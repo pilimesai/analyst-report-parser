@@ -1,0 +1,6 @@
+streamlit
+google-genai
+pandas
+PyMuPDF
+python-dotenv
+yfinance
