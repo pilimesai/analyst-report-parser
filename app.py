@@ -159,9 +159,11 @@ def parse_report_with_gemini(text, api_key):
     4. 券商預估EPS (Estimated EPS)，請只輸出數字 (如 15.2)。如果在報告中沒有明確給出預估 EPS，請填 "N/A"。
     5. 目標價 (Target Price, TP)，請只輸出數字或貨幣字串，例如 1200 或 $1200。如果沒有給，請填 "N/A"。
     6. 重點分析內容 (Summary)，請用繁體中文，將這篇報告中最核心的看多/看空理由濃縮在 50-100 字以內。
+    7. 報告發布日期 (Date)，格式強制為 YYYY-MM-DD。若無明確日期，請盡可能從內文中推測，或填入 "未知"。
     
     你必須將結果強制輸出為 JSON 格式，不要包含任何 Markdown 標記，也不要有其餘說明文字。JSON 的鍵名 (keys) 必須完全符合以下結構：
     {
+      "date": "報告發布日期",
       "stock": "股票代號與名稱",
       "brokerage": "券商名稱",
       "rating": "評等",
@@ -312,38 +314,91 @@ if analyze_btn:
 
 if st.session_state.history:
     st.divider()
-    st.subheader("📊 歷次分析彙整結果")
-    df = pd.DataFrame(st.session_state.history)
+    st.subheader("📊 歷次分析彙整結果 (依股票整合)")
     
-    # Reorder columns if keys are perfectly matched
-    expected_cols = ['檔案名稱', 'stock', 'brokerage', 'rating', 'target_price', 'eps', '最新收盤價', '目前本益比(PE)', '低於20倍PE?', 'summary']
-    # Only keep available columns
-    available_cols = [c for c in expected_cols if c in df.columns]
-    df = df[available_cols]
+    # 建立原始 DataFrame
+    df_raw = pd.DataFrame(st.session_state.history)
     
-    # Rename for display
-    rename_dict = {
-        '檔案名稱': '來源檔案',
-        'stock': '股票名稱/代號',
-        'brokerage': '券商',
-        'rating': '評等',
-        'target_price': '目標價 (TP)',
-        'eps': '預估 EPS',
-        'summary': '重點分析'
-    }
-    df.rename(columns=rename_dict, inplace=True)
+    # 進行整合邏輯
+    consolidated = []
     
-    # Deduplicate in case users uploaded the same exact item (optional)
-    # df.drop_duplicates(inplace=True)
-    
-    st.dataframe(df, use_container_width=True)
-    
-    # 建立 CSV 下載按鈕 (加上 BOM 以解決 Excel 中文亂碼)
-    csv = df.to_csv(index=False).encode('utf-8-sig')
-    st.download_button(
-        label="📥 下載完整 CSV 表格",
-        data=csv,
-        file_name="券商報告歷史彙整.csv",
-        mime="text/csv",
-        use_container_width=True
-    )
+    if 'stock' in df_raw.columns:
+        # 將同股票的資料 Group 起來
+        for stock, group in df_raw.groupby('stock', dropna=False):
+            if not str(stock).strip():
+                continue
+                
+            # 取得最新收盤價 (由於同一股票理論上收盤價相同，取最後一個有效值)
+            close_price = "N/A"
+            valid_closes = group[group['最新收盤價'] != "N/A"]['最新收盤價']
+            if not valid_closes.empty:
+                close_price = valid_closes.iloc[-1]
+            
+            # 計算平均 EPS 與 目標價
+            # 將 'N/A' 等轉為 NaN 後計算平均
+            valid_eps = pd.to_numeric(group['eps'], errors='coerce').dropna()
+            avg_eps = valid_eps.mean() if not valid_eps.empty else None
+            
+            # 目標價有時候包含貨幣符號，先做一點清理
+            def clean_tp(x):
+                try:
+                    return float(re.sub(r'[^\d.]', '', str(x)))
+                except:
+                    return None
+                    
+            valid_tps = group['target_price'].apply(clean_tp).dropna()
+            avg_tp = valid_tps.mean() if not valid_tps.empty else None
+            
+            # 組合各券商的評價紀錄字串
+            evaluations = []
+            for _, row in group.iterrows():
+                date_str = row.get('date', '未知日期')
+                broker = row.get('brokerage', '未知券商')
+                rating = row.get('rating', '無')
+                tp = row.get('target_price', 'N/A')
+                eps = row.get('eps', 'N/A')
+                summary = row.get('summary', '')
+                
+                eval_text = f"🔹 【{date_str}｜{broker}】 評等: {rating} | 目標價: {tp} | 預估EPS: {eps}\n📝 {summary}"
+                evaluations.append(eval_text)
+                
+            combined_evals = "\n\n".join(evaluations)
+            
+            # 重新計算「綜合本益比」 (基於平均EPS)
+            pe_str = "N/A"
+            pe_below_20 = "N/A"
+            
+            if close_price != "N/A" and avg_eps and avg_eps != 0:
+                try:
+                    pe = round(float(close_price) / float(avg_eps), 2)
+                    pe_str = str(pe)
+                    pe_below_20 = "✅ 是" if pe < 20 else "❌ 否"
+                except:
+                    pass
+                    
+            consolidated.append({
+                "股票名稱/代號": stock,
+                "最新收盤價": close_price,
+                "平均預估EPS": round(avg_eps, 2) if avg_eps else "N/A",
+                "平均目標價": round(avg_tp, 2) if avg_tp else "N/A",
+                "綜合本益比(PE)": pe_str,
+                "低於20倍PE?": pe_below_20,
+                "各家券商評價紀錄 (依日期/券商)": combined_evals
+            })
+            
+        df_display = pd.DataFrame(consolidated)
+        
+        # 顯示 Dataframe，設定使用最大寬度，讓多行文字可以展開
+        st.dataframe(df_display, use_container_width=True)
+        
+        # 建立 CSV 下載按鈕 (加上 BOM 以解決 Excel 中文亂碼)
+        csv = df_display.to_csv(index=False).encode('utf-8-sig')
+        st.download_button(
+            label="📥 下載整合後 CSV 表格",
+            data=csv,
+            file_name="券商報告整合表.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
+    else:
+        st.info("尚無完整的股票資料可供分析。")
