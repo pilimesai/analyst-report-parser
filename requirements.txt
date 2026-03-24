@@ -4,3 +4,5 @@ pandas
 PyMuPDF
 python-dotenv
 yfinance
+gspread
+google-auth

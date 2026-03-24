@@ -8,6 +8,8 @@ import yfinance as yf
 import re
 import os
 from dotenv import load_dotenv
+import gspread
+from google.oauth2.service_account import Credentials
 
 load_dotenv()
 
@@ -32,9 +34,92 @@ st.sidebar.markdown(
     "[取得 Gemini API Key](https://aistudio.google.com/app/apikey)"
 )
 
+# Data persistence
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+HISTORY_FILE = os.path.join(BASE_DIR, "history.json")
+
+def get_gspread_client():
+    if "gcp_service_account" in st.secrets:
+        try:
+            creds = Credentials.from_service_account_info(
+                st.secrets["gcp_service_account"],
+                scopes=[
+                    "https://www.googleapis.com/auth/spreadsheets",
+                    "https://www.googleapis.com/auth/drive"
+                ]
+            )
+            return gspread.authorize(creds)
+        except Exception as e:
+            st.warning(f"Google 憑證錯誤: {e}")
+    return None
+
+def get_worksheet():
+    client = get_gspread_client()
+    if client and "sheets" in st.secrets and "url" in st.secrets["sheets"]:
+        try:
+            sheet = client.open_by_url(st.secrets["sheets"]["url"])
+            return sheet.sheet1
+        except Exception as e:
+            st.error(f"無法開啟指定的 Google Sheet: {e}")
+            return None
+    return None
+
+def load_history():
+    ws = get_worksheet()
+    if ws:
+        try:
+            records = ws.get_all_records()
+            st.toast(f"☁️ 成功從 Google Sheets 載入 {len(records)} 筆紀錄！", icon="📂")
+            return records
+        except Exception as e:
+            st.error(f"❌ 從 Google Sheets 讀取失敗: {e}")
+            return []
+    
+    # 這是沒有設定 GCP 金鑰時的「本機暫存版本」
+    if os.path.exists(HISTORY_FILE):
+        try:
+            with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                st.toast(f"✅ 成功從本地檔案載入 {len(data)} 筆紀錄！", icon="📂")
+                return data
+        except Exception as e:
+            st.error(f"❌ 載入本地歷史紀錄失敗 (檔案毀損或格式錯誤): {e}")
+            return []
+    else:
+        st.toast("ℹ️ 沒有找到歷史紀錄檔案，準備建立新紀錄。", icon="🆕")
+    return []
+
+def save_history(history):
+    ws = get_worksheet()
+    if ws:
+        try:
+            ws.clear()
+            if history:
+                df = pd.DataFrame(history)
+                df = df.fillna("N/A")
+                data = [df.columns.values.tolist()] + df.values.tolist()
+                
+                # gspread v6 之後的語法是 worksheet.update(values=..., range_name=...)
+                try:
+                    ws.update(values=data, range_name="A1")
+                except TypeError:
+                    # 兼容舊版語法
+                    ws.update(data, "A1")
+            st.toast(f"☁️ 已成功將 {len(history)} 筆紀錄同步至 Google Sheets！", icon="💾")
+        except Exception as e:
+            st.error(f"❌ 寫入 Google Sheets 失敗: {str(e)}")
+    else:
+        # 本機暫存版本
+        try:
+            with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+                json.dump(history, f, ensure_ascii=False, indent=2)
+            st.toast(f"💾 已成功寫入實體檔案 (因未設定 Google 金鑰)！", icon="💾")
+        except Exception as e:
+            st.error(f"❌ 無法儲存歷史紀錄: {str(e)}")
+
 # Initialize session history
 if 'history' not in st.session_state:
-    st.session_state.history = []
+    st.session_state.history = load_history()
 
 # Main area
 tab1, tab2 = st.tabs(["📂 檔案上傳", "📝 直接貼上文字"])
@@ -117,7 +202,7 @@ def get_latest_close_price(stock_id):
                 ticker = yf.Ticker(f"{code}{suffix}")
                 hist = ticker.history(period="1d")
                 if not hist.empty:
-                    return round(hist['Close'].iloc[-1], 2)
+                    return round(float(hist['Close'].iloc[-1]), 2)
             except:
                 continue
     return None
@@ -128,6 +213,7 @@ clear_btn = col2.button("🧹 清空歷史紀錄", use_container_width=True)
 
 if clear_btn:
     st.session_state.history = []
+    save_history(st.session_state.history)
     st.rerun()
 
 if analyze_btn:
@@ -222,6 +308,7 @@ if analyze_btn:
         
         if results:
             st.session_state.history.extend(results)
+            save_history(st.session_state.history)
 
 if st.session_state.history:
     st.divider()
