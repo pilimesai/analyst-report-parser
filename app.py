@@ -148,10 +148,10 @@ def extract_text(file):
         st.error(f"提取文字時發生錯誤 ({file.name}): {str(e)}")
     return text
 
-def parse_report_with_gemini(text, api_key):
+def parse_report_with_gemini(text, api_key, source_name="未知來源"):
     client = genai.Client(api_key=api_key)
     
-    prompt = """
+    prompt = f"""
     你是一位專業的金融分析師。請仔細閱讀以下券商分析報告，並精確地提取出以下資訊：
     1. 股票代號與名稱 (例如: 2330 台積電)
     2. 發布該報告的券商名稱 (Brokerage)
@@ -159,10 +159,10 @@ def parse_report_with_gemini(text, api_key):
     4. 券商預估EPS (Estimated EPS)，請只輸出數字 (如 15.2)。如果在報告中沒有明確給出預估 EPS，請填 "N/A"。
     5. 目標價 (Target Price, TP)，請只輸出數字或貨幣字串，例如 1200 或 $1200。如果沒有給，請填 "N/A"。
     6. 重點分析內容 (Summary)，請用繁體中文，將這篇報告中最核心的看多/看空理由濃縮在 50-100 字以內。
-    7. 報告發布日期 (Date)，格式強制為 YYYY-MM-DD。若無明確日期，請盡可能從內文中推測，或填入 "未知"。
+    7. 報告發布日期 (Date)，格式強制為 YYYY-MM-DD。這份報告的來源名稱為「{source_name}」，請優先從這個名稱（例如法人日報的日期）提取日期。若名稱中沒有明確日期，請再嘗試從內文中尋找。若都找不到才填入 "未知"。
     
     你必須將結果強制輸出為 JSON 格式，不要包含任何 Markdown 標記，也不要有其餘說明文字。JSON 的鍵名 (keys) 必須完全符合以下結構：
-    {
+    {{
       "date": "報告發布日期",
       "stock": "股票代號與名稱",
       "brokerage": "券商名稱",
@@ -170,7 +170,7 @@ def parse_report_with_gemini(text, api_key):
       "target_price": "目標價",
       "eps": "券商預估EPS",
       "summary": "重點分析內容"
-    }
+    }}
     
     以下是報告內容：
     """
@@ -249,7 +249,7 @@ if analyze_btn:
                 text = text[:300000] 
                 
                 # 2. 呼叫 Gemini 分析
-                parsed_data = parse_report_with_gemini(text, api_key)
+                parsed_data = parse_report_with_gemini(text, api_key, source_name=file.name)
                 
                 if parsed_data:
                     items = parsed_data if isinstance(parsed_data, list) else [parsed_data]
@@ -280,7 +280,7 @@ if analyze_btn:
             status_text.text(f"正在分析 ({current}/{tasks_count}): {pasted_name} ...")
             
             text_truncated = pasted_text[:300000]
-            parsed_data = parse_report_with_gemini(text_truncated, api_key)
+            parsed_data = parse_report_with_gemini(text_truncated, api_key, source_name=pasted_name)
             
             if parsed_data:
                 items = parsed_data if isinstance(parsed_data, list) else [parsed_data]
@@ -349,21 +349,6 @@ if st.session_state.history:
             valid_tps = group['target_price'].apply(clean_tp).dropna()
             avg_tp = valid_tps.mean() if not valid_tps.empty else None
             
-            # 組合各券商的評價紀錄字串
-            evaluations = []
-            for _, row in group.iterrows():
-                date_str = row.get('date', '未知日期')
-                broker = row.get('brokerage', '未知券商')
-                rating = row.get('rating', '無')
-                tp = row.get('target_price', 'N/A')
-                eps = row.get('eps', 'N/A')
-                summary = row.get('summary', '')
-                
-                eval_text = f"🔹 【{date_str}｜{broker}】 評等: {rating} | 目標價: {tp} | 預估EPS: {eps}\n📝 {summary}"
-                evaluations.append(eval_text)
-                
-            combined_evals = "\n\n".join(evaluations)
-            
             # 重新計算「綜合本益比」 (基於平均EPS)
             pe_str = "N/A"
             pe_below_20 = "N/A"
@@ -376,15 +361,40 @@ if st.session_state.history:
                 except:
                     pass
                     
-            consolidated.append({
-                "股票名稱/代號": stock,
-                "最新收盤價": close_price,
-                "平均預估EPS": round(avg_eps, 2) if avg_eps else "N/A",
-                "平均目標價": round(avg_tp, 2) if avg_tp else "N/A",
-                "綜合本益比(PE)": pe_str,
-                "低於20倍PE?": pe_below_20,
-                "各家券商評價紀錄 (依日期/券商)": combined_evals
-            })
+            # 展開各家券商評價紀錄為獨立列，只有第一列顯示共用的股票資訊
+            is_first_row = True
+            for _, row in group.iterrows():
+                if is_first_row:
+                    consolidated.append({
+                        "股票名稱/代號": stock,
+                        "最新收盤價": close_price,
+                        "發布日期": row.get('date', '未知日期'),
+                        "券商名稱": row.get('brokerage', '未知券商'),
+                        "券商評等": row.get('rating', '無'),
+                        "券商目標價": row.get('target_price', 'N/A'),
+                        "券商預估EPS": row.get('eps', 'N/A'),
+                        "重點分析": row.get('summary', ''),
+                        "平均目標價": round(avg_tp, 2) if avg_tp else "N/A",
+                        "平均預估EPS": round(avg_eps, 2) if avg_eps else "N/A",
+                        "綜合本益比(PE)": pe_str,
+                        "低於20倍PE?": pe_below_20
+                    })
+                    is_first_row = False
+                else:
+                    consolidated.append({
+                        "股票名稱/代號": "",
+                        "最新收盤價": "",
+                        "發布日期": row.get('date', '未知日期'),
+                        "券商名稱": row.get('brokerage', '未知券商'),
+                        "券商評等": row.get('rating', '無'),
+                        "券商目標價": row.get('target_price', 'N/A'),
+                        "券商預估EPS": row.get('eps', 'N/A'),
+                        "重點分析": row.get('summary', ''),
+                        "平均目標價": "",
+                        "平均預估EPS": "",
+                        "綜合本益比(PE)": "",
+                        "低於20倍PE?": ""
+                    })
             
         df_display = pd.DataFrame(consolidated)
         
