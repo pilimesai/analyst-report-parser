@@ -309,11 +309,37 @@ if analyze_btn:
                 
             progress_bar.progress(current / tasks_count)
             
-        status_text.text("✅ 此批次分析完成！")
-        
         if results:
             st.session_state.history.extend(results)
+            
+            status_text.text("🔄 正在為資料庫中的所有股票同步今日最新收盤價...")
+            unique_stocks = list(set([str(item.get('stock', '')) for item in st.session_state.history if str(item.get('stock', '')).strip()]))
+            
+            stock_prices = {}
+            for i, stock in enumerate(unique_stocks):
+                price = get_latest_close_price(stock)
+                if price:
+                    stock_prices[stock] = price
+                progress_bar.progress((i + 1) / max(1, len(unique_stocks)))
+                
+            for item in st.session_state.history:
+                stock_key = str(item.get('stock', ''))
+                if stock_key in stock_prices:
+                    new_price = stock_prices[stock_key]
+                    item['最新收盤價'] = new_price
+                    try:
+                        eps_val = float(str(item.get('eps', 'N/A')))
+                        if new_price and eps_val != 0:
+                            pe = round(float(new_price) / eps_val, 2)
+                            item['目前本益比(PE)'] = pe
+                            item['低於20倍PE?'] = "✅ 是" if pe < 20 else "❌ 否"
+                    except:
+                        pass
+            
+            status_text.text("✅ 分析成功，且所有歷史名單股價皆已自動更新！")
             save_history(st.session_state.history)
+        else:
+            status_text.text("✅ 分析完成，但無新擷取的資料。")
 
 if st.session_state.history:
     st.divider()
