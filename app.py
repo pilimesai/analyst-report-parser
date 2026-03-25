@@ -402,6 +402,33 @@ if analyze_btn:
             status_text.text("✅ 分析完成，但無新擷取的資料。")
 
 if st.session_state.history:
+    # --- 全域歷史資料大掃除 (修復舊有的重複資料) ---
+    best_items = {}
+    for item in st.session_state.history:
+        key = (str(item.get('stock', '')).strip(), 
+               str(item.get('brokerage', '')).strip())
+        if key not in best_items:
+            best_items[key] = item
+        else:
+            old_date = str(best_items[key].get('date', ''))
+            new_date = str(item.get('date', ''))
+            if new_date >= old_date:
+                old_summary = str(best_items[key].get('summary', '')).strip()
+                new_summary = str(item.get('summary', '')).strip()
+                null_vals = ['', 'N/A', '無', 'UNKNOWN', '未知', 'NONE', 'NAN']
+                if (new_summary.upper() in null_vals) and (old_summary.upper() not in null_vals):
+                    item['summary'] = old_summary
+                old_rating = str(best_items[key].get('rating', '')).strip()
+                new_rating = str(item.get('rating', '')).strip()
+                if (new_rating.upper() in null_vals) and (old_rating.upper() not in null_vals):
+                    item['rating'] = old_rating
+                best_items[key] = item
+                
+    if len(best_items) != len(st.session_state.history):
+        st.session_state.history = list(best_items.values())
+        save_history(st.session_state.history)
+    # ----------------------------------------------------   
+
     st.divider()
     st.subheader("📊 歷次分析彙整結果 (依股票整合)")
     
