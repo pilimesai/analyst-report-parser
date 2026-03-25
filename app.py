@@ -407,53 +407,46 @@ if analyze_btn:
             status_text.text("✅ 分析完成，但無新擷取的資料。")
 
 if st.session_state.history:
-    # --- 全域歷史資料大掃除 (修復舊有的重複資料) ---
-    best_items = {}
-    import re
-    for item in st.session_state.history:
-        stock_name = str(item.get('stock', '')).strip()
-        broker_name = str(item.get('brokerage', '')).strip()
+    df_raw = pd.DataFrame(st.session_state.history)
+    
+    # --- 採用功能強大的 Pandas 全域歷史去重複大掃除 ---
+    if not df_raw.empty and 'stock' in df_raw.columns:
+        # 建立標準化欄位以供分組去重複
+        df_raw['norm_stock'] = df_raw['stock'].astype(str).str.replace(r'[0-9\W_]', '', regex=True).str.upper()
+        df_raw['norm_broker'] = df_raw['brokerage'].astype(str).str.replace(r'[\W_]', '', regex=True).str.upper()
         
-        # 終極標準化券商名稱：清空括號、英文字首、常見尾綴
-        norm_broker = re.sub(r'[ \(\)\-]', '', broker_name).upper()
         for eng in ['KGI', 'SINOPAC', 'YUANTA', 'FUBON', 'CATHAY', 'CTBC', 'CAPITAL', 'MASTERLINK']:
-            norm_broker = norm_broker.replace(eng, '')
-        for suffix in ["證券", "投顧", "控股", "金控", "金融", "金", "SECURITIES", "證", "公司", "股份有限公司", "期貨", "亞洲"]:
-            norm_broker = norm_broker.replace(suffix, "")
-        norm_broker = norm_broker.strip()
+            df_raw['norm_broker'] = df_raw['norm_broker'].str.replace(eng, '')
+        for suffix in ["證券", "投顧", "控股", "金控", "金融", "金", "SECURITIES", "證", "公司", "股份有限公司", "期貨", "亞洲", "研究"]:
+            df_raw['norm_broker'] = df_raw['norm_broker'].str.replace(suffix, '')
+            
+        # 處理日期排序，將「未知」替換成「0000」排在最前
+        df_raw['sort_date'] = df_raw['date'].astype(str).str.replace('未知.*', '0000', regex=True)
+        df_raw = df_raw.sort_values('sort_date', ascending=True)
         
-        # 終極標準化股票名稱：將數字、標點符號、空白全部剃除，只保留純文字（讓 "2727 王品" 與 "王品" 視為相同）
-        norm_stock = re.sub(r'[0-9\W_]', '', stock_name).upper()
+        # 依序使用 ffill 將舊資料中的 summary 和 rating 往前填補給較新的缺失記錄
+        null_vals = ['', 'N/A', 'N/a', '無', 'UNKNOWN', '未知', 'NONE', 'NAN']
+        df_raw['summary'] = df_raw['summary'].replace(null_vals, pd.NA)
+        df_raw['rating'] = df_raw['rating'].replace(null_vals, pd.NA)
         
-        key = (norm_stock, norm_broker)
-        if key not in best_items:
-            best_items[key] = item
-        else:
-            old_date = str(best_items[key].get('date', ''))
-            new_date = str(item.get('date', ''))
-            if new_date >= old_date:
-                old_summary = str(best_items[key].get('summary', '')).strip()
-                new_summary = str(item.get('summary', '')).strip()
-                null_vals = ['', 'N/A', '無', 'UNKNOWN', '未知', 'NONE', 'NAN']
-                if (new_summary.upper() in null_vals) and (old_summary.upper() not in null_vals):
-                    item['summary'] = old_summary
-                old_rating = str(best_items[key].get('rating', '')).strip()
-                new_rating = str(item.get('rating', '')).strip()
-                if (new_rating.upper() in null_vals) and (old_rating.upper() not in null_vals):
-                    item['rating'] = old_rating
-                best_items[key] = item
-                
-    # 強制執行儲存以確保畫面確實反應最新的乾淨狀態
-    if len(best_items) != len(st.session_state.history) or True: # Force update unconditionally to clear rendering cache
-        st.session_state.history = list(best_items.values())
-        save_history(st.session_state.history)
-    # ----------------------------------------------------   
+        df_raw['summary'] = df_raw.groupby(['norm_stock', 'norm_broker'])['summary'].ffill()
+        df_raw['rating'] = df_raw.groupby(['norm_stock', 'norm_broker'])['rating'].ffill()
+        
+        # 保留每個群組的「最後一筆」(時間最新)
+        clean_df = df_raw.drop_duplicates(subset=['norm_stock', 'norm_broker'], keep='last')
+        
+        # 轉換回 dictionary 並儲存回 history
+        clean_history = clean_df.drop(columns=['norm_stock', 'norm_broker', 'sort_date']).fillna('N/A').to_dict('records')
+        
+        if len(clean_history) != len(st.session_state.history):
+            st.session_state.history = clean_history
+            save_history(st.session_state.history)
+            df_raw = pd.DataFrame(st.session_state.history) # 重新建立清好的資料以供顯示
+        
+    # ----------------------------------------------------
 
     st.divider()
     st.subheader("📊 歷次分析彙整結果 (依股票整合)")
-    
-    # 建立原始 DataFrame
-    df_raw = pd.DataFrame(st.session_state.history)
     
     # 進行整合邏輯
     consolidated = []
