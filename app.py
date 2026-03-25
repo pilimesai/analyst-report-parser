@@ -127,7 +127,7 @@ tab1, tab2 = st.tabs(["📂 檔案上傳", "📝 直接貼上文字"])
 with tab1:
     uploaded_files = st.file_uploader(
         "上傳券商報告", 
-        type=["pdf", "txt"], 
+        type=["pdf", "txt", "xlsx", "xls", "csv"], 
         accept_multiple_files=True
     )
 
@@ -144,6 +144,14 @@ def extract_text(file):
                 text += page.get_text("text") + "\n"
         elif file.name.endswith(".txt"):
             text = file.read().decode("utf-8")
+        elif file.name.endswith((".xlsx", ".xls")):
+            import pandas as pd
+            df = pd.read_excel(file)
+            text = "這是一份表格資料：\n" + df.to_csv(index=False)
+        elif file.name.endswith(".csv"):
+            import pandas as pd
+            df = pd.read_csv(file)
+            text = "這是一份表格資料：\n" + df.to_csv(index=False)
     except Exception as e:
         st.error(f"提取文字時發生錯誤 ({file.name}): {str(e)}")
     return text
@@ -164,7 +172,14 @@ def parse_report_with_gemini(text, api_key, source_name="未知來源"):
        👉 第二優先：若名稱中真的毫無日期線索，再從內文中尋找。
        👉 若窮盡一切方法仍找不出日期，才填入 "未知"。
     
-    你必須將結果強制輸出為 JSON 格式，不要包含任何 Markdown 標記，也不要有其餘說明文字。JSON 的鍵名 (keys) 必須完全符合以下結構：
+    如果文件中包含「多筆」獨立的報告（例如 Excel 多列表格），請輸出一個 JSON 陣列 (Array)，例如：
+    [
+      {{ "date": "...", "stock": "...", "brokerage": "...", "rating": "...", "eps": "...", "target_price": "...", "summary": "..." }},
+      {{ "date": "...", "stock": "...", "brokerage": "...", "rating": "...", "eps": "...", "target_price": "...", "summary": "..." }}
+    ]
+    如果你只看到一筆，也可以只輸出單一 JSON 物件，或只含單一物件的陣列。
+    
+    你必須將結果強制輸出為 JSON 格式，不要包含任何 Markdown 標記，也不要有其餘說明文字。JSON 內的每一筆物件必須完全符合以下結構 (keys)：
     {{
       "date": "報告發布日期",
       "stock": "股票代號與名稱",
@@ -175,7 +190,7 @@ def parse_report_with_gemini(text, api_key, source_name="未知來源"):
       "summary": "重點分析內容"
     }}
     
-    以下是報告內容：
+    以下是內容資料：
     """
     
     try:
