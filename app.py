@@ -427,8 +427,16 @@ if st.session_state.history:
             
         df_display = pd.DataFrame(consolidated)
         
+        # 定義高亮函數：若評等包含「強力買進」，則將文字標紅加粗
+        if not df_display.empty and '券商評等' in df_display.columns:
+            def highlight_strong_buy(s):
+                return ['color: #ff4b4b; font-weight: bold' if isinstance(v, str) and '強力買進' in v else '' for v in s]
+            styled_df = df_display.style.apply(highlight_strong_buy, subset=['券商評等'])
+        else:
+            styled_df = df_display
+        
         # 顯示 Dataframe，設定使用最大寬度，讓多行文字可以展開
-        st.dataframe(df_display, use_container_width=True)
+        st.dataframe(styled_df, use_container_width=True)
         
         # 建立 CSV 下載按鈕 (加上 BOM 以解決 Excel 中文亂碼)
         csv = df_display.to_csv(index=False).encode('utf-8-sig')
