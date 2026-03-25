@@ -354,6 +354,20 @@ if analyze_btn:
                     new_date = str(item.get('date', ''))
                     # 若新報告日期較新 (或同一天但較晚上傳)，則覆蓋舊報告
                     if new_date >= old_date:
+                        # --- 保護機制：如果新的簡略資料(例如 Excel)沒有文字分析，就繼承舊的寶貴分析 ---
+                        old_summary = str(best_items[key].get('summary', '')).strip()
+                        new_summary = str(item.get('summary', '')).strip()
+                        null_vals = ['', 'N/A', '無', 'UNKNOWN', '未知', 'NONE', 'NAN']
+                        
+                        if (new_summary.upper() in null_vals) and (old_summary.upper() not in null_vals):
+                            item['summary'] = old_summary
+                            
+                        # 連「評等」也一併保護
+                        old_rating = str(best_items[key].get('rating', '')).strip()
+                        new_rating = str(item.get('rating', '')).strip()
+                        if (new_rating.upper() in null_vals) and (old_rating.upper() not in null_vals):
+                            item['rating'] = old_rating
+
                         best_items[key] = item
             st.session_state.history = list(best_items.values())
             # -------------------------------------------------------
