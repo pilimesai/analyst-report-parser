@@ -214,12 +214,27 @@ def get_latest_close_price(stock_id):
 
 col1, col2 = st.columns([1, 1])
 analyze_btn = col1.button("開始分析", type="primary", use_container_width=True)
-clear_btn = col2.button("🧹 清空歷史紀錄", use_container_width=True)
 
-if clear_btn:
-    st.session_state.history = []
-    save_history(st.session_state.history)
-    st.rerun()
+# 使用 popover 加入確認對話框與「管理員密碼」權限機制
+with col2.popover("🧹 清空歷史紀錄", use_container_width=True):
+    st.warning("⚠️ 此為管理員專屬動作，清空後資料將**無法復原**。")
+    admin_pwd = st.text_input("輸入管理員密碼：", type="password")
+    
+    if st.button("🔴 我確定，清空全部", use_container_width=True):
+        # 取得系統設定的密碼 (預設為 "admin123")
+        correct_pwd = os.environ.get("ADMIN_PASSWORD", "admin123")
+        try:
+            if "ADMIN_PASSWORD" in st.secrets:
+                correct_pwd = st.secrets["ADMIN_PASSWORD"]
+        except Exception:
+            pass
+            
+        if admin_pwd == correct_pwd:
+            st.session_state.history = []
+            save_history(st.session_state.history)
+            st.rerun()
+        else:
+            st.error("❌ 密碼錯誤，您無權限清除歷史紀錄！")
 
 if analyze_btn:
     if not api_key:
