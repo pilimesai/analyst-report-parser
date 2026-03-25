@@ -493,5 +493,45 @@ if st.session_state.history:
             mime="text/csv",
             use_container_width=True
         )
+        
+        # --- 股票搜尋功能 ---
+        if not df_display.empty:
+            st.divider()
+            st.subheader("🔍 個股報告搜尋")
+            search_query = st.text_input("輸入股票名稱或代號 (例如：台積電 或 2330)", placeholder="搜尋...")
+            
+            if search_query.strip():
+                # 因為 df_display 畫面上為了美觀，將同股票後續列的名稱設為空字串，所以我們先暫時向下填滿回來做搜尋
+                temp_df = df_display.copy()
+                temp_df['股票名稱/代號'] = temp_df['股票名稱/代號'].replace('', float('NaN')).ffill()
+                
+                # 使用 contains 進行不分大小寫的關鍵字模糊搜尋
+                mask = temp_df['股票名稱/代號'].astype(str).str.contains(search_query.strip(), case=False, na=False)
+                filtered_df = df_display[mask]
+                
+                if not filtered_df.empty:
+                    st.success(f"✅ 找到 {len(filtered_df)} 筆關於「{search_query}」的紀錄：")
+                    
+                    # 在搜尋結果中找出該次搜尋出現的最新的日期
+                    valid_filtered_dates = [str(d) for d in filtered_df.get('發布日期', []) if str(d) != '未知日期' and str(d).strip() != '']
+                    local_latest = max(valid_filtered_dates) if valid_filtered_dates else None
+                    
+                    def highlight_search_latest_row(row):
+                        if local_latest and str(row.get('發布日期')) == local_latest:
+                            return ['background-color: rgba(255, 235, 59, 0.15)'] * len(row)
+                        return [''] * len(row)
+                    
+                    styled_filtered = filtered_df.style.apply(highlight_search_latest_row, axis=1)
+                    
+                    # 借用原本的 highlight_strong_buy
+                    if '券商評等' in filtered_df.columns:
+                        def highlight_strong_buy(s):
+                            return ['color: #ff4b4b; font-weight: bold' if isinstance(v, str) and '強力買進' in v else '' for v in s]
+                        styled_filtered = styled_filtered.apply(highlight_strong_buy, subset=['券商評等'])
+                        
+                    st.dataframe(styled_filtered, use_container_width=True)
+                else:
+                    st.warning(f"⚠️ 目前沒有找到關於「{search_query}」的報告。")
+
     else:
         st.info("尚無完整的股票資料可供分析。")
