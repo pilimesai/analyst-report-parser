@@ -342,32 +342,37 @@ if analyze_btn:
         if results:
             st.session_state.history.extend(results)
             
-            # --- 自動覆蓋舊報告機制 (相同股票、同一家券商，只保留最新日期) ---
+            # --- 自動覆蓋舊報告機制 (同步採用超強正規化去重複) ---
             best_items = {}
+            import re
             for item in st.session_state.history:
-                key = (str(item.get('stock', '')).strip(), 
-                       str(item.get('brokerage', '')).strip())
+                b_name = str(item.get('brokerage', '')).strip()
+                s_name = str(item.get('stock', '')).strip()
+                n_b = re.sub(r'[ \(\)\-]', '', b_name).upper()
+                for eng in ['KGI', 'SINOPAC', 'YUANTA', 'FUBON', 'CATHAY', 'CTBC', 'CAPITAL', 'MASTERLINK']:
+                    n_b = n_b.replace(eng, '')
+                for suffix in ["證券", "投顧", "控股", "金控", "金融", "金", "SECURITIES", "證", "公司", "股份有限公司", "期貨", "亞洲"]:
+                    n_b = n_b.replace(suffix, "")
+                n_b = n_b.strip()
+                
+                n_s = re.sub(r'[0-9\W_]', '', s_name).upper()
+                key = (n_s, n_b)
+                
                 if key not in best_items:
                     best_items[key] = item
                 else:
                     old_date = str(best_items[key].get('date', ''))
                     new_date = str(item.get('date', ''))
-                    # 若新報告日期較新 (或同一天但較晚上傳)，則覆蓋舊報告
                     if new_date >= old_date:
-                        # --- 保護機制：如果新的簡略資料(例如 Excel)沒有文字分析，就繼承舊的寶貴分析 ---
                         old_summary = str(best_items[key].get('summary', '')).strip()
                         new_summary = str(item.get('summary', '')).strip()
                         null_vals = ['', 'N/A', '無', 'UNKNOWN', '未知', 'NONE', 'NAN']
-                        
                         if (new_summary.upper() in null_vals) and (old_summary.upper() not in null_vals):
                             item['summary'] = old_summary
-                            
-                        # 連「評等」也一併保護
                         old_rating = str(best_items[key].get('rating', '')).strip()
                         new_rating = str(item.get('rating', '')).strip()
                         if (new_rating.upper() in null_vals) and (old_rating.upper() not in null_vals):
                             item['rating'] = old_rating
-
                         best_items[key] = item
             st.session_state.history = list(best_items.values())
             # -------------------------------------------------------
@@ -438,7 +443,8 @@ if st.session_state.history:
                     item['rating'] = old_rating
                 best_items[key] = item
                 
-    if len(best_items) != len(st.session_state.history):
+    # 強制執行儲存以確保畫面確實反應最新的乾淨狀態
+    if len(best_items) != len(st.session_state.history) or True: # Force update unconditionally to clear rendering cache
         st.session_state.history = list(best_items.values())
         save_history(st.session_state.history)
     # ----------------------------------------------------   
