@@ -327,19 +327,21 @@ if analyze_btn:
         if results:
             st.session_state.history.extend(results)
             
-            # --- 自動去重複機制 (相同股票、同一家券商、同一天發布) ---
-            seen = set()
-            deduped = []
-            for item in reversed(st.session_state.history):
-                # 以「股票」、「券商」和「日期」做為唯一識別碼 (使用 get 保護並清除多餘空白)
+            # --- 自動覆蓋舊報告機制 (相同股票、同一家券商，只保留最新日期) ---
+            best_items = {}
+            for item in st.session_state.history:
                 key = (str(item.get('stock', '')).strip(), 
-                       str(item.get('brokerage', '')).strip(), 
-                       str(item.get('date', '')).strip())
-                if key not in seen:
-                    seen.add(key)
-                    deduped.append(item)
-            st.session_state.history = list(reversed(deduped))
-            # ----------------------------------------------------
+                       str(item.get('brokerage', '')).strip())
+                if key not in best_items:
+                    best_items[key] = item
+                else:
+                    old_date = str(best_items[key].get('date', ''))
+                    new_date = str(item.get('date', ''))
+                    # 若新報告日期較新 (或同一天但較晚上傳)，則覆蓋舊報告
+                    if new_date >= old_date:
+                        best_items[key] = item
+            st.session_state.history = list(best_items.values())
+            # -------------------------------------------------------
             
             status_text.text("🔄 正在為資料庫中的所有股票同步今日最新收盤價...")
             unique_stocks = list(set([str(item.get('stock', '')) for item in st.session_state.history if str(item.get('stock', '')).strip()]))
