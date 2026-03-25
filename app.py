@@ -405,8 +405,19 @@ if st.session_state.history:
     # --- 全域歷史資料大掃除 (修復舊有的重複資料) ---
     best_items = {}
     for item in st.session_state.history:
-        key = (str(item.get('stock', '')).strip(), 
-               str(item.get('brokerage', '')).strip())
+        stock_name = str(item.get('stock', '')).strip()
+        broker_name = str(item.get('brokerage', '')).strip()
+        
+        # 標準化券商名稱，去尾綴讓「凱基」與「凱基投顧」、「永豐」與「永豐金」自動合併為同一家
+        norm_broker = broker_name
+        for suffix in ["證券", "投顧", "控股", "金控", "金融", "金", "Securities", "證", "公司", "股份有限公司"]:
+            norm_broker = norm_broker.replace(suffix, "")
+        norm_broker = norm_broker.strip().upper()
+        
+        # 標準化股票名稱避免空白造成的誤判
+        norm_stock = stock_name.replace(" ", "").replace("　", "").upper()
+        
+        key = (norm_stock, norm_broker)
         if key not in best_items:
             best_items[key] = item
         else:
