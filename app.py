@@ -458,14 +458,29 @@ if st.session_state.history:
             
         df_display = pd.DataFrame(consolidated)
         
-        # 定義高亮函數：若評等包含「強力買進」，則將文字標紅加粗
-        if not df_display.empty and '券商評等' in df_display.columns:
+        if not df_display.empty:
+            # 找出所有有效日期中的「最新日期」
+            valid_dates = [str(d) for d in df_display.get('發布日期', []) if str(d) != '未知日期' and str(d).strip() != '']
+            latest_date = max(valid_dates) if valid_dates else None
+            
+            # --- 定義高亮函數 ---
+            def highlight_latest_row(row):
+                # 最新日期的整列加上淡淡的黃色背景
+                if latest_date and str(row.get('發布日期')) == latest_date:
+                    return ['background-color: rgba(255, 235, 59, 0.15)'] * len(row)
+                return [''] * len(row)
+                
             def highlight_strong_buy(s):
+                # 強力買進標紅加粗
                 return ['color: #ff4b4b; font-weight: bold' if isinstance(v, str) and '強力買進' in v else '' for v in s]
-            styled_df = df_display.style.apply(highlight_strong_buy, subset=['券商評等'])
+                
+            # 依序疊加樣式
+            styled_df = df_display.style.apply(highlight_latest_row, axis=1)
+            if '券商評等' in df_display.columns:
+                styled_df = styled_df.apply(highlight_strong_buy, subset=['券商評等'])
         else:
             styled_df = df_display
-        
+            
         # 顯示 Dataframe，設定使用最大寬度，讓多行文字可以展開
         st.dataframe(styled_df, use_container_width=True)
         
