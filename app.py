@@ -404,18 +404,21 @@ if analyze_btn:
 if st.session_state.history:
     # --- 全域歷史資料大掃除 (修復舊有的重複資料) ---
     best_items = {}
+    import re
     for item in st.session_state.history:
         stock_name = str(item.get('stock', '')).strip()
         broker_name = str(item.get('brokerage', '')).strip()
         
-        # 標準化券商名稱，去尾綴讓「凱基」與「凱基投顧」、「永豐」與「永豐金」自動合併為同一家
-        norm_broker = broker_name
-        for suffix in ["證券", "投顧", "控股", "金控", "金融", "金", "Securities", "證", "公司", "股份有限公司"]:
+        # 終極標準化券商名稱：清空括號、英文字首、常見尾綴
+        norm_broker = re.sub(r'[ \(\)\-]', '', broker_name).upper()
+        for eng in ['KGI', 'SINOPAC', 'YUANTA', 'FUBON', 'CATHAY', 'CTBC', 'CAPITAL', 'MASTERLINK']:
+            norm_broker = norm_broker.replace(eng, '')
+        for suffix in ["證券", "投顧", "控股", "金控", "金融", "金", "SECURITIES", "證", "公司", "股份有限公司", "期貨", "亞洲"]:
             norm_broker = norm_broker.replace(suffix, "")
-        norm_broker = norm_broker.strip().upper()
+        norm_broker = norm_broker.strip()
         
-        # 標準化股票名稱避免空白造成的誤判
-        norm_stock = stock_name.replace(" ", "").replace("　", "").upper()
+        # 終極標準化股票名稱：將數字、標點符號、空白全部剃除，只保留純文字（讓 "2727 王品" 與 "王品" 視為相同）
+        norm_stock = re.sub(r'[0-9\W_]', '', stock_name).upper()
         
         key = (norm_stock, norm_broker)
         if key not in best_items:
