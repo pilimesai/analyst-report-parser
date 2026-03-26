@@ -243,11 +243,12 @@ def get_latest_close_price(stock_id):
                 continue
     return None
 
-col1, col2 = st.columns([1, 1])
+col1, col2, col3 = st.columns([1, 1, 1])
 analyze_btn = col1.button("開始分析", type="primary", use_container_width=True)
+daily_pick_btn = col2.button("🏆 執行每日選股", type="secondary", use_container_width=True)
 
 # 使用 popover 加入確認對話框與「管理員密碼」權限機制
-with col2.popover("🧹 清空歷史紀錄", use_container_width=True):
+with col3.popover("🧹 清空歷史紀錄", use_container_width=True):
     st.warning("⚠️ 此為管理員專屬動作，清空後資料將**無法復原**。")
     admin_pwd = st.text_input("輸入管理員密碼：", type="password")
     
@@ -266,6 +267,65 @@ with col2.popover("🧹 清空歷史紀錄", use_container_width=True):
             st.rerun()
         else:
             st.error("❌ 密碼錯誤，您無權限清除歷史紀錄！")
+
+if daily_pick_btn:
+    if not st.session_state.history:
+        st.warning("⚠️ 目前資料庫中沒有報告，請先上傳並分析報告以累積資料！")
+    else:
+        st.markdown("---")
+        st.header("🏆 每日嚴選標的")
+        df_history = pd.DataFrame(st.session_state.history)
+        
+        if 'stock' in df_history.columns:
+            def parse_criteria_global(mc):
+                if isinstance(mc, list): return mc
+                if isinstance(mc, str):
+                    try:
+                        parsed = ast.literal_eval(mc)
+                        if isinstance(parsed, list): return parsed
+                    except:
+                        if mc and mc not in ["N/A", "NaN", "無"]:
+                            return [x.strip() for x in mc.split(',')]
+                return []
+                
+            group_scores = {}
+            group_criteria = {}
+            for stock, group in df_history.groupby('stock'):
+                if not str(stock).strip() or str(stock).upper() == 'NAN':
+                    continue
+                all_c = set()
+                if 'matched_criteria' in group.columns:
+                    for mc in group['matched_criteria']:
+                        all_c.update(parse_criteria_global(mc))
+                group_scores[stock] = len(all_c)
+                group_criteria[stock] = all_c
+            
+            if group_scores:
+                max_score = max(group_scores.values())
+                if max_score > 0:
+                    top_stocks = [s for s, score in group_scores.items() if score == max_score]
+                    st.success(f"🎉 篩選完成！目前最高分為 **{max_score}** 分，共有 **{len(top_stocks)}** 檔股票符合條件！")
+                    
+                    cols = st.columns(min(3, len(top_stocks)))
+                    for idx, t_stock in enumerate(top_stocks):
+                        c = cols[idx % 3]
+                        with c.container(border=True):
+                            c.metric(label="股票代號/名稱", value=t_stock, delta=f"{max_score} 分滿點", delta_color="normal")
+                            c.markdown("**✅ 符合的選股條件：**")
+                            for criteria in group_criteria[t_stock]:
+                                c.markdown(f"- {criteria}")
+                            
+                            # 尋找與該檔股票相關的重點摘要
+                            recent_summaries = df_history[df_history['stock'] == t_stock]['summary'].dropna().unique()
+                            valid_sums = [s for s in recent_summaries if str(s).strip() and str(s) not in ['N/A', '無']]
+                            if valid_sums:
+                                with c.expander("看近期報告摘要"):
+                                    for s in valid_sums:
+                                        st.caption(f"▪️ {s}")
+                else:
+                    st.info("👀 目前資料庫中的所有股票，皆未在報告中提及您設定的 10 項嚴格選股條件 (最高分為 0)。建議分析更多包含技術/籌碼面的券商報告！")
+            else:
+                st.info("尚無有效的股票名稱資料。")
 
 if analyze_btn:
     if not api_key:
