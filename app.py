@@ -7,6 +7,7 @@ from google.genai import types
 import yfinance as yf
 import re
 import os
+import ast
 from dotenv import load_dotenv
 import gspread
 from google.oauth2.service_account import Credentials
@@ -171,11 +172,24 @@ def parse_report_with_gemini(text, api_key, source_name="未知來源"):
        👉 第一優先：請觀察這份報告的來源名稱「{source_name}」。如果有連續數字（例如 20231005 或 240325），請直接轉換為 2023-10-05 等。若只有月日（如 1005 或 10月5日），請自動補上今年年份（例如 2024-10-05）。
        👉 第二優先：若名稱中真的毫無日期線索，再從內文中尋找。
        👉 若窮盡一切方法仍找不出日期，才填入 "未知"。
+    8. 每日選股 (Daily Stock Selection)。如果報告中有特別推薦為「每日選股」或類似的標的，請填寫相關內容（如「✅ 是」或短評），如果沒有提及，請填 "N/A"。
+    9. 選股積分條件 (Stock Scoring Criteria)。請檢查報告中是否提及以下 10 項條件，若有明確提及或數據支持符合該條件，請將其完全一致的字串加入陣列中：
+       - "投信第一天買且近三月未買"
+       - "三大法人同買"
+       - "日KD黃金交叉"
+       - "周KD黃金交叉"
+       - "成交量大於十週均量且大於三倍十日均量"
+       - "合約負債季增50%且創四季新高"
+       - "兩周內有法說會"
+       - "近期將發行CB"
+       - "近月營收月增且年增"
+       - "大戶持股比例成長"
+       （注意：請嚴格根據報告內容判斷，不得自行腦補。如果一項都沒提到，請輸出空陣列 []）
     
     如果文件中包含「多筆」獨立的報告（例如 Excel 多列表格），請輸出一個 JSON 陣列 (Array)，例如：
     [
-      {{ "date": "...", "stock": "...", "brokerage": "...", "rating": "...", "eps": "...", "target_price": "...", "summary": "..." }},
-      {{ "date": "...", "stock": "...", "brokerage": "...", "rating": "...", "eps": "...", "target_price": "...", "summary": "..." }}
+      {{ "date": "...", "stock": "...", "brokerage": "...", "rating": "...", "eps": "...", "target_price": "...", "summary": "...", "daily_stock_selection": "...", "matched_criteria": ["三大法人同買", "近月營收月增且年增"] }},
+      {{ "date": "...", "stock": "...", "brokerage": "...", "rating": "...", "eps": "...", "target_price": "...", "summary": "...", "daily_stock_selection": "...", "matched_criteria": [] }}
     ]
     如果你只看到一筆，也可以只輸出單一 JSON 物件，或只含單一物件的陣列。
     
@@ -187,7 +201,9 @@ def parse_report_with_gemini(text, api_key, source_name="未知來源"):
       "rating": "評等",
       "target_price": "目標價",
       "eps": "券商預估EPS",
-      "summary": "重點分析內容"
+      "summary": "重點分析內容",
+      "daily_stock_selection": "每日選股",
+      "matched_criteria": ["符合條件一", "符合條件二"]
     }}
     
     以下是內容資料：
@@ -373,6 +389,18 @@ if analyze_btn:
                         new_rating = str(item.get('rating', '')).strip()
                         if (new_rating.upper() in null_vals) and (old_rating.upper() not in null_vals):
                             item['rating'] = old_rating
+                        old_daily = str(best_items[key].get('daily_stock_selection', '')).strip()
+                        new_daily = str(item.get('daily_stock_selection', '')).strip()
+                        if (new_daily.upper() in null_vals) and (old_daily.upper() not in null_vals):
+                            item['daily_stock_selection'] = old_daily
+                            
+                        # 聯集 matched_criteria
+                        old_mc = best_items[key].get('matched_criteria', [])
+                        new_mc = item.get('matched_criteria', [])
+                        if not isinstance(old_mc, list): old_mc = []
+                        if not isinstance(new_mc, list): new_mc = []
+                        item['matched_criteria'] = list(set(old_mc + new_mc))
+                        
                         best_items[key] = item
             st.session_state.history = list(best_items.values())
             # -------------------------------------------------------
@@ -428,6 +456,9 @@ if st.session_state.history:
         null_vals = ['', 'N/A', 'N/a', '無', 'UNKNOWN', '未知', 'NONE', 'NAN']
         df_raw['summary'] = df_raw['summary'].replace(null_vals, pd.NA)
         df_raw['rating'] = df_raw['rating'].replace(null_vals, pd.NA)
+        if 'daily_stock_selection' in df_raw.columns:
+            df_raw['daily_stock_selection'] = df_raw['daily_stock_selection'].replace(null_vals, pd.NA)
+            df_raw['daily_stock_selection'] = df_raw.groupby(['norm_stock', 'norm_broker'])['daily_stock_selection'].ffill()
         
         df_raw['summary'] = df_raw.groupby(['norm_stock', 'norm_broker'])['summary'].ffill()
         df_raw['rating'] = df_raw.groupby(['norm_stock', 'norm_broker'])['rating'].ffill()
@@ -452,8 +483,39 @@ if st.session_state.history:
     consolidated = []
     
     if 'stock' in df_raw.columns:
-        # 將同股票的資料 Group 起來
+        # 1. 預先計算每檔股票的積分，以供排序 (最高分排前面)
+        def parse_criteria_global(mc):
+            if isinstance(mc, list): return mc
+            if isinstance(mc, str):
+                try:
+                    parsed = ast.literal_eval(mc)
+                    if isinstance(parsed, list): return parsed
+                except:
+                    if mc and mc not in ["N/A", "NaN", "無"]:
+                        return [x.strip() for x in mc.split(',')]
+            return []
+            
+        group_scores = {}
+        group_criteria = {}
+        
         for stock, group in df_raw.groupby('stock', dropna=False):
+            if not str(stock).strip():
+                group_scores[stock] = -1
+                group_criteria[stock] = set()
+                continue
+            all_c = set()
+            if 'matched_criteria' in group.columns:
+                for mc in group['matched_criteria']:
+                    all_c.update(parse_criteria_global(mc))
+            group_scores[stock] = len(all_c)
+            group_criteria[stock] = all_c
+            
+        # 依照分數由大到小排序股票
+        sorted_stocks = sorted(group_scores.keys(), key=lambda x: group_scores[x], reverse=True)
+        
+        # 2. 將同股票的資料 Group 起來並依序加入 consolidated
+        for stock in sorted_stocks:
+            group = df_raw[df_raw['stock'] == stock]
             if not str(stock).strip():
                 continue
                 
@@ -489,6 +551,11 @@ if st.session_state.history:
                     pe_below_20 = "✅ 是" if pe < 20 else "❌ 否"
                 except:
                     pass
+            
+            # 使用我們預先計算好的積分
+            all_criteria = group_criteria[stock]
+            stock_score = group_scores[stock]
+            stock_criteria_str = "、".join(all_criteria) if all_criteria else ""
                     
             # 展開各家券商評價紀錄為獨立列，只有第一列顯示共用的股票資訊
             is_first_row = True
@@ -496,9 +563,12 @@ if st.session_state.history:
                 if is_first_row:
                     consolidated.append({
                         "股票名稱/代號": stock,
+                        "選股積分": stock_score,
+                        "符合條件": stock_criteria_str,
                         "最新收盤價": close_price,
                         "發布日期": row.get('date', '未知日期'),
                         "券商名稱": row.get('brokerage', '未知券商'),
+                        "每日選股": row.get('daily_stock_selection', 'N/A'),
                         "券商評等": row.get('rating', '無'),
                         "券商目標價": row.get('target_price', 'N/A'),
                         "券商預估EPS": row.get('eps', 'N/A'),
@@ -512,9 +582,12 @@ if st.session_state.history:
                 else:
                     consolidated.append({
                         "股票名稱/代號": "",
+                        "選股積分": "",
+                        "符合條件": "",
                         "最新收盤價": "",
                         "發布日期": row.get('date', '未知日期'),
                         "券商名稱": row.get('brokerage', '未知券商'),
+                        "每日選股": row.get('daily_stock_selection', 'N/A'),
                         "券商評等": row.get('rating', '無'),
                         "券商目標價": row.get('target_price', 'N/A'),
                         "券商預估EPS": row.get('eps', 'N/A'),
