@@ -2,8 +2,8 @@ import streamlit as st
 import requests
 import datetime
 
-def evaluate_stock_quant(stock_id, tdcc_df=None):
-    """純 Python 量化條件篩選器 - 透過 FinMind API + yfinance 即時計算"""
+def evaluate_stock_quant(stock_id, tdcc_df=None, conference_stocks=None):
+    """純 Python 量化條件篩選器 - 透過 FinMind API + yfinance + TDCC + 法說會 即時計算"""
     matched = []
     stock_id = str(stock_id).strip().replace('.TW', '').replace('.TWO', '')
     if not stock_id.isdigit():
@@ -152,6 +152,17 @@ def evaluate_stock_quant(stock_id, tdcc_df=None):
                         matched.append(f"大戶持股比例高({total_pct:.1f}%)")
     except Exception as e:
         print(f"TDCC大戶計算錯誤 {stock_id}: {e}")
+
+    # 5. 法說會 (使用者上傳的 Excel 比對)
+    try:
+        if conference_stocks and stock_id in conference_stocks:
+            conf_date = conference_stocks[stock_id]
+            today = datetime.datetime.now().date()
+            delta = (conf_date - today).days
+            if 0 <= delta <= 14:
+                matched.append(f"兩周內有法說會({conf_date.strftime('%m/%d')})")
+    except Exception as e:
+        print(f"法說會計算錯誤 {stock_id}: {e}")
 
     return matched
 
@@ -1595,6 +1606,8 @@ if st.session_state.history:
 
         
 
+        conf_file = st.file_uploader("📅 （選填）上傳法說會日期 Excel（需含『股票代號』與『法說會日期』欄位）", type=['xlsx', 'xls', 'csv'])
+
         daily_pick_btn = st.button("🚀 執行條件積分比對", type="primary", use_container_width=True)
 
         
@@ -1624,6 +1637,60 @@ if st.session_state.history:
                 except Exception as e:
                     print(f"TDCC 下載失敗: {e}")
                 
+                # 解析法說會 Excel（若使用者有上傳）
+                conference_stocks = {}
+                if conf_file:
+                    status.text("📅 正在解析法說會日期 Excel...")
+                    try:
+                        conf_file.seek(0)
+                        if conf_file.name.endswith('.csv'):
+                            try:
+                                conf_df = pd.read_csv(conf_file, encoding='utf-8-sig', dtype=str)
+                            except:
+                                conf_file.seek(0)
+                                conf_df = pd.read_csv(conf_file, encoding='cp950', dtype=str)
+                        else:
+                            conf_df = pd.read_excel(conf_file, dtype=str)
+                        
+                        # 自動偵測「股票代號」欄位
+                        code_col = None
+                        for c in conf_df.columns:
+                            if any(k in str(c) for k in ['代號', '股票', '代碼', 'code', 'stock', 'Code']):
+                                code_col = c
+                                break
+                        if not code_col:
+                            code_col = conf_df.columns[0]  # 預設第一欄
+                        
+                        # 自動偵測「日期」欄位
+                        date_col = None
+                        for c in conf_df.columns:
+                            if any(k in str(c) for k in ['日期', '法說', 'date', 'Date', '時間']):
+                                date_col = c
+                                break
+                        if not date_col:
+                            # 找第一個看起來像日期的欄位
+                            for c in conf_df.columns:
+                                if c != code_col:
+                                    date_col = c
+                                    break
+                        
+                        if code_col and date_col:
+                            for _, row in conf_df.iterrows():
+                                raw_code = str(row[code_col]).strip()
+                                code_match = re.search(r'\d{4}', raw_code)
+                                if code_match:
+                                    sid = code_match.group()
+                                    try:
+                                        d = pd.to_datetime(str(row[date_col]).strip(), errors='coerce')
+                                        if pd.notna(d):
+                                            conference_stocks[sid] = d.date()
+                                    except:
+                                        pass
+                            if conference_stocks:
+                                st.toast(f"✅ 成功載入 {len(conference_stocks)} 檔法說會日期！", icon="📅")
+                    except Exception as e:
+                        st.warning(f"⚠️ 法說會 Excel 解析失敗：{e}")
+                
                 live_scores = {}
                 live_matches = {}
                 
@@ -1635,8 +1702,8 @@ if st.session_state.history:
                     if stock_id_match:
                         stock_id = stock_id_match.group()
                         
-                        # 呼叫純 Python 的 quant_engine 進行計算 (傳入預載的 TDCC 資料)
-                        matched = evaluate_stock_quant(stock_id, tdcc_df=tdcc_df)
+                        # 呼叫純 Python 的 quant_engine 進行計算 (傳入預載的 TDCC 與法說會資料)
+                        matched = evaluate_stock_quant(stock_id, tdcc_df=tdcc_df, conference_stocks=conference_stocks)
                         
                         live_scores[s] = len(matched)
                         live_matches[s] = matched
