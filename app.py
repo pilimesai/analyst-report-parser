@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 import datetime
 
-def evaluate_stock_quant(stock_id, tdcc_df=None, conference_stocks=None, cb_stocks=None):
+def evaluate_stock_quant(stock_id, tdcc_df=None, conference_stocks=None, cb_stocks=None, cb_issued_data=None):
     """純 Python 量化條件篩選器 - 透過 FinMind API + yfinance + TDCC + 法說會 + CB 即時計算"""
     matched = []
     stock_id = str(stock_id).strip().replace('.TW', '').replace('.TWO', '')
@@ -170,6 +170,31 @@ def evaluate_stock_quant(stock_id, tdcc_df=None, conference_stocks=None, cb_stoc
             matched.append("近期將發行CB")
     except Exception as e:
         print(f"CB計算錯誤 {stock_id}: {e}")
+
+    # 7. CB 轉換條件：已發行CB、股價低於轉換價、轉換比例<10%
+    try:
+        if cb_issued_data and stock_id in cb_issued_data:
+            cb_info = cb_issued_data[stock_id]
+            conv_price = cb_info.get('conv_price', 0)
+            balance_pct = cb_info.get('balance_pct', 0)  # 餘額比例
+            conversion_pct = 100 - balance_pct  # 已轉換比例
+            
+            if conv_price > 0 and conversion_pct < 10:
+                # 取得目前股價 (使用前面 yfinance 已抓的 hist)
+                try:
+                    current_price = 0
+                    for suffix in ['.TW', '.TWO']:
+                        ticker = yf.Ticker(f"{stock_id}{suffix}")
+                        h = ticker.history(period="1d")
+                        if not h.empty:
+                            current_price = h['Close'].iloc[-1]
+                            break
+                    if current_price > 0 and current_price < conv_price:
+                        matched.append(f"CB股價({current_price:.1f})<轉換價({conv_price})且轉換率{conversion_pct:.1f}%")
+                except:
+                    pass
+    except Exception as e:
+        print(f"CB轉換計算錯誤 {stock_id}: {e}")
 
     return matched
 
@@ -1616,7 +1641,19 @@ if st.session_state.history:
         conf_file = st.file_uploader("📅 （選填）上傳法說會日期 Excel（需含『股票代號』與『法說會日期』欄位）", type=['xlsx', 'xls', 'csv'])
 
         cb_default = "3290,2301,6603,4714,1727,3294,8476,3605,4123,8271,8111,3149,7738,8442,4764,1717,4503,5464,8462,5284,4749,1295,3680,4722,8467,2762,2109,6692,4760,6807,2466,8038,3581,8114,3576"
-        cb_input = st.text_input("📋 （選填）近期將發行 CB 的股票代號（逗號分隔，可從統一證券CBAS網站更新）", value=cb_default, help="資料來源：https://cbas16889.pscnet.com.tw/marketInfo/expectedRelease/")
+        cb_input = st.text_input("📋 （選填）近期將發行 CB 的股票代號（逗號分隔）", value=cb_default, help="資料來源：https://cbas16889.pscnet.com.tw/marketInfo/expectedRelease/")
+
+        with st.expander("📊 （選填）已發行 CB 轉換資料（股票代號:轉換價:餘額比例%，每行一筆）"):
+            cb_issued_default = """1101:35.2:100
+1316:17.4:100
+1560:284.6:60.36
+1609:51.3:100
+2455:162.9:100
+2464:78.5:98.03
+2486:125.2:100
+2528:42.4:100
+2530:30.2:95.09"""
+            cb_issued_input = st.text_area("格式：股票代號:轉換價:餘額比例%", value=cb_issued_default, height=150, help="資料來源：https://cbas16889.pscnet.com.tw/marketInfo/issued/ — 餘額比例>90%表示轉換率<10%")
 
         daily_pick_btn = st.button("🚀 執行條件積分比對", type="primary", use_container_width=True)
 
@@ -1710,6 +1747,24 @@ if st.session_state.history:
                         if code_match:
                             cb_stocks.add(code_match.group())
                 
+                # 解析已發行 CB 轉換資料
+                cb_issued_data = {}
+                try:
+                    if cb_issued_input:
+                        for line in cb_issued_input.strip().split('\n'):
+                            parts = line.strip().split(':')
+                            if len(parts) >= 3:
+                                sid = parts[0].strip()
+                                try:
+                                    cb_issued_data[sid] = {
+                                        'conv_price': float(parts[1].strip()),
+                                        'balance_pct': float(parts[2].strip())
+                                    }
+                                except ValueError:
+                                    pass
+                except:
+                    pass
+                
                 live_scores = {}
                 live_matches = {}
                 
@@ -1721,8 +1776,8 @@ if st.session_state.history:
                     if stock_id_match:
                         stock_id = stock_id_match.group()
                         
-                        # 呼叫純 Python 的 quant_engine (傳入預載的 TDCC、法說會、CB 資料)
-                        matched = evaluate_stock_quant(stock_id, tdcc_df=tdcc_df, conference_stocks=conference_stocks, cb_stocks=cb_stocks)
+                        # 呼叫純 Python 的 quant_engine (傳入所有預載資料)
+                        matched = evaluate_stock_quant(stock_id, tdcc_df=tdcc_df, conference_stocks=conference_stocks, cb_stocks=cb_stocks, cb_issued_data=cb_issued_data)
                         
                         # 條件 11: 目前股價低於 20 倍 PE（從報告表格讀取）
                         try:
