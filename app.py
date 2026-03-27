@@ -1,5 +1,123 @@
 import streamlit as st
-from quant_engine import evaluate_stock_quant
+import requests
+import datetime
+
+def evaluate_stock_quant(stock_id):
+    """純 Python 量化條件篩選器 - 透過 FinMind API + yfinance 即時計算"""
+    matched = []
+    stock_id = str(stock_id).strip().replace('.TW', '').replace('.TWO', '')
+    if not stock_id.isdigit():
+        return matched
+
+    # 1. 取得歷史報價 (yfinance) → 計算 KD 與均量
+    try:
+        hist = pd.DataFrame()
+        for suffix in ['.TW', '.TWO']:
+            ticker = yf.Ticker(f"{stock_id}{suffix}")
+            temp_hist = ticker.history(period="6mo")
+            if not temp_hist.empty:
+                hist = temp_hist
+                break
+
+        if not hist.empty and len(hist) > 20:
+            # 日 KD
+            low_min = hist['Low'].rolling(window=9).min()
+            high_max = hist['High'].rolling(window=9).max()
+            rsv = (hist['Close'] - low_min) / (high_max - low_min) * 100
+            hist['K'] = rsv.ewm(com=2, adjust=False).mean()
+            hist['D'] = hist['K'].ewm(com=2, adjust=False).mean()
+            today_k, today_d = hist['K'].iloc[-1], hist['D'].iloc[-1]
+            yest_k, yest_d = hist['K'].iloc[-2], hist['D'].iloc[-2]
+            if today_k > today_d and yest_k < yest_d:
+                matched.append("日KD黃金交叉")
+
+            # 周 KD
+            weekly_hist = hist.resample('W').agg({
+                'Open': 'first', 'High': 'max', 'Low': 'min', 'Close': 'last', 'Volume': 'sum'
+            }).dropna()
+            if len(weekly_hist) > 9:
+                w_low_min = weekly_hist['Low'].rolling(window=9).min()
+                w_high_max = weekly_hist['High'].rolling(window=9).max()
+                w_rsv = (weekly_hist['Close'] - w_low_min) / (w_high_max - w_low_min) * 100
+                weekly_hist['K'] = w_rsv.ewm(com=2, adjust=False).mean()
+                weekly_hist['D'] = weekly_hist['K'].ewm(com=2, adjust=False).mean()
+                wt_k, wt_d = weekly_hist['K'].iloc[-1], weekly_hist['D'].iloc[-1]
+                wy_k, wy_d = weekly_hist['K'].iloc[-2], weekly_hist['D'].iloc[-2]
+                if wt_k > wt_d and wy_k < wy_d:
+                    matched.append("周KD黃金交叉")
+
+            # 成交量條件
+            if len(hist) > 10 and len(weekly_hist) > 10:
+                vol_10d_avg = hist['Volume'].rolling(window=10).mean().iloc[-2]
+                vol_10w_avg = weekly_hist['Volume'].rolling(window=10).mean().iloc[-2]
+                today_vol = hist['Volume'].iloc[-1]
+                if today_vol == 0:
+                    today_vol = hist['Volume'].iloc[-2]
+                vol_10w_avg_daily = vol_10w_avg / 5
+                if today_vol > vol_10w_avg_daily and today_vol > (3 * vol_10d_avg):
+                    matched.append("成交量大於十週均量且大於三倍十日均量")
+    except Exception as e:
+        print(f"YFinance 計算錯誤 {stock_id}: {e}")
+
+    # 2. 籌碼資料 (FinMind HTTP API)
+    try:
+        url = "https://api.finmindtrade.com/api/v4/data"
+        start_d = (datetime.datetime.now() - datetime.timedelta(days=7)).strftime("%Y-%m-%d")
+        payload = {"dataset": "TaiwanStockInstitutionalInvestorsBuySell", "data_id": stock_id, "start_date": start_d}
+        resp = requests.get(url, params=payload, timeout=10)
+        if resp.status_code == 200:
+            data = resp.json().get("data", [])
+            if data:
+                df_chips = pd.DataFrame(data)
+                latest_date = df_chips['date'].max()
+                today_chips = df_chips[df_chips['date'] == latest_date]
+                buy_foreign, buy_trust, buy_dealer = 0, 0, 0
+                for _, row in today_chips.iterrows():
+                    name = str(row.get('name', ''))
+                    net = float(row.get('buy', 0)) - float(row.get('sell', 0))
+                    if '外資' in name: buy_foreign += net
+                    if '投信' in name: buy_trust += net
+                    if '自營商' in name: buy_dealer += net
+                if buy_foreign > 0 and buy_trust > 0 and buy_dealer > 0:
+                    matched.append("三大法人同買")
+                if buy_trust > 0:
+                    m3_start = (datetime.datetime.now() - datetime.timedelta(days=90)).strftime("%Y-%m-%d")
+                    m3_payload = {"dataset": "TaiwanStockInstitutionalInvestorsBuySell", "data_id": stock_id, "start_date": m3_start}
+                    m3_resp = requests.get(url, params=m3_payload, timeout=10)
+                    if m3_resp.status_code == 200:
+                        m3_data = m3_resp.json().get("data", [])
+                        if m3_data:
+                            m3_df = pd.DataFrame(m3_data)
+                            m3_trust = m3_df[m3_df['name'].str.contains('投信')]
+                            if not m3_trust.empty:
+                                m3_trust = m3_trust.copy()
+                                m3_trust['net'] = m3_trust['buy'] - m3_trust['sell']
+                                past_90d = m3_trust[m3_trust['date'] < latest_date]
+                                if not past_90d.empty and past_90d['net'].max() <= 0:
+                                    matched.append("投信第一天買且近三月未買")
+    except Exception as e:
+        print(f"籌碼計算錯誤 {stock_id}: {e}")
+
+    # 3. 營收資料
+    try:
+        url = "https://api.finmindtrade.com/api/v4/data"
+        start_d = (datetime.datetime.now() - datetime.timedelta(days=120)).strftime("%Y-%m-%d")
+        payload = {"dataset": "TaiwanStockMonthRevenue", "data_id": stock_id, "start_date": start_d}
+        resp = requests.get(url, params=payload, timeout=10)
+        if resp.status_code == 200:
+            data = resp.json().get("data", [])
+            if data:
+                df_rev = pd.DataFrame(data).sort_values(by="date")
+                if len(df_rev) >= 2:
+                    latest_rev = df_rev.iloc[-1]
+                    prev_rev = df_rev.iloc[-2]
+                    mom_growth = float(latest_rev.get('revenue', 0)) > float(prev_rev.get('revenue', 0))
+                    yoy_val = latest_rev.get('revenue_year_growth_rate', latest_rev.get('revenue_YearExchangeRate', 0))
+                    yoy_growth = float(yoy_val) > 0 if yoy_val is not None else False
+                    if mom_growth and yoy_growth:
+                        matched.append("近月營收月增且年增")
+    except Exception as e:
+        print(f"營收計算錯誤 {stock_id}: {e}")
 
 import pandas as pd
 
