@@ -2,8 +2,8 @@ import streamlit as st
 import requests
 import datetime
 
-def evaluate_stock_quant(stock_id, tdcc_df=None, conference_stocks=None):
-    """純 Python 量化條件篩選器 - 透過 FinMind API + yfinance + TDCC + 法說會 即時計算"""
+def evaluate_stock_quant(stock_id, tdcc_df=None, conference_stocks=None, cb_stocks=None):
+    """純 Python 量化條件篩選器 - 透過 FinMind API + yfinance + TDCC + 法說會 + CB 即時計算"""
     matched = []
     stock_id = str(stock_id).strip().replace('.TW', '').replace('.TWO', '')
     if not stock_id.isdigit():
@@ -163,6 +163,13 @@ def evaluate_stock_quant(stock_id, tdcc_df=None, conference_stocks=None):
                 matched.append(f"兩周內有法說會({conf_date.strftime('%m/%d')})")
     except Exception as e:
         print(f"法說會計算錯誤 {stock_id}: {e}")
+
+    # 6. CB 可轉債 (使用者輸入的近期發行 CB 股票清單)
+    try:
+        if cb_stocks and stock_id in cb_stocks:
+            matched.append("近期將發行CB")
+    except Exception as e:
+        print(f"CB計算錯誤 {stock_id}: {e}")
 
     return matched
 
@@ -1608,6 +1615,9 @@ if st.session_state.history:
 
         conf_file = st.file_uploader("📅 （選填）上傳法說會日期 Excel（需含『股票代號』與『法說會日期』欄位）", type=['xlsx', 'xls', 'csv'])
 
+        cb_default = "3290,2301,6603,4714,1727,3294,8476,3605,4123,8271,8111,3149,7738,8442,4764,1717,4503,5464,8462,5284,4749,1295,3680,4722,8467,2762,2109,6692,4760,6807,2466,8038,3581,8114,3576"
+        cb_input = st.text_input("📋 （選填）近期將發行 CB 的股票代號（逗號分隔，可從統一證券CBAS網站更新）", value=cb_default, help="資料來源：https://cbas16889.pscnet.com.tw/marketInfo/expectedRelease/")
+
         daily_pick_btn = st.button("🚀 執行條件積分比對", type="primary", use_container_width=True)
 
         
@@ -1691,6 +1701,15 @@ if st.session_state.history:
                     except Exception as e:
                         st.warning(f"⚠️ 法說會 Excel 解析失敗：{e}")
                 
+                # 解析 CB 股票清單
+                cb_stocks = set()
+                if cb_input:
+                    for code in cb_input.replace(' ', '').split(','):
+                        code = code.strip()
+                        code_match = re.search(r'\d{4}', code)
+                        if code_match:
+                            cb_stocks.add(code_match.group())
+                
                 live_scores = {}
                 live_matches = {}
                 
@@ -1702,8 +1721,31 @@ if st.session_state.history:
                     if stock_id_match:
                         stock_id = stock_id_match.group()
                         
-                        # 呼叫純 Python 的 quant_engine 進行計算 (傳入預載的 TDCC 與法說會資料)
-                        matched = evaluate_stock_quant(stock_id, tdcc_df=tdcc_df, conference_stocks=conference_stocks)
+                        # 呼叫純 Python 的 quant_engine (傳入預載的 TDCC、法說會、CB 資料)
+                        matched = evaluate_stock_quant(stock_id, tdcc_df=tdcc_df, conference_stocks=conference_stocks, cb_stocks=cb_stocks)
+                        
+                        # 條件 11: 目前股價低於 20 倍 PE（從報告表格讀取）
+                        try:
+                            stock_rows = df_display[df_display['股票名稱/代號'].astype(str).str.contains(stock_id, na=False)]
+                            if not stock_rows.empty and '低於20倍PE?' in df_display.columns:
+                                pe_vals = stock_rows['低於20倍PE?'].dropna().unique()
+                                if any('✅' in str(v) for v in pe_vals):
+                                    matched.append("目前股價低於20倍PE")
+                        except Exception as e:
+                            print(f"PE條件錯誤: {e}")
+                        
+                        # 條件 12: 券商給予正面評價（從報告表格讀取）
+                        try:
+                            if not stock_rows.empty and '券商評等' in df_display.columns:
+                                ratings = stock_rows['券商評等'].dropna().unique()
+                                positive_keywords = ['買進', '買入', '強力買進', 'Buy', 'Outperform', 'Overweight', 
+                                                     '優於大盤', '調升', '增持', '推薦', 'Strong Buy', '加碼']
+                                for rating in ratings:
+                                    if any(kw in str(rating) for kw in positive_keywords):
+                                        matched.append(f"券商正面評價({rating})")
+                                        break
+                        except Exception as e:
+                            print(f"評等條件錯誤: {e}")
                         
                         live_scores[s] = len(matched)
                         live_matches[s] = matched
