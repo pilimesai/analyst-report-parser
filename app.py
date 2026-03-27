@@ -119,6 +119,8 @@ def evaluate_stock_quant(stock_id):
     except Exception as e:
         print(f"營收計算錯誤 {stock_id}: {e}")
 
+    return matched
+
 import pandas as pd
 
 import json
