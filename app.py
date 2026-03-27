@@ -1,4 +1,5 @@
 import streamlit as st
+from quant_engine import evaluate_stock_quant
 
 import pandas as pd
 
