@@ -98,6 +98,9 @@ def save_history(history):
             if history:
                 df = pd.DataFrame(history)
                 df = df.fillna("N/A")
+                # 將所有列表轉換為以逗號分隔的字串，避免 Google Sheets 報錯 list_value {}
+                for col in df.columns:
+                    df[col] = df[col].apply(lambda x: ', '.join(map(str, x)) if isinstance(x, list) else x)
                 data = [df.columns.values.tolist()] + df.values.tolist()
                 
                 # gspread v6 之後的語法是 worksheet.update(values=..., range_name=...)
@@ -173,29 +176,41 @@ def parse_report_with_gemini(text, api_key, source_name="未知來源"):
        👉 第二優先：若名稱中真的毫無日期線索，再從內文中尋找。
        👉 若窮盡一切方法仍找不出日期，才填入 "未知"。
     8. 每日選股 (Daily Stock Selection)。如果報告中有特別推薦為「每日選股」或類似的標的，請填寫相關內容（如「✅ 是」或短評），如果沒有提及，請填 "N/A"。
-    9. 選股積分條件 (Stock Scoring Criteria)。請檢查報告中是否提及以下 10 項條件，若有明確提及或數據支持符合該條件，請將其完全一致的字串加入陣列中：
-       - "投信第一天買且近三月未買"
-       - "三大法人同買"
-       - "日KD黃金交叉"
-       - "周KD黃金交叉"
-       - "成交量大於十週均量且大於三倍十日均量"
+    9. 選股積分條件 (Stock Scoring Criteria)。請檢查報告中是否提及以下 10 項條件。只要報告中有明確提及、同義詞表達（例如「外資與投信同步買超」、「KD交叉向上」、「出量上漲」），請將其對應的「官方標籤字串」加入陣列中：
+       - "投信第一天買且近三月未買" (或提及投信初升段買進、投信破冰首度買進等)
+       - "三大法人同買" (或提及外資、投信、自營商聯手買超，法人齊買等)
+       - "日KD黃金交叉" (或日KD交叉向上)
+       - "周KD黃金交叉" (或周KD交叉向上)
+       - "成交量大於十週均量且大於三倍十日均量" (或提及爆量起漲、放量突破等)
        - "合約負債季增50%且創四季新高"
-       - "兩周內有法說會"
-       - "近期將發行CB"
-       - "近月營收月增且年增"
-       - "大戶持股比例成長"
-       （注意：請嚴格根據報告內容判斷，不得自行腦補。如果一項都沒提到，請輸出空陣列 []）
+       - "兩周內有法說會" (或近期將舉辦業績發表會、法說行情)
+       - "近期將發行CB" (或將發行可轉債)
+       - "近月營收月增且年增" (或營收雙增)
+       - "大戶持股比例成長" (或千張大戶增加、籌碼集中大戶等)
+       （注意：輸出時請一定要輸出上述雙引號內的官方標籤字串，例如 `"三大法人同買"`。如果報�col1, col2 = st.columns([1, 1])
+analyze_btn = col1.button("開始分析", type="primary", use_container_width=True)
+
+# 使用 popover 加入確認對話框與「管理員密碼」權限機制
+with col2.popover("🧹 清空歷史紀錄", use_container_width=True):
+    st.warning("⚠️ 此為管理員專屬動作，清空後資料將**無法復原**。")
+    admin_pwd = st.text_input("輸入管理員密碼：", type="password")
     
-    如果文件中包含「多筆」獨立的報告（例如 Excel 多列表格），請輸出一個 JSON 陣列 (Array)，例如：
-    [
-      {{ "date": "...", "stock": "...", "brokerage": "...", "rating": "...", "eps": "...", "target_price": "...", "summary": "...", "daily_stock_selection": "...", "matched_criteria": ["三大法人同買", "近月營收月增且年增"] }},
-      {{ "date": "...", "stock": "...", "brokerage": "...", "rating": "...", "eps": "...", "target_price": "...", "summary": "...", "daily_stock_selection": "...", "matched_criteria": [] }}
-    ]
-    如果你只看到一筆，也可以只輸出單一 JSON 物件，或只含單一物件的陣列。
-    
-    你必須將結果強制輸出為 JSON 格式，不要包含任何 Markdown 標記，也不要有其餘說明文字。JSON 內的每一筆物件必須完全符合以下結構 (keys)：
-    {{
-      "date": "報告發布日期",
+    if st.button("🔴 我確定，清空全部", use_container_width=True):
+        # 取得系統設定的密碼 (預設為 "admin123")
+        correct_pwd = os.environ.get("ADMIN_PASSWORD", "admin123")
+        try:
+            if "ADMIN_PASSWORD" in st.secrets:
+                correct_pwd = st.secrets["ADMIN_PASSWORD"]
+        except Exception:
+            pass
+            
+        if admin_pwd == correct_pwd:
+            st.session_state.history = []
+            save_history(st.session_state.history)
+            st.rerun()
+        else:
+            st.error("❌ 密碼错誤，您無權限清除歷史紀錄！")
+date": "報告發布日期",
       "stock": "股票代號與名稱",
       "brokerage": "券商名稱",
       "rating": "評等",
@@ -203,7 +218,7 @@ def parse_report_with_gemini(text, api_key, source_name="未知來源"):
       "eps": "券商預估EPS",
       "summary": "重點分析內容",
       "daily_stock_selection": "每日選股",
-      "matched_criteria": ["符合條件一", "符合條件二"]
+      "matched_criteria": ["符合的標籤一", "符合的標籤二"]
     }}
     
     以下是內容資料：
@@ -243,12 +258,11 @@ def get_latest_close_price(stock_id):
                 continue
     return None
 
-col1, col2, col3 = st.columns([1, 1, 1])
+col1, col2 = st.columns([1, 1])
 analyze_btn = col1.button("開始分析", type="primary", use_container_width=True)
-daily_pick_btn = col2.button("🏆 執行每日選股", type="secondary", use_container_width=True)
 
 # 使用 popover 加入確認對話框與「管理員密碼」權限機制
-with col3.popover("🧹 清空歷史紀錄", use_container_width=True):
+with col2.popover("🧹 清空歷史紀錄", use_container_width=True):
     st.warning("⚠️ 此為管理員專屬動作，清空後資料將**無法復原**。")
     admin_pwd = st.text_input("輸入管理員密碼：", type="password")
     
@@ -268,64 +282,6 @@ with col3.popover("🧹 清空歷史紀錄", use_container_width=True):
         else:
             st.error("❌ 密碼錯誤，您無權限清除歷史紀錄！")
 
-if daily_pick_btn:
-    if not st.session_state.history:
-        st.warning("⚠️ 目前資料庫中沒有報告，請先上傳並分析報告以累積資料！")
-    else:
-        st.markdown("---")
-        st.header("🏆 每日嚴選標的")
-        df_history = pd.DataFrame(st.session_state.history)
-        
-        if 'stock' in df_history.columns:
-            def parse_criteria_global(mc):
-                if isinstance(mc, list): return mc
-                if isinstance(mc, str):
-                    try:
-                        parsed = ast.literal_eval(mc)
-                        if isinstance(parsed, list): return parsed
-                    except:
-                        if mc and mc not in ["N/A", "NaN", "無"]:
-                            return [x.strip() for x in mc.split(',')]
-                return []
-                
-            group_scores = {}
-            group_criteria = {}
-            for stock, group in df_history.groupby('stock'):
-                if not str(stock).strip() or str(stock).upper() == 'NAN':
-                    continue
-                all_c = set()
-                if 'matched_criteria' in group.columns:
-                    for mc in group['matched_criteria']:
-                        all_c.update(parse_criteria_global(mc))
-                group_scores[stock] = len(all_c)
-                group_criteria[stock] = all_c
-            
-            if group_scores:
-                max_score = max(group_scores.values())
-                if max_score > 0:
-                    top_stocks = [s for s, score in group_scores.items() if score == max_score]
-                    st.success(f"🎉 篩選完成！目前最高分為 **{max_score}** 分，共有 **{len(top_stocks)}** 檔股票符合條件！")
-                    
-                    cols = st.columns(min(3, len(top_stocks)))
-                    for idx, t_stock in enumerate(top_stocks):
-                        c = cols[idx % 3]
-                        with c.container(border=True):
-                            c.metric(label="股票代號/名稱", value=t_stock, delta=f"{max_score} 分滿點", delta_color="normal")
-                            c.markdown("**✅ 符合的選股條件：**")
-                            for criteria in group_criteria[t_stock]:
-                                c.markdown(f"- {criteria}")
-                            
-                            # 尋找與該檔股票相關的重點摘要
-                            recent_summaries = df_history[df_history['stock'] == t_stock]['summary'].dropna().unique()
-                            valid_sums = [s for s in recent_summaries if str(s).strip() and str(s) not in ['N/A', '無']]
-                            if valid_sums:
-                                with c.expander("看近期報告摘要"):
-                                    for s in valid_sums:
-                                        st.caption(f"▪️ {s}")
-                else:
-                    st.info("👀 目前資料庫中的所有股票，皆未在報告中提及您設定的 10 項嚴格選股條件 (最高分為 0)。建議分析更多包含技術/籌碼面的券商報告！")
-            else:
-                st.info("尚無有效的股票名稱資料。")
 
 if analyze_btn:
     if not api_key:
@@ -734,6 +690,89 @@ if st.session_state.history:
                     st.dataframe(styled_filtered, use_container_width=True)
                 else:
                     st.warning(f"⚠️ 目前沒有找到關於「{search_query}」的報告。")
+        
+        # --- 每日選股評分功能 ---
+        st.divider()
+        st.markdown("<div id='daily-stock-pick'></div>", unsafe_allow_html=True)
+        # 用戶要求的移到這裡的按鈕
+        daily_pick_btn = st.button("🏆 執行每日選股", type="secondary", use_container_width=True)
+        st.subheader("🏆 每日選股評分")
+        st.markdown("請針對上方表格中的股票，勾選今日符合的條件，系統會自動計算積分並選出最佳標的。")
+        
+        CRITERIA = [
+            "1️⃣ 投信第一天買，且過去三個月沒有買過",
+            "2️⃣ 三大法人同買",
+            "3️⃣ 日KD黃金交叉",
+            "4️⃣ 周KD黃金交叉",
+            "5️⃣ 成交量 > 十週平均量，且 > 3倍十日均量",
+            "6️⃣ 合約負債季增加50%，且是四季新高",
+            "7️⃣ 2周內會有法說會",
+            "8️⃣ 最近要發行CB（可轉債）",
+            "9️⃣ 近月營收月增且年增",
+            "🔟 大戶持股比例成長",
+        ]
+        
+        all_stocks_disp = [s for s in df_display['股票名稱/代號'].replace('', float('NaN')).ffill().dropna().unique() if str(s).strip() and str(s).upper() != 'NAN']
+        
+        if all_stocks_disp:
+            with st.form("daily_scoring_form"):
+                st.caption(f"共 {len(all_stocks_disp)} 檔股票待評分 — 展開每一檔，勾選今日符合的條件")
+                
+                stock_checks_disp = {}
+                for stock in all_stocks_disp:
+                    with st.expander(f"📌 {stock}", expanded=False):
+                        checks = []
+                        for i, criterion in enumerate(CRITERIA):
+                            checked = st.checkbox(criterion, key=f"dchk_{stock}_{i}")
+                            checks.append(checked)
+                        stock_checks_disp[stock] = checks
+                
+                disp_submitted = st.form_submit_button("🚀 計算積分並篩選", type="primary", use_container_width=True)
+            
+            if disp_submitted:
+                scores_d = {}
+                matched_d = {}
+                for stock in all_stocks_disp:
+                    hit = [CRITERIA[i] for i, c in enumerate(stock_checks_disp[stock]) if c]
+                    scores_d[stock] = len(hit)
+                    matched_d[stock] = hit
+                
+                scored_d = [(s, scores_d[s], matched_d[s]) for s in all_stocks_disp if scores_d[s] > 0]
+                scored_d.sort(key=lambda x: x[1], reverse=True)
+                
+                if not scored_d:
+                    st.info("⚠️ 請至少為一檔股票勾選一項條件後再計算。")
+                else:
+                    max_d = scored_d[0][1]
+                    champs_d = [(s, sc, m) for s, sc, m in scored_d if sc == max_d]
+                    others_d = [(s, sc, m) for s, sc, m in scored_d if sc < max_d]
+                    
+                    st.success(f"🎉 最高分 **{max_d}** 分，以下為推薦標的：")
+                    
+                    cols_d = st.columns(min(3, len(champs_d)))
+                    for idx, (t_stock, t_score, t_match) in enumerate(champs_d):
+                        c = cols_d[idx % 3]
+                        with c.container(border=True):
+                            c.metric(label="🏆 股票代號/名稱", value=t_stock, delta=f"最高 {t_score} 分", delta_color="normal")
+                            c.markdown("**✅ 符合條件：**")
+                            for m in t_match:
+                                c.markdown(f"- {m}")
+                            # 顯示報告摘要
+                            df_h = pd.DataFrame(st.session_state.history)
+                            if 'stock' in df_h.columns:
+                                recent_sums = df_h[df_h['stock'] == t_stock]['summary'].dropna().unique()
+                                valid_sums = [sv for sv in recent_sums if str(sv).strip() and str(sv) not in ['N/A', '無']]
+                                if valid_sums:
+                                    with c.expander("看近期報告摘要"):
+                                        for sv in valid_sums:
+                                            st.caption(f"▪️ {sv}")
+                    
+                    if others_d:
+                        st.write("")
+                        with st.expander("👀 其他也有符合條件的潛力股（按分數排列）"):
+                            for r_stock, r_score, r_match in others_d:
+                                st.markdown(f"**{r_stock}** — {r_score} 分：{' / '.join(r_match)}")
+
 
     else:
         st.info("尚無完整的股票資料可供分析。")
