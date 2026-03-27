@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 import datetime
 
-def evaluate_stock_quant(stock_id):
+def evaluate_stock_quant(stock_id, tdcc_df=None):
     """純 Python 量化條件篩選器 - 透過 FinMind API + yfinance 即時計算"""
     matched = []
     stock_id = str(stock_id).strip().replace('.TW', '').replace('.TWO', '')
@@ -101,7 +101,8 @@ def evaluate_stock_quant(stock_id):
     # 3. 營收資料
     try:
         url = "https://api.finmindtrade.com/api/v4/data"
-        start_d = (datetime.datetime.now() - datetime.timedelta(days=120)).strftime("%Y-%m-%d")
+        # 抓 14 個月資料，確保能比較去年同月
+        start_d = (datetime.datetime.now() - datetime.timedelta(days=400)).strftime("%Y-%m-%d")
         payload = {"dataset": "TaiwanStockMonthRevenue", "data_id": stock_id, "start_date": start_d}
         resp = requests.get(url, params=payload, timeout=10)
         if resp.status_code == 200:
@@ -111,13 +112,46 @@ def evaluate_stock_quant(stock_id):
                 if len(df_rev) >= 2:
                     latest_rev = df_rev.iloc[-1]
                     prev_rev = df_rev.iloc[-2]
-                    mom_growth = float(latest_rev.get('revenue', 0)) > float(prev_rev.get('revenue', 0))
-                    yoy_val = latest_rev.get('revenue_year_growth_rate', latest_rev.get('revenue_YearExchangeRate', 0))
-                    yoy_growth = float(yoy_val) > 0 if yoy_val is not None else False
+                    latest_revenue = float(latest_rev.get('revenue', 0))
+                    prev_revenue = float(prev_rev.get('revenue', 0))
+                    
+                    # MoM 月增: 最新月營收 > 上個月營收
+                    mom_growth = latest_revenue > prev_revenue
+                    
+                    # YoY 年增: 手動找去年同月份的營收來比較
+                    latest_month = int(latest_rev.get('revenue_month', 0))
+                    latest_year = int(latest_rev.get('revenue_year', 0))
+                    yoy_growth = False
+                    
+                    # 在歷史資料中尋找去年同月
+                    same_month_last_year = df_rev[
+                        (df_rev['revenue_month'].astype(int) == latest_month) & 
+                        (df_rev['revenue_year'].astype(int) == latest_year - 1)
+                    ]
+                    if not same_month_last_year.empty:
+                        last_year_revenue = float(same_month_last_year.iloc[-1].get('revenue', 0))
+                        if last_year_revenue > 0:
+                            yoy_growth = latest_revenue > last_year_revenue
+                    
                     if mom_growth and yoy_growth:
                         matched.append("近月營收月增且年增")
     except Exception as e:
         print(f"營收計算錯誤 {stock_id}: {e}")
+
+    # 4. 大戶持股比例 (集保結算所 TDCC OpenData - 神秘金字塔)
+    try:
+        if tdcc_df is not None and not tdcc_df.empty:
+            # 欄位: [資料日期, 證券代號, 持股分級, 人數, 股數, 佔集保庫存數%]
+            stock_tdcc = tdcc_df[tdcc_df.iloc[:, 1].astype(str).str.strip() == stock_id]
+            if not stock_tdcc.empty:
+                # 加總級距 >= 11 的所有比例 (400張以上的大戶)
+                big_holders = stock_tdcc[stock_tdcc.iloc[:, 2].astype(int) >= 11]
+                if not big_holders.empty:
+                    total_pct = big_holders.iloc[:, 5].astype(float).sum()
+                    if total_pct > 50:
+                        matched.append(f"大戶持股比例高({total_pct:.1f}%)")
+    except Exception as e:
+        print(f"TDCC大戶計算錯誤 {stock_id}: {e}")
 
     return matched
 
@@ -1561,14 +1595,12 @@ if st.session_state.history:
 
         
 
-        xq_file = st.file_uploader("📥 請上傳您從 XQ 匯出的盤後精準選股 CSV 檔案 (xq_picks.csv)", type=['csv'])
-
         daily_pick_btn = st.button("🚀 執行條件積分比對", type="primary", use_container_width=True)
 
         
 
         if daily_pick_btn:
-            st.info("⚡ 系統正在啟動本機純 Python 量化運算引擎，透過 FinMind 與 YFinance 即時抓取最新資料！這可能需要 1~2 分鐘，請稍候...")
+            st.info("⚡ 系統正在啟動本機純 Python 量化運算引擎，透過 FinMind、YFinance 與 TDCC 集保結算所即時抓取最新資料！這可能需要 1~2 分鐘，請稍候...")
             
             try:
                 progress_bar = st.progress(0)
@@ -1577,6 +1609,20 @@ if st.session_state.history:
                 # 取得畫面上所有不重複的股票代號
                 all_raw_stocks = df_display['股票名稱/代號'].replace('', float('NaN')).ffill().dropna().unique()
                 valid_stocks = [s for s in all_raw_stocks if str(s).strip() and str(s).upper() != 'NAN']
+                
+                # 預先下載 TDCC 集保結算所資料 (67K rows)，避免每檔重複下載
+                import io as _io
+                tdcc_df = None
+                status.text("📊 正在下載集保結算所 (TDCC) 神秘金字塔資料...")
+                try:
+                    tdcc_resp = requests.get("https://smart.tdcc.com.tw/opendata/getOD.ashx?id=1-5",
+                                            headers={"User-Agent": "Mozilla/5.0"}, timeout=15, verify=False)
+                    if tdcc_resp.status_code == 200:
+                        tdcc_content = tdcc_resp.content.decode('utf-8-sig')
+                        tdcc_df = pd.read_csv(_io.StringIO(tdcc_content))
+                        st.toast("✅ 集保結算所大戶持股資料載入成功！", icon="🏛️")
+                except Exception as e:
+                    print(f"TDCC 下載失敗: {e}")
                 
                 live_scores = {}
                 live_matches = {}
@@ -1589,12 +1635,8 @@ if st.session_state.history:
                     if stock_id_match:
                         stock_id = stock_id_match.group()
                         
-                        # 呼叫純 Python 的 quant_engine 進行計算
-                        matched = evaluate_stock_quant(stock_id)
-                        
-                        # 因為純 Python API 較難準確抓取以下稀有資料，我們直接放行或標記(也可以選擇忽略)
-                        # 目前 `quant_engine` 僅先實作主要的 KD、營收與三大法人
-                        missing_conditions = ["合約負債季增50%且創四季新高", "兩周內有法說會", "近期將發行CB", "大戶持股比例成長"]
+                        # 呼叫純 Python 的 quant_engine 進行計算 (傳入預載的 TDCC 資料)
+                        matched = evaluate_stock_quant(stock_id, tdcc_df=tdcc_df)
                         
                         live_scores[s] = len(matched)
                         live_matches[s] = matched
