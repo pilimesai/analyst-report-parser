@@ -1642,29 +1642,30 @@ if st.session_state.history:
                     name_col = None
                     for c in _conf_df.columns:
                         if any(k in str(c) for k in ['名稱', '公司', 'name', 'Name']) and c != _code_col and c != _date_col:
-                            # 驗證欄位值確實含中文
                             sample_vals = _conf_df[c].dropna().head(3).astype(str)
                             if any(_re.search(r'[\u4e00-\u9fff]', v) for v in sample_vals):
                                 name_col = c
                                 break
                     
-                    # yfinance 公司名稱快取
-                    _name_cache = {}
-                    def _get_company_name(code):
-                        if code in _name_cache:
-                            return _name_cache[code]
-                        try:
-                            for suffix in ['.TW', '.TWO']:
-                                t = yf.Ticker(f"{code}{suffix}")
-                                info = t.info
-                                name = info.get('shortName', '') or info.get('longName', '')
-                                if name:
-                                    _name_cache[code] = name
-                                    return name
-                        except:
-                            pass
-                        _name_cache[code] = ""
-                        return ""
+                    # 一次性下載所有上市櫃公司名稱對照表
+                    _name_map = {}
+                    try:
+                        # TWSE 上市
+                        _r1 = requests.get("https://openapi.twse.com.tw/v1/opendata/t187ap03_L", timeout=10, verify=False)
+                        for d in _r1.json():
+                            _name_map[str(d.get('公司代號', '')).strip()] = str(d.get('公司簡稱', '')).strip()
+                    except:
+                        pass
+                    try:
+                        # TPEx 上櫃
+                        _r2 = requests.get("https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap03_O", timeout=10, verify=False)
+                        for d in _r2.json():
+                            code = str(d.get('SecuritiesCompanyCode', '')).strip()
+                            name = str(d.get('CompanyAbbreviation', '')).strip()
+                            if code and name:
+                                _name_map[code] = name
+                    except:
+                        pass
                     
                     display_rows = []
                     for _, row in _conf_df.iterrows():
@@ -1690,9 +1691,9 @@ if st.session_state.history:
                                         name_part = _re.sub(r'[\d\s]+', '', raw_code).strip()
                                         if name_part and _re.search(r'[\u4e00-\u9fff]', name_part):
                                             company = name_part
-                                    # 來源3: 用 yfinance 查詢公司名稱
+                                    # 來源3: 從 TWSE/TPEx 對照表查詢
                                     if not company:
-                                        company = _get_company_name(stock_code)
+                                        company = _name_map.get(stock_code, "")
                                     
                                     status_text = "✅ 兩周內" if 0 <= delta <= 14 else ("⏳ 即將到來" if delta > 14 else "⏰ 已結束")
                                     display_rows.append({
