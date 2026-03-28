@@ -1637,25 +1637,46 @@ if st.session_state.history:
                 if _code_col and _date_col:
                     import re as _re
                     today = datetime.datetime.now().date()
+                    
+                    # 預先偵測名稱欄位
+                    name_col = None
+                    for c in _conf_df.columns:
+                        if any(k in str(c) for k in ['名稱', '公司', 'name', 'Name']) and c != _code_col and c != _date_col:
+                            name_col = c
+                            break
+                    # 如果沒有明確的名稱欄，嘗試其他非代號非日期的欄位
+                    if not name_col:
+                        for c in _conf_df.columns:
+                            if c != _code_col and c != _date_col:
+                                name_col = c
+                                break
+                    
                     display_rows = []
                     for _, row in _conf_df.iterrows():
                         raw_code = str(row[_code_col]).strip()
                         raw_date = str(row[_date_col]).strip()
                         code_m = _re.search(r'\d{4}', raw_code)
                         if code_m:
+                            stock_code = code_m.group()
                             try:
                                 d = pd.to_datetime(raw_date, errors='coerce')
                                 if pd.notna(d):
                                     delta = (d.date() - today).days
-                                    name_col = None
-                                    for c in _conf_df.columns:
-                                        if any(k in str(c) for k in ['名稱', '公司', 'name', 'Name']) and c != _code_col and c != _date_col:
-                                            name_col = c
-                                            break
-                                    company = str(row[name_col]).strip() if name_col and pd.notna(row.get(name_col)) else ""
+                                    
+                                    # 嘗試取得公司名稱（多種來源）
+                                    company = ""
+                                    # 來源1: 獨立的名稱欄
+                                    if name_col and pd.notna(row.get(name_col)):
+                                        company = str(row[name_col]).strip()
+                                    # 來源2: 從代號欄提取（例如 "3131 晶宏" 或 "3131晶宏"）
+                                    if not company:
+                                        name_part = _re.sub(r'[\d\s]+', '', raw_code).strip()
+                                        if name_part:
+                                            company = name_part
+                                    
                                     status_text = "✅ 兩周內" if 0 <= delta <= 14 else ("⏳ 即將到來" if delta > 14 else "⏰ 已結束")
                                     display_rows.append({
-                                        "股票代號": raw_code,
+                                        "股票代號": stock_code,
                                         "公司名稱": company,
                                         "法說會日期": d.strftime('%Y/%m/%d'),
                                         "距今天數": f"{delta} 天",
