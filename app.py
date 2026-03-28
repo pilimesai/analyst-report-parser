@@ -1640,6 +1640,91 @@ if st.session_state.history:
 
         conf_file = st.file_uploader("📅 （選填）上傳法說會日期 Excel（需含『股票代號』與『法說會日期』欄位）", type=['xlsx', 'xls', 'csv'])
 
+        # --- 即時顯示法說會清單表格 ---
+        if conf_file:
+            try:
+                conf_file.seek(0)
+                if conf_file.name.endswith('.csv'):
+                    try:
+                        _conf_df = pd.read_csv(conf_file, encoding='utf-8-sig', dtype=str)
+                    except:
+                        conf_file.seek(0)
+                        _conf_df = pd.read_csv(conf_file, encoding='cp950', dtype=str)
+                else:
+                    _conf_df = pd.read_excel(conf_file, dtype=str)
+                
+                # 自動偵測欄位
+                _code_col = None
+                for c in _conf_df.columns:
+                    if any(k in str(c) for k in ['代號', '股票', '代碼', 'code', 'stock', 'Code']):
+                        _code_col = c
+                        break
+                if not _code_col:
+                    _code_col = _conf_df.columns[0]
+                
+                _date_col = None
+                for c in _conf_df.columns:
+                    if any(k in str(c) for k in ['日期', '法說', 'date', 'Date', '時間']):
+                        _date_col = c
+                        break
+                if not _date_col:
+                    for c in _conf_df.columns:
+                        if c != _code_col:
+                            _date_col = c
+                            break
+
+                if _code_col and _date_col:
+                    import re as _re
+                    today = datetime.datetime.now().date()
+                    display_rows = []
+                    for _, row in _conf_df.iterrows():
+                        raw_code = str(row[_code_col]).strip()
+                        raw_date = str(row[_date_col]).strip()
+                        code_m = _re.search(r'\d{4}', raw_code)
+                        if code_m:
+                            try:
+                                d = pd.to_datetime(raw_date, errors='coerce')
+                                if pd.notna(d):
+                                    delta = (d.date() - today).days
+                                    # 取公司名稱（如果有的話）
+                                    name_col = None
+                                    for c in _conf_df.columns:
+                                        if any(k in str(c) for k in ['名稱', '公司', 'name', 'Name']) and c != _code_col and c != _date_col:
+                                            name_col = c
+                                            break
+                                    company = str(row[name_col]).strip() if name_col and pd.notna(row.get(name_col)) else ""
+                                    status_text = "✅ 兩周內" if 0 <= delta <= 14 else ("⏳ 即將到來" if delta > 14 else "⏰ 已結束")
+                                    display_rows.append({
+                                        "股票代號": raw_code,
+                                        "公司名稱": company,
+                                        "法說會日期": d.strftime('%Y/%m/%d'),
+                                        "距今天數": f"{delta} 天",
+                                        "狀態": status_text
+                                    })
+                            except:
+                                pass
+                    
+                    if display_rows:
+                        conf_display_df = pd.DataFrame(display_rows)
+                        conf_display_df = conf_display_df.sort_values(by="法說會日期")
+                        
+                        st.markdown(f"##### 📅 法說會清單（共 {len(display_rows)} 筆）")
+                        
+                        def highlight_conf_row(row):
+                            if '✅' in str(row['狀態']):
+                                return ['background-color: rgba(76, 175, 80, 0.15)'] * len(row)
+                            elif '⏰' in str(row['狀態']):
+                                return ['color: #999'] * len(row)
+                            return [''] * len(row)
+                        
+                        styled_conf = conf_display_df.style.apply(highlight_conf_row, axis=1)
+                        st.dataframe(styled_conf, use_container_width=True, hide_index=True)
+                    
+                conf_file.seek(0)  # 重置以供後續使用
+            except Exception as e:
+                st.warning(f"⚠️ 法說會預覽解析失敗：{e}")
+
+
         cb_default = "3290,2301,6603,4714,1727,3294,8476,3605,4123,8271,8111,3149,7738,8442,4764,1717,4503,5464,8462,5284,4749,1295,3680,4722,8467,2762,2109,6692,4760,6807,2466,8038,3581,8114,3576"
         cb_input = st.text_input("📋 （選填）近期將發行 CB 的股票代號（逗號分隔）", value=cb_default, help="資料來源：https://cbas16889.pscnet.com.tw/marketInfo/expectedRelease/")
 
