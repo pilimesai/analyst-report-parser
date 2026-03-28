@@ -1647,25 +1647,50 @@ if st.session_state.history:
                                 name_col = c
                                 break
                     
-                    # 一次性下載所有上市櫃公司名稱對照表
+                    # 一次性下載所有上市櫃公司名稱對照表（帶快取）
+                    import json as _json
+                    STOCK_NAMES_CACHE = "stock_names.json"
                     _name_map = {}
+                    
+                    # 嘗試從 API 下載
                     try:
-                        # TWSE 上市
                         _r1 = requests.get("https://openapi.twse.com.tw/v1/opendata/t187ap03_L", timeout=10, verify=False)
-                        for d in _r1.json():
-                            _name_map[str(d.get('公司代號', '')).strip()] = str(d.get('公司簡稱', '')).strip()
-                    except:
-                        pass
+                        if _r1.status_code == 200:
+                            for d in _r1.json():
+                                _name_map[str(d.get('公司代號', '')).strip()] = str(d.get('公司簡稱', '')).strip()
+                    except Exception as _e:
+                        print(f"TWSE名稱下載失敗: {_e}")
                     try:
-                        # TPEx 上櫃
                         _r2 = requests.get("https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap03_O", timeout=10, verify=False)
-                        for d in _r2.json():
-                            code = str(d.get('SecuritiesCompanyCode', '')).strip()
-                            name = str(d.get('CompanyAbbreviation', '')).strip()
-                            if code and name:
-                                _name_map[code] = name
-                    except:
-                        pass
+                        if _r2.status_code == 200:
+                            for d in _r2.json():
+                                code = str(d.get('SecuritiesCompanyCode', '')).strip()
+                                name = str(d.get('CompanyAbbreviation', '')).strip()
+                                if code and name:
+                                    _name_map[code] = name
+                    except Exception as _e:
+                        print(f"TPEx名稱下載失敗: {_e}")
+                    
+                    # 下載成功則存檔快取
+                    if _name_map:
+                        try:
+                            with open(STOCK_NAMES_CACHE, 'w', encoding='utf-8') as _f:
+                                _json.dump(_name_map, _f, ensure_ascii=False)
+                            st.toast(f"✅ 已載入 {len(_name_map)} 間公司名稱！", icon="🏢")
+                        except:
+                            pass
+                    else:
+                        # API 失敗，嘗試讀取快取
+                        import os as _os
+                        if _os.path.exists(STOCK_NAMES_CACHE):
+                            try:
+                                with open(STOCK_NAMES_CACHE, 'r', encoding='utf-8') as _f:
+                                    _name_map = _json.load(_f)
+                                st.toast(f"📂 API 不可用，已從快取載入 {len(_name_map)} 間公司名稱", icon="🏢")
+                            except:
+                                pass
+                        if not _name_map:
+                            st.warning("⚠️ 無法下載公司名稱對照表，公司名稱可能為空")
                     
                     display_rows = []
                     for _, row in _conf_df.iterrows():
