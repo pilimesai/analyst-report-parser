@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 import datetime
 
-def evaluate_stock_quant(stock_id, tdcc_df=None, conference_stocks=None, cb_stocks=None, cb_issued_data=None):
+def evaluate_stock_quant(stock_id, tdcc_df=None, tdcc_prev_df=None, conference_stocks=None, cb_stocks=None, cb_issued_data=None):
     """純 Python 量化條件篩選器 - 透過 FinMind API + yfinance + TDCC + 法說會 + CB 即時計算"""
     matched = []
     stock_id = str(stock_id).strip().replace('.TW', '').replace('.TWO', '')
@@ -138,18 +138,33 @@ def evaluate_stock_quant(stock_id, tdcc_df=None, conference_stocks=None, cb_stoc
     except Exception as e:
         print(f"營收計算錯誤 {stock_id}: {e}")
 
-    # 4. 大戶持股比例 (集保結算所 TDCC OpenData - 神秘金字塔)
+    # 4. 大戶持股比例成長 (集保結算所 TDCC OpenData - 神秘金字塔)
     try:
         if tdcc_df is not None and not tdcc_df.empty:
             # 欄位: [資料日期, 證券代號, 持股分級, 人數, 股數, 佔集保庫存數%]
             stock_tdcc = tdcc_df[tdcc_df.iloc[:, 1].astype(str).str.strip() == stock_id]
             if not stock_tdcc.empty:
-                # 加總級距 >= 11 的所有比例 (400張以上的大戶)
-                big_holders = stock_tdcc[stock_tdcc.iloc[:, 2].astype(int) >= 11]
+                # 加總級距 >= 11 且 < 17 的比例 (400張以上大戶，排除 Level 17 合計列)
+                big_holders = stock_tdcc[(stock_tdcc.iloc[:, 2].astype(int) >= 11) & (stock_tdcc.iloc[:, 2].astype(int) < 17)]
                 if not big_holders.empty:
                     total_pct = big_holders.iloc[:, 5].astype(float).sum()
-                    if total_pct > 50:
-                        matched.append(f"大戶持股比例高({total_pct:.1f}%)")
+                    
+                    # 如果有上週資料，比較成長
+                    if tdcc_prev_df is not None and not tdcc_prev_df.empty:
+                        prev_stock = tdcc_prev_df[tdcc_prev_df.iloc[:, 1].astype(str).str.strip() == stock_id]
+                        if not prev_stock.empty:
+                            prev_big = prev_stock[(prev_stock.iloc[:, 2].astype(int) >= 11) & (prev_stock.iloc[:, 2].astype(int) < 17)]
+                            prev_pct = prev_big.iloc[:, 5].astype(float).sum() if not prev_big.empty else 0
+                            if total_pct > prev_pct and (total_pct - prev_pct) >= 0.1:
+                                matched.append(f"大戶持股增加({prev_pct:.1f}%→{total_pct:.1f}%)")
+                        else:
+                            # 上週沒有資料（新上市？），直接用門檻
+                            if total_pct > 50:
+                                matched.append(f"大戶持股比例高({total_pct:.1f}%)")
+                    else:
+                        # 沒有上週對照資料，用門檻判斷
+                        if total_pct > 50:
+                            matched.append(f"大戶持股比例高({total_pct:.1f}%)")
     except Exception as e:
         print(f"TDCC大戶計算錯誤 {stock_id}: {e}")
 
@@ -1790,15 +1805,39 @@ if st.session_state.history:
                 
                 # 預先下載 TDCC 集保結算所資料 (67K rows)，避免每檔重複下載
                 import io as _io
+                import os as _os
                 tdcc_df = None
-                status.text("📊 正在下載集保結算所 (TDCC) 神秘金字塔資料...")
+                tdcc_prev_df = None
+                TDCC_CACHE_FILE = "tdcc_prev.csv"
+                
+                # 載入上週的 TDCC 快照 (用於比較大戶持股成長)
+                status.text("📊 正在載入集保結算所歷史資料...")
+                try:
+                    if _os.path.exists(TDCC_CACHE_FILE):
+                        tdcc_prev_df = pd.read_csv(TDCC_CACHE_FILE)
+                        st.toast("📂 已載入上次集保快照作為對照！", icon="📊")
+                except Exception as e:
+                    print(f"TDCC 快照載入失敗: {e}")
+                
+                # 下載本週最新 TDCC 資料
+                status.text("📊 正在下載集保結算所 (TDCC) 神秘金字塔最新資料...")
                 try:
                     tdcc_resp = requests.get("https://smart.tdcc.com.tw/opendata/getOD.ashx?id=1-5",
                                             headers={"User-Agent": "Mozilla/5.0"}, timeout=15, verify=False)
                     if tdcc_resp.status_code == 200:
                         tdcc_content = tdcc_resp.content.decode('utf-8-sig')
                         tdcc_df = pd.read_csv(_io.StringIO(tdcc_content))
-                        st.toast("✅ 集保結算所大戶持股資料載入成功！", icon="🏛️")
+                        
+                        # 檢查是否與上次不同日期（代表是新一週的資料）
+                        curr_date = str(tdcc_df.iloc[0, 0]) if not tdcc_df.empty else ""
+                        prev_date = str(tdcc_prev_df.iloc[0, 0]) if tdcc_prev_df is not None and not tdcc_prev_df.empty else ""
+                        
+                        if curr_date != prev_date:
+                            # 新日期！把當前資料存為下次的「上週對照」
+                            tdcc_df.to_csv(TDCC_CACHE_FILE, index=False, encoding='utf-8-sig')
+                            st.toast(f"✅ 集保資料已更新 ({curr_date})，舊快照 ({prev_date or '無'}) 已保存供比較！", icon="🏛️")
+                        else:
+                            st.toast(f"✅ 集保資料日期相同 ({curr_date})，使用快取對照。", icon="🏛️")
                 except Exception as e:
                     print(f"TDCC 下載失敗: {e}")
                 
@@ -1895,7 +1934,7 @@ if st.session_state.history:
                         stock_id = stock_id_match.group()
                         
                         # 呼叫純 Python 的 quant_engine (傳入所有預載資料)
-                        matched = evaluate_stock_quant(stock_id, tdcc_df=tdcc_df, conference_stocks=conference_stocks, cb_stocks=cb_stocks, cb_issued_data=cb_issued_data)
+                        matched = evaluate_stock_quant(stock_id, tdcc_df=tdcc_df, tdcc_prev_df=tdcc_prev_df, conference_stocks=conference_stocks, cb_stocks=cb_stocks, cb_issued_data=cb_issued_data)
                         
                         # 條件 11: 目前股價低於 20 倍 PE（從報告表格讀取）
                         try:
