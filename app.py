@@ -320,9 +320,22 @@ def load_history():
 
             records = ws.get_all_records()
 
-            st.toast(f"☁️ 成功從 Google Sheets 載入 {len(records)} 筆紀錄！", icon="📂")
-
-            return records
+            if records:
+                st.toast(f"☁️ 成功從 Google Sheets (Sheet1) 載入 {len(records)} 筆紀錄！", icon="📂")
+                return records
+            
+            # Sheet1 是空的，嘗試從 Sheet2（備份）還原
+            try:
+                ws2 = ws.spreadsheet.worksheet("備份")
+                backup_records = ws2.get_all_records()
+                if backup_records:
+                    st.warning(f"⚠️ Sheet1 為空！已從 Sheet2（備份）還原 {len(backup_records)} 筆紀錄。")
+                    return backup_records
+            except:
+                pass
+            
+            st.toast("ℹ️ Google Sheets 目前沒有資料。", icon="🆕")
+            return []
 
         except Exception as e:
 
@@ -366,37 +379,57 @@ def save_history(history):
 
         try:
 
+            # ⚠️ 安全防護：拒絕寫入空白資料，防止誤清表格
+            if not history:
+                st.warning("⚠️ 偵測到空白資料，已中止寫入以保護現有記錄！")
+                return
+
+            df = pd.DataFrame(history)
+
+            df = df.fillna("N/A")
+
+            # 將所有列表轉換為以逗號分隔的字串，避免 Google Sheets 報錯 list_value {}
+
+            for col in df.columns:
+
+                df[col] = df[col].apply(lambda x: ', '.join(map(str, x)) if isinstance(x, list) else x)
+
+            data = [df.columns.values.tolist()] + df.values.tolist()
+
+            
+
+            # Step 1: 寫入 Sheet1（主表）
             ws.clear()
 
-            if history:
+            try:
 
-                df = pd.DataFrame(history)
+                ws.update(values=data, range_name="A1")
 
-                df = df.fillna("N/A")
+            except TypeError:
 
-                # 將所有列表轉換為以逗號分隔的字串，避免 Google Sheets 報錯 list_value {}
+                # 兼容舊版語法
 
-                for col in df.columns:
+                ws.update(data, "A1")
 
-                    df[col] = df[col].apply(lambda x: ', '.join(map(str, x)) if isinstance(x, list) else x)
+            st.toast(f"☁️ 已成功將 {len(history)} 筆紀錄同步至 Sheet1！", icon="💾")
 
-                data = [df.columns.values.tolist()] + df.values.tolist()
-
-                
-
-                # gspread v6 之後的語法是 worksheet.update(values=..., range_name=...)
-
+            # Step 2: Sheet1 寫入成功，複製備份到 Sheet2
+            try:
+                spreadsheet = ws.spreadsheet
                 try:
-
-                    ws.update(values=data, range_name="A1")
-
+                    ws2 = spreadsheet.worksheet("備份")
+                except:
+                    ws2 = spreadsheet.add_worksheet(title="備份", rows=str(len(data) + 10), cols=str(len(data[0]) + 2))
+                
+                ws2.clear()
+                try:
+                    ws2.update(values=data, range_name="A1")
                 except TypeError:
-
-                    # 兼容舊版語法
-
-                    ws.update(data, "A1")
-
-            st.toast(f"☁️ 已成功將 {len(history)} 筆紀錄同步至 Google Sheets！", icon="💾")
+                    ws2.update(data, "A1")
+                
+                st.toast(f"🛡️ 已同步備份 {len(history)} 筆紀錄至 Sheet2（備份）！", icon="✅")
+            except Exception as e2:
+                st.warning(f"⚠️ Sheet1 寫入成功，但備份至 Sheet2 失敗: {e2}")
 
         except Exception as e:
 
