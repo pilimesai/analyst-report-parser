@@ -1284,6 +1284,10 @@ if st.session_state.history:
 
     
 
+    # 預先解析法說會 Excel（若已上傳），供歷史表格使用
+    if 'conf_dates_map' not in st.session_state:
+        st.session_state['conf_dates_map'] = {}
+
     # 進行整合邏輯
 
     consolidated = []
@@ -1776,7 +1780,12 @@ if st.session_state.history:
                         code = str(dr['股票代號']).strip()
                         if '✅' in dr['狀態'] or '⏳' in dr['狀態']:  # 只保留未過期的
                             _conf_map[code] = dr['法說會日期']
-                    st.session_state['conf_dates_map'] = _conf_map
+                    
+                    # 如果是新資料，存入並觸發重新整理讓歷史表格即時顯示
+                    old_map = st.session_state.get('conf_dates_map', {})
+                    if _conf_map != old_map:
+                        st.session_state['conf_dates_map'] = _conf_map
+                        st.rerun()
                     
                     if display_rows:
                         conf_display_df = pd.DataFrame(display_rows)
