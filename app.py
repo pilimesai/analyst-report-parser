@@ -1615,27 +1615,64 @@ if st.session_state.history:
                 else:
                     _conf_df = pd.read_excel(conf_file, dtype=str)
                 
-                _code_col = None
-                for c in _conf_df.columns:
-                    if any(k in str(c) for k in ['代號', '股票', '代碼', 'code', 'stock', 'Code']):
-                        _code_col = c
-                        break
-                if not _code_col:
-                    _code_col = _conf_df.columns[0]
+                import re as _re
                 
+                # 顯示 Excel 原始內容預覽
+                with st.expander("📋 查看上傳的 Excel 原始內容"):
+                    st.dataframe(_conf_df.head(5), use_container_width=True)
+                
+                # 智慧欄位偵測：分析實際值來判斷哪欄是代號、哪欄是日期
+                _code_col = None
                 _date_col = None
+                
                 for c in _conf_df.columns:
-                    if any(k in str(c) for k in ['日期', '法說', 'date', 'Date', '時間']):
+                    sample = _conf_df[c].dropna().head(5).astype(str).tolist()
+                    if not sample:
+                        continue
+                    
+                    # 測試是否為日期欄（包含 / 或 - 且可解析為日期）
+                    date_count = sum(1 for v in sample if ('/' in v or '-' in v) and pd.notna(pd.to_datetime(v, errors='coerce')))
+                    if date_count >= len(sample) * 0.5 and not _date_col:
                         _date_col = c
-                        break
-                if not _date_col:
-                    for c in _conf_df.columns:
-                        if c != _code_col:
+                        continue
+                    
+                    # 測試是否為股票代號欄（4位數字，且不是年份 2020~2030）
+                    code_count = 0
+                    for v in sample:
+                        v_stripped = v.strip()
+                        m = _re.search(r'^\d{4}$', v_stripped)
+                        if m and not (2020 <= int(m.group()) <= 2030):
+                            code_count += 1
+                        elif _re.search(r'[\u4e00-\u9fff]', v_stripped) and _re.search(r'\d{4}', v_stripped):
+                            code_count += 1
+                    if code_count >= len(sample) * 0.5 and not _code_col:
+                        _code_col = c
+                        continue
+                
+                # 容錯：如果只偵測到其中一個，另一個取剩餘欄位
+                all_cols = list(_conf_df.columns)
+                if _code_col and not _date_col:
+                    remaining = [c for c in all_cols if c != _code_col]
+                    if remaining:
+                        _date_col = remaining[0]
+                elif _date_col and not _code_col:
+                    remaining = [c for c in all_cols if c != _date_col]
+                    if remaining:
+                        _code_col = remaining[0]
+                elif not _code_col and not _date_col:
+                    for c in all_cols:
+                        if any(k in str(c) for k in ['代號', '股票', '代碼', 'code']) and not _code_col:
+                            _code_col = c
+                        elif any(k in str(c) for k in ['日期', '法說', 'date', '時間']) and not _date_col:
                             _date_col = c
-                            break
+                    if not _code_col:
+                        _code_col = all_cols[0]
+                    if not _date_col and len(all_cols) > 1:
+                        _date_col = [c for c in all_cols if c != _code_col][0]
+                
+                st.caption(f"📌 偵測結果：代號欄＝「{_code_col}」, 日期欄＝「{_date_col}」")
 
                 if _code_col and _date_col:
-                    import re as _re
                     today = datetime.datetime.now().date()
                     
                     # 預先偵測名稱欄位（必須含中文字，排除純數字欄）
