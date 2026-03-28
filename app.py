@@ -1638,18 +1638,33 @@ if st.session_state.history:
                     import re as _re
                     today = datetime.datetime.now().date()
                     
-                    # 預先偵測名稱欄位
+                    # 預先偵測名稱欄位（必須含中文字，排除純數字欄）
                     name_col = None
                     for c in _conf_df.columns:
                         if any(k in str(c) for k in ['名稱', '公司', 'name', 'Name']) and c != _code_col and c != _date_col:
-                            name_col = c
-                            break
-                    # 如果沒有明確的名稱欄，嘗試其他非代號非日期的欄位
-                    if not name_col:
-                        for c in _conf_df.columns:
-                            if c != _code_col and c != _date_col:
+                            # 驗證欄位值確實含中文
+                            sample_vals = _conf_df[c].dropna().head(3).astype(str)
+                            if any(_re.search(r'[\u4e00-\u9fff]', v) for v in sample_vals):
                                 name_col = c
                                 break
+                    
+                    # yfinance 公司名稱快取
+                    _name_cache = {}
+                    def _get_company_name(code):
+                        if code in _name_cache:
+                            return _name_cache[code]
+                        try:
+                            for suffix in ['.TW', '.TWO']:
+                                t = yf.Ticker(f"{code}{suffix}")
+                                info = t.info
+                                name = info.get('shortName', '') or info.get('longName', '')
+                                if name:
+                                    _name_cache[code] = name
+                                    return name
+                        except:
+                            pass
+                        _name_cache[code] = ""
+                        return ""
                     
                     display_rows = []
                     for _, row in _conf_df.iterrows():
@@ -1667,12 +1682,17 @@ if st.session_state.history:
                                     company = ""
                                     # 來源1: 獨立的名稱欄
                                     if name_col and pd.notna(row.get(name_col)):
-                                        company = str(row[name_col]).strip()
+                                        val = str(row[name_col]).strip()
+                                        if _re.search(r'[\u4e00-\u9fff]', val):
+                                            company = val
                                     # 來源2: 從代號欄提取（例如 "3131 晶宏" 或 "3131晶宏"）
                                     if not company:
                                         name_part = _re.sub(r'[\d\s]+', '', raw_code).strip()
-                                        if name_part:
+                                        if name_part and _re.search(r'[\u4e00-\u9fff]', name_part):
                                             company = name_part
+                                    # 來源3: 用 yfinance 查詢公司名稱
+                                    if not company:
+                                        company = _get_company_name(stock_code)
                                     
                                     status_text = "✅ 兩周內" if 0 <= delta <= 14 else ("⏳ 即將到來" if delta > 14 else "⏰ 已結束")
                                     display_rows.append({
