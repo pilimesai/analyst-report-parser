@@ -138,35 +138,36 @@ def evaluate_stock_quant(stock_id, tdcc_df=None, tdcc_prev_df=None, conference_s
     except Exception as e:
         print(f"營收計算錯誤 {stock_id}: {e}")
 
-    # 4. 大戶持股比例成長 (集保結算所 TDCC OpenData - 神秘金字塔)
+    # 4. 大戶持股比例成長 (神秘金字塔 - 集保庫存分級歷史)
     try:
-        if tdcc_df is not None and not tdcc_df.empty:
-            # 欄位: [資料日期, 證券代號, 持股分級, 人數, 股數, 佔集保庫存數%]
-            stock_tdcc = tdcc_df[tdcc_df.iloc[:, 1].astype(str).str.strip() == stock_id]
-            if not stock_tdcc.empty:
-                # 加總級距 >= 11 且 < 17 的比例 (400張以上大戶，排除 Level 17 合計列)
-                big_holders = stock_tdcc[(stock_tdcc.iloc[:, 2].astype(int) >= 11) & (stock_tdcc.iloc[:, 2].astype(int) < 17)]
-                if not big_holders.empty:
-                    total_pct = big_holders.iloc[:, 5].astype(float).sum()
-                    
-                    # 如果有上週資料，比較成長
-                    if tdcc_prev_df is not None and not tdcc_prev_df.empty:
-                        prev_stock = tdcc_prev_df[tdcc_prev_df.iloc[:, 1].astype(str).str.strip() == stock_id]
-                        if not prev_stock.empty:
-                            prev_big = prev_stock[(prev_stock.iloc[:, 2].astype(int) >= 11) & (prev_stock.iloc[:, 2].astype(int) < 17)]
-                            prev_pct = prev_big.iloc[:, 5].astype(float).sum() if not prev_big.empty else 0
-                            if total_pct > prev_pct and (total_pct - prev_pct) >= 0.1:
-                                matched.append(f"大戶持股增加({prev_pct:.1f}%→{total_pct:.1f}%)")
-                        else:
-                            # 上週沒有資料（新上市？），直接用門檻
-                            if total_pct > 50:
-                                matched.append(f"大戶持股比例高({total_pct:.1f}%)")
-                    else:
-                        # 沒有上週對照資料，用門檻判斷
-                        if total_pct > 50:
-                            matched.append(f"大戶持股比例高({total_pct:.1f}%)")
+        from bs4 import BeautifulSoup as _BS
+        _pyramid_url = f"https://norway.twsthr.info/StockHolders.aspx?stock={stock_id}"
+        _pyramid_headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+        _pr = requests.get(_pyramid_url, headers=_pyramid_headers, timeout=10, verify=False)
+        _pr.encoding = 'utf-8'
+        _soup = _BS(_pr.text, 'html.parser')
+        
+        # 找含有 400 張以上 的摘要表格
+        for _tbl in _soup.find_all('table'):
+            _rows = _tbl.find_all('tr')
+            for _row in _rows:
+                cells = [c.get_text(strip=True) for c in _row.find_all(['td', 'th'])]
+                if any('400' in c and '以上' in c for c in cells):
+                    # 表格格式: ['', '* 400 張以上', 人數, 張數, 百分比%, '', 人數, 張數, 百分比%, '', ...]
+                    # 百分比在 index 4 (本週) 和 index 8 (上週)
+                    try:
+                        curr_pct = float(cells[4].replace(',', ''))
+                        prev_pct = float(cells[8].replace(',', ''))
+                        if curr_pct > prev_pct and (curr_pct - prev_pct) >= 0.1:
+                            matched.append(f"大戶持股增加({prev_pct:.1f}%→{curr_pct:.1f}%)")
+                    except (IndexError, ValueError):
+                        pass
+                    break
+            else:
+                continue
+            break
     except Exception as e:
-        print(f"TDCC大戶計算錯誤 {stock_id}: {e}")
+        print(f"神秘金字塔大戶計算錯誤 {stock_id}: {e}")
 
     # 5. 法說會 (使用者上傳的 Excel 比對)
     try:
