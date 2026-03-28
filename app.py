@@ -1350,6 +1350,16 @@ if st.session_state.history:
 
         sorted_stocks = sorted(group_scores.keys(), key=lambda x: group_scores[x], reverse=True)
 
+        # 從 session_state 取法說會日期對照表
+        def _get_conf_date(stock_str):
+            conf_map = st.session_state.get('conf_dates_map', {})
+            if not conf_map:
+                return ""
+            m = re.search(r'\d{4}', str(stock_str))
+            if m:
+                return conf_map.get(m.group(), "")
+            return ""
+
         
 
         # 2. 將同股票的資料 Group 起來並依序加入 consolidated
@@ -1452,17 +1462,13 @@ if st.session_state.history:
 
                         "股票名稱/代號": stock,
 
-                        "選股積分": stock_score,
-
-                        "符合條件": stock_criteria_str,
-
                         "最新收盤價": close_price,
+
+                        "法說會日期": _get_conf_date(stock),
 
                         "發布日期": row.get('date', '未知日期'),
 
                         "券商名稱": row.get('brokerage', '未知券商'),
-
-                        "每日選股": row.get('daily_stock_selection', 'N/A'),
 
                         "券商評等": row.get('rating', '無'),
 
@@ -1490,17 +1496,13 @@ if st.session_state.history:
 
                         "股票名稱/代號": "",
 
-                        "選股積分": "",
-
-                        "符合條件": "",
-
                         "最新收盤價": "",
+
+                        "法說會日期": "",
 
                         "發布日期": row.get('date', '未知日期'),
 
                         "券商名稱": row.get('brokerage', '未知券商'),
-
-                        "每日選股": row.get('daily_stock_selection', 'N/A'),
 
                         "券商評等": row.get('rating', '無'),
 
@@ -1767,6 +1769,14 @@ if st.session_state.history:
                                     })
                             except:
                                 pass
+                    
+                    # 將法說會日期存入 session_state 供歷史表格使用
+                    _conf_map = {}
+                    for dr in display_rows:
+                        code = str(dr['股票代號']).strip()
+                        if '✅' in dr['狀態'] or '⏳' in dr['狀態']:  # 只保留未過期的
+                            _conf_map[code] = dr['法說會日期']
+                    st.session_state['conf_dates_map'] = _conf_map
                     
                     if display_rows:
                         conf_display_df = pd.DataFrame(display_rows)
