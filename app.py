@@ -46,16 +46,30 @@ def evaluate_stock_quant(stock_id, tdcc_df=None, tdcc_prev_df=None, conference_s
                 if wt_k > wt_d and wy_k < wy_d:
                     matched.append("周KD黃金交叉")
 
-            # 成交量條件
+            # 成交量條件 (需全部滿足)
             if len(hist) > 10 and len(weekly_hist) > 10:
-                vol_10d_avg = hist['Volume'].rolling(window=10).mean().iloc[-2]
-                vol_10w_avg = weekly_hist['Volume'].rolling(window=10).mean().iloc[-2]
                 today_vol = hist['Volume'].iloc[-1]
+                today_close = hist['Close'].iloc[-1]
+                today_open = hist['Open'].iloc[-1]
                 if today_vol == 0:
                     today_vol = hist['Volume'].iloc[-2]
+                    today_close = hist['Close'].iloc[-2]
+                    today_open = hist['Open'].iloc[-2]
+                
+                today_vol_lots = today_vol / 1000  # 張 = 股 / 1000
+                turnover = today_close * today_vol  # 成交金額(元)
+                vol_10d_avg = hist['Volume'].rolling(window=10).mean().iloc[-2]
+                vol_10w_avg = weekly_hist['Volume'].rolling(window=10).mean().iloc[-2]
                 vol_10w_avg_daily = vol_10w_avg / 5
-                if today_vol > vol_10w_avg_daily and today_vol > (3 * vol_10d_avg):
-                    matched.append("成交量大於十週均量且大於三倍十日均量")
+                
+                cond_1 = today_vol_lots > 2000          # 成交量 > 2000 張
+                cond_2 = turnover > 5e8                  # 成交金額 > 0.5 億
+                cond_3 = today_vol > vol_10w_avg_daily   # 量 > 近10週平均
+                cond_4 = today_vol > (3 * vol_10d_avg)   # 量 > 10日均量3倍
+                cond_5 = today_close > today_open         # 收盤 > 開盤(紅K)
+                
+                if cond_1 and cond_2 and cond_3 and cond_4 and cond_5:
+                    matched.append(f"爆量紅K({today_vol_lots:.0f}張,{turnover/1e8:.1f}億)")
     except Exception as e:
         print(f"YFinance 計算錯誤 {stock_id}: {e}")
 
