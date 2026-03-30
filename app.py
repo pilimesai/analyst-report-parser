@@ -1619,6 +1619,62 @@ if st.session_state.history:
 
         
 
+        # --- 獨立整理：尚無報告的法說會個股 ---
+        conf_map = st.session_state.get('conf_dates_map', {})
+        if conf_map:
+            import re as _re, json as _json, os as _os
+            history_codes = set()
+            for s in df_raw['stock'].dropna():
+                m = _re.search(r'\d{4}', str(s))
+                if m: history_codes.add(m.group())
+            
+            missing_codes = [c for c in conf_map.keys() if c not in history_codes]
+            if missing_codes:
+                name_map = {}
+                if _os.path.exists("stock_names.json"):
+                    try:
+                        with open("stock_names.json", 'r', encoding='utf-8') as _f:
+                            name_map = _json.load(_f)
+                    except: pass
+                
+                missing_data = []
+                for c in missing_codes:
+                    missing_data.append({
+                        "股票代號": c,
+                        "股票名稱": name_map.get(c, "未知名稱"),
+                        "預定法說會日期": conf_map[c]
+                    })
+                st.markdown("##### 💡 已排定法說會但尚無分析報告之個股")
+                st.dataframe(pd.DataFrame(missing_data).sort_values("預定法說會日期"), use_container_width=True, hide_index=True)
+
+        # --- 獨立整理：尚無報告的法說會個股 ---
+        conf_map = st.session_state.get('conf_dates_map', {})
+        if conf_map:
+            import re as _re, json as _json, os as _os
+            history_codes = set()
+            for s in df_raw['stock'].dropna():
+                m = _re.search(r'\d{4}', str(s))
+                if m: history_codes.add(m.group())
+            
+            missing_codes = [c for c in conf_map.keys() if c not in history_codes]
+            if missing_codes:
+                name_map = {}
+                if _os.path.exists("stock_names.json"):
+                    try:
+                        with open("stock_names.json", 'r', encoding='utf-8') as _f:
+                            name_map = _json.load(_f)
+                    except: pass
+                
+                missing_data = []
+                for c in missing_codes:
+                    missing_data.append({
+                        "股票代號": c,
+                        "股票名稱": name_map.get(c, "未知名稱"),
+                        "預定法說會日期": conf_map[c]
+                    })
+                st.markdown("##### 💡 已排定法說會但尚無分析報告之個股")
+                st.dataframe(pd.DataFrame(missing_data).sort_values("預定法說會日期"), use_container_width=True, hide_index=True)
+
         # --- 法說會資料（獨立區塊，不依賴主表格） ---
         st.divider()
         st.subheader("📅 法說會追蹤")
@@ -1759,7 +1815,11 @@ if st.session_state.history:
                             stock_code = code_m.group()
                             try:
                                 d = pd.to_datetime(raw_date, errors='coerce')
+                                if pd.isna(d) and '/' in raw_date:
+                                    try: d = pd.to_datetime(f"{today.year}/" + raw_date, errors='coerce')
+                                    except: pass
                                 if pd.notna(d):
+                                    if d.year == 1900: d = d.replace(year=today.year)
                                     delta = (d.date() - today).days
                                     
                                     # 嘗試取得公司名稱（多種來源）
@@ -2023,8 +2083,12 @@ if st.session_state.history:
                                 if code_match:
                                     sid = code_match.group()
                                     try:
-                                        d = pd.to_datetime(str(row[date_col]).strip(), errors='coerce')
+                                        r_date_str = str(row[date_col]).strip()
+                                        d = pd.to_datetime(r_date_str, errors='coerce')
+                                        if pd.isna(d) and '/' in r_date_str:
+                                            d = pd.to_datetime(f"{datetime.datetime.now().year}/" + r_date_str, errors='coerce')
                                         if pd.notna(d):
+                                            if d.year == 1900: d = d.replace(year=datetime.datetime.now().year)
                                             conference_stocks[sid] = d.date()
                                     except:
                                         pass
