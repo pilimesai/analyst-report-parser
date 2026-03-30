@@ -1783,12 +1783,13 @@ if st.session_state.history:
                             st.warning("⚠️ 無法下載公司名稱對照表，公司名稱可能為空")
                     
                     display_rows = []
+                    unparsed_rows = []
                     _name_map_rev = {v: k for k, v in _name_map.items()} if '_name_map' in locals() and _name_map else {}
                     
                     all_rows = [dict(zip(_conf_df.columns, _conf_df.columns))] + [row.to_dict() for _, row in _conf_df.iterrows()]
                     for row_dict in all_rows:
-                        raw_code = str(row_dict[_code_col]).strip()
-                        raw_date = str(row_dict[_date_col]).strip()
+                        raw_code = str(row_dict.get(_code_col, "")).strip()
+                        raw_date = str(row_dict.get(_date_col, "")).strip()
                         
                         stock_code = ""
                         code_m = _re.search(r'\d{4}', raw_code)
@@ -1804,27 +1805,29 @@ if st.session_state.history:
                                         
                         if stock_code:
                             try:
-                                d = pd.to_datetime(raw_date, errors='coerce')
-                                if pd.isna(d) and '/' in raw_date:
-                                    try: d = pd.to_datetime(f"{today.year}/" + raw_date, errors='coerce')
+                                # 修正可能被讀取為 float 格式的純數字字串，如 "20260331.0"
+                                safe_date = raw_date
+                                if safe_date.endswith('.0'): safe_date = safe_date[:-2]
+                                d = pd.to_datetime(safe_date, errors='coerce')
+                                
+                                if pd.isna(d) and '/' in safe_date:
+                                    try: d = pd.to_datetime(f"{today.year}/" + safe_date, errors='coerce')
                                     except: pass
+                                
                                 if pd.notna(d):
                                     if d.year == 1900: d = d.replace(year=today.year)
                                     delta = (d.date() - today).days
                                     
                                     # 嘗試取得公司名稱（多種來源）
                                     company = ""
-                                    # 來源1: 獨立的名稱欄
-                                    if name_col and pd.notna(row.get(name_col)):
-                                        val = str(row[name_col]).strip()
+                                    if name_col and pd.notna(row_dict.get(name_col)):
+                                        val = str(row_dict[name_col]).strip()
                                         if _re.search(r'[\u4e00-\u9fff]', val):
                                             company = val
-                                    # 來源2: 從代號欄提取（例如 "3131 晶宏" 或 "3131晶宏"）
                                     if not company:
                                         name_part = _re.sub(r'[\d\s]+', '', raw_code).strip()
                                         if name_part and _re.search(r'[\u4e00-\u9fff]', name_part):
                                             company = name_part
-                                    # 來源3: 從 TWSE/TPEx 對照表查詢
                                     if not company:
                                         company = _name_map.get(stock_code, "")
                                     
@@ -1836,9 +1839,20 @@ if st.session_state.history:
                                         "距今天數": f"{delta} 天",
                                         "狀態": status_text
                                     })
-                            except:
-                                pass
+                                else:
+                                    unparsed_rows.append({"原內容(代號)": raw_code, "原內容(日期)": raw_date, "未抓取原因": "日期格式無法辨識"})
+                            except Exception as e:
+                                unparsed_rows.append({"原內容(代號)": raw_code, "原內容(日期)": raw_date, "未抓取原因": f"日期解析例外 ({str(e)})"})
+                        else:
+                            # 忽略單純的 NaN 重複行
+                            if raw_code.lower() != 'nan' and 'unnamed' not in raw_code.lower():
+                                unparsed_rows.append({"原內容(代號)": raw_code, "原內容(日期)": raw_date, "未抓取原因": "無法找到對應四位數證券代碼"})
                     
+                    if unparsed_rows:
+                        st.warning(f"⚠️ 有 {len(unparsed_rows)} 筆上傳資料在此次判定中無法被系統自動辨識！", icon="⚠️")
+                        with st.expander("❌ 展開查看無法辨識的項目明細與可能原因"):
+                            st.dataframe(pd.DataFrame(unparsed_rows), use_container_width=True)
+
                     # 將法說會日期存入 session_state 供歷史表格使用
                     _conf_map = {}
                     for dr in display_rows:
