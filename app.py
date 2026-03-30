@@ -2065,6 +2065,21 @@ if st.session_state.history:
                 all_raw_stocks = df_display['股票名稱/代號'].replace('', float('NaN')).ffill().dropna().unique()
                 valid_stocks = [s for s in all_raw_stocks if str(s).strip() and str(s).upper() != 'NAN']
                 
+                # 同時將「尚無報告的法說會個股」一併納入量化分析清單
+                _conf_map = st.session_state.get('conf_dates_map', {})
+                if _conf_map:
+                    import re as _re
+                    _history_codes = set()
+                    for s in df_raw['stock'].dropna():
+                        m = _re.search(r'\d{4}', str(s))
+                        if m: _history_codes.add(m.group())
+                    _missing = [c for c in _conf_map.keys() if c not in _history_codes]
+                    _global_names = st.session_state.get("global_name_map", {})
+                    for c in _missing:
+                        combined_name = f"{c} {_global_names.get(c, '')}".strip()
+                        if not any(c in str(vs) for vs in valid_stocks):
+                            valid_stocks.append(combined_name)
+                
                 # 預先下載 TDCC 集保結算所資料 (67K rows)，避免每檔重複下載
                 import io as _io
                 import os as _os
