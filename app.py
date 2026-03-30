@@ -1620,8 +1620,11 @@ if st.session_state.history:
         
 
         # --- 獨立整理：尚無報告的法說會個股 ---
+        st.markdown("##### 💡 已排定法說會但『尚無分析報告』之個股")
         conf_map = st.session_state.get('conf_dates_map', {})
-        if conf_map:
+        if not conf_map:
+            st.info("📅 目前無即將到來的法說會紀錄（上傳的資料可能為空或皆已過期）。")
+        else:
             import re as _re, json as _json, os as _os
             history_codes = set()
             for s in df_raw['stock'].dropna():
@@ -1644,36 +1647,9 @@ if st.session_state.history:
                         "股票名稱": name_map.get(c, "未知名稱"),
                         "預定法說會日期": conf_map[c]
                     })
-                st.markdown("##### 💡 已排定法說會但尚無分析報告之個股")
                 st.dataframe(pd.DataFrame(missing_data).sort_values("預定法說會日期"), use_container_width=True, hide_index=True)
-
-        # --- 獨立整理：尚無報告的法說會個股 ---
-        conf_map = st.session_state.get('conf_dates_map', {})
-        if conf_map:
-            import re as _re, json as _json, os as _os
-            history_codes = set()
-            for s in df_raw['stock'].dropna():
-                m = _re.search(r'\d{4}', str(s))
-                if m: history_codes.add(m.group())
-            
-            missing_codes = [c for c in conf_map.keys() if c not in history_codes]
-            if missing_codes:
-                name_map = {}
-                if _os.path.exists("stock_names.json"):
-                    try:
-                        with open("stock_names.json", 'r', encoding='utf-8') as _f:
-                            name_map = _json.load(_f)
-                    except: pass
-                
-                missing_data = []
-                for c in missing_codes:
-                    missing_data.append({
-                        "股票代號": c,
-                        "股票名稱": name_map.get(c, "未知名稱"),
-                        "預定法說會日期": conf_map[c]
-                    })
-                st.markdown("##### 💡 已排定法說會但尚無分析報告之個股")
-                st.dataframe(pd.DataFrame(missing_data).sort_values("預定法說會日期"), use_container_width=True, hide_index=True)
+            else:
+                st.success("🎉 太棒了！目前所有已排定的法說會個股，都已經有對應的券商報告！")
 
         # --- 法說會資料（獨立區塊，不依賴主表格） ---
         st.divider()
