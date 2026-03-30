@@ -1783,12 +1783,26 @@ if st.session_state.history:
                             st.warning("⚠️ 無法下載公司名稱對照表，公司名稱可能為空")
                     
                     display_rows = []
-                    for _, row in _conf_df.iterrows():
-                        raw_code = str(row[_code_col]).strip()
-                        raw_date = str(row[_date_col]).strip()
+                    _name_map_rev = {v: k for k, v in _name_map.items()} if '_name_map' in locals() and _name_map else {}
+                    
+                    all_rows = [dict(zip(_conf_df.columns, _conf_df.columns))] + [row.to_dict() for _, row in _conf_df.iterrows()]
+                    for row_dict in all_rows:
+                        raw_code = str(row_dict[_code_col]).strip()
+                        raw_date = str(row_dict[_date_col]).strip()
+                        
+                        stock_code = ""
                         code_m = _re.search(r'\d{4}', raw_code)
                         if code_m:
                             stock_code = code_m.group()
+                        elif _name_map_rev and raw_code:
+                            stock_code = _name_map_rev.get(raw_code, "")
+                            if not stock_code and len(raw_code) >= 2:
+                                for name, cd in _name_map_rev.items():
+                                    if raw_code in name or name in raw_code:
+                                        stock_code = cd
+                                        break
+                                        
+                        if stock_code:
                             try:
                                 d = pd.to_datetime(raw_date, errors='coerce')
                                 if pd.isna(d) and '/' in raw_date:
@@ -2015,63 +2029,19 @@ if st.session_state.history:
                 except Exception as e:
                     print(f"TDCC 下載失敗: {e}")
                 
-                # 解析法說會 Excel（若使用者有上傳）
+                # 載入畫面上已自動預解析的法說會日期
                 conference_stocks = {}
-                if conf_file:
-                    status.text("📅 正在解析法說會日期 Excel...")
-                    try:
-                        conf_file.seek(0)
-                        if conf_file.name.endswith('.csv'):
-                            try:
-                                conf_df = pd.read_csv(conf_file, encoding='utf-8-sig', dtype=str)
-                            except:
-                                conf_file.seek(0)
-                                conf_df = pd.read_csv(conf_file, encoding='cp950', dtype=str)
-                        else:
-                            conf_df = pd.read_excel(conf_file, dtype=str)
-                        
-                        # 自動偵測「股票代號」欄位
-                        code_col = None
-                        for c in conf_df.columns:
-                            if any(k in str(c) for k in ['代號', '股票', '代碼', 'code', 'stock', 'Code']):
-                                code_col = c
-                                break
-                        if not code_col:
-                            code_col = conf_df.columns[0]  # 預設第一欄
-                        
-                        # 自動偵測「日期」欄位
-                        date_col = None
-                        for c in conf_df.columns:
-                            if any(k in str(c) for k in ['日期', '法說', 'date', 'Date', '時間']):
-                                date_col = c
-                                break
-                        if not date_col:
-                            # 找第一個看起來像日期的欄位
-                            for c in conf_df.columns:
-                                if c != code_col:
-                                    date_col = c
-                                    break
-                        
-                        if code_col and date_col:
-                            for _, row in conf_df.iterrows():
-                                raw_code = str(row[code_col]).strip()
-                                code_match = re.search(r'\d{4}', raw_code)
-                                if code_match:
-                                    sid = code_match.group()
-                                    try:
-                                        r_date_str = str(row[date_col]).strip()
-                                        d = pd.to_datetime(r_date_str, errors='coerce')
-                                        if pd.isna(d) and '/' in r_date_str:
-                                            d = pd.to_datetime(f"{datetime.datetime.now().year}/" + r_date_str, errors='coerce')
-                                        if pd.notna(d):
-                                            if d.year == 1900: d = d.replace(year=datetime.datetime.now().year)
-                                            conference_stocks[sid] = d.date()
-                                    except:
-                                        pass
-                            if conference_stocks:
-                                st.toast(f"✅ 成功載入 {len(conference_stocks)} 檔法說會日期！", icon="📅")
-                    except Exception as e:
-                        st.warning(f"⚠️ 法說會 Excel 解析失敗：{e}")
+                conf_map = st.session_state.get('conf_dates_map', {})
+                if conf_map:
+                    for sid, d_str in conf_map.items():
+                        try:
+                            d = pd.to_datetime(d_str, errors='coerce')
+                            if pd.notna(d):
+                                conference_stocks[sid] = d.date()
+                        except:
+                            pass
+                    if conference_stocks:
+                        st.toast(f"✅ 套用 {len(conference_stocks)} 檔法說會日期！", icon="📅")
                 
                 # 解析 CB 股票清單
                 cb_stocks = set()
