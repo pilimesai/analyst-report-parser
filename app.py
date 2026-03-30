@@ -1633,12 +1633,15 @@ if st.session_state.history:
             
             missing_codes = [c for c in conf_map.keys() if c not in history_codes]
             if missing_codes:
-                name_map = {}
-                if _os.path.exists("stock_names.json"):
-                    try:
-                        with open("stock_names.json", 'r', encoding='utf-8') as _f:
-                            name_map = _json.load(_f)
-                    except: pass
+                name_map = st.session_state.get("global_name_map", {})
+                if not name_map:
+                    cache_path = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "stock_names.json")
+                    if _os.path.exists(cache_path):
+                        try:
+                            with open(cache_path, 'r', encoding='utf-8') as _f:
+                                name_map = _json.load(_f)
+                                st.session_state["global_name_map"] = name_map
+                        except: pass
                 
                 missing_data = []
                 for c in missing_codes:
@@ -1739,7 +1742,8 @@ if st.session_state.history:
                     
                     # 一次性下載所有上市櫃公司名稱對照表（帶快取）
                     import json as _json
-                    STOCK_NAMES_CACHE = "stock_names.json"
+                    import os as _os
+                    STOCK_NAMES_CACHE = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "stock_names.json")
                     _name_map = {}
                     
                     # 嘗試從 API 下載
@@ -1771,7 +1775,6 @@ if st.session_state.history:
                             pass
                     else:
                         # API 失敗，嘗試讀取快取
-                        import os as _os
                         if _os.path.exists(STOCK_NAMES_CACHE):
                             try:
                                 with open(STOCK_NAMES_CACHE, 'r', encoding='utf-8') as _f:
@@ -1781,6 +1784,9 @@ if st.session_state.history:
                                 pass
                         if not _name_map:
                             st.warning("⚠️ 無法下載公司名稱對照表，公司名稱可能為空")
+                    
+                    if _name_map:
+                        st.session_state["global_name_map"] = _name_map
                     
                     display_rows = []
                     unparsed_rows = []
