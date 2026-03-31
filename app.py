@@ -1657,6 +1657,19 @@ if st.session_state.history:
         # --- 法說會資料（獨立區塊，不依賴主表格） ---
         st.divider()
         st.subheader("📅 法說會追蹤")
+        import os as _os, json as _json
+        CONF_CACHE_FILE = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "conf_dates.json")
+        
+        if 'conf_dates_map' not in st.session_state:
+            if _os.path.exists(CONF_CACHE_FILE):
+                try:
+                    with open(CONF_CACHE_FILE, 'r', encoding='utf-8') as f:
+                        st.session_state['conf_dates_map'] = _json.load(f)
+                except:
+                    st.session_state['conf_dates_map'] = {}
+            else:
+                st.session_state['conf_dates_map'] = {}
+                
         conf_file = st.file_uploader("上傳法說會日期 Excel（需含『股票代號』與『法說會日期』欄位）", type=['xlsx', 'xls', 'csv'])
 
         if conf_file:
@@ -1920,31 +1933,63 @@ if st.session_state.history:
                         if '✅' in dr['狀態'] or '⏳' in dr['狀態']:  # 只保留未過期的
                             _conf_map[code] = dr['法說會日期']
                     
-                    # 如果是新資料，存入並觸發重新整理讓歷史表格即時顯示
+                    # 如果是新資料，存入並觸發重新整理讓表格顯示
                     old_map = st.session_state.get('conf_dates_map', {})
                     if _conf_map != old_map:
                         st.session_state['conf_dates_map'] = _conf_map
+                        try:
+                            with open(CONF_CACHE_FILE, 'w', encoding='utf-8') as f:
+                                _json.dump(_conf_map, f, ensure_ascii=False)
+                        except: pass
                         st.rerun()
-                    
-                    if display_rows:
-                        conf_display_df = pd.DataFrame(display_rows)
-                        conf_display_df = conf_display_df.sort_values(by="法說會日期")
                         
-                        st.markdown(f"##### 📅 法說會清單（共 {len(display_rows)} 筆）")
-                        
-                        def highlight_conf_row(row):
-                            if '✅' in str(row['狀態']):
-                                return ['background-color: rgba(76, 175, 80, 0.15)'] * len(row)
-                            elif '⏰' in str(row['狀態']):
-                                return ['color: #999'] * len(row)
-                            return [''] * len(row)
-                        
-                        styled_conf = conf_display_df.style.apply(highlight_conf_row, axis=1)
-                        st.dataframe(styled_conf, use_container_width=True, hide_index=True)
-                    
                 conf_file.seek(0)
             except Exception as e:
                 st.warning(f"⚠️ 法說會預覽解析失敗：{e}")
+                
+        # 無論剛剛有沒有上傳，只要 session 裡面有有效法說會資料，就印出表格
+        curr_conf_map = st.session_state.get('conf_dates_map', {})
+        if curr_conf_map:
+            from datetime import datetime as dt
+            today_date = dt.today().date()
+            curr_name_map = st.session_state.get('global_name_map', {})
+            rebuilt_rows = []
+            
+            for code, date_str in curr_conf_map.items():
+                d = pd.to_datetime(date_str, errors='coerce')
+                if pd.notna(d):
+                    delta = (d.date() - today_date).days
+                    if delta < 0: continue # 自動過濾已過期的資料
+                    status_text = "✅ 兩周內" if 0 <= delta <= 14 else ("⏳ 即將到來" if delta > 14 else "⏰ 已結束")
+                    
+                    rebuilt_rows.append({
+                        "股票代號": code,
+                        "公司名稱": curr_name_map.get(code, "未知名稱"),
+                        "法說會日期": d.strftime('%Y/%m/%d'),
+                        "距今天數": f"{delta} 天",
+                        "狀態": status_text
+                    })
+            
+            if rebuilt_rows:
+                st.markdown(f"##### 📅 法說會清單（共 {len(rebuilt_rows)} 筆）")
+                conf_display_df = pd.DataFrame(rebuilt_rows).sort_values(by="法說會日期")
+                
+                def highlight_conf_row(row):
+                    if '✅' in str(row['狀態']): return ['background-color: rgba(76, 175, 80, 0.15)'] * len(row)
+                    elif '⏰' in str(row['狀態']): return ['color: #999'] * len(row)
+                    return [''] * len(row)
+                    
+                st.dataframe(conf_display_df.style.apply(highlight_conf_row, axis=1), hide_index=True, use_container_width=True)
+                
+                # 給予清除快取的選項
+                _, col_clear = st.columns([8, 2])
+                with col_clear:
+                    if st.button("🗑️ 清空歷史法說資料", use_container_width=True):
+                        st.session_state['conf_dates_map'] = {}
+                        if _os.path.exists(CONF_CACHE_FILE):
+                            try: _os.remove(CONF_CACHE_FILE)
+                            except: pass
+                        st.rerun()
 
         # --- 股票搜尋功能 ---
 
