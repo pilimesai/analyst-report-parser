@@ -478,8 +478,63 @@ def save_history(history):
             st.toast(f"💾 已成功寫入實體檔案 (因未設定 Google 金鑰)！", icon="💾")
 
         except Exception as e:
-
             st.error(f"❌ 無法儲存歷史紀錄: {str(e)}")
+
+def load_conf_dates():
+    _conf_cache_path = os.path.join(BASE_DIR, "conf_dates.json")
+    ws = get_worksheet()
+    if ws:
+        try:
+            spreadsheet = ws.spreadsheet
+            ws_conf = spreadsheet.worksheet("法說會")
+            records = ws_conf.get_all_records()
+            if records:
+                conf_map = {str(r.get("代號", "")).strip(): str(r.get("日期", "")) for r in records if r.get("代號")}
+                st.toast(f"☁️ 成功從 Google Sheets (法說會) 載入 {len(conf_map)} 筆紀錄！", icon="📅")
+                return conf_map
+        except Exception as e:
+            if "WorksheetNotFound" not in str(type(e).__name__):
+                st.warning(f"⚠️ 從 Google Sheets 讀取法說會資料失敗: {e}")
+
+    # Fallback to local
+    if os.path.exists(_conf_cache_path):
+        try:
+            with open(_conf_cache_path, 'r', encoding='utf-8') as _f:
+                conf_map = json.load(_f)
+                st.toast(f"✅ 成功從本地檔案載入 {len(conf_map)} 筆法說會紀錄！", icon="📅")
+                return conf_map
+        except Exception as e:
+            st.error(f"❌ 載入本地法說會紀錄失敗: {e}")
+    return {}
+
+def save_conf_dates(conf_map):
+    _conf_cache_path = os.path.join(BASE_DIR, "conf_dates.json")
+    ws = get_worksheet()
+    if ws:
+        try:
+            spreadsheet = ws.spreadsheet
+            try:
+                ws_conf = spreadsheet.worksheet("法說會")
+            except:
+                ws_conf = spreadsheet.add_worksheet(title="法說會", rows="1000", cols="5")
+                st.toast("🆕 已建立新的 Google Sheet 分頁：法說會", icon="✨")
+            
+            data = [["代號", "日期"]] + [[k, v] for k, v in conf_map.items()]
+            ws_conf.clear()
+            try:
+                ws_conf.update(values=data, range_name="A1")
+            except TypeError:
+                ws_conf.update(data, "A1")
+            st.toast(f"☁️ 已成功將 {len(conf_map)} 筆法說會紀錄同步至 Google Sheets！", icon="💾")
+        except Exception as e:
+            st.error(f"❌ 寫入 Google Sheets (法說會) 失敗: {str(e)}")
+            
+    # Fallback/also save to local
+    try:
+        with open(_conf_cache_path, "w", encoding="utf-8") as f:
+            json.dump(conf_map, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        st.error(f"❌ 無法儲存法說會紀錄至本地: {str(e)}")
 
 # Initialize session history
 
@@ -1301,7 +1356,7 @@ if st.session_state.history:
 
     # 預先解析法說會 Excel（若已上傳），供歷史表格使用
     if 'conf_dates_map' not in st.session_state:
-        st.session_state['conf_dates_map'] = {}
+        st.session_state['conf_dates_map'] = load_conf_dates()
 
     if 'global_name_map' not in st.session_state:
         import os as _os, json as _json
@@ -1668,18 +1723,9 @@ if st.session_state.history:
         # --- 法說會資料（獨立區塊，不依賴主表格） ---
         st.divider()
         st.subheader("📅 法說會追蹤")
-        import os as _os, json as _json
-        CONF_CACHE_FILE = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "conf_dates.json")
         
         if 'conf_dates_map' not in st.session_state:
-            if _os.path.exists(CONF_CACHE_FILE):
-                try:
-                    with open(CONF_CACHE_FILE, 'r', encoding='utf-8') as f:
-                        st.session_state['conf_dates_map'] = _json.load(f)
-                except:
-                    st.session_state['conf_dates_map'] = {}
-            else:
-                st.session_state['conf_dates_map'] = {}
+            st.session_state['conf_dates_map'] = load_conf_dates()
                 
         conf_file = st.file_uploader("上傳法說會日期 Excel（需含『股票代號』與『法說會日期』欄位）", type=['xlsx', 'xls', 'csv'])
 
@@ -1948,10 +1994,7 @@ if st.session_state.history:
                     old_map = st.session_state.get('conf_dates_map', {})
                     if _conf_map != old_map:
                         st.session_state['conf_dates_map'] = _conf_map
-                        try:
-                            with open(CONF_CACHE_FILE, 'w', encoding='utf-8') as f:
-                                _json.dump(_conf_map, f, ensure_ascii=False)
-                        except: pass
+                        save_conf_dates(_conf_map)
                         st.rerun()
                         
                 conf_file.seek(0)
@@ -1997,9 +2040,7 @@ if st.session_state.history:
                 with col_clear:
                     if st.button("🗑️ 清空歷史法說資料", use_container_width=True):
                         st.session_state['conf_dates_map'] = {}
-                        if _os.path.exists(CONF_CACHE_FILE):
-                            try: _os.remove(CONF_CACHE_FILE)
-                            except: pass
+                        save_conf_dates({})
                         st.rerun()
 
         # --- 股票搜尋功能 ---
