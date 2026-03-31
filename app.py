@@ -1303,6 +1303,17 @@ if st.session_state.history:
     if 'conf_dates_map' not in st.session_state:
         st.session_state['conf_dates_map'] = {}
 
+    if 'global_name_map' not in st.session_state:
+        import os as _os, json as _json
+        _cache_path = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "stock_names.json")
+        _name_map = {}
+        if _os.path.exists(_cache_path):
+            try:
+                with open(_cache_path, 'r', encoding='utf-8') as _f:
+                    _name_map = _json.load(_f)
+            except: pass
+        st.session_state['global_name_map'] = _name_map
+
     # 進行整合邏輯
 
     consolidated = []
