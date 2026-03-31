@@ -1367,6 +1367,33 @@ if st.session_state.history:
                 with open(_cache_path, 'r', encoding='utf-8') as _f:
                     _name_map = _json.load(_f)
             except: pass
+        
+        # 如果本地檔案不見了或是空的（例如部署到 Streamlit Cloud 重啟後），則主動重新下載
+        if not _name_map:
+            try:
+                _r1 = requests.get("https://openapi.twse.com.tw/v1/opendata/t187ap03_L", timeout=10, verify=False)
+                if _r1.status_code == 200:
+                    for d in _r1.json():
+                        _name_map[str(d.get('公司代號', '')).strip()] = str(d.get('公司簡稱', '')).strip()
+            except: pass
+            
+            try:
+                _r2 = requests.get("https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap03_O", timeout=10, verify=False)
+                if _r2.status_code == 200:
+                    for d in _r2.json():
+                        code = str(d.get('SecuritiesCompanyCode', '')).strip()
+                        name = str(d.get('CompanyAbbreviation', '')).strip()
+                        if code and name:
+                            _name_map[code] = name
+            except: pass
+            
+            # 若下載成功，嘗試寫入快取
+            if _name_map:
+                try:
+                    with open(_cache_path, 'w', encoding='utf-8') as _f:
+                        _json.dump(_name_map, _f, ensure_ascii=False)
+                except: pass
+
         st.session_state['global_name_map'] = _name_map
 
     # 進行整合邏輯
@@ -1814,7 +1841,7 @@ if st.session_state.history:
                     import json as _json
                     import os as _os
                     STOCK_NAMES_CACHE = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "stock_names.json")
-                    _name_map = {}
+                    _name_map = st.session_state.get("global_name_map", {}).copy()
                     
                     # 嘗試從 API 下載
                     try:
@@ -1961,13 +1988,28 @@ if st.session_state.history:
                         if d_parsed.year == 1900: d_parsed = d_parsed.replace(year=today.year)
                         delta = (d_parsed.date() - today).days
                         
-                        company = _name_map.get(stock_code, "")
+                        company = ""
+                        # 優先從偵測到的公司名稱欄位取值
+                        if name_col and name_col in row_dict:
+                            cell_val = str(row_dict[name_col]).strip()
+                            if cell_val and cell_val.lower() != 'nan':
+                                company = cell_val
+                        
+                        if not company:
+                            company = _name_map.get(stock_code, "")
+                            
                         # 嘗試從原代號中提取名稱
-                        name_part = _re.sub(r'[\d\s\.]+', '', raw_code_used).strip()
-                        if name_part and _re.search(r'[\u4e00-\u9fff]', name_part) and not company:
-                            company = name_part
+                        if not company:
+                            name_part = _re.sub(r'[\d\s\.]+', '', raw_code_used).strip()
+                            if name_part and _re.search(r'[\u4e00-\u9fff]', name_part):
+                                company = name_part
+                                
                         if not company:
                             company = "未知"
+                            
+                        # 若有找到有效的名稱，則即時更新至字典中，以便後續與系統共用
+                        if company != "未知" and stock_code:
+                            _name_map[stock_code] = company
                             
                         status_text = "✅ 兩周內" if 0 <= delta <= 14 else ("⏳ 即將到來" if delta > 14 else "⏰ 已結束")
                         display_rows.append({
@@ -1985,6 +2027,14 @@ if st.session_state.history:
 
                     # 將法說會日期存入 session_state 供歷史表格使用
                     _conf_map = {}
+                    
+                    # 檔案解析完畢，更新全局公司名稱快取與實體檔案
+                    st.session_state["global_name_map"] = _name_map
+                    try:
+                        with open(STOCK_NAMES_CACHE, 'w', encoding='utf-8') as _f:
+                            _json.dump(_name_map, _f, ensure_ascii=False)
+                    except: pass
+                    
                     for dr in display_rows:
                         code = str(dr['股票代號']).strip()
                         if '✅' in dr['狀態'] or '⏳' in dr['狀態']:  # 只保留未過期的
