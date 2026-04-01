@@ -1452,8 +1452,9 @@ if st.session_state.history:
         # 依照分數由大到小排序股票
         sorted_stocks = sorted(group_scores.keys(), key=lambda x: group_scores[x], reverse=True)
         
-        # --- [擴充] 比對法說會清單，找出「尚無分析報告」的個股並併入列表 ---
+        # --- [擴充] 比對法說會清單，找出「尚無分析報告」的個股並併入列表 (僅限未來或今日法說會) ---
         conf_map = st.session_state.get('conf_dates_map', {})
+        today = datetime.datetime.now().date()
         history_codes = set()
         for s in df_raw['stock'].dropna():
             m = re.search(r'\d{4}', str(s))
@@ -1461,8 +1462,14 @@ if st.session_state.history:
             
         missing_from_history = []
         name_map = st.session_state.get("global_name_map", {})
-        for code, cdate in conf_map.items():
+        for code, date_str in conf_map.items():
             if code not in history_codes:
+                # 檢查日期，若已過期則不列入「尚無報告」清單
+                try:
+                    cdate = pd.to_datetime(date_str).date()
+                    if cdate < today: continue
+                except: pass
+                
                 full_name = f"{code} {name_map.get(code, '')}".strip()
                 if full_name:
                     missing_from_history.append(full_name)
@@ -1472,6 +1479,7 @@ if st.session_state.history:
 
         # 將缺失個股排在既有報告之後
         sorted_stocks = sorted_stocks + missing_from_history
+
 
 
         # 從 session_state 取法說會日期對照表
@@ -1493,8 +1501,29 @@ if st.session_state.history:
             if not str(stock).strip():
                 continue
                 
+            # --- [新增過濾] 若法說會已過，且沒有任何券商觀點 (Summary 為空)，則予以移除/不顯示 ---
+            conf_date_str = _get_conf_date(stock)
+            has_no_summary = True
+            placeholder_vals = ["N/A", "NAN", "NONE", "無", "未知", "UNKNOWN", ""]
+            
+            # 檢查該股是否真的完全沒有任何一筆有效的總結
+            if not group.empty:
+                for _, r in group.iterrows():
+                    sum_val = str(r.get('summary', '')).strip().upper()
+                    if sum_val not in placeholder_vals:
+                        has_no_summary = False
+                        break
+            
+            if conf_date_str:
+                try:
+                    cdate_obj = pd.to_datetime(conf_date_str).date()
+                    if cdate_obj < today and has_no_summary:
+                        continue # 符合已過時且無觀點，跳過此股票
+                except: pass
+
             # --- [處理] 如果這檔股票完全沒有歷史報告資料 (來自法說會清單的缺失股) ---
             if group.empty:
+
                 stock_code_match = re.search(r'\d{4}', str(stock))
                 stock_code = stock_code_match.group() if stock_code_match else None
                 close_price = get_latest_close_price(stock_code) if stock_code else "N/A"
