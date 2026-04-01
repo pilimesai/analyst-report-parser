@@ -616,6 +616,8 @@ def parse_report_with_gemini(text, api_key, source_name="未知來源"):
     5. 目標價 (Target Price, TP)，請只輸出數字或貨幣字串，例如 1200 或 $1200。如果沒有給，請填 "N/A"。
 
     6. 重點分析內容 (Summary)，請用繁體中文，將這篇報告中最核心的看多/看空理由濃縮在 50-100 字以內。
+       👉 重要：若報告中缺乏核心分析或理由，請直接回傳空字串 ""，嚴禁回傳「此報告僅提供數據」等解釋性文字。
+
 
     7. 報告發布日期 (Date)。格式強制轉換為 YYYY-MM-DD。
 
@@ -1510,9 +1512,12 @@ if st.session_state.history:
             if not group.empty:
                 for _, r in group.iterrows():
                     sum_val = str(r.get('summary', '')).strip().upper()
-                    if sum_val not in placeholder_vals:
+                    # 偵測是否為佔位符或自定義的「無內容」說明文字
+                    is_placeholder = sum_val in placeholder_vals or any(p in sum_val for p in ["此報告僅提供", "未包含具體", "未提供分析"])
+                    if not is_placeholder:
                         has_no_summary = False
                         break
+
             
             if conf_date_str:
                 try:
@@ -1650,7 +1655,8 @@ if st.session_state.history:
 
                         "券商預估EPS": row.get('eps', 'N/A'),
 
-                        "重點分析": row.get('summary', '') if str(row.get('summary', '')).strip().upper() not in ["N/A", "NAN", "NONE", "無", "未知", "UNKNOWN", ""] else "",
+                        "重點分析": row.get('summary', '') if str(row.get('summary', '')).strip().upper() not in ["N/A", "NAN", "NONE", "無", "未知", "UNKNOWN", ""] and not any(p in str(row.get('summary', '')) for p in ["此報告僅提供", "未包含具體", "未提供分析"]) else "",
+
 
                         "平均目標價": round(avg_tp, 2) if avg_tp else "N/A",
 
@@ -1684,7 +1690,8 @@ if st.session_state.history:
 
                         "券商預估EPS": row.get('eps', 'N/A'),
 
-                        "重點分析": row.get('summary', '') if str(row.get('summary', '')).strip().upper() not in ["N/A", "NAN", "NONE", "無", "未知", "UNKNOWN", ""] else "",
+                        "重點分析": row.get('summary', '') if str(row.get('summary', '')).strip().upper() not in ["N/A", "NAN", "NONE", "無", "未知", "UNKNOWN", ""] and not any(p in str(row.get('summary', '')) for p in ["此報告僅提供", "未包含具體", "未提供分析"]) else "",
+
 
                         "平均目標價": "",
 
