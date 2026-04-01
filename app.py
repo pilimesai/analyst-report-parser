@@ -1450,8 +1450,29 @@ if st.session_state.history:
             
 
         # 依照分數由大到小排序股票
-
         sorted_stocks = sorted(group_scores.keys(), key=lambda x: group_scores[x], reverse=True)
+        
+        # --- [擴充] 比對法說會清單，找出「尚無分析報告」的個股並併入列表 ---
+        conf_map = st.session_state.get('conf_dates_map', {})
+        history_codes = set()
+        for s in df_raw['stock'].dropna():
+            m = re.search(r'\d{4}', str(s))
+            if m: history_codes.add(m.group())
+            
+        missing_from_history = []
+        name_map = st.session_state.get("global_name_map", {})
+        for code, cdate in conf_map.items():
+            if code not in history_codes:
+                full_name = f"{code} {name_map.get(code, '')}".strip()
+                if full_name:
+                    missing_from_history.append(full_name)
+                    # 補齊這些缺失股票的預設分數與條件(空)
+                    group_scores[full_name] = -1 
+                    group_criteria[full_name] = set()
+
+        # 將缺失個股排在既有報告之後
+        sorted_stocks = sorted_stocks + missing_from_history
+
 
         # 從 session_state 取法說會日期對照表
         def _get_conf_date(stock_str):
@@ -1468,12 +1489,33 @@ if st.session_state.history:
         # 2. 將同股票的資料 Group 起來並依序加入 consolidated
 
         for stock in sorted_stocks:
-
             group = df_raw[df_raw['stock'] == stock]
-
             if not str(stock).strip():
-
                 continue
+                
+            # --- [處理] 如果這檔股票完全沒有歷史報告資料 (來自法說會清單的缺失股) ---
+            if group.empty:
+                stock_code_match = re.search(r'\d{4}', str(stock))
+                stock_code = stock_code_match.group() if stock_code_match else None
+                close_price = get_latest_close_price(stock_code) if stock_code else "N/A"
+                
+                consolidated.append({
+                    "股票名稱/代號": stock,
+                    "最新收盤價": close_price,
+                    "法說會日期": _get_conf_date(stock),
+                    "發布日期": "尚無報告",
+                    "券商名稱": "-",
+                    "券商評等": "無",
+                    "券商目標價": "N/A",
+                    "券商預估EPS": "N/A",
+                    "重點分析": "", # 依照使用者需求保持空白
+                    "平均目標價": "N/A",
+                    "平均預估EPS": "N/A",
+                    "綜合本益比(PE)": "N/A",
+                    "低於20倍PE?": "N/A"
+                })
+                continue
+
 
                 
 
@@ -1703,40 +1745,21 @@ if st.session_state.history:
 
         
 
-        # --- 獨立整理：尚無報告的法說會個股 ---
-        st.markdown("##### 💡 已排定法說會但『尚無分析報告』之個股")
+        # --- 獨立整理：尚無報告的法說會個股 (已整合於上方主表格，此處由主表格呈現) ---
         conf_map = st.session_state.get('conf_dates_map', {})
         if not conf_map:
             st.info("📅 目前無即將到來的法說會紀錄（上傳的資料可能為空或皆已過期）。")
         else:
-            import re as _re, json as _json, os as _os
+            # 由於已將資料併入上方主表格，此處僅簡單顯示成功訊息或對齊資訊
+            import re as _re
             history_codes = set()
             for s in df_raw['stock'].dropna():
                 m = _re.search(r'\d{4}', str(s))
                 if m: history_codes.add(m.group())
-            
             missing_codes = [c for c in conf_map.keys() if c not in history_codes]
-            if missing_codes:
-                name_map = st.session_state.get("global_name_map", {})
-                if not name_map:
-                    cache_path = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "stock_names.json")
-                    if _os.path.exists(cache_path):
-                        try:
-                            with open(cache_path, 'r', encoding='utf-8') as _f:
-                                name_map = _json.load(_f)
-                                st.session_state["global_name_map"] = name_map
-                        except: pass
-                
-                missing_data = []
-                for c in missing_codes:
-                    missing_data.append({
-                        "股票代號": c,
-                        "股票名稱": name_map.get(c, "未知名稱"),
-                        "預定法說會日期": conf_map[c]
-                    })
-                st.dataframe(pd.DataFrame(missing_data).sort_values("預定法說會日期"), use_container_width=True, hide_index=True)
-            else:
+            if not missing_codes:
                 st.success("🎉 太棒了！目前所有已排定的法說會個股，都已經有對應的券商報告！")
+
 
         # --- 法說會資料（獨立區塊，不依賴主表格） ---
         st.divider()
