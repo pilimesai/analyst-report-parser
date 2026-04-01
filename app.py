@@ -152,36 +152,27 @@ def evaluate_stock_quant(stock_id, tdcc_df=None, tdcc_prev_df=None, conference_s
     except Exception as e:
         print(f"營收計算錯誤 {stock_id}: {e}")
 
-    # 4. 大戶持股比例成長 (神秘金字塔 - 集保庫存分級歷史)
+    # 4. 大戶持股比例成長 (TDCC 集保庫存分級)
     try:
-        from bs4 import BeautifulSoup as _BS
-        _pyramid_url = f"https://norway.twsthr.info/StockHolders.aspx?stock={stock_id}"
-        _pyramid_headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
-        _pr = requests.get(_pyramid_url, headers=_pyramid_headers, timeout=10, verify=False)
-        _pr.encoding = 'utf-8'
-        _soup = _BS(_pr.text, 'html.parser')
-        
-        # 找含有 400 張以上 的摘要表格
-        for _tbl in _soup.find_all('table'):
-            _rows = _tbl.find_all('tr')
-            for _row in _rows:
-                cells = [c.get_text(strip=True) for c in _row.find_all(['td', 'th'])]
-                if any('400' in c and '以上' in c for c in cells):
-                    # 表格格式: ['', '* 400 張以上', 人數, 張數, 百分比%, '', 人數, 張數, 百分比%, '', ...]
-                    # 百分比在 index 4 (本週) 和 index 8 (上週)
-                    try:
-                        curr_pct = float(cells[4].replace(',', ''))
-                        prev_pct = float(cells[8].replace(',', ''))
+        if tdcc_df is not None and not tdcc_df.empty:
+            df_filtered = tdcc_df[tdcc_df['證券代號'].astype(str) == stock_id]
+            if not df_filtered.empty:
+                levels = pd.to_numeric(df_filtered['持股分級'], errors='coerce')
+                curr_data = df_filtered[levels >= 12]
+                curr_pct = pd.to_numeric(curr_data['占集保庫存數比例%'], errors='coerce').sum()
+                
+                # 只有當我們有上週資料且當下百分大於0時才做比較
+                if curr_pct > 0 and tdcc_prev_df is not None and not tdcc_prev_df.empty:
+                    prev_filtered = tdcc_prev_df[tdcc_prev_df['證券代號'].astype(str) == stock_id]
+                    if not prev_filtered.empty:
+                        p_levels = pd.to_numeric(prev_filtered['持股分級'], errors='coerce')
+                        prev_data = prev_filtered[p_levels >= 12]
+                        prev_pct = pd.to_numeric(prev_data['占集保庫存數比例%'], errors='coerce').sum()
+                        
                         if curr_pct > prev_pct and (curr_pct - prev_pct) >= 0.1:
                             matched.append(f"大戶持股增加({prev_pct:.1f}%→{curr_pct:.1f}%)")
-                    except (IndexError, ValueError):
-                        pass
-                    break
-            else:
-                continue
-            break
     except Exception as e:
-        print(f"神秘金字塔大戶計算錯誤 {stock_id}: {e}")
+        print(f"TDCC持股計算錯誤 {stock_id}: {e}")
 
     # 5. 法說會 (使用者上傳的 Excel 比對)
     try:
@@ -1588,7 +1579,7 @@ if st.session_state.history:
 
                         "券商預估EPS": row.get('eps', 'N/A'),
 
-                        "重點分析": row.get('summary', ''),
+                        "重點分析": row.get('summary', '') if str(row.get('summary', '')).strip().upper() not in ["N/A", "NAN", "NONE", "無", "未知", "UNKNOWN", ""] else "",
 
                         "平均目標價": round(avg_tp, 2) if avg_tp else "N/A",
 
@@ -1622,7 +1613,7 @@ if st.session_state.history:
 
                         "券商預估EPS": row.get('eps', 'N/A'),
 
-                        "重點分析": row.get('summary', ''),
+                        "重點分析": row.get('summary', '') if str(row.get('summary', '')).strip().upper() not in ["N/A", "NAN", "NONE", "無", "未知", "UNKNOWN", ""] else "",
 
                         "平均目標價": "",
 
