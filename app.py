@@ -1513,10 +1513,11 @@ if st.session_state.history:
                 for _, r in group.iterrows():
                     sum_val = str(r.get('summary', '')).strip().upper()
                     # 偵測是否為佔位符或自定義的「無內容」說明文字
-                    is_placeholder = sum_val in placeholder_vals or any(p in sum_val for p in ["此報告僅提供", "未包含具體", "未提供分析"])
+                    is_placeholder = sum_val in placeholder_vals or any(p in sum_val for p in ["此報告僅提供", "未包含具體", "未提供分析", "無法從中提取", "無法生成", "表格資料"])
                     if not is_placeholder:
                         has_no_summary = False
                         break
+
 
             
             if conf_date_str:
@@ -1655,7 +1656,8 @@ if st.session_state.history:
 
                         "券商預估EPS": row.get('eps', 'N/A'),
 
-                        "重點分析": row.get('summary', '') if str(row.get('summary', '')).strip().upper() not in ["N/A", "NAN", "NONE", "無", "未知", "UNKNOWN", ""] and not any(p in str(row.get('summary', '')) for p in ["此報告僅提供", "未包含具體", "未提供分析"]) else "",
+                        "重點分析": row.get('summary', '') if str(row.get('summary', '')).strip().upper() not in ["N/A", "NAN", "NONE", "無", "未知", "UNKNOWN", ""] and not any(p in str(row.get('summary', '')) for p in ["此報告僅提供", "未包含具體", "未提供分析", "無法從中提取", "無法生成", "表格資料"]) else "",
+
 
 
                         "平均目標價": round(avg_tp, 2) if avg_tp else "N/A",
@@ -1690,7 +1692,8 @@ if st.session_state.history:
 
                         "券商預估EPS": row.get('eps', 'N/A'),
 
-                        "重點分析": row.get('summary', '') if str(row.get('summary', '')).strip().upper() not in ["N/A", "NAN", "NONE", "無", "未知", "UNKNOWN", ""] and not any(p in str(row.get('summary', '')) for p in ["此報告僅提供", "未包含具體", "未提供分析"]) else "",
+                        "重點分析": row.get('summary', '') if str(row.get('summary', '')).strip().upper() not in ["N/A", "NAN", "NONE", "無", "未知", "UNKNOWN", ""] and not any(p in str(row.get('summary', '')) for p in ["此報告僅提供", "未包含具體", "未提供分析", "無法從中提取", "無法生成", "表格資料"]) else "",
+
 
 
                         "平均目標價": "",
