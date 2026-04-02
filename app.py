@@ -1271,7 +1271,7 @@ if st.session_state.history:
 
         # 建立標準化欄位以供分組去重複
 
-        df_raw['norm_stock'] = df_raw['stock'].astype(str).str.replace(r'[0-9\W_]', '', regex=True).str.upper()
+        df_raw['norm_stock'] = df_raw['stock'].astype(str).str.extract(r'(\d{4})')[0].fillna(df_raw['stock'].astype(str).str.replace(r'[\W_]', '', regex=True).str.upper())
 
         df_raw['norm_broker'] = df_raw['brokerage'].astype(str).str.replace(r'[\W_]', '', regex=True).str.upper()
 
@@ -1397,102 +1397,88 @@ if st.session_state.history:
 
     if 'stock' in df_raw.columns:
 
-        # 1. 預先計算每檔股票的積分，以供排序 (最高分排前面)
-
-        def parse_criteria_global(mc):
-
-            if isinstance(mc, list): return mc
-
-            if isinstance(mc, str):
-
-                try:
-
-                    parsed = ast.literal_eval(mc)
-
-                    if isinstance(parsed, list): return parsed
-
-                except:
-
-                    if mc and mc not in ["N/A", "NaN", "無"]:
-
-                        return [x.strip() for x in mc.split(',')]
-
-            return []
-
-            
-
-        group_scores = {}
-
-        group_criteria = {}
-
+        # 0. 整理全域股票名稱對照 (確保名稱一致性)
+        name_map = st.session_state.get("global_name_map", {})
         
+        def _get_standard_stock_name(s):
+            s_str = str(s).strip()
+            # 提取 4 位股票代碼
+            m = re.search(r'(\d{4})', s_str)
+            if m:
+                code = m.group()
+                # 優先用官方名稱，若無則提取原字串中的名稱部分
+                official_name = name_map.get(code, "").strip()
+                if not official_name:
+                    # 嘗試從原字串提取中文/英文名稱（去除數字與符號）
+                    official_name = re.sub(r'[\d\W_]', '', s_str).strip()
+                return f"{code} {official_name}".strip()
+            return s_str
+
+        # 1. 正規化所有歷史紀錄中的股票名稱
+        if not df_raw.empty:
+            df_raw['stock'] = df_raw['stock'].apply(_get_standard_stock_name)
+
+        # 2. 預先計算每檔股票的積分與條件，以供排序
+        def parse_criteria_global(mc):
+            if isinstance(mc, list): return mc
+            if isinstance(mc, str):
+                try:
+                    parsed = ast.literal_eval(mc)
+                    if isinstance(parsed, list): return parsed
+                except:
+                    if mc and mc not in ["N/A", "NaN", "無"]:
+                        return [x.strip() for x in mc.split(',')]
+            return []
+            
+        group_scores = {}
+        group_criteria = {}
+        history_stock_set = set() # 記錄所有已有報告的股號
 
         for stock, group in df_raw.groupby('stock', dropna=False):
-
-            if not str(stock).strip():
-
-                group_scores[stock] = -1
-
-                group_criteria[stock] = set()
-
+            stock_clean = str(stock).strip()
+            if not stock_clean:
                 continue
-
-            all_c = set()
-
-            if 'matched_criteria' in group.columns:
-
-                for mc in group['matched_criteria']:
-
-                    all_c.update(parse_criteria_global(mc))
-
-            group_scores[stock] = len(all_c)
-
-            group_criteria[stock] = all_c
-
             
+            all_c = set()
+            if 'matched_criteria' in group.columns:
+                for mc in group['matched_criteria']:
+                    all_c.update(parse_criteria_global(mc))
+            
+            group_scores[stock_clean] = len(all_c)
+            group_criteria[stock_clean] = all_c
+            
+            # 紀錄股號
+            m = re.search(r'(\d{4})', stock_clean)
+            if m: history_stock_set.add(m.group())
 
-        # 依照分數由大到小排序股票
+        # 3. 排序已有報告的股票
         sorted_stocks = sorted(group_scores.keys(), key=lambda x: group_scores[x], reverse=True)
         
-        # --- [擴充] 比對法說會清單，找出「尚無分析報告」的個股並併入列表 (僅限未來或今日法說會) ---
+        # 4. 併入「法說會尚無報告」的個股
         conf_map = st.session_state.get('conf_dates_map', {})
         today = datetime.datetime.now().date()
-        history_codes = set()
-        for s in df_raw['stock'].dropna():
-            m = re.search(r'\d{4}', str(s))
-            if m: history_codes.add(m.group())
             
-        missing_from_history = []
-        name_map = st.session_state.get("global_name_map", {})
         for code, date_str in conf_map.items():
-            if code not in history_codes:
-                # 檢查日期，若已過期則不列入「尚無報告」清單
+            # 字串比對股號，避免重複
+            if str(code).strip() not in history_stock_set:
+                # 檢查日期，若已過期則不列入
                 try:
                     cdate = pd.to_datetime(date_str).date()
                     if cdate < today: continue
                 except: pass
                 
-                full_name = f"{code} {name_map.get(code, '')}".strip()
-                if full_name:
-                    missing_from_history.append(full_name)
-                    # 補齊這些缺失股票的預設分數與條件(空)
+                # 使用相同的標準化邏輯建立區塊
+                full_name = _get_standard_stock_name(code)
+                if full_name and full_name not in group_scores:
+                    sorted_stocks.append(full_name)
                     group_scores[full_name] = -1 
                     group_criteria[full_name] = set()
 
-        # 將缺失個股排在既有報告之後
-        sorted_stocks = sorted_stocks + missing_from_history
-
-
-
-        # 從 session_state 取法說會日期對照表
+        # [定義] 取得法說會日期
         def _get_conf_date(stock_str):
             conf_map = st.session_state.get('conf_dates_map', {})
-            if not conf_map:
-                return ""
-            m = re.search(r'\d{4}', str(stock_str))
-            if m:
-                return conf_map.get(m.group(), "")
-            return ""
+            m = re.search(r'(\d{4})', str(stock_str))
+            return conf_map.get(m.group(), "") if m else ""
 
         
 
