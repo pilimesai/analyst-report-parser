@@ -527,6 +527,119 @@ def save_conf_dates(conf_map):
     except Exception as e:
         st.error(f"❌ 無法儲存法說會紀錄至本地: {str(e)}")
 
+def load_revenue_stocks():
+    _rev_cache_path = os.path.join(BASE_DIR, "revenue_stocks.json")
+    ws = get_worksheet()
+    if ws:
+        try:
+            spreadsheet = ws.spreadsheet
+            ws_rev = spreadsheet.worksheet("營收條件")
+            records = ws_rev.get_all_records()
+            if records:
+                rev_list = [str(r.get("代號", "")).strip() for r in records if r.get("代號")]
+                st.toast(f"☁️ 成功從 Google Sheets (營收條件) 載入 {len(rev_list)} 筆紀錄！", icon="💰")
+                return rev_list
+        except Exception as e:
+            if "WorksheetNotFound" not in str(type(e).__name__):
+                st.warning(f"⚠️ 從 Google Sheets 讀取營收條件資料失敗: {e}")
+
+    # Fallback to local
+    if os.path.exists(_rev_cache_path):
+        try:
+            with open(_rev_cache_path, 'r', encoding='utf-8') as _f:
+                rev_list = json.load(_f)
+                st.toast(f"✅ 成功從本地檔案載入 {len(rev_list)} 筆營收紀錄！", icon="💰")
+                return rev_list
+        except Exception as e:
+            st.error(f"❌ 載入本地營收紀錄失敗: {e}")
+    return []
+
+def save_revenue_stocks(rev_list):
+    _rev_cache_path = os.path.join(BASE_DIR, "revenue_stocks.json")
+    ws = get_worksheet()
+    if ws:
+        try:
+            spreadsheet = ws.spreadsheet
+            try:
+                ws_rev = spreadsheet.worksheet("營收條件")
+            except:
+                ws_rev = spreadsheet.add_worksheet(title="營收條件", rows="1000", cols="2")
+                st.toast("🆕 已建立新的 Google Sheet 分頁：營收條件", icon="✨")
+            
+            data = [["代號"]] + [[k] for k in rev_list]
+            ws_rev.clear()
+            try:
+                ws_rev.update(values=data, range_name="A1")
+            except TypeError:
+                ws_rev.update(data, "A1")
+            st.toast(f"☁️ 已成功將 {len(rev_list)} 筆營收紀錄同步至 Google Sheets！", icon="💾")
+        except Exception as e:
+            st.error(f"❌ 寫入 Google Sheets (營收條件) 失敗: {str(e)}")
+            
+    # Fallback/also save to local
+    try:
+        with open(_rev_cache_path, "w", encoding="utf-8") as f:
+            json.dump(rev_list, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        st.error(f"❌ 無法儲存營收紀錄至本地: {str(e)}")
+
+def load_contract_liability_stocks():
+    _cl_cache_path = os.path.join(BASE_DIR, "contract_liability_stocks.json")
+    ws = get_worksheet()
+    if ws:
+        try:
+            spreadsheet = ws.spreadsheet
+            ws_cl = spreadsheet.worksheet("合約負債條件")
+            records = ws_cl.get_all_records()
+            if records:
+                cl_list = [str(r.get("代號", "")).strip() for r in records if r.get("代號")]
+                st.toast(f"☁️ 成功從 Google Sheets (合約負債條件) 載入 {len(cl_list)} 筆紀錄！", icon="📋")
+                return cl_list
+        except Exception as e:
+            if "WorksheetNotFound" not in str(type(e).__name__):
+                st.warning(f"⚠️ 從 Google Sheets 讀取合約負債條件資料失敗: {e}")
+
+    # Fallback to local
+    if os.path.exists(_cl_cache_path):
+        try:
+            with open(_cl_cache_path, 'r', encoding='utf-8') as _f:
+                cl_list = json.load(_f)
+                st.toast(f"✅ 成功從本地檔案載入 {len(cl_list)} 筆合約負債紀錄！", icon="📋")
+                return cl_list
+        except Exception as e:
+            st.error(f"❌ 載入本地合約負債紀錄失敗: {e}")
+    return []
+
+def save_contract_liability_stocks(cl_list):
+    _cl_cache_path = os.path.join(BASE_DIR, "contract_liability_stocks.json")
+    ws = get_worksheet()
+    if ws:
+        try:
+            spreadsheet = ws.spreadsheet
+            try:
+                ws_cl = spreadsheet.worksheet("合約負債條件")
+            except:
+                ws_cl = spreadsheet.add_worksheet(title="合約負債條件", rows="1000", cols="2")
+                st.toast("🆕 已建立新的 Google Sheet 分頁：合約負債條件", icon="✨")
+            
+            data = [["代號"]] + [[k] for k in cl_list]
+            ws_cl.clear()
+            try:
+                ws_cl.update(values=data, range_name="A1")
+            except TypeError:
+                ws_cl.update(data, "A1")
+            st.toast(f"☁️ 已成功將 {len(cl_list)} 筆合約負債紀錄同步至 Google Sheets！", icon="💾")
+        except Exception as e:
+            st.error(f"❌ 寫入 Google Sheets (合約負債條件) 失敗: {str(e)}")
+            
+    # Fallback/also save to local
+    try:
+        with open(_cl_cache_path, "w", encoding="utf-8") as f:
+            json.dump(cl_list, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        st.error(f"❌ 無法儲存合約負債紀錄至本地: {str(e)}")
+
+
 # Initialize session history
 
 if 'history' not in st.session_state:
@@ -1462,6 +1575,17 @@ if st.session_state.history:
                 except:
                     pass
             
+            # 計算營收條件加分 (來自手動上傳清單)
+            rev_list = st.session_state.get('revenue_stocks', [])
+            m_code = re.search(r'(\d{4})', stock_clean)
+            if m_code and m_code.group() in rev_list:
+                all_c.add("近月營收月增且年增")
+            
+            # 計算合約負債條件加分 (來自手動上傳清單)
+            cl_list = st.session_state.get('contract_liability_stocks', [])
+            if m_code and m_code.group() in cl_list:
+                all_c.add("合約負債季增50%且創四季新高")
+            
             group_scores[stock_clean] = len(all_c)
             group_criteria[stock_clean] = all_c
             
@@ -1489,6 +1613,26 @@ if st.session_state.history:
                 if full_name and full_name not in group_scores:
                     sorted_stocks.append(full_name)
                     group_scores[full_name] = -1 
+                    group_criteria[full_name] = set()
+
+        # 5. 併入「營收符合尚無報告」的個股
+        rev_list = st.session_state.get('revenue_stocks', [])
+        for code in rev_list:
+            if str(code).strip() not in history_stock_set:
+                full_name = _get_standard_stock_name(code)
+                if full_name and full_name not in group_scores:
+                    sorted_stocks.append(full_name)
+                    group_scores[full_name] = -1
+                    group_criteria[full_name] = set()
+
+        # 6. 併入「合約負債符合尚無報告」的個股
+        cl_list = st.session_state.get('contract_liability_stocks', [])
+        for code in cl_list:
+            if str(code).strip() not in history_stock_set:
+                full_name = _get_standard_stock_name(code)
+                if full_name and full_name not in group_scores:
+                    sorted_stocks.append(full_name)
+                    group_scores[full_name] = -1
                     group_criteria[full_name] = set()
 
         
@@ -2158,6 +2302,124 @@ if st.session_state.history:
                         st.session_state['conf_dates_map'] = {}
                         save_conf_dates({})
                         st.rerun()
+
+        # --- 營收與財報條件資料（獨立區塊） ---
+        st.divider()
+        st.subheader("💰 營收與財報選股名單")
+        
+        if 'revenue_stocks' not in st.session_state:
+            st.session_state['revenue_stocks'] = load_revenue_stocks()
+            
+        rev_file = st.file_uploader("上傳符合營收條件的 Excel 或 CSV（系統將自動掃描內容中的股票代號）", type=['xlsx', 'xls', 'csv'], key="rev_uploader")
+        
+        if rev_file:
+            try:
+                rev_file.seek(0)
+                if rev_file.name.endswith('.csv'):
+                    try:
+                        _rev_df = pd.read_csv(rev_file, encoding='utf-8-sig', dtype=str)
+                    except:
+                        rev_file.seek(0)
+                        _rev_df = pd.read_csv(rev_file, encoding='cp950', dtype=str)
+                else:
+                    _rev_df = pd.read_excel(rev_file, dtype=str)
+                
+                import re as _re
+                new_rev_stocks = set()
+                # 簡單暴力掃描所有欄位抓取四位數台股代號
+                for c in _rev_df.columns:
+                    for v in _rev_df[c].dropna().astype(str):
+                        v_str = v.strip()
+                        m = _re.search(r'(?<!\d)(\d{4})(?!\d)', v_str)
+                        if m:
+                            code_int = int(m.group(1))
+                            if 1100 <= code_int <= 9999 and str(code_int)[:2] != '20':
+                                new_rev_stocks.add(m.group(1))
+                
+                if new_rev_stocks:
+                    st.success(f"✅ 成功萃取出 {len(new_rev_stocks)} 檔符合營收條件的股票！")
+                    curr_rev = set(st.session_state.get('revenue_stocks', []))
+                    if curr_rev != new_rev_stocks:
+                        st.session_state['revenue_stocks'] = list(new_rev_stocks)
+                        save_revenue_stocks(list(new_rev_stocks))
+                        st.rerun()
+                else:
+                    st.warning("⚠️ 檔案中未發現有效股票代號")
+            except Exception as e:
+                st.warning(f"⚠️ 營收清單解析失敗：{e}")
+
+        curr_rev_list = st.session_state.get('revenue_stocks', [])
+        if curr_rev_list:
+            st.markdown(f"##### 💰 目前營收條件清單（共 {len(curr_rev_list)} 筆）")
+            curr_name_map = st.session_state.get('global_name_map', {})
+            rev_display_rows = [{"股票代號": code, "公司名稱": curr_name_map.get(code, "未知名稱")} for code in curr_rev_list]
+            st.dataframe(pd.DataFrame(rev_display_rows), hide_index=True)
+            
+            _, col_clear_rev = st.columns([8, 2])
+            with col_clear_rev:
+                if st.button("🗑️ 清空營收條件資料", use_container_width=True):
+                    st.session_state['revenue_stocks'] = []
+                    save_revenue_stocks([])
+                    st.rerun()
+
+        # --- 合約負債條件資料（獨立區塊） ---
+        st.divider()
+        st.subheader("📋 合約負債選股名單")
+        st.caption("符合條件：合約負債 季增50% 且 創四季新高（可從 XQ 篩選後匯出 CSV 上傳）")
+        
+        if 'contract_liability_stocks' not in st.session_state:
+            st.session_state['contract_liability_stocks'] = load_contract_liability_stocks()
+            
+        cl_file = st.file_uploader("上傳符合合約負債條件的 Excel 或 CSV（系統將自動掃描內容中的股票代號）", type=['xlsx', 'xls', 'csv'], key="cl_uploader")
+        
+        if cl_file:
+            try:
+                cl_file.seek(0)
+                if cl_file.name.endswith('.csv'):
+                    try:
+                        _cl_df = pd.read_csv(cl_file, encoding='utf-8-sig', dtype=str)
+                    except:
+                        cl_file.seek(0)
+                        _cl_df = pd.read_csv(cl_file, encoding='cp950', dtype=str)
+                else:
+                    _cl_df = pd.read_excel(cl_file, dtype=str)
+                
+                import re as _re
+                new_cl_stocks = set()
+                for c in _cl_df.columns:
+                    for v in _cl_df[c].dropna().astype(str):
+                        v_str = v.strip()
+                        m = _re.search(r'(?<!\d)(\d{4})(?!\d)', v_str)
+                        if m:
+                            code_int = int(m.group(1))
+                            if 1100 <= code_int <= 9999 and str(code_int)[:2] != '20':
+                                new_cl_stocks.add(m.group(1))
+                
+                if new_cl_stocks:
+                    st.success(f"✅ 成功萃取出 {len(new_cl_stocks)} 檔符合合約負債條件的股票！")
+                    curr_cl = set(st.session_state.get('contract_liability_stocks', []))
+                    if curr_cl != new_cl_stocks:
+                        st.session_state['contract_liability_stocks'] = list(new_cl_stocks)
+                        save_contract_liability_stocks(list(new_cl_stocks))
+                        st.rerun()
+                else:
+                    st.warning("⚠️ 檔案中未發現有效股票代號")
+            except Exception as e:
+                st.warning(f"⚠️ 合約負債清單解析失敗：{e}")
+
+        curr_cl_list = st.session_state.get('contract_liability_stocks', [])
+        if curr_cl_list:
+            st.markdown(f"##### 📋 目前合約負債條件清單（共 {len(curr_cl_list)} 筆）")
+            curr_name_map = st.session_state.get('global_name_map', {})
+            cl_display_rows = [{"股票代號": code, "公司名稱": curr_name_map.get(code, "未知名稱")} for code in curr_cl_list]
+            st.dataframe(pd.DataFrame(cl_display_rows), hide_index=True)
+            
+            _, col_clear_cl = st.columns([8, 2])
+            with col_clear_cl:
+                if st.button("🗑️ 清空合約負債條件資料", use_container_width=True):
+                    st.session_state['contract_liability_stocks'] = []
+                    save_contract_liability_stocks([])
+                    st.rerun()
 
         # --- 股票搜尋功能 ---
 
