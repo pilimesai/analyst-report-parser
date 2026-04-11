@@ -1430,6 +1430,13 @@ if st.session_state.history:
                         return [x.strip() for x in mc.split(',')]
             return []
             
+        # [定義] 取得法說會日期
+        def _get_conf_date(stock_str):
+            conf_map = st.session_state.get('conf_dates_map', {})
+            m = re.search(r'(\d{4})', str(stock_str))
+            return conf_map.get(m.group(), "") if m else ""
+
+        today = datetime.datetime.now().date()
         group_scores = {}
         group_criteria = {}
         history_stock_set = set() # 記錄所有已有報告的股號
@@ -1444,6 +1451,17 @@ if st.session_state.history:
                 for mc in group['matched_criteria']:
                     all_c.update(parse_criteria_global(mc))
             
+            # 計算法說會加分
+            conf_date_str = _get_conf_date(stock_clean)
+            if conf_date_str:
+                try:
+                    cdate = pd.to_datetime(conf_date_str).date()
+                    delta = (cdate - today).days
+                    if 0 <= delta <= 14:
+                        all_c.add("兩周內有法說會")
+                except:
+                    pass
+            
             group_scores[stock_clean] = len(all_c)
             group_criteria[stock_clean] = all_c
             
@@ -1456,7 +1474,6 @@ if st.session_state.history:
         
         # 4. 併入「法說會尚無報告」的個股
         conf_map = st.session_state.get('conf_dates_map', {})
-        today = datetime.datetime.now().date()
             
         for code, date_str in conf_map.items():
             # 字串比對股號，避免重複
@@ -1473,12 +1490,6 @@ if st.session_state.history:
                     sorted_stocks.append(full_name)
                     group_scores[full_name] = -1 
                     group_criteria[full_name] = set()
-
-        # [定義] 取得法說會日期
-        def _get_conf_date(stock_str):
-            conf_map = st.session_state.get('conf_dates_map', {})
-            m = re.search(r'(\d{4})', str(stock_str))
-            return conf_map.get(m.group(), "") if m else ""
 
         
 
@@ -1744,9 +1755,25 @@ if st.session_state.history:
 
             
 
-        # 顯示 Dataframe，設定使用最大寬度，讓多行文字可以展開
+        # 設定選項切換手機端閱讀與電腦端閱讀
+        use_mobile_view = st.toggle("📱 開啟手機閱讀模式 (表格自動換行以利閱讀全部重點分析)")
 
-        st.dataframe(styled_df, use_container_width=True)
+        if use_mobile_view:
+            # 在手機閱讀模式下，使用 st.table 搭配 CSS 強制所有文字自動換行顯示
+            st.markdown("""
+                <style>
+                .stTable td, .stTable th {
+                    white-space: normal !important;
+                    word-break: break-all;
+                }
+                </style>
+            """, unsafe_allow_html=True)
+            st.table(styled_df)
+        else:
+            # 電腦端預設模式：加入 column_config 拉大欄位寬度方便閱讀
+            st.dataframe(styled_df, use_container_width=True, column_config={
+                "重點分析": st.column_config.TextColumn("重點分析", width="large", help="重點分析內容")
+            })
 
         
 
