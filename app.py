@@ -1464,6 +1464,12 @@ if st.session_state.history:
     if 'conf_dates_map' not in st.session_state:
         st.session_state['conf_dates_map'] = load_conf_dates()
 
+    # ⚠️ 提前初始化手動上傳清單，確保計分邏輯執行時資料已就緒
+    if 'revenue_stocks' not in st.session_state:
+        st.session_state['revenue_stocks'] = load_revenue_stocks()
+    if 'contract_liability_stocks' not in st.session_state:
+        st.session_state['contract_liability_stocks'] = load_contract_liability_stocks()
+
     if 'global_name_map' not in st.session_state:
         import os as _os, json as _json
         _cache_path = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "stock_names.json")
