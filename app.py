@@ -761,7 +761,7 @@ def parse_report_with_gemini(text, api_key, source_name="未知來源"):
                 return None
         except Exception as e:
             err_str = str(e)
-            if 'RESOURCE_EXHAUSTED' in err_str or '429' in err_str or 'quota' in err_str.lower():
+            if 'RESOURCE_EXHAUSTED' in err_str or '429' in err_str or '503' in err_str or 'UNAVAILABLE' in err_str or 'quota' in err_str.lower():
                 if _model_name != _models_to_try[-1]:
                     st.toast(f"⚠️ {_model_name} 額度耗盡，自動切換至備用模型重試...", icon="🔄")
                     continue
@@ -877,7 +877,7 @@ def evaluate_stock_with_search(stock, api_key):
                 break
             except Exception as _e2:
                 _es2 = str(_e2)
-                if ('RESOURCE_EXHAUSTED' in _es2 or '429' in _es2 or 'quota' in _es2.lower()) and _mn != _models_s[-1]:
+                if ('RESOURCE_EXHAUSTED' in _es2 or '429' in _es2 or '503' in _es2 or 'UNAVAILABLE' in _es2 or 'quota' in _es2.lower()) and _mn != _models_s[-1]:
                     continue
                 raise
         if response is None:
