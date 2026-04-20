@@ -2561,43 +2561,64 @@ if st.session_state.history:
                         if not any(c in str(vs) for vs in valid_stocks):
                             valid_stocks.append(combined_name)
                 
-                # 預先下載 TDCC 集保結算所資料 (67K rows)，避免每檔重複下載
+                # 預先下載 TDCC 集保結算所資料（本週 + 上週），直接透過 API 帶日期參數取得，不需本地快照
                 import io as _io
-                import os as _os
                 tdcc_df = None
                 tdcc_prev_df = None
-                TDCC_CACHE_FILE = "tdcc_prev.csv"
+                TDCC_BASE_URL = "https://smart.tdcc.com.tw/opendata/getOD.ashx?id=1-5"
                 
-                # 載入上週的 TDCC 快照 (用於比較大戶持股成長)
-                status.text("📊 正在載入集保結算所歷史資料...")
+                # Step 1：抓本週最新資料
+                status.text("📊 正在下載集保結算所 (TDCC) 神秘金字塔本週資料...")
                 try:
-                    if _os.path.exists(TDCC_CACHE_FILE):
-                        tdcc_prev_df = pd.read_csv(TDCC_CACHE_FILE)
-                        st.toast("📂 已載入上次集保快照作為對照！", icon="📊")
-                except Exception as e:
-                    print(f"TDCC 快照載入失敗: {e}")
-                
-                # 下載本週最新 TDCC 資料
-                status.text("📊 正在下載集保結算所 (TDCC) 神秘金字塔最新資料...")
-                try:
-                    tdcc_resp = requests.get("https://smart.tdcc.com.tw/opendata/getOD.ashx?id=1-5",
-                                            headers={"User-Agent": "Mozilla/5.0"}, timeout=15, verify=False)
+                    tdcc_resp = requests.get(TDCC_BASE_URL,
+                                            headers={"User-Agent": "Mozilla/5.0"}, timeout=20, verify=False)
                     if tdcc_resp.status_code == 200:
-                        tdcc_content = tdcc_resp.content.decode('utf-8-sig')
-                        tdcc_df = pd.read_csv(_io.StringIO(tdcc_content))
-                        
-                        # 檢查是否與上次不同日期（代表是新一週的資料）
-                        curr_date = str(tdcc_df.iloc[0, 0]) if not tdcc_df.empty else ""
-                        prev_date = str(tdcc_prev_df.iloc[0, 0]) if tdcc_prev_df is not None and not tdcc_prev_df.empty else ""
-                        
-                        if curr_date != prev_date:
-                            # 新日期！把當前資料存為下次的「上週對照」
-                            tdcc_df.to_csv(TDCC_CACHE_FILE, index=False, encoding='utf-8-sig')
-                            st.toast(f"✅ 集保資料已更新 ({curr_date})，舊快照 ({prev_date or '無'}) 已保存供比較！", icon="🏛️")
-                        else:
-                            st.toast(f"✅ 集保資料日期相同 ({curr_date})，使用快取對照。", icon="🏛️")
+                        tdcc_df = pd.read_csv(_io.StringIO(tdcc_resp.content.decode('utf-8-sig')))
+                        curr_date_str = str(tdcc_df.iloc[0, 0]) if not tdcc_df.empty else ""
+                        st.toast(f"✅ 本週集保資料下載完成 ({curr_date_str})", icon="🏛️")
                 except Exception as e:
-                    print(f"TDCC 下載失敗: {e}")
+                    print(f"TDCC 本週下載失敗: {e}")
+                
+                # Step 2：根據本週日期往回推找上週的集保發布日（TDCC 每週三或四公布，往回試 5~10 天）
+                status.text("📊 正在下載集保結算所上週資料作為比較基準...")
+                if tdcc_df is not None and not tdcc_df.empty:
+                    try:
+                        # 解析本週日期（格式可能是 "113/04/16" 民國曆 或 "20250416" 西元）
+                        curr_date_raw = str(tdcc_df.iloc[0, 0]).strip()
+                        curr_dt = None
+                        # 嘗試民國曆格式 YYY/MM/DD
+                        _roc_m = re.match(r'^(\d{2,3})/(\d{2})/(\d{2})$', curr_date_raw)
+                        if _roc_m:
+                            _y = int(_roc_m.group(1)) + 1911
+                            curr_dt = datetime.datetime(_y, int(_roc_m.group(2)), int(_roc_m.group(3)))
+                        else:
+                            curr_dt = pd.to_datetime(curr_date_raw, errors='coerce').to_pydatetime()
+                        
+                        if curr_dt:
+                            # 從上週五往回試到上週一（TDCC 每週三公布上週資料）
+                            found_prev = False
+                            for _delta in range(5, 11):
+                                _try_dt = curr_dt - datetime.timedelta(days=_delta)
+                                # 轉回 TDCC 民國曆格式 YYY/MM/DD
+                                _roc_y = _try_dt.year - 1911
+                                _date_param = f"{_roc_y:03d}/{_try_dt.month:02d}/{_try_dt.day:02d}"
+                                try:
+                                    _prev_url = f"{TDCC_BASE_URL}&date={_date_param.replace('/', '')}"
+                                    _prev_resp = requests.get(_prev_url,
+                                                             headers={"User-Agent": "Mozilla/5.0"}, timeout=15, verify=False)
+                                    if _prev_resp.status_code == 200:
+                                        _prev_df = pd.read_csv(_io.StringIO(_prev_resp.content.decode('utf-8-sig')))
+                                        if not _prev_df.empty and str(_prev_df.iloc[0, 0]).strip() != curr_date_raw:
+                                            tdcc_prev_df = _prev_df
+                                            prev_date_str = str(tdcc_prev_df.iloc[0, 0])
+                                            st.toast(f"✅ 上週集保資料取得成功 ({prev_date_str})", icon="📊")
+                                            found_prev = True
+                                            break
+                                except: pass
+                            if not found_prev:
+                                st.toast("⚠️ 無法取得上週集保資料，大戶持股成長條件將略過", icon="⚠️")
+                    except Exception as e:
+                        print(f"TDCC 上週資料取得失敗: {e}")
                 
                 # 載入畫面上已自動預解析的法說會日期
                 conference_stocks = {}
