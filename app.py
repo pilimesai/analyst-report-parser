@@ -798,41 +798,33 @@ def parse_report_with_gemini(text, api_key, source_name="未知來源"):
 
     
 
-    try:
-
-        response = client.models.generate_content(
-
-            model='gemini-2.5-flash',
-
-            contents=[prompt, text],
-
-            config=types.GenerateContentConfig(
-
-                response_mime_type="application/json",
-
-            ),
-
-        )
-
+    # 依序嘗試的模型清單：先用最強，額度耗盡自動降級
+    _models_to_try = ['gemini-2.5-flash', 'gemini-2.0-flash']
+    for _model_name in _models_to_try:
         try:
-
-            return json.loads(response.text)
-
-        except json.JSONDecodeError:
-
-            st.error("JSON 解析失敗，模型回傳的值可能不符預期。")
-
-            with st.expander("檢視原始回傳內容"):
-
-                st.write(response.text)
-
+            response = client.models.generate_content(
+                model=_model_name,
+                contents=[prompt, text],
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                ),
+            )
+            try:
+                return json.loads(response.text)
+            except json.JSONDecodeError:
+                st.error("JSON 解析失敗，模型回傳的值可能不符預期。")
+                with st.expander("檢視原始回傳內容"):
+                    st.write(response.text)
+                return None
+        except Exception as e:
+            err_str = str(e)
+            if 'RESOURCE_EXHAUSTED' in err_str or '429' in err_str or 'quota' in err_str.lower():
+                if _model_name != _models_to_try[-1]:
+                    st.toast(f"⚠️ {_model_name} 額度耗盡，自動切換至備用模型重試...", icon="🔄")
+                    continue  # 試下一個模型
+            st.error(f"呼叫 API 時發生錯誤 ({_model_name}): {err_str}")
             return None
-
-    except Exception as e:
-
-        st.error(f"呼叫 API 時發生錯誤: {str(e)}")
-
-        return None
+    return None
 
 def get_latest_close_price(stock_id):
 
@@ -926,23 +918,26 @@ def evaluate_stock_with_search(stock, api_key):
 
     
 
-    try:
-
-        response = client.models.generate_content(
-
-            model='gemini-2.5-flash',
-
-            contents=prompt,
-
-            config=types.GenerateContentConfig(
-
-                tools=[{"google_search": {}}],
-
-                temperature=0.1
-
-            ),
-
-        )
+    _models_to_try = ['gemini-2.5-flash', 'gemini-2.0-flash']
+    response = None
+    for _model_name in _models_to_try:
+        try:
+            response = client.models.generate_content(
+                model=_model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    tools=[{"google_search": {}}],
+                    temperature=0.1
+                ),
+            )
+            break  # 成功就跳出
+        except Exception as _e:
+            _es = str(_e)
+            if ('RESOURCE_EXHAUSTED' in _es or '429' in _es or 'quota' in _es.lower()) and _model_name != _models_to_try[-1]:
+                continue
+            raise  # 其他錯誤或最後一個模型也失敗，往外拋
+    if response is None:
+        return []
 
         
 
