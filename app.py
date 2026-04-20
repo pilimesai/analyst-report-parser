@@ -742,31 +742,54 @@ def parse_report_with_gemini(text, api_key, source_name="未知來源"):
 
     
 
+    import time as _time
     _models_to_try = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.0-flash-lite']
-    for _model_name in _models_to_try:
-        try:
-            response = client.models.generate_content(
-                model=_model_name,
-                contents=[prompt, text],
-                config=types.GenerateContentConfig(
-                    response_mime_type="application/json",
-                ),
-            )
+    _max_wait_retries = 2  # 遇到全模型限速時最多等待重試幾次
+
+    def _parse_retry_delay(err_str):
+        """從錯誤訊息中解析建議等待秒數"""
+        m = re.search(r"retryDelay['\"]?:\s*['\"]?(\d+)s", err_str)
+        return int(m.group(1)) + 2 if m else 60  # 預設等 60 秒
+
+    for _wait_attempt in range(_max_wait_retries + 1):
+        _last_err = ""
+        for _model_name in _models_to_try:
             try:
-                return json.loads(response.text)
-            except json.JSONDecodeError:
-                st.error("JSON 解析失敗，模型回傳的值可能不符預期。")
-                with st.expander("檢視原始回傳內容"):
-                    st.write(response.text)
-                return None
-        except Exception as e:
-            err_str = str(e)
-            if 'RESOURCE_EXHAUSTED' in err_str or '429' in err_str or '503' in err_str or 'UNAVAILABLE' in err_str or 'quota' in err_str.lower():
-                if _model_name != _models_to_try[-1]:
-                    st.toast(f"⚠️ {_model_name} 額度耗盡，自動切換至備用模型重試...", icon="🔄")
-                    continue
-            st.error(f"呼叫 API 時發生錯誤 ({_model_name}): {err_str}")
-            return None
+                response = client.models.generate_content(
+                    model=_model_name,
+                    contents=[prompt, text],
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                    ),
+                )
+                try:
+                    return json.loads(response.text)
+                except json.JSONDecodeError:
+                    st.error("JSON 解析失敗，模型回傳的值可能不符預期。")
+                    with st.expander("檢視原始回傳內容"):
+                        st.write(response.text)
+                    return None
+            except Exception as e:
+                err_str = str(e)
+                _last_err = err_str
+                if 'RESOURCE_EXHAUSTED' in err_str or '429' in err_str or '503' in err_str or 'UNAVAILABLE' in err_str or 'quota' in err_str.lower():
+                    if _model_name != _models_to_try[-1]:
+                        st.toast(f"⚠️ {_model_name} 經流限，切換備用模型...", icon="🔄")
+                        continue
+                    # 所有模型都被限速
+                    if _wait_attempt < _max_wait_retries:
+                        _wait_sec = _parse_retry_delay(err_str)
+                        st.warning(f"⏳ 所有模型都被請求限速，等候 {_wait_sec} 秒後自動重試... (第 {_wait_attempt+1}/{_max_wait_retries} 次)")
+                        _time.sleep(_wait_sec)
+                        break  # 跳出模型循環，進入下一輪等待重試
+                else:
+                    st.error(f"呼叫 API 時發生錯誤 ({_model_name}): {err_str}")
+                    return None
+        else:
+            continue  # 模型循環正常結束（此分支不會被執行）
+        # 模型循環被 break 中斷，逐層 break 讓外層 for 知道
+        pass
+    st.error(f"所有模型皆被限速，已重試 {_max_wait_retries} 次仍無法完成請稍後再試。")
     return None
 
 def get_latest_close_price(stock_id):
@@ -862,24 +885,39 @@ def evaluate_stock_with_search(stock, api_key):
     
 
     try:
+        import time as _time2
         _models_s = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.0-flash-lite']
+        _max_wait_s = 2
+
+        def _parse_delay(es):
+            m2 = re.search(r"retryDelay['\"]?:\s*['\"]?(\d+)s", es)
+            return int(m2.group(1)) + 2 if m2 else 60
+
         response = None
-        for _mn in _models_s:
-            try:
-                response = client.models.generate_content(
-                    model=_mn,
-                    contents=prompt,
-                    config=types.GenerateContentConfig(
-                        tools=[{"google_search": {}}],
-                        temperature=0.1
-                    ),
-                )
-                break
-            except Exception as _e2:
-                _es2 = str(_e2)
-                if ('RESOURCE_EXHAUSTED' in _es2 or '429' in _es2 or '503' in _es2 or 'UNAVAILABLE' in _es2 or 'quota' in _es2.lower()) and _mn != _models_s[-1]:
-                    continue
-                raise
+        for _w_attempt in range(_max_wait_s + 1):
+            for _mn in _models_s:
+                try:
+                    response = client.models.generate_content(
+                        model=_mn,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
+                            tools=[{"google_search": {}}],
+                            temperature=0.1
+                        ),
+                    )
+                    break
+                except Exception as _e2:
+                    _es2 = str(_e2)
+                    if ('RESOURCE_EXHAUSTED' in _es2 or '429' in _es2 or '503' in _es2 or 'UNAVAILABLE' in _es2 or 'quota' in _es2.lower()):
+                        if _mn != _models_s[-1]:
+                            continue
+                        if _w_attempt < _max_wait_s:
+                            _ws = _parse_delay(_es2)
+                            _time2.sleep(_ws)
+                            break
+                    raise
+            else:
+                break  # 模型循環正常完成（已 break）
         if response is None:
             return []
 
