@@ -583,62 +583,6 @@ def save_revenue_stocks(rev_list):
     except Exception as e:
         st.error(f"❌ 無法儲存營收紀錄至本地: {str(e)}")
 
-def load_contract_liability_stocks():
-    _cl_cache_path = os.path.join(BASE_DIR, "contract_liability_stocks.json")
-    ws = get_worksheet()
-    if ws:
-        try:
-            spreadsheet = ws.spreadsheet
-            ws_cl = spreadsheet.worksheet("合約負債條件")
-            records = ws_cl.get_all_records()
-            if records:
-                cl_list = [str(r.get("代號", "")).strip() for r in records if r.get("代號")]
-                st.toast(f"☁️ 成功從 Google Sheets (合約負債條件) 載入 {len(cl_list)} 筆紀錄！", icon="📋")
-                return cl_list
-        except Exception as e:
-            if "WorksheetNotFound" not in str(type(e).__name__):
-                st.warning(f"⚠️ 從 Google Sheets 讀取合約負債條件資料失敗: {e}")
-
-    # Fallback to local
-    if os.path.exists(_cl_cache_path):
-        try:
-            with open(_cl_cache_path, 'r', encoding='utf-8') as _f:
-                cl_list = json.load(_f)
-                st.toast(f"✅ 成功從本地檔案載入 {len(cl_list)} 筆合約負債紀錄！", icon="📋")
-                return cl_list
-        except Exception as e:
-            st.error(f"❌ 載入本地合約負債紀錄失敗: {e}")
-    return []
-
-def save_contract_liability_stocks(cl_list):
-    _cl_cache_path = os.path.join(BASE_DIR, "contract_liability_stocks.json")
-    ws = get_worksheet()
-    if ws:
-        try:
-            spreadsheet = ws.spreadsheet
-            try:
-                ws_cl = spreadsheet.worksheet("合約負債條件")
-            except:
-                ws_cl = spreadsheet.add_worksheet(title="合約負債條件", rows="1000", cols="2")
-                st.toast("🆕 已建立新的 Google Sheet 分頁：合約負債條件", icon="✨")
-            
-            data = [["代號"]] + [[k] for k in cl_list]
-            ws_cl.clear()
-            try:
-                ws_cl.update(values=data, range_name="A1")
-            except TypeError:
-                ws_cl.update(data, "A1")
-            st.toast(f"☁️ 已成功將 {len(cl_list)} 筆合約負債紀錄同步至 Google Sheets！", icon="💾")
-        except Exception as e:
-            st.error(f"❌ 寫入 Google Sheets (合約負債條件) 失敗: {str(e)}")
-            
-    # Fallback/also save to local
-    try:
-        with open(_cl_cache_path, "w", encoding="utf-8") as f:
-            json.dump(cl_list, f, ensure_ascii=False, indent=2)
-    except Exception as e:
-        st.error(f"❌ 無法儲存合約負債紀錄至本地: {str(e)}")
-
 
 # Initialize session history
 
@@ -798,7 +742,6 @@ def parse_report_with_gemini(text, api_key, source_name="未知來源"):
 
     
 
-    # 依序嘗試的模型清單：先用最強，額度耗盡自動降級
     _models_to_try = ['gemini-2.5-flash', 'gemini-2.0-flash']
     for _model_name in _models_to_try:
         try:
@@ -821,7 +764,7 @@ def parse_report_with_gemini(text, api_key, source_name="未知來源"):
             if 'RESOURCE_EXHAUSTED' in err_str or '429' in err_str or 'quota' in err_str.lower():
                 if _model_name != _models_to_try[-1]:
                     st.toast(f"⚠️ {_model_name} 額度耗盡，自動切換至備用模型重試...", icon="🔄")
-                    continue  # 試下一個模型
+                    continue
             st.error(f"呼叫 API 時發生錯誤 ({_model_name}): {err_str}")
             return None
     return None
@@ -918,26 +861,27 @@ def evaluate_stock_with_search(stock, api_key):
 
     
 
-    _models_to_try = ['gemini-2.5-flash', 'gemini-2.0-flash']
-    response = None
-    for _model_name in _models_to_try:
-        try:
-            response = client.models.generate_content(
-                model=_model_name,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    tools=[{"google_search": {}}],
-                    temperature=0.1
-                ),
-            )
-            break  # 成功就跳出
-        except Exception as _e:
-            _es = str(_e)
-            if ('RESOURCE_EXHAUSTED' in _es or '429' in _es or 'quota' in _es.lower()) and _model_name != _models_to_try[-1]:
-                continue
-            raise  # 其他錯誤或最後一個模型也失敗，往外拋
-    if response is None:
-        return []
+    try:
+        _models_s = ['gemini-2.5-flash', 'gemini-2.0-flash']
+        response = None
+        for _mn in _models_s:
+            try:
+                response = client.models.generate_content(
+                    model=_mn,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        tools=[{"google_search": {}}],
+                        temperature=0.1
+                    ),
+                )
+                break
+            except Exception as _e2:
+                _es2 = str(_e2)
+                if ('RESOURCE_EXHAUSTED' in _es2 or '429' in _es2 or 'quota' in _es2.lower()) and _mn != _models_s[-1]:
+                    continue
+                raise
+        if response is None:
+            return []
 
         
 
@@ -1459,12 +1403,6 @@ if st.session_state.history:
     if 'conf_dates_map' not in st.session_state:
         st.session_state['conf_dates_map'] = load_conf_dates()
 
-    # ⚠️ 提前初始化手動上傳清單，確保計分邏輯執行時資料已就緒
-    if 'revenue_stocks' not in st.session_state:
-        st.session_state['revenue_stocks'] = load_revenue_stocks()
-    if 'contract_liability_stocks' not in st.session_state:
-        st.session_state['contract_liability_stocks'] = load_contract_liability_stocks()
-
     if 'global_name_map' not in st.session_state:
         import os as _os, json as _json
         _cache_path = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "stock_names.json")
@@ -1582,11 +1520,6 @@ if st.session_state.history:
             if m_code and m_code.group() in rev_list:
                 all_c.add("近月營收月增且年增")
             
-            # 計算合約負債條件加分 (來自手動上傳清單)
-            cl_list = st.session_state.get('contract_liability_stocks', [])
-            if m_code and m_code.group() in cl_list:
-                all_c.add("合約負債季增50%且創四季新高")
-            
             group_scores[stock_clean] = len(all_c)
             group_criteria[stock_clean] = all_c
             
@@ -1623,17 +1556,7 @@ if st.session_state.history:
                 full_name = _get_standard_stock_name(code)
                 if full_name and full_name not in group_scores:
                     sorted_stocks.append(full_name)
-                    group_scores[full_name] = -1
-                    group_criteria[full_name] = set()
-
-        # 6. 併入「合約負債符合尚無報告」的個股
-        cl_list = st.session_state.get('contract_liability_stocks', [])
-        for code in cl_list:
-            if str(code).strip() not in history_stock_set:
-                full_name = _get_standard_stock_name(code)
-                if full_name and full_name not in group_scores:
-                    sorted_stocks.append(full_name)
-                    group_scores[full_name] = -1
+                    group_scores[full_name] = -1 
                     group_criteria[full_name] = set()
 
         
@@ -2363,65 +2286,6 @@ if st.session_state.history:
                     save_revenue_stocks([])
                     st.rerun()
 
-        # --- 合約負債條件資料（獨立區塊） ---
-        st.divider()
-        st.subheader("📋 合約負債選股名單")
-        st.caption("符合條件：合約負債 季增50% 且 創四季新高（可從 XQ 篩選後匯出 CSV 上傳）")
-        
-        if 'contract_liability_stocks' not in st.session_state:
-            st.session_state['contract_liability_stocks'] = load_contract_liability_stocks()
-            
-        cl_file = st.file_uploader("上傳符合合約負債條件的 Excel 或 CSV（系統將自動掃描內容中的股票代號）", type=['xlsx', 'xls', 'csv'], key="cl_uploader")
-        
-        if cl_file:
-            try:
-                cl_file.seek(0)
-                if cl_file.name.endswith('.csv'):
-                    try:
-                        _cl_df = pd.read_csv(cl_file, encoding='utf-8-sig', dtype=str)
-                    except:
-                        cl_file.seek(0)
-                        _cl_df = pd.read_csv(cl_file, encoding='cp950', dtype=str)
-                else:
-                    _cl_df = pd.read_excel(cl_file, dtype=str)
-                
-                import re as _re
-                new_cl_stocks = set()
-                for c in _cl_df.columns:
-                    for v in _cl_df[c].dropna().astype(str):
-                        v_str = v.strip()
-                        m = _re.search(r'(?<!\d)(\d{4})(?!\d)', v_str)
-                        if m:
-                            code_int = int(m.group(1))
-                            if 1100 <= code_int <= 9999 and str(code_int)[:2] != '20':
-                                new_cl_stocks.add(m.group(1))
-                
-                if new_cl_stocks:
-                    st.success(f"✅ 成功萃取出 {len(new_cl_stocks)} 檔符合合約負債條件的股票！")
-                    curr_cl = set(st.session_state.get('contract_liability_stocks', []))
-                    if curr_cl != new_cl_stocks:
-                        st.session_state['contract_liability_stocks'] = list(new_cl_stocks)
-                        save_contract_liability_stocks(list(new_cl_stocks))
-                        st.rerun()
-                else:
-                    st.warning("⚠️ 檔案中未發現有效股票代號")
-            except Exception as e:
-                st.warning(f"⚠️ 合約負債清單解析失敗：{e}")
-
-        curr_cl_list = st.session_state.get('contract_liability_stocks', [])
-        if curr_cl_list:
-            st.markdown(f"##### 📋 目前合約負債條件清單（共 {len(curr_cl_list)} 筆）")
-            curr_name_map = st.session_state.get('global_name_map', {})
-            cl_display_rows = [{"股票代號": code, "公司名稱": curr_name_map.get(code, "未知名稱")} for code in curr_cl_list]
-            st.dataframe(pd.DataFrame(cl_display_rows), hide_index=True)
-            
-            _, col_clear_cl = st.columns([8, 2])
-            with col_clear_cl:
-                if st.button("🗑️ 清空合約負債條件資料", use_container_width=True):
-                    st.session_state['contract_liability_stocks'] = []
-                    save_contract_liability_stocks([])
-                    st.rerun()
-
         # --- 股票搜尋功能 ---
 
         if not df_display.empty:
@@ -2556,64 +2420,43 @@ if st.session_state.history:
                         if not any(c in str(vs) for vs in valid_stocks):
                             valid_stocks.append(combined_name)
                 
-                # 預先下載 TDCC 集保結算所資料（本週 + 上週），直接透過 API 帶日期參數取得，不需本地快照
+                # 預先下載 TDCC 集保結算所資料 (67K rows)，避免每檔重複下載
                 import io as _io
+                import os as _os
                 tdcc_df = None
                 tdcc_prev_df = None
-                TDCC_BASE_URL = "https://smart.tdcc.com.tw/opendata/getOD.ashx?id=1-5"
+                TDCC_CACHE_FILE = "tdcc_prev.csv"
                 
-                # Step 1：抓本週最新資料
-                status.text("📊 正在下載集保結算所 (TDCC) 神秘金字塔本週資料...")
+                # 載入上週的 TDCC 快照 (用於比較大戶持股成長)
+                status.text("📊 正在載入集保結算所歷史資料...")
                 try:
-                    tdcc_resp = requests.get(TDCC_BASE_URL,
-                                            headers={"User-Agent": "Mozilla/5.0"}, timeout=20, verify=False)
-                    if tdcc_resp.status_code == 200:
-                        tdcc_df = pd.read_csv(_io.StringIO(tdcc_resp.content.decode('utf-8-sig')))
-                        curr_date_str = str(tdcc_df.iloc[0, 0]) if not tdcc_df.empty else ""
-                        st.toast(f"✅ 本週集保資料下載完成 ({curr_date_str})", icon="🏛️")
+                    if _os.path.exists(TDCC_CACHE_FILE):
+                        tdcc_prev_df = pd.read_csv(TDCC_CACHE_FILE)
+                        st.toast("📂 已載入上次集保快照作為對照！", icon="📊")
                 except Exception as e:
-                    print(f"TDCC 本週下載失敗: {e}")
+                    print(f"TDCC 快照載入失敗: {e}")
                 
-                # Step 2：根據本週日期往回推找上週的集保發布日（TDCC 每週三或四公布，往回試 5~10 天）
-                status.text("📊 正在下載集保結算所上週資料作為比較基準...")
-                if tdcc_df is not None and not tdcc_df.empty:
-                    try:
-                        # 解析本週日期（格式可能是 "113/04/16" 民國曆 或 "20250416" 西元）
-                        curr_date_raw = str(tdcc_df.iloc[0, 0]).strip()
-                        curr_dt = None
-                        # 嘗試民國曆格式 YYY/MM/DD
-                        _roc_m = re.match(r'^(\d{2,3})/(\d{2})/(\d{2})$', curr_date_raw)
-                        if _roc_m:
-                            _y = int(_roc_m.group(1)) + 1911
-                            curr_dt = datetime.datetime(_y, int(_roc_m.group(2)), int(_roc_m.group(3)))
-                        else:
-                            curr_dt = pd.to_datetime(curr_date_raw, errors='coerce').to_pydatetime()
+                # 下載本週最新 TDCC 資料
+                status.text("📊 正在下載集保結算所 (TDCC) 神秘金字塔最新資料...")
+                try:
+                    tdcc_resp = requests.get("https://smart.tdcc.com.tw/opendata/getOD.ashx?id=1-5",
+                                            headers={"User-Agent": "Mozilla/5.0"}, timeout=15, verify=False)
+                    if tdcc_resp.status_code == 200:
+                        tdcc_content = tdcc_resp.content.decode('utf-8-sig')
+                        tdcc_df = pd.read_csv(_io.StringIO(tdcc_content))
                         
-                        if curr_dt:
-                            # 從上週五往回試到上週一（TDCC 每週三公布上週資料）
-                            found_prev = False
-                            for _delta in range(5, 11):
-                                _try_dt = curr_dt - datetime.timedelta(days=_delta)
-                                # 轉回 TDCC 民國曆格式 YYY/MM/DD
-                                _roc_y = _try_dt.year - 1911
-                                _date_param = f"{_roc_y:03d}/{_try_dt.month:02d}/{_try_dt.day:02d}"
-                                try:
-                                    _prev_url = f"{TDCC_BASE_URL}&date={_date_param.replace('/', '')}"
-                                    _prev_resp = requests.get(_prev_url,
-                                                             headers={"User-Agent": "Mozilla/5.0"}, timeout=15, verify=False)
-                                    if _prev_resp.status_code == 200:
-                                        _prev_df = pd.read_csv(_io.StringIO(_prev_resp.content.decode('utf-8-sig')))
-                                        if not _prev_df.empty and str(_prev_df.iloc[0, 0]).strip() != curr_date_raw:
-                                            tdcc_prev_df = _prev_df
-                                            prev_date_str = str(tdcc_prev_df.iloc[0, 0])
-                                            st.toast(f"✅ 上週集保資料取得成功 ({prev_date_str})", icon="📊")
-                                            found_prev = True
-                                            break
-                                except: pass
-                            if not found_prev:
-                                st.toast("⚠️ 無法取得上週集保資料，大戶持股成長條件將略過", icon="⚠️")
-                    except Exception as e:
-                        print(f"TDCC 上週資料取得失敗: {e}")
+                        # 檢查是否與上次不同日期（代表是新一週的資料）
+                        curr_date = str(tdcc_df.iloc[0, 0]) if not tdcc_df.empty else ""
+                        prev_date = str(tdcc_prev_df.iloc[0, 0]) if tdcc_prev_df is not None and not tdcc_prev_df.empty else ""
+                        
+                        if curr_date != prev_date:
+                            # 新日期！把當前資料存為下次的「上週對照」
+                            tdcc_df.to_csv(TDCC_CACHE_FILE, index=False, encoding='utf-8-sig')
+                            st.toast(f"✅ 集保資料已更新 ({curr_date})，舊快照 ({prev_date or '無'}) 已保存供比較！", icon="🏛️")
+                        else:
+                            st.toast(f"✅ 集保資料日期相同 ({curr_date})，使用快取對照。", icon="🏛️")
+                except Exception as e:
+                    print(f"TDCC 下載失敗: {e}")
                 
                 # 載入畫面上已自動預解析的法說會日期
                 conference_stocks = {}
