@@ -742,7 +742,7 @@ def parse_report_with_gemini(text, api_key, source_name="未知來源"):
 
     
 
-    _models_to_try = ['gemini-2.5-flash', 'gemini-2.0-flash']
+    _models_to_try = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash']
     for _model_name in _models_to_try:
         try:
             response = client.models.generate_content(
@@ -862,7 +862,7 @@ def evaluate_stock_with_search(stock, api_key):
     
 
     try:
-        _models_s = ['gemini-2.5-flash', 'gemini-2.0-flash']
+        _models_s = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash']
         response = None
         for _mn in _models_s:
             try:
