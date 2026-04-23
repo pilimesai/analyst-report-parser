@@ -658,87 +658,29 @@ def parse_report_with_gemini(text, api_key, source_name="未知來源"):
 
     
 
-    prompt = f"""
+    # 截斷過長報告，避免消耗過多 token（保留前 4000 字已足夠提取關鍵資訊）
+    _MAX_TEXT_LEN = 4000
+    if len(text) > _MAX_TEXT_LEN:
+        text = text[:_MAX_TEXT_LEN] + "\n...[內容過長已截斷]"
 
-    你是一位專業的金融分析師。請仔細閱讀以下券商分析報告，並精確地提取出以下資訊：
+    prompt = f"""從以下券商報告中提取下列欄位，以 JSON 回傳。
 
-    1. 股票代號與名稱 (例如: 2330 台積電)
+欄位說明（請嚴格遵守）：
+- date: 報告日期，格式 YYYY-MM-DD。優先從來源名稱「{source_name}」中找數字序列（如 20240325→2024-03-25）；其次從內文找；找不到填"未知"。
+- stock: 股票代號+名稱（如"2330 台積電"）
+- brokerage: 券商名稱
+- rating: 評等（買進/中立/賣出或英文原文）
+- target_price: 目標價（純數字，如"150"）；無則填"N/A"
+- eps: 券商預估EPS（純數字）；無則填"N/A"
+- summary: 繁體中文，30字內說明核心看法（看多/看空理由）。若無實質分析填""
+- daily_stock_selection: 若有明確標示為每日選股填"✅ 是"；否則填"N/A"
+- matched_criteria: 陣列，只填以下出現的項目："投信第一天買且近三月未買"、"三大法人同買"、"日KD黃金交叉"、"周KD黃金交叉"、"成交量大於十週均量且大於三倍十日均量"、"合約負債季增50%且創四季新高"、"兩周內有法說會"、"近期將發行CB"、"近月營收月增且年增"、"大戶持股比例成長"；無則填[]
 
-    2. 發布該報告的券商名稱 (Brokerage)
+回傳格式(JSON only)：
+{{"date":"","stock":"","brokerage":"","rating":"","target_price":"","eps":"","summary":"","daily_stock_selection":"","matched_criteria":[]}}
 
-    3. 券商給予的評等 (Rating，例如: 買進、中立、買入、Buy、Outperform 等)
-
-    4. 券商預估EPS (Estimated EPS)，請只輸出數字 (如 15.2)。如果在報告中沒有明確給出預估 EPS，請填 "N/A"。
-
-    5. 目標價 (Target Price, TP)，請只輸出數字或貨幣字串，例如 1200 或 $1200。如果沒有給，請填 "N/A"。
-
-    6. 重點分析內容 (Summary)，請用繁體中文，將這篇報告中最核心的看多/看空理由濃縮在 50-100 字以內。
-       👉 重要：若報告中缺乏核心分析或理由，請直接回傳空字串 ""，嚴禁回傳「此報告僅提供數據」等解釋性文字。
-
-
-    7. 報告發布日期 (Date)。格式強制轉換為 YYYY-MM-DD。
-
-       👉 第一優先：請觀察這份報告的來源名稱「{source_name}」。如果有連續數字（例如 20231005 或 240325），請直接轉換為 2023-10-05 等。若只有月日（如 1005 或 10月5日），請自動補上今年年份（例如 2024-10-05）。
-
-       👉 第二優先：若名稱中真的毫無日期線索，再從內文中尋找。
-
-       👉 若窮盡一切方法仍找不出日期，才填入 "未知"。
-
-    8. 每日選股 (Daily Stock Selection)。如果報告中有特別推薦為「每日選股」或類似的標的，請填寫相關內容（如「✅ 是」或短評），如果沒有提及，請填 "N/A"。
-
-    9. 選股積分條件 (Stock Scoring Criteria)。請檢查報告中是否提及以下 10 項條件。只要報告中有明確提及、同義詞表達（例如「外資與投信同步買超」、「KD交叉向上」、「出量上漲」），請將其對應的「官方標籤字串」加入陣列中：
-
-       - "投信第一天買且近三月未買" (或提及投信初升段買進、投信破冰首度買進等)
-
-       - "三大法人同買" (或提及外資、投信、自營商聯手買超，法人齊買等)
-
-       - "日KD黃金交叉" (或日KD交叉向上)
-
-       - "周KD黃金交叉" (或周KD交叉向上)
-
-       - "成交量大於十週均量且大於三倍十日均量" (或提及爆量起漲、放量突破等)
-
-       - "合約負債季增50%且創四季新高"
-
-       - "兩周內有法說會" (或近期將舉辦業績發表會、法說行情)
-
-       - "近期將發行CB" (或將發行可轉債)
-
-       - "近月營收月增且年增" (或營收雙增)
-
-       - "大戶持股比例成長" (或千張大戶增加、籌碼集中大戶等)
-
-       （注意：輸出時請一定要輸出上述雙引號內的官方標籤字串，例如 `"三大法人同買"`。如果報告沒有明確提到上述條件，請回傳空陣列 []。）
-
-    請以 JSON 格式回應格式如下：
-
-    {{
-
-      "date": "報告發布日期",
-
-      "stock": "股票代號與名稱",
-
-      "brokerage": "券商名稱",
-
-      "rating": "評等",
-
-      "target_price": "目標價",
-
-      "eps": "券商預估EPS",
-
-      "summary": "重點分析內容",
-
-      "daily_stock_selection": "每日選股",
-
-      "matched_criteria": ["符合的標籤一", "符合的標籤二"]
-
-    }}
-
-    
-
-    以下是內容資料：
-
-    """
+報告內容：
+"""
 
     
 
@@ -757,7 +699,7 @@ def parse_report_with_gemini(text, api_key, source_name="未知來源"):
             try:
                 response = client.models.generate_content(
                     model=_model_name,
-                    contents=[prompt, text],
+                    contents=prompt + text,
                     config=types.GenerateContentConfig(
                         response_mime_type="application/json",
                     ),
@@ -1071,15 +1013,14 @@ if analyze_btn:
 
                 
 
-                # 截斷過長的文字 (避免極端情況，雖然 Gemini 可以支援很長)
-
-                text = text[:300000] 
-
-                
-
-                # 2. 呼叫 Gemini 分析
+                # 2. 呼叫 Gemini 分析（函式內已截斷至 4000 字）
 
                 parsed_data = parse_report_with_gemini(text, api_key, source_name=file.name)
+
+                # 多份報告之間加延遲，避免觸發 API 限速
+                import time as _loop_time
+                if current < tasks_count:
+                    _loop_time.sleep(3)
 
                 
 
@@ -1139,9 +1080,7 @@ if analyze_btn:
 
             
 
-            text_truncated = pasted_text[:300000]
-
-            parsed_data = parse_report_with_gemini(text_truncated, api_key, source_name=pasted_name)
+            parsed_data = parse_report_with_gemini(pasted_text, api_key, source_name=pasted_name)
 
             
 
