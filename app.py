@@ -652,7 +652,34 @@ def extract_text(file):
 
     return text
 
-def parse_report_with_gemini(text, api_key, source_name="未知來源"):
+# ── Rate Limiter for Free Tier (10 req/min) ─────────────────────────────────
+_rate_limiter_state = {"count": 0, "window_start": None}
+_FREE_TIER_RPM = 8  # 保守設 8，留緩衝（免費版上限 10/分鐘）
+
+def _gemini_rate_limit_wait(placeholder=None):
+    """若本分鐘已達 Free Tier 上限，等到下一分鐘再繼續。"""
+    import time as _rl_time
+    now = _rl_time.time()
+    state = _rate_limiter_state
+    if state["window_start"] is None or now - state["window_start"] >= 60:
+        state["window_start"] = now
+        state["count"] = 0
+    state["count"] += 1
+    if state["count"] > _FREE_TIER_RPM:
+        wait_sec = 60 - (now - state["window_start"]) + 2
+        if wait_sec > 0:
+            if placeholder:
+                for i in range(int(wait_sec), 0, -1):
+                    placeholder.info(f"⏳ Free Tier 每分鐘限速保護，等候 {i} 秒後繼續...")
+                    _rl_time.sleep(1)
+                placeholder.empty()
+            else:
+                _rl_time.sleep(wait_sec)
+        state["window_start"] = _rl_time.time()
+        state["count"] = 1
+# ─────────────────────────────────────────────────────────────────────────────
+
+def parse_report_with_gemini(text, api_key, source_name="未知來源", _rate_placeholder=None):
 
     client = genai.Client(api_key=api_key)
 
@@ -692,6 +719,9 @@ def parse_report_with_gemini(text, api_key, source_name="未知來源"):
         """從錯誤訊息中解析建議等待秒數"""
         m = re.search(r"retryDelay['\"]?:\s*['\"]?(\d+)s", err_str)
         return int(m.group(1)) + 2 if m else 60  # 預設等 60 秒
+
+    # 呼叫前先做 rate limit 檢查（Free Tier 保護）
+    _gemini_rate_limit_wait(placeholder=_rate_placeholder)
 
     for _wait_attempt in range(_max_wait_retries + 1):
         _last_err = ""
@@ -1015,12 +1045,15 @@ if analyze_btn:
 
                 # 2. 呼叫 Gemini 分析（函式內已截斷至 4000 字）
 
-                parsed_data = parse_report_with_gemini(text, api_key, source_name=file.name)
+                parsed_data = parse_report_with_gemini(text, api_key, source_name=file.name, _rate_placeholder=status_text)
 
-                # 多份報告之間加延遲，避免觸發 API 限速
+                # 多份報告之間加延遲（Free Tier: 10 req/min → 每份至少間隔 7 秒）
                 import time as _loop_time
                 if current < tasks_count:
-                    _loop_time.sleep(3)
+                    for _cd in range(7, 0, -1):
+                        status_text.info(f"⏱️ 限速保護：{_cd} 秒後繼續分析下一份報告...")
+                        _loop_time.sleep(1)
+                    status_text.empty()
 
                 
 
