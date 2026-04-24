@@ -1791,7 +1791,7 @@ if st.session_state.history:
 
             # 找出所有有效日期中的「最新日期」
 
-            valid_dates = [str(d) for d in df_display.get('發布日期', []) if str(d) != '未知日期' and str(d).strip() != '']
+            valid_dates = [str(d) for d in df_display.get('發布日期', []) if str(d).strip() not in ['', '未知日期', '尚無報告', 'N/A', 'nan'] and ('-' in str(d) or '/' in str(d))]
 
             latest_date = max(valid_dates) if valid_dates else None
 
