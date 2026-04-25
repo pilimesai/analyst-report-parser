@@ -584,6 +584,63 @@ def save_revenue_stocks(rev_list):
         st.error(f"❌ 無法儲存營收紀錄至本地: {str(e)}")
 
 
+def load_big_player_stocks():
+    _cache_path = os.path.join(BASE_DIR, "big_player_stocks.json")
+    ws = get_worksheet()
+    if ws:
+        try:
+            spreadsheet = ws.spreadsheet
+            ws_bp = spreadsheet.worksheet("大戶選股積分")
+            records = ws_bp.get_all_records()
+            if records:
+                bp_list = [str(r.get("代號", "")).strip() for r in records if r.get("代號")]
+                st.toast(f"☁️ 成功從 Google Sheets (大戶選股積分) 載入 {len(bp_list)} 筆紀錄！", icon="💎")
+                return bp_list
+        except Exception as e:
+            if "WorksheetNotFound" not in str(type(e).__name__):
+                st.warning(f"⚠️ 從 Google Sheets 讀取大戶選股積分資料失敗: {e}")
+
+    # Fallback to local
+    if os.path.exists(_cache_path):
+        try:
+            with open(_cache_path, 'r', encoding='utf-8') as _f:
+                bp_list = json.load(_f)
+                st.toast(f"✅ 成功從本地檔案載入 {len(bp_list)} 筆大戶選股積分紀錄！", icon="💎")
+                return bp_list
+        except Exception as e:
+            st.error(f"❌ 載入本地大戶選股積分紀錄失敗: {e}")
+    return []
+
+def save_big_player_stocks(bp_list):
+    _cache_path = os.path.join(BASE_DIR, "big_player_stocks.json")
+    ws = get_worksheet()
+    if ws:
+        try:
+            spreadsheet = ws.spreadsheet
+            try:
+                ws_bp = spreadsheet.worksheet("大戶選股積分")
+            except:
+                ws_bp = spreadsheet.add_worksheet(title="大戶選股積分", rows="1000", cols="2")
+                st.toast("🆕 已建立新的 Google Sheet 分頁：大戶選股積分", icon="✨")
+
+            data = [["代號"]] + [[k] for k in bp_list]
+            ws_bp.clear()
+            try:
+                ws_bp.update(values=data, range_name="A1")
+            except TypeError:
+                ws_bp.update(data, "A1")
+            st.toast(f"☁️ 已成功將 {len(bp_list)} 筆大戶選股積分紀錄同步至 Google Sheets！", icon="💾")
+        except Exception as e:
+            st.error(f"❌ 寫入 Google Sheets (大戶選股積分) 失敗: {str(e)}")
+
+    # Fallback/also save to local
+    try:
+        with open(_cache_path, "w", encoding="utf-8") as f:
+            json.dump(bp_list, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        st.error(f"❌ 無法儲存大戶選股積分紀錄至本地: {str(e)}")
+
+
 # Initialize session history
 
 if 'history' not in st.session_state:
@@ -1529,6 +1586,11 @@ if st.session_state.history:
             m_code = re.search(r'(\d{4})', stock_clean)
             if m_code and m_code.group() in rev_list:
                 all_c.add("近月營收月增且年增")
+
+            # 計算大戶選股積分加分 (來自手動上傳清單)
+            bp_list = st.session_state.get('big_player_stocks', [])
+            if m_code and m_code.group() in bp_list:
+                all_c.add("大戶持股比例成長")
             
             group_scores[stock_clean] = len(all_c)
             group_criteria[stock_clean] = all_c
@@ -1567,6 +1629,16 @@ if st.session_state.history:
                 if full_name and full_name not in group_scores:
                     sorted_stocks.append(full_name)
                     group_scores[full_name] = -1 
+                    group_criteria[full_name] = set()
+
+        # 6. 併入「大戶選股積分尚無報告」的個股
+        bp_list = st.session_state.get('big_player_stocks', [])
+        for code in bp_list:
+            if str(code).strip() not in history_stock_set:
+                full_name = _get_standard_stock_name(code)
+                if full_name and full_name not in group_scores:
+                    sorted_stocks.append(full_name)
+                    group_scores[full_name] = -1
                     group_criteria[full_name] = set()
 
         
@@ -2374,6 +2446,65 @@ if st.session_state.history:
 
         
 
+        # --- 大戶選股積分上傳區塊 ---
+        st.divider()
+        st.subheader("💎 大戶選股積分名單")
+
+        if 'big_player_stocks' not in st.session_state:
+            st.session_state['big_player_stocks'] = load_big_player_stocks()
+
+        bp_file = st.file_uploader("上傳大戶選股積分 Excel 或 CSV（系統將自動掃描內容中的股票代號）", type=['xlsx', 'xls', 'csv'], key="bp_uploader")
+
+        if bp_file:
+            try:
+                bp_file.seek(0)
+                if bp_file.name.endswith('.csv'):
+                    try:
+                        _bp_df = pd.read_csv(bp_file, encoding='utf-8-sig', dtype=str)
+                    except:
+                        bp_file.seek(0)
+                        _bp_df = pd.read_csv(bp_file, encoding='cp950', dtype=str)
+                else:
+                    _bp_df = pd.read_excel(bp_file, dtype=str)
+
+                import re as _re
+                new_bp_stocks = set()
+                # 簡單暴力掃描所有欄位抓取四位數台股代號
+                for c in _bp_df.columns:
+                    for v in _bp_df[c].dropna().astype(str):
+                        v_str = v.strip()
+                        m = _re.search(r'(?<!\d)(\d{4})(?!\d)', v_str)
+                        if m:
+                            code_int = int(m.group(1))
+                            if 1100 <= code_int <= 9999 and str(code_int)[:2] != '20':
+                                new_bp_stocks.add(m.group(1))
+
+                if new_bp_stocks:
+                    st.success(f"✅ 成功從大戶選股積分報告中萃取出 {len(new_bp_stocks)} 檔股票！")
+                    curr_bp = set(st.session_state.get('big_player_stocks', []))
+                    if curr_bp != new_bp_stocks:
+                        st.session_state['big_player_stocks'] = list(new_bp_stocks)
+                        save_big_player_stocks(list(new_bp_stocks))
+                        st.rerun()
+                else:
+                    st.warning("⚠️ 檔案中未發現有效股票代號")
+            except Exception as e:
+                st.warning(f"⚠️ 大戶選股積分清單解析失敗：{e}")
+
+        curr_bp_list = st.session_state.get('big_player_stocks', [])
+        if curr_bp_list:
+            st.markdown(f"##### 💎 目前大戶選股積分清單（共 {len(curr_bp_list)} 筆）")
+            curr_name_map = st.session_state.get('global_name_map', {})
+            bp_display_rows = [{"股票代號": code, "公司名稱": curr_name_map.get(code, "未知名稱")} for code in curr_bp_list]
+            st.dataframe(pd.DataFrame(bp_display_rows), hide_index=True)
+
+            _, col_clear_bp = st.columns([8, 2])
+            with col_clear_bp:
+                if st.button("🗑️ 清空大戶選股積分資料", use_container_width=True):
+                    st.session_state['big_player_stocks'] = []
+                    save_big_player_stocks([])
+                    st.rerun()
+
         # --- 自動每日選股評分功能 ---
 
         st.divider()
@@ -2408,6 +2539,7 @@ if st.session_state.history:
             st.info("⚡ 系統正在啟動本機純 Python 量化運算引擎，透過 FinMind、YFinance 與 TDCC 集保結算所即時抓取最新資料！這可能需要 1~2 分鐘，請稍候...")
             
             try:
+                # 將大戶選股積分清單的股票也納入分析（與法說會、營收條件同步處理）
                 progress_bar = st.progress(0)
                 status = st.empty()
                 
@@ -2417,18 +2549,25 @@ if st.session_state.history:
                 
                 # 同時將「尚無報告的法說會個股」一併納入量化分析清單
                 _conf_map = st.session_state.get('conf_dates_map', {})
+                import re as _re
+                _history_codes = set()
+                for s in df_raw['stock'].dropna():
+                    m = _re.search(r'\d{4}', str(s))
+                    if m: _history_codes.add(m.group())
+                _global_names = st.session_state.get("global_name_map", {})
                 if _conf_map:
-                    import re as _re
-                    _history_codes = set()
-                    for s in df_raw['stock'].dropna():
-                        m = _re.search(r'\d{4}', str(s))
-                        if m: _history_codes.add(m.group())
                     _missing = [c for c in _conf_map.keys() if c not in _history_codes]
-                    _global_names = st.session_state.get("global_name_map", {})
                     for c in _missing:
                         combined_name = f"{c} {_global_names.get(c, '')}".strip()
                         if not any(c in str(vs) for vs in valid_stocks):
                             valid_stocks.append(combined_name)
+
+                # 同時將「大戶選股積分清單」的股票也納入（若尚未在名單中）
+                _bp_list = st.session_state.get('big_player_stocks', [])
+                for c in _bp_list:
+                    combined_name = f"{c} {_global_names.get(c, '')}".strip()
+                    if not any(c in str(vs) for vs in valid_stocks):
+                        valid_stocks.append(combined_name)
                 
                 # 預先下載 TDCC 集保結算所資料 (67K rows)，避免每檔重複下載
                 import io as _io
