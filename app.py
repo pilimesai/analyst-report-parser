@@ -641,6 +641,63 @@ def save_big_player_stocks(bp_list):
         st.error(f"❌ 無法儲存大戶選股積分紀錄至本地: {str(e)}")
 
 
+def load_gross_margin_stocks():
+    _cache_path = os.path.join(BASE_DIR, "gross_margin_stocks.json")
+    ws = get_worksheet()
+    if ws:
+        try:
+            spreadsheet = ws.spreadsheet
+            ws_gm = spreadsheet.worksheet("毛利三季成長")
+            records = ws_gm.get_all_records()
+            if records:
+                gm_list = [str(r.get("代號", "")).strip() for r in records if r.get("代號")]
+                st.toast(f"☁️ 成功從 Google Sheets (毛利三季成長) 載入 {len(gm_list)} 筆紀錄！", icon="📈")
+                return gm_list
+        except Exception as e:
+            if "WorksheetNotFound" not in str(type(e).__name__):
+                st.warning(f"⚠️ 從 Google Sheets 讀取毛利三季成長資料失敗: {e}")
+
+    # Fallback to local
+    if os.path.exists(_cache_path):
+        try:
+            with open(_cache_path, 'r', encoding='utf-8') as _f:
+                gm_list = json.load(_f)
+                st.toast(f"✅ 成功從本地檔案載入 {len(gm_list)} 筆毛利三季成長紀錄！", icon="📈")
+                return gm_list
+        except Exception as e:
+            st.error(f"❌ 載入本地毛利三季成長紀錄失敗: {e}")
+    return []
+
+def save_gross_margin_stocks(gm_list):
+    _cache_path = os.path.join(BASE_DIR, "gross_margin_stocks.json")
+    ws = get_worksheet()
+    if ws:
+        try:
+            spreadsheet = ws.spreadsheet
+            try:
+                ws_gm = spreadsheet.worksheet("毛利三季成長")
+            except:
+                ws_gm = spreadsheet.add_worksheet(title="毛利三季成長", rows="1000", cols="2")
+                st.toast("🆕 已建立新的 Google Sheet 分頁：毛利三季成長", icon="✨")
+
+            data = [["代號"]] + [[k] for k in gm_list]
+            ws_gm.clear()
+            try:
+                ws_gm.update(values=data, range_name="A1")
+            except TypeError:
+                ws_gm.update(data, "A1")
+            st.toast(f"☁️ 已成功將 {len(gm_list)} 筆毛利三季成長紀錄同步至 Google Sheets！", icon="💾")
+        except Exception as e:
+            st.error(f"❌ 寫入 Google Sheets (毛利三季成長) 失敗: {str(e)}")
+
+    # Fallback/also save to local
+    try:
+        with open(_cache_path, "w", encoding="utf-8") as f:
+            json.dump(gm_list, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        st.error(f"❌ 無法儲存毛利三季成長紀錄至本地: {str(e)}")
+
+
 # Initialize session history
 
 if 'history' not in st.session_state:
@@ -1591,6 +1648,11 @@ if st.session_state.history:
             bp_list = st.session_state.get('big_player_stocks', [])
             if m_code and m_code.group() in bp_list:
                 all_c.add("大戶持股比例成長")
+
+            # 計算毛利連續三季成長加分 (來自手動上傳清單)
+            gm_list = st.session_state.get('gross_margin_stocks', [])
+            if m_code and m_code.group() in gm_list:
+                all_c.add("毛利連續三季成長")
             
             group_scores[stock_clean] = len(all_c)
             group_criteria[stock_clean] = all_c
@@ -1634,6 +1696,16 @@ if st.session_state.history:
         # 6. 併入「大戶選股積分尚無報告」的個股
         bp_list = st.session_state.get('big_player_stocks', [])
         for code in bp_list:
+            if str(code).strip() not in history_stock_set:
+                full_name = _get_standard_stock_name(code)
+                if full_name and full_name not in group_scores:
+                    sorted_stocks.append(full_name)
+                    group_scores[full_name] = -1
+                    group_criteria[full_name] = set()
+
+        # 7. 併入「毛利連續三季成長尚無報告」的個股
+        gm_list = st.session_state.get('gross_margin_stocks', [])
+        for code in gm_list:
             if str(code).strip() not in history_stock_set:
                 full_name = _get_standard_stock_name(code)
                 if full_name and full_name not in group_scores:
@@ -2453,6 +2525,9 @@ if st.session_state.history:
         if 'big_player_stocks' not in st.session_state:
             st.session_state['big_player_stocks'] = load_big_player_stocks()
 
+        if 'gross_margin_stocks' not in st.session_state:
+            st.session_state['gross_margin_stocks'] = load_gross_margin_stocks()
+
         bp_file = st.file_uploader("上傳大戶選股積分 Excel 或 CSV（系統將自動掃描內容中的股票代號）", type=['xlsx', 'xls', 'csv'], key="bp_uploader")
 
         if bp_file:
@@ -2503,6 +2578,62 @@ if st.session_state.history:
                 if st.button("🗑️ 清空大戶選股積分資料", use_container_width=True):
                     st.session_state['big_player_stocks'] = []
                     save_big_player_stocks([])
+                    st.rerun()
+
+        # --- 毛利連續三季成長上傳區塊 ---
+        st.divider()
+        st.subheader("📈 毛利連續三季成長名單")
+
+        gm_file = st.file_uploader("上傳毛利連續三季成長 Excel 或 CSV（系統將自動掃描內容中的股票代號）", type=['xlsx', 'xls', 'csv'], key="gm_uploader")
+
+        if gm_file:
+            try:
+                gm_file.seek(0)
+                if gm_file.name.endswith('.csv'):
+                    try:
+                        _gm_df = pd.read_csv(gm_file, encoding='utf-8-sig', dtype=str)
+                    except:
+                        gm_file.seek(0)
+                        _gm_df = pd.read_csv(gm_file, encoding='cp950', dtype=str)
+                else:
+                    _gm_df = pd.read_excel(gm_file, dtype=str)
+
+                import re as _re
+                new_gm_stocks = set()
+                # 簡單暴力掃描所有欄位抓取四位數台股代號
+                for c in _gm_df.columns:
+                    for v in _gm_df[c].dropna().astype(str):
+                        v_str = v.strip()
+                        m = _re.search(r'(?<!\d)(\d{4})(?!\d)', v_str)
+                        if m:
+                            code_int = int(m.group(1))
+                            if 1100 <= code_int <= 9999 and str(code_int)[:2] != '20':
+                                new_gm_stocks.add(m.group(1))
+
+                if new_gm_stocks:
+                    st.success(f"✅ 成功從毛利三季成長報告中萃取出 {len(new_gm_stocks)} 檔股票！")
+                    curr_gm = set(st.session_state.get('gross_margin_stocks', []))
+                    if curr_gm != new_gm_stocks:
+                        st.session_state['gross_margin_stocks'] = list(new_gm_stocks)
+                        save_gross_margin_stocks(list(new_gm_stocks))
+                        st.rerun()
+                else:
+                    st.warning("⚠️ 檔案中未發現有效股票代號")
+            except Exception as e:
+                st.warning(f"⚠️ 毛利三季成長清單解析失敗：{e}")
+
+        curr_gm_list = st.session_state.get('gross_margin_stocks', [])
+        if curr_gm_list:
+            st.markdown(f"##### 📈 目前毛利連續三季成長清單（共 {len(curr_gm_list)} 筆）")
+            curr_name_map = st.session_state.get('global_name_map', {})
+            gm_display_rows = [{"股票代號": code, "公司名稱": curr_name_map.get(code, "未知名稱")} for code in curr_gm_list]
+            st.dataframe(pd.DataFrame(gm_display_rows), hide_index=True)
+
+            _, col_clear_gm = st.columns([8, 2])
+            with col_clear_gm:
+                if st.button("🗑️ 清空毛利三季成長資料", use_container_width=True):
+                    st.session_state['gross_margin_stocks'] = []
+                    save_gross_margin_stocks([])
                     st.rerun()
 
         # --- 自動每日選股評分功能 ---
@@ -2565,6 +2696,13 @@ if st.session_state.history:
                 # 同時將「大戶選股積分清單」的股票也納入（若尚未在名單中）
                 _bp_list = st.session_state.get('big_player_stocks', [])
                 for c in _bp_list:
+                    combined_name = f"{c} {_global_names.get(c, '')}".strip()
+                    if not any(c in str(vs) for vs in valid_stocks):
+                        valid_stocks.append(combined_name)
+
+                # 同時將「毛利連續三季成長清單」的股票也納入（若尚未在名單中）
+                _gm_list = st.session_state.get('gross_margin_stocks', [])
+                for c in _gm_list:
                     combined_name = f"{c} {_global_names.get(c, '')}".strip()
                     if not any(c in str(vs) for vs in valid_stocks):
                         valid_stocks.append(combined_name)
