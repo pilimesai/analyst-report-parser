@@ -2667,7 +2667,7 @@ if st.session_state.history:
         
 
         if daily_pick_btn:
-            st.info("⚡ 系統正在啟動本機純 Python 量化運算引擎，透過 FinMind、YFinance 與 TDCC 集保結算所即時抓取最新資料！這可能需要 1~2 分鐘，請稍候...")
+            st.info("⚡ 系統正在啟動本機純 Python 量化運算引擎，透過 FinMind、YFinance 即時抓取最新資料！這可能需要 1~2 分鐘，請稍候...")
             
             try:
                 # 將大戶選股積分清單的股票也納入分析（與法說會、營收條件同步處理）
@@ -2706,44 +2706,6 @@ if st.session_state.history:
                     combined_name = f"{c} {_global_names.get(c, '')}".strip()
                     if not any(c in str(vs) for vs in valid_stocks):
                         valid_stocks.append(combined_name)
-                
-                # 預先下載 TDCC 集保結算所資料 (67K rows)，避免每檔重複下載
-                import io as _io
-                import os as _os
-                tdcc_df = None
-                tdcc_prev_df = None
-                TDCC_CACHE_FILE = "tdcc_prev.csv"
-                
-                # 載入上週的 TDCC 快照 (用於比較大戶持股成長)
-                status.text("📊 正在載入集保結算所歷史資料...")
-                try:
-                    if _os.path.exists(TDCC_CACHE_FILE):
-                        tdcc_prev_df = pd.read_csv(TDCC_CACHE_FILE)
-                        st.toast("📂 已載入上次集保快照作為對照！", icon="📊")
-                except Exception as e:
-                    print(f"TDCC 快照載入失敗: {e}")
-                
-                # 下載本週最新 TDCC 資料
-                status.text("📊 正在下載集保結算所 (TDCC) 神秘金字塔最新資料...")
-                try:
-                    tdcc_resp = requests.get("https://smart.tdcc.com.tw/opendata/getOD.ashx?id=1-5",
-                                            headers={"User-Agent": "Mozilla/5.0"}, timeout=15, verify=False)
-                    if tdcc_resp.status_code == 200:
-                        tdcc_content = tdcc_resp.content.decode('utf-8-sig')
-                        tdcc_df = pd.read_csv(_io.StringIO(tdcc_content))
-                        
-                        # 檢查是否與上次不同日期（代表是新一週的資料）
-                        curr_date = str(tdcc_df.iloc[0, 0]) if not tdcc_df.empty else ""
-                        prev_date = str(tdcc_prev_df.iloc[0, 0]) if tdcc_prev_df is not None and not tdcc_prev_df.empty else ""
-                        
-                        if curr_date != prev_date:
-                            # 新日期！把當前資料存為下次的「上週對照」
-                            tdcc_df.to_csv(TDCC_CACHE_FILE, index=False, encoding='utf-8-sig')
-                            st.toast(f"✅ 集保資料已更新 ({curr_date})，舊快照 ({prev_date or '無'}) 已保存供比較！", icon="🏛️")
-                        else:
-                            st.toast(f"✅ 集保資料日期相同 ({curr_date})，使用快取對照。", icon="🏛️")
-                except Exception as e:
-                    print(f"TDCC 下載失敗: {e}")
                 
                 # 載入畫面上已自動預解析的法說會日期
                 conference_stocks = {}
@@ -2798,7 +2760,7 @@ if st.session_state.history:
                         stock_id = stock_id_match.group()
                         
                         # 呼叫純 Python 的 quant_engine (傳入所有預載資料)
-                        matched = evaluate_stock_quant(stock_id, tdcc_df=tdcc_df, tdcc_prev_df=tdcc_prev_df, conference_stocks=conference_stocks, cb_stocks=cb_stocks, cb_issued_data=cb_issued_data)
+                        matched = evaluate_stock_quant(stock_id, tdcc_df=None, tdcc_prev_df=None, conference_stocks=conference_stocks, cb_stocks=cb_stocks, cb_issued_data=cb_issued_data)
                         
                         # 條件 11: 目前股價低於 20 倍 PE（從報告表格讀取）
                         try:
