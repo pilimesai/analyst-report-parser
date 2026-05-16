@@ -2415,12 +2415,11 @@ if st.session_state.history:
                                 new_rev_stocks.add(m.group(1))
                 
                 if new_rev_stocks:
-                    st.success(f"✅ 成功萃取出 {len(new_rev_stocks)} 檔符合營收條件的股票！")
-                    curr_rev = set(st.session_state.get('revenue_stocks', []))
-                    if curr_rev != new_rev_stocks:
-                        st.session_state['revenue_stocks'] = list(new_rev_stocks)
-                        save_revenue_stocks(list(new_rev_stocks))
-                        st.rerun()
+                    old_count = len(st.session_state.get('revenue_stocks', []))
+                    st.session_state['revenue_stocks'] = list(new_rev_stocks)
+                    save_revenue_stocks(list(new_rev_stocks))
+                    st.success(f"✅ 成功以新資料取代舊資料！已清除舊有 {old_count} 筆，新增 {len(new_rev_stocks)} 檔符合營收條件的股票！")
+                    st.rerun()
                 else:
                     st.warning("⚠️ 檔案中未發現有效股票代號")
             except Exception as e:
@@ -2555,12 +2554,11 @@ if st.session_state.history:
                                 new_bp_stocks.add(m.group(1))
 
                 if new_bp_stocks:
-                    st.success(f"✅ 成功從大戶選股積分報告中萃取出 {len(new_bp_stocks)} 檔股票！")
-                    curr_bp = set(st.session_state.get('big_player_stocks', []))
-                    if curr_bp != new_bp_stocks:
-                        st.session_state['big_player_stocks'] = list(new_bp_stocks)
-                        save_big_player_stocks(list(new_bp_stocks))
-                        st.rerun()
+                    old_count = len(st.session_state.get('big_player_stocks', []))
+                    st.session_state['big_player_stocks'] = list(new_bp_stocks)
+                    save_big_player_stocks(list(new_bp_stocks))
+                    st.success(f"✅ 成功以新資料取代舊資料！已清除舊有 {old_count} 筆，新增 {len(new_bp_stocks)} 檔大戶選股積分股票！")
+                    st.rerun()
                 else:
                     st.warning("⚠️ 檔案中未發現有效股票代號")
             except Exception as e:
@@ -2611,12 +2609,11 @@ if st.session_state.history:
                                 new_gm_stocks.add(m.group(1))
 
                 if new_gm_stocks:
-                    st.success(f"✅ 成功從毛利三季成長報告中萃取出 {len(new_gm_stocks)} 檔股票！")
-                    curr_gm = set(st.session_state.get('gross_margin_stocks', []))
-                    if curr_gm != new_gm_stocks:
-                        st.session_state['gross_margin_stocks'] = list(new_gm_stocks)
-                        save_gross_margin_stocks(list(new_gm_stocks))
-                        st.rerun()
+                    old_count = len(st.session_state.get('gross_margin_stocks', []))
+                    st.session_state['gross_margin_stocks'] = list(new_gm_stocks)
+                    save_gross_margin_stocks(list(new_gm_stocks))
+                    st.success(f"✅ 成功以新資料取代舊資料！已清除舊有 {old_count} 筆，新增 {len(new_gm_stocks)} 檔毛利連續三季成長股票！")
+                    st.rerun()
                 else:
                     st.warning("⚠️ 檔案中未發現有效股票代號")
             except Exception as e:
