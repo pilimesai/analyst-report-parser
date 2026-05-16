@@ -1929,7 +1929,21 @@ if st.session_state.history:
 
         df_display = pd.DataFrame(consolidated)
 
-        
+        # 依股號由小到大排序（取出 4 位數字做數值排序）
+        if not df_display.empty:
+            import re as _re_sort
+            def _extract_code(s):
+                m = _re_sort.search(r'\d{4}', str(s))
+                return int(m.group()) if m else 99999
+            # 先建立排序鍵，只對「股票名稱/代號」非空的首列排序，其餘列維持原有順序
+            # 方法：將每個股票群組提取代號 → 依代號排序 sorted_stocks 的順序
+            _unique_stocks_ordered = list(dict.fromkeys(
+                df_display['股票名稱/代號'].replace('', float('NaN')).ffill()
+            ))
+            _unique_stocks_sorted = sorted(_unique_stocks_ordered, key=_extract_code)
+            _order_map = {s: i for i, s in enumerate(_unique_stocks_sorted)}
+            df_display['_sort_key'] = df_display['股票名稱/代號'].replace('', float('NaN')).ffill().map(_order_map)
+            df_display = df_display.sort_values('_sort_key', kind='stable').drop(columns=['_sort_key']).reset_index(drop=True)
 
         if not df_display.empty:
 
@@ -2364,7 +2378,10 @@ if st.session_state.history:
             
             if rebuilt_rows:
                 st.markdown(f"##### 📅 法說會清單（共 {len(rebuilt_rows)} 筆）")
-                conf_display_df = pd.DataFrame(rebuilt_rows).sort_values(by="法說會日期")
+                import re as _re_conf
+                _conf_tmp = pd.DataFrame(rebuilt_rows)
+                _conf_tmp['_code_sort'] = _conf_tmp['股票代號'].apply(lambda x: int(_re_conf.search(r'\d{4}', str(x)).group()) if _re_conf.search(r'\d{4}', str(x)) else 99999)
+                conf_display_df = _conf_tmp.sort_values('_code_sort').drop(columns=['_code_sort']).reset_index(drop=True)
                 
                 def highlight_conf_row(row):
                     if '✅' in str(row['狀態']): return ['background-color: rgba(76, 175, 80, 0.15)'] * len(row)
@@ -2429,7 +2446,7 @@ if st.session_state.history:
         if curr_rev_list:
             st.markdown(f"##### 💰 目前營收條件清單（共 {len(curr_rev_list)} 筆）")
             curr_name_map = st.session_state.get('global_name_map', {})
-            rev_display_rows = [{"股票代號": code, "公司名稱": curr_name_map.get(code, "未知名稱")} for code in curr_rev_list]
+            rev_display_rows = [{"股票代號": code, "公司名稱": curr_name_map.get(code, "未知名稱")} for code in sorted(curr_rev_list, key=lambda x: int(x) if str(x).isdigit() else 99999)]
             st.dataframe(pd.DataFrame(rev_display_rows), hide_index=True)
             
             _, col_clear_rev = st.columns([8, 2])
@@ -2568,7 +2585,7 @@ if st.session_state.history:
         if curr_bp_list:
             st.markdown(f"##### 💎 目前大戶選股積分清單（共 {len(curr_bp_list)} 筆）")
             curr_name_map = st.session_state.get('global_name_map', {})
-            bp_display_rows = [{"股票代號": code, "公司名稱": curr_name_map.get(code, "未知名稱")} for code in curr_bp_list]
+            bp_display_rows = [{"股票代號": code, "公司名稱": curr_name_map.get(code, "未知名稱")} for code in sorted(curr_bp_list, key=lambda x: int(x) if str(x).isdigit() else 99999)]
             st.dataframe(pd.DataFrame(bp_display_rows), hide_index=True)
 
             _, col_clear_bp = st.columns([8, 2])
@@ -2623,7 +2640,7 @@ if st.session_state.history:
         if curr_gm_list:
             st.markdown(f"##### 📈 目前毛利連續三季成長清單（共 {len(curr_gm_list)} 筆）")
             curr_name_map = st.session_state.get('global_name_map', {})
-            gm_display_rows = [{"股票代號": code, "公司名稱": curr_name_map.get(code, "未知名稱")} for code in curr_gm_list]
+            gm_display_rows = [{"股票代號": code, "公司名稱": curr_name_map.get(code, "未知名稱")} for code in sorted(curr_gm_list, key=lambda x: int(x) if str(x).isdigit() else 99999)]
             st.dataframe(pd.DataFrame(gm_display_rows), hide_index=True)
 
             _, col_clear_gm = st.columns([8, 2])
