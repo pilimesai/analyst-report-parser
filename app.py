@@ -1657,6 +1657,8 @@ if st.session_state.history:
             score = len(all_c)
             if "大戶持股比例成長" in all_c:
                 score += 1  # 大戶選股符合，積分加二 (額外加 1 分)
+            if "兩周內有法說會" in all_c:
+                score += 1  # 法說會符合，積分加二 (額外加 1 分)
             group_scores[stock_clean] = score
             group_criteria[stock_clean] = all_c
             
@@ -2813,6 +2815,8 @@ if st.session_state.history:
                         score = len(matched)
                         if "大戶持股比例成長" in matched or any("大戶持股增加" in m for m in matched):
                             score += 1  # 大戶選股符合，積分加二 (額外加 1 分)
+                        if any("兩周內有法說會" in m for m in matched):
+                            score += 1  # 法說會符合，積分加二 (額外加 1 分)
                         live_scores[s] = score
                         live_matches[s] = matched
                     else:
