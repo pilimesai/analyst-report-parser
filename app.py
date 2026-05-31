@@ -1654,7 +1654,10 @@ if st.session_state.history:
             if m_code and m_code.group() in gm_list:
                 all_c.add("毛利連續三季成長")
             
-            group_scores[stock_clean] = len(all_c)
+            score = len(all_c)
+            if "大戶持股比例成長" in all_c:
+                score += 1  # 大戶選股符合，積分加二 (額外加 1 分)
+            group_scores[stock_clean] = score
             group_criteria[stock_clean] = all_c
             
             # 紀錄股號
@@ -2799,7 +2802,18 @@ if st.session_state.history:
                         except Exception as e:
                             print(f"評等條件錯誤: {e}")
                         
-                        live_scores[s] = len(matched)
+                        # 條件 13: 大戶持股比例成長（從手動名單讀取）
+                        try:
+                            bp_list = st.session_state.get('big_player_stocks', [])
+                            if stock_id in bp_list:
+                                matched.append("大戶持股比例成長")
+                        except Exception as e:
+                            print(f"大戶條件錯誤: {e}")
+                        
+                        score = len(matched)
+                        if "大戶持股比例成長" in matched or any("大戶持股增加" in m for m in matched):
+                            score += 1  # 大戶選股符合，積分加二 (額外加 1 分)
+                        live_scores[s] = score
                         live_matches[s] = matched
                     else:
                         live_scores[s] = 0
