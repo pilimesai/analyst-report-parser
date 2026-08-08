@@ -381,6 +381,8 @@
         .table-responsive {
             width: 100%;
             overflow-x: auto;
+            overflow-y: auto;
+            max-height: 75vh;
         }
 
         table {
@@ -418,8 +420,12 @@
         th {
             font-weight: 600;
             color: var(--text-secondary);
-            background-color: rgba(15, 23, 42, 0.3);
+            background-color: #1e293b; /* 使用不透明背景，避免捲動文字透出 */
             white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.5); /* 增加底部陰影區隔 */
         }
 
         tr:hover td {
