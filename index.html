@@ -393,12 +393,20 @@
         th, td {
             padding: 1rem;
             border-bottom: 1px solid var(--card-border);
+            vertical-align: middle;
+        }
+
+        /* 避免較短的資料欄位被不自然換行 */
+        td:nth-child(1), td:nth-child(2), td:nth-child(3), 
+        td:nth-child(4), td:nth-child(5), td:nth-child(6) {
+            white-space: nowrap;
         }
 
         th {
             font-weight: 600;
             color: var(--text-secondary);
             background-color: rgba(15, 23, 42, 0.3);
+            white-space: nowrap;
         }
 
         tr:hover td {
@@ -674,8 +682,20 @@
                 } else if (row['量化條件符合項目']) {
                     matchedCriteria = String(row['量化條件符合項目']).split('/').map(x => x.trim()).filter(Boolean);
                 }
+                let rawDate = row.date || row['日期'] || '';
+                let formattedDate = rawDate;
+                
+                // 檢查是否為 Excel 的日期序列號 (例如 46104.333...)
+                if (!isNaN(parseFloat(rawDate)) && isFinite(rawDate) && rawDate > 10000) {
+                    const dateObj = new Date(Math.round((parseFloat(rawDate) - 25569) * 86400 * 1000));
+                    // 轉為 YYYY/MM/DD
+                    formattedDate = dateObj.toLocaleDateString('zh-TW');
+                } else if (rawDate) {
+                    formattedDate = String(rawDate);
+                }
+
                 return {
-                    date: row.date || row['日期'] || '',
+                    date: formattedDate,
                     stock: row.stock || row['個股'] || row['股票'] || '',
                     brokerage: row.brokerage || row['券商'] || '',
                     rating: row.rating || row['評等'] || '',
