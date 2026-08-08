@@ -384,6 +384,7 @@
         }
 
         table {
+            width: 100%;
             border-collapse: collapse;
             text-align: left;
             font-size: 0.85rem;
@@ -398,10 +399,20 @@
             word-break: break-word;
         }
 
-        /* 避免較短的資料欄位被不自然換行，並限制過度展開 */
+        /* 避免較短的資料欄位被不自然換行，並將它們的寬度縮至最小 */
         td:nth-child(1), td:nth-child(2), td:nth-child(3), 
         td:nth-child(4), td:nth-child(5), td:nth-child(6) {
             white-space: nowrap;
+            width: 1%; 
+        }
+
+        /* 讓長文字內容有最大高度，超過時出現捲軸 */
+        .scrollable-cell {
+            max-height: 80px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            min-width: 200px;
+            padding-right: 4px;
         }
 
         th {
@@ -1044,8 +1055,8 @@ JSON 規格範例：
                     <td><span class="rating-badge ${ratingClass}">${row.rating || 'N/A'}</span></td>
                     <td>${row.target_price || 'N/A'}</td>
                     <td>${row.eps || 'N/A'}</td>
-                    <td>${row.summary || 'N/A'}</td>
-                    <td id="criteria-${index}">${(row.matched_criteria && row.matched_criteria.length > 0) ? row.matched_criteria.join(' / ') : '進行量化運算以比對...'}</td>
+                    <td><div class="scrollable-cell">${row.summary || 'N/A'}</div></td>
+                    <td id="criteria-${index}"><div class="scrollable-cell">${(row.matched_criteria && row.matched_criteria.length > 0) ? row.matched_criteria.join(' / ') : '進行量化運算以比對...'}</div></td>
                 `;
                 reportsTbody.appendChild(tr);
             });
