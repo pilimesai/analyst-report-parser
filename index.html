@@ -648,7 +648,8 @@
                 <label>近期發行CB</label>
                 <input type="file" id="recent-cb-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
-                    <button class="btn" onclick="document.getElementById('recent-cb-upload').click()" style="width: 100%;">📥 上傳 CSV</button>
+                    <button class="btn" onclick="document.getElementById('recent-cb-upload').click()" style="width: 48%;">📥 上傳 CSV</button>
+                    <button class="btn btn-primary" onclick="fetchCBFromGithub()" style="width: 48%; background: #4a6fa5;">🤖 AI自動獲取</button>
                 </div>
             </div>
         </div>
@@ -941,6 +942,20 @@
         document.getElementById('earnings-call-upload').addEventListener('change', (e) => handleCsvUpload(e, '法說會'));
         document.getElementById('contract-liabilities-upload').addEventListener('change', (e) => handleCsvUpload(e, '合約負債條件'));
         document.getElementById('recent-cb-upload').addEventListener('change', (e) => handleCsvUpload(e, '近期發行CB'));
+
+        async function fetchCBFromGithub() {
+            try {
+                showToast("正在透過 AI 從資料庫獲取最新 CB 名單...");
+                // Fetch from the raw github user content
+                const res = await fetch("https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/%E8%BF%91%E6%9C%9F%E7%99%BC%E8%A1%8CCB.csv?v=" + new Date().getTime());
+                if (!res.ok) throw new Error("無法獲取資料");
+                const text = await res.text();
+                
+                parseAndSyncCsv(text, "AI自動獲取", "近期發行CB", false);
+            } catch(e) {
+                showToast("獲取失敗: " + e.message, true);
+            }
+        }
 
         function handleCsvUpload(e, targetSheetName) {
             const file = e.target.files[0];
