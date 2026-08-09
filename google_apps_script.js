@@ -134,8 +134,12 @@ function doGet(e) {
       }
     }
     
-    // 讀取 CSV 分頁，提取代碼供網頁初始化
-    var sheetNamesToRead = ["大戶持股", "可轉債CB", "XQ選股"];
+    // 讀取 CSV 分頁，供網頁初始化繪製表格
+    var sheetNamesToRead = [
+      "大戶持股", "可轉債CB", "XQ選股", 
+      "大戶選股積分名單", "毛利連續三季成長名單", 
+      "營收選股名單", "法說會追蹤"
+    ];
     var sheetData = {};
     
     for (var j = 0; j < sheetNamesToRead.length; j++) {
@@ -143,27 +147,7 @@ function doGet(e) {
       var s = ss.getSheetByName(sName);
       if (s && s.getLastRow() > 1) {
         var sValues = s.getDataRange().getValues();
-        var headers = sValues[0];
-        var codeIdx = -1;
-        for (var c = 0; c < headers.length; c++) {
-          var h = String(headers[c]);
-          if (h.indexOf('代號') > -1 || h.indexOf('代碼') > -1 || h.indexOf('Code') > -1 || h.indexOf('股票') > -1) {
-            codeIdx = c;
-            break;
-          }
-        }
-        
-        var codes = [];
-        if (codeIdx > -1) {
-          for (var r = 1; r < sValues.length; r++) {
-            var cellVal = String(sValues[r][codeIdx]);
-            var match = cellVal.match(/\\d{4}/);
-            if (match) {
-              codes.push(match[0]);
-            }
-          }
-        }
-        sheetData[sName] = codes.join(", ");
+        sheetData[sName] = sValues;
       }
     }
     
