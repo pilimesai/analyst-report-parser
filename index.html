@@ -842,6 +842,12 @@
                     if (result.sheetData) {
                         window.tablesData = result.sheetData;
                         console.log("已從雲端同步設定與 CSV 分頁資料", window.tablesData);
+                        
+                        // 檢查是否為舊版 Apps Script
+                        if (window.tablesData['可轉債CB'] && !window.tablesData['近期發行CB']) {
+                            alert("⚠️ 系統偵測到您的 Apps Script 還在舊版本！\n\n請務必到 Apps Script 編輯器：\n1. 貼上最新版 google_apps_script.js 程式碼\n2. 點擊右上角「部署」->「管理部署作業」\n3. 點擊鉛筆(編輯) -> 版本選擇「新版本」-> 儲存！\n\n這樣「近期發行CB」才會正常顯示喔！");
+                        }
+
                         showToast("✅ 已成功從雲端自動載入大戶與試算表資料！");
                         renderPersistentTables();
                     }
@@ -1295,6 +1301,7 @@ JSON 規格範例：
             sheetsToRender.forEach(sheetName => {
                 const data = window.tablesData[sheetName];
                 if (!data || data.length === 0) return; // skip empty
+                if (data.length === 1 && data[0].length === 1 && data[0][0] === "") return; // skip completely empty sheet in google sheets
 
                 const section = document.createElement('div');
                 section.className = 'reports-section';
