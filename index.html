@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📈 券商報告自動分析器 (Serverless 版)</title>
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
     <!-- PDF.js & SheetJS CDNs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    
+
     <style>
         :root {
             --bg-color: #0b0f19;
@@ -97,7 +100,10 @@
             color: var(--text-secondary);
         }
 
-        input[type="text"], input[type="password"], select, textarea {
+        input[type="text"],
+        input[type="password"],
+        select,
+        textarea {
             width: 100%;
             background-color: rgba(15, 23, 42, 0.6);
             border: 1px solid var(--card-border);
@@ -109,7 +115,9 @@
             transition: all var(--transition-speed);
         }
 
-        input:focus, select:focus, textarea:focus {
+        input:focus,
+        select:focus,
+        textarea:focus {
             outline: none;
             border-color: var(--accent-indigo);
             box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
@@ -142,10 +150,12 @@
             opacity: 0;
             transition: opacity var(--transition-speed);
         }
+
         .modal-overlay.show {
             display: flex;
             opacity: 1;
         }
+
         .modal-content {
             background-color: var(--sidebar-bg);
             border: 1px solid var(--card-border);
@@ -159,9 +169,11 @@
             transform: scale(0.95);
             transition: transform var(--transition-speed);
         }
+
         .modal-overlay.show .modal-content {
             transform: scale(1);
         }
+
         .modal-header {
             padding: 1.5rem;
             border-bottom: 1px solid var(--card-border);
@@ -169,10 +181,12 @@
             justify-content: space-between;
             align-items: center;
         }
+
         .modal-header h3 {
             font-size: 1.25rem;
             margin: 0;
         }
+
         .close-btn {
             background: none;
             border: none;
@@ -181,20 +195,23 @@
             cursor: pointer;
             transition: color 0.2s;
         }
+
         .close-btn:hover {
             color: var(--text-primary);
         }
+
         .modal-body {
             padding: 1.5rem;
             overflow-y: auto;
             flex: 1;
         }
-        
+
         .upload-actions {
             display: flex;
             gap: 0.5rem;
             margin-top: 0.25rem;
         }
+
         .upload-actions .btn {
             flex: 1;
             justify-content: center;
@@ -244,7 +261,8 @@
             gap: 1rem;
         }
 
-        .upload-zone:hover, .upload-zone.dragover {
+        .upload-zone:hover,
+        .upload-zone.dragover {
             border-color: var(--accent-emerald);
             background-color: rgba(16, 185, 129, 0.05);
             transform: translateY(-2px);
@@ -256,8 +274,15 @@
         }
 
         @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
         }
 
         .upload-text h4 {
@@ -469,7 +494,8 @@
             border: 1px solid var(--card-border);
         }
 
-        th, td {
+        th,
+        td {
             padding: 0.4rem 0.5rem;
             border: 1px solid var(--card-border);
             vertical-align: bottom;
@@ -477,10 +503,14 @@
         }
 
         /* 避免較短的資料欄位被不自然換行，並將它們的寬度縮至最小 */
-        td:nth-child(1), td:nth-child(2), td:nth-child(3), 
-        td:nth-child(4), td:nth-child(5), td:nth-child(6) {
+        td:nth-child(1),
+        td:nth-child(2),
+        td:nth-child(3),
+        td:nth-child(4),
+        td:nth-child(5),
+        td:nth-child(6) {
             white-space: nowrap;
-            width: 1%; 
+            width: 1%;
         }
 
         /* 讓長文字內容有最大高度，超過時出現捲軸 */
@@ -495,12 +525,14 @@
         th {
             font-weight: 600;
             color: var(--text-secondary);
-            background-color: #1e293b; /* 使用不透明背景，避免捲動文字透出 */
+            background-color: #1e293b;
+            /* 使用不透明背景，避免捲動文字透出 */
             white-space: nowrap;
             position: sticky;
             top: 0;
             z-index: 10;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.5); /* 增加底部陰影區隔 */
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            /* 增加底部陰影區隔 */
         }
 
         tr:hover td {
@@ -548,8 +580,15 @@
         }
 
         @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         .toast.error {
@@ -557,6 +596,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Sidebar Settings Panel -->
@@ -565,7 +605,7 @@
             <span>📈</span>
             <span>報告分析器</span>
         </div>
-        
+
         <div class="sidebar-section">
             <h3>⚙️ 核心設定</h3>
             <div class="input-group">
@@ -575,7 +615,7 @@
                     金鑰將儲存於您的瀏覽器快取。<a href="https://aistudio.google.com/app/apikey" target="_blank">取得金鑰 ↗</a>
                 </div>
             </div>
-            
+
             <div class="input-group">
                 <label for="model-select">AI 模型</label>
                 <select id="model-select">
@@ -608,7 +648,8 @@
                 <label>大戶持股</label>
                 <input type="file" id="big-score-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
-                    <button class="btn" onclick="document.getElementById('big-score-upload').click()" style="width: 100%;">📥 上傳 CSV</button>
+                    <button class="btn" onclick="document.getElementById('big-score-upload').click()"
+                        style="width: 100%;">📥 上傳 CSV</button>
                 </div>
             </div>
 
@@ -616,7 +657,8 @@
                 <label>毛利三季成長</label>
                 <input type="file" id="gross-margin-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
-                    <button class="btn" onclick="document.getElementById('gross-margin-upload').click()" style="width: 100%;">📥 上傳 CSV</button>
+                    <button class="btn" onclick="document.getElementById('gross-margin-upload').click()"
+                        style="width: 100%;">📥 上傳 CSV</button>
                 </div>
             </div>
 
@@ -624,7 +666,8 @@
                 <label>營收條件</label>
                 <input type="file" id="revenue-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
-                    <button class="btn" onclick="document.getElementById('revenue-upload').click()" style="width: 100%;">📥 上傳 CSV</button>
+                    <button class="btn" onclick="document.getElementById('revenue-upload').click()"
+                        style="width: 100%;">📥 上傳 CSV</button>
                 </div>
             </div>
 
@@ -632,7 +675,8 @@
                 <label>法說會</label>
                 <input type="file" id="earnings-call-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
-                    <button class="btn" onclick="document.getElementById('earnings-call-upload').click()" style="width: 100%;">📥 上傳 CSV</button>
+                    <button class="btn" onclick="document.getElementById('earnings-call-upload').click()"
+                        style="width: 100%;">📥 上傳 CSV</button>
                 </div>
             </div>
 
@@ -640,7 +684,8 @@
                 <label>合約負債條件</label>
                 <input type="file" id="contract-liabilities-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
-                    <button class="btn" onclick="document.getElementById('contract-liabilities-upload').click()" style="width: 100%;">📥 上傳 CSV</button>
+                    <button class="btn" onclick="document.getElementById('contract-liabilities-upload').click()"
+                        style="width: 100%;">📥 上傳 CSV</button>
                 </div>
             </div>
 
@@ -648,8 +693,10 @@
                 <label>近期發行CB</label>
                 <input type="file" id="recent-cb-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
-                    <button class="btn" onclick="document.getElementById('recent-cb-upload').click()" style="width: 48%;">📥 上傳 CSV</button>
-                    <button class="btn btn-primary" onclick="fetchCBFromGithub()" style="width: 48%; background: #4a6fa5;">🤖 AI自動獲取</button>
+                    <button class="btn" onclick="document.getElementById('recent-cb-upload').click()"
+                        style="width: 48%;">📥 上傳 CSV</button>
+                    <button class="btn btn-primary" onclick="fetchCBFromGithub()"
+                        style="width: 48%; background: #4a6fa5;">🤖 AI自動獲取</button>
                 </div>
             </div>
         </div>
@@ -679,70 +726,77 @@
             </div>
 
             <!-- Paste Text Zone -->
-            <div class="text-input-zone" style="margin-top: 15px; background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: 1rem; padding: 1.5rem;">
-                <h4 style="margin-bottom: 12px; font-weight: 600; font-size: 1.1rem; color: var(--text-primary);">📝 或直接貼上法人日報文字</h4>
-                <textarea id="raw-text-input" placeholder="在此貼上文字報告、新聞稿或長篇券商分析..." rows="5" style="width: 100%; border-radius: 0.5rem; border: 1px solid var(--card-border); padding: 1rem; background-color: rgba(255,255,255,0.02); color: var(--text-primary); font-family: inherit; resize: vertical; margin-bottom: 15px; font-size: 0.95rem; line-height: 1.5;"></textarea>
+            <div class="text-input-zone"
+                style="margin-top: 15px; background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: 1rem; padding: 1.5rem;">
+                <h4 style="margin-bottom: 12px; font-weight: 600; font-size: 1.1rem; color: var(--text-primary);">📝
+                    或直接貼上法人日報文字</h4>
+                <textarea id="raw-text-input" placeholder="在此貼上文字報告、新聞稿或長篇券商分析..." rows="5"
+                    style="width: 100%; border-radius: 0.5rem; border: 1px solid var(--card-border); padding: 1rem; background-color: rgba(255,255,255,0.02); color: var(--text-primary); font-family: inherit; resize: vertical; margin-bottom: 15px; font-size: 0.95rem; line-height: 1.5;"></textarea>
                 <div style="text-align: right;">
-                    <button class="btn btn-primary" id="analyze-text-btn" style="padding: 0.75rem 2rem; font-size: 1rem;">🚀 開始分析文字</button>
+                    <button class="btn btn-primary" id="analyze-text-btn"
+                        style="padding: 0.75rem 2rem; font-size: 1rem;">🚀 開始分析文字</button>
                 </div>
             </div>
 
-        <!-- Progress Tracking -->
-        <div class="progress-container" id="progress-container">
-            <div class="progress-header">
-                <span id="progress-status">正在解析報告...</span>
-                <span id="progress-percent">0%</span>
-            </div>
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" id="progress-bar-fill"></div>
-            </div>
-        </div>
-
-        <!-- Top Scored Quant Champs -->
-        <div class="champs-section" id="champs-section">
-            <div class="champs-title">🏆 純量化嚴選標的</div>
-            <div class="champs-grid" id="champs-grid">
-                <!-- Champ cards insert here -->
-            </div>
-        </div>
-
-        <!-- Analysis Results Table -->
-        <div class="reports-section">
-            <div class="section-header">
-                <h2>📊 報告解析結果總覽</h2>
-                <div class="action-buttons">
-                    <button class="btn" id="sync-all-btn">☁️ 同步至 Sheets</button>
-                    <button class="btn" id="export-json-btn">📤 導出 JSON</button>
-                    <button class="btn btn-danger" id="clear-all-btn">🔴 清空紀錄</button>
+            <!-- Progress Tracking -->
+            <div class="progress-container" id="progress-container">
+                <div class="progress-header">
+                    <span id="progress-status">正在解析報告...</span>
+                    <span id="progress-percent">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progress-bar-fill"></div>
                 </div>
             </div>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>日期</th>
-                            <th>個股</th>
-                            <th>券商</th>
-                            <th>評等</th>
-                            <th>目標價</th>
-                            <th>預估 EPS</th>
-                            <th>摘要</th>
-                            <th>量化條件符合項目</th>
-                        </tr>
-                    </thead>
-                    <tbody id="reports-tbody">
-                        <!-- Table rows insert here -->
-                        <tr id="empty-row">
-                            <td colspan="8" style="text-align: center; color: var(--text-secondary); padding: 2rem;">尚無報告資料，請先上傳報告進行解析。</td>
-                        </tr>
-                    </tbody>
-                </table>
+
+            <!-- Top Scored Quant Champs -->
+            <div class="champs-section" id="champs-section">
+                <div class="champs-title">🏆 純量化嚴選標的</div>
+                <div class="champs-grid" id="champs-grid">
+                    <!-- Champ cards insert here -->
+                </div>
+            </div>
+
+            <!-- Analysis Results Table -->
+            <div class="reports-section">
+                <div class="section-header">
+                    <h2>📊 報告解析結果總覽</h2>
+                    <div class="action-buttons">
+                        <button class="btn" id="sync-all-btn">☁️ 同步至 Sheets</button>
+                        <button class="btn" id="export-json-btn">📤 導出 JSON</button>
+                        <button class="btn btn-danger" id="clear-all-btn">🔴 清空紀錄</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>個股</th>
+                                <th>券商</th>
+                                <th>評等</th>
+                                <th>目標價</th>
+                                <th>預估 EPS</th>
+                                <th>摘要</th>
+                                <th>量化條件符合項目</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reports-tbody">
+                            <!-- Table rows insert here -->
+                            <tr id="empty-row">
+                                <td colspan="8"
+                                    style="text-align: center; color: var(--text-secondary); padding: 2rem;">
+                                    尚無報告資料，請先上傳報告進行解析。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Persistent CSV Tables Container -->
-    <div id="persistent-csv-tables" style="display:flex; flex-direction:column; gap:20px; padding-bottom: 40px; margin-top: 2rem;"></div>
+        <!-- Persistent CSV Tables Container -->
+        <div id="persistent-csv-tables"
+            style="display:flex; flex-direction:column; gap:20px; padding-bottom: 40px; margin-top: 2rem;"></div>
     </div>
 
     <!-- Notification Toast -->
@@ -758,7 +812,7 @@
         let reportsData = [];
         let stockNameMap = {};
         window.tablesData = {};
-        
+
         // PDF.js worker URL setup
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
@@ -790,21 +844,21 @@
             const match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
             if (!match) throw new Error("無效的 Google 試算表連結格式");
             const id = match[1];
-            
+
             let gid = "0";
             const gidMatch = url.match(/gid=(\d+)/);
             if (gidMatch) gid = gidMatch[1];
-            
+
             const csvUrl = `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${gid}`;
             const resp = await fetch(csvUrl);
             if (!resp.ok) throw new Error("讀取失敗，請確認共用權限設為『知道連結的任何人均可檢視』");
-            
+
             const text = await resp.text();
-            const workbook = XLSX.read(text, {type: 'string'});
+            const workbook = XLSX.read(text, { type: 'string' });
             const sheetName = workbook.SheetNames[0];
             const sheet = workbook.Sheets[sheetName];
             const json = XLSX.utils.sheet_to_json(sheet);
-            
+
             return json.map(row => {
                 let matchedCriteria = [];
                 if (row.matched_criteria) {
@@ -818,7 +872,7 @@
                 }
                 let rawDate = row.date || row['日期'] || '';
                 let formattedDate = rawDate;
-                
+
                 // 檢查是否為 Excel 的日期序列號 (例如 46104.333...)
                 if (!isNaN(parseFloat(rawDate)) && isFinite(rawDate) && rawDate > 10000) {
                     const dateObj = new Date(Math.round((parseFloat(rawDate) - 25569) * 86400 * 1000));
@@ -853,7 +907,7 @@
                     if (result.sheetData) {
                         window.tablesData = result.sheetData;
                         console.log("已從雲端同步設定與 CSV 分頁資料", window.tablesData);
-                        
+
                         // 檢查是否為舊版 Apps Script
                         if (window.tablesData['可轉債CB'] && !window.tablesData['近期發行CB']) {
                             alert("⚠️ 系統偵測到您的 Apps Script 還在舊版本！\n\n請務必到 Apps Script 編輯器：\n1. 貼上最新版 google_apps_script.js 程式碼\n2. 點擊右上角「部署」->「管理部署作業」\n3. 點擊鉛筆(編輯) -> 版本選擇「新版本」-> 儲存！\n\n這樣「近期發行CB」才會正常顯示喔！");
@@ -885,7 +939,7 @@
             }
 
             fetchSettingsFromCloud();
-            
+
             // Load historical reports
             let hasLoadedFromCloud = false;
             if (localStorage.getItem('google_sheet_url')) {
@@ -949,18 +1003,18 @@
 
             progressContainer.style.display = 'flex';
             updateProgress(10, `正在準備分析文字...`);
-            
+
             try {
                 // Call Gemini API
                 updateProgress(30, `正在使用 AI 分析貼上文字...`);
                 const modelName = modelSelect.value;
                 const parsedObj = await analyzeReportWithGemini(apiKey, text, modelName);
-                
+
                 if (parsedObj) {
                     // Append and save locally
                     reportsData.push(parsedObj);
                     localStorage.setItem('reports_history', JSON.stringify(reportsData));
-                    
+
                     // Auto-sync if script URL is configured
                     const scriptUrl = scriptUrlInput.value.trim();
                     if (scriptUrl) {
@@ -1020,9 +1074,9 @@
                 const res = await fetch("https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/%E8%BF%91%E6%9C%9F%E7%99%BC%E8%A1%8CCB.csv?v=" + new Date().getTime());
                 if (!res.ok) throw new Error("無法獲取資料");
                 const text = await res.text();
-                
+
                 parseAndSyncCsv(text, "AI自動獲取", "近期發行CB", false);
-            } catch(e) {
+            } catch (e) {
                 showToast("獲取失敗: " + e.message, true);
             }
         }
@@ -1030,19 +1084,19 @@
         function handleCsvUpload(e, targetSheetName) {
             const file = e.target.files[0];
             if (!file) return;
-            
+
             const reader = new FileReader();
-            reader.onload = function(evt) {
+            reader.onload = function (evt) {
                 const text = evt.target.result;
                 if (text.includes('\uFFFD')) {
                     const readerBig5 = new FileReader();
-                    readerBig5.onload = function(evtBig5) {
+                    readerBig5.onload = function (evtBig5) {
                         parseAndSyncCsv(evtBig5.target.result, file.name, targetSheetName, true);
                     };
                     readerBig5.readAsText(file, "Big5");
                 } else if (!parseAndSyncCsv(text, file.name, targetSheetName, false)) {
                     const readerBig5 = new FileReader();
-                    readerBig5.onload = function(evtBig5) {
+                    readerBig5.onload = function (evtBig5) {
                         parseAndSyncCsv(evtBig5.target.result, file.name, targetSheetName, true);
                     };
                     readerBig5.readAsText(file, "Big5");
@@ -1056,7 +1110,7 @@
             try {
                 const lines = text.split(/\r?\n/);
                 if (lines.length < 2) throw new Error("CSV structure too simple");
-                
+
                 let csvRows = [];
                 let maxCols = 0;
                 for (let i = 0; i < lines.length; i++) {
@@ -1089,7 +1143,7 @@
                             data: csvRows
                         })
                     }).then(res => res.json()).then(resJson => {
-                        if(resJson.status === 'success') {
+                        if (resJson.status === 'success') {
                             showToast(`☁️ ${filename} 已成功同步至雲端分頁：${sheetName}`);
                             renderPersistentTables();
                         } else {
@@ -1103,7 +1157,7 @@
                     showToast(`✅ ${filename} 已暫存於本地 (尚未設定 GAS 網址)`);
                     renderPersistentTables();
                 }
-                
+
                 return true;
             } catch (err) {
                 if (isFallback) {
@@ -1133,12 +1187,12 @@
             }
 
             progressContainer.style.display = 'flex';
-            
+
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 const percent = Math.round((i / files.length) * 100);
                 updateProgress(percent, `正在解析: ${file.name}`);
-                
+
                 try {
                     let text = "";
                     if (file.name.endsWith('.pdf')) {
@@ -1167,12 +1221,12 @@
                     updateProgress(percent + 5, `正在使用 AI 分析: ${file.name}`);
                     const modelName = modelSelect.value;
                     const parsedObj = await analyzeReportWithGemini(apiKey, text, modelName);
-                    
+
                     if (parsedObj) {
                         // Append and save locally
                         reportsData.push(parsedObj);
                         localStorage.setItem('reports_history', JSON.stringify(reportsData));
-                        
+
                         // Auto-sync if script URL is configured
                         const scriptUrl = scriptUrlInput.value.trim();
                         if (scriptUrl) {
@@ -1193,7 +1247,7 @@
                     showToast(`❌ 處理 ${file.name} 時失敗: ${e.message}`, true);
                 }
             }
-            
+
             updateProgress(100, "✅ 所有檔案解析完成！");
             setTimeout(() => {
                 progressContainer.style.display = 'none';
@@ -1208,7 +1262,7 @@
 
         // Extract PDF text using PDF.js
         async function extractTextFromPdf(arrayBuffer) {
-            const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
             let text = "";
             for (let i = 1; i <= pdf.numPages; i++) {
                 const page = await pdf.getPage(i);
@@ -1221,7 +1275,7 @@
         // Extract Excel data using SheetJS
         function parseExcel(arrayBuffer) {
             const data = new Uint8Array(arrayBuffer);
-            const workbook = XLSX.read(data, {type: 'array'});
+            const workbook = XLSX.read(data, { type: 'array' });
             const sheetName = workbook.SheetNames[0];
             const sheet = workbook.Sheets[sheetName];
             const csv = XLSX.utils.sheet_to_csv(sheet);
@@ -1241,7 +1295,7 @@
 6. eps: 報告預估之今年或明年 EPS。
 7. summary: 簡短的報告摘要（100字內）。
 8. daily_stock_selection: 報告是否具備量化選股特徵（例如提及法說會、CB發行等），無則填"無"。
-9. matched_criteria: 陣列，只填以下出現的項目："投信第一天買且近三月未買"、"三大法人同買"、"日KD黃金交叉"、"周KD黃金交叉"、"成交量大於十週均量且大於三倍十日均量"、"合約負債季增50%且創四季新高"、"兩周內有法說會"、"近期將發行CB"、"近月營收月增且年增"、"大戶持股比例成長"；無則填[]
+9. matched_criteria: 陣列，只填以下出現的項目："投信第一天買, 且過去三個月沒有買過"、"三大法人同買"、"日KD黃金交叉"、"周KD黃金交叉"、"成交量>十週平均量且>3倍十日均量"、"入選合約負債"、"入選2周內會有法說會"、"入選要發行CB"、"入選營收條件"、"入選大戶持股"、"表格裡面目前股價低於20PE"、"券商給的是正面評價,例如買進,調升TP"、"若已有發行的CB,且股價低於轉換價,並且轉換比例<10%"、"入選毛利三季成長"；無則填[]
 
 請回傳「單一 JSON 格式字串」，且不得包含 Markdown 語法外框，例如不要寫 \`\`\`json 框限。
 
@@ -1278,7 +1332,7 @@ JSON 規格範例：
         // Render reports database inside Table
         function renderReportsTable() {
             reportsTbody.innerHTML = '';
-            
+
             if (reportsData.length === 0) {
                 reportsTbody.appendChild(emptyRow);
                 return;
@@ -1286,7 +1340,7 @@ JSON 規格範例：
 
             reportsData.forEach((row, index) => {
                 const tr = document.createElement('tr');
-                
+
                 // Rating styling
                 let ratingClass = 'rating-neutral';
                 const rat = String(row.rating).toLowerCase();
@@ -1361,7 +1415,7 @@ JSON 規格範例：
             if (!window.tablesData) return;
 
             const sheetsToRender = Object.keys(window.tablesData);
-            
+
             // 定義要顯示的順序或白名單（如果不在此清單中，就接在後面顯示）
             const preferredOrder = [
                 '大戶持股', '近期發行CB', '毛利三季成長', '營收條件', '法說會', '合約負債條件'
@@ -1381,7 +1435,7 @@ JSON 規格範例：
 
                 const section = document.createElement('div');
                 section.className = 'reports-section';
-                
+
                 const header = document.createElement('div');
                 header.className = 'section-header';
                 header.innerHTML = `<h2>📊 ${sheetName}</h2>`;
@@ -1389,9 +1443,9 @@ JSON 規格範例：
 
                 const tableContainer = document.createElement('div');
                 tableContainer.className = 'table-responsive';
-                
+
                 const table = document.createElement('table');
-                
+
                 const thead = document.createElement('thead');
                 const trHead = document.createElement('tr');
                 data[0].forEach(col => {
@@ -1423,7 +1477,7 @@ JSON 規格範例：
         // 🚀 QUANT SYSTEM IN JAVASCRIPT
         runQuantBtn.addEventListener('click', async () => {
             const validStocks = [];
-            
+
             // Collect unique stock codes in current reports
             reportsData.forEach(row => {
                 const sid = getStockId(row.stock);
@@ -1483,51 +1537,50 @@ JSON 規格範例：
                 const stockId = validStocks[i];
                 const stockName = stockNameMap[stockId] || '';
                 const fullName = `${stockId} ${stockName}`.trim();
-                
+
                 updateProgress(Math.round((i / validStocks.length) * 100), `🔍 正在對 ${fullName} 進行即時量化運算...`);
-                
+
                 try {
                     const matched = await evaluateStockQuant(stockId, config);
-                    
+
                     // Add report-based properties
                     const reportRows = reportsData.filter(r => getStockId(r.stock) === stockId);
                     if (reportRows.length > 0) {
                         const firstRow = reportRows[0];
-                        // PE Condition Check
                         const peText = String(firstRow.summary + firstRow.daily_stock_selection).toLowerCase();
                         if (peText.includes('低於20倍') || peText.includes('pe低於20') || peText.includes('估值偏低')) {
-                            matched.push("目前股價低於20倍PE");
+                            matched.push("表格裡面目前股價低於20PE");
                         }
                         // Broker rating
                         const ratText = String(firstRow.rating).toLowerCase();
                         if (ratText.includes('買') || ratText.includes('buy') || ratText.includes('overweight')) {
-                            matched.push(`券商正面評價(${firstRow.rating})`);
+                            matched.push("券商給的是正面評價,例如買進,調升TP");
                         }
                     }
 
                     // Add new lists conditions
                     if (bigPlayerStocks.includes(stockId)) {
-                        matched.push("大戶持股");
+                        matched.push("入選大戶持股");
                     }
                     if (grossMarginStocks.includes(stockId)) {
-                        matched.push("符合毛利三季成長");
+                        matched.push("入選毛利三季成長");
                     }
                     if (revenueStocks.includes(stockId)) {
-                        matched.push("營收條件");
+                        matched.push("入選營收條件");
                     }
                     if (earningsCallStocks.includes(stockId)) {
-                        matched.push("法說會");
+                        matched.push("入選2周內會有法說會");
                     }
                     if (contractLiabilitiesStocks.includes(stockId)) {
-                        matched.push("合約負債條件");
+                        matched.push("入選合約負債");
                     }
 
                     // Score logic
                     let score = matched.length;
-                    if (matched.some(m => m.includes("大戶"))) {
+                    if (matched.some(m => m.includes("入選大戶持股"))) {
                         score += 1; // 大戶相關特別加分
                     }
-                    if (matched.some(m => m.includes("法說會"))) {
+                    if (matched.some(m => m.includes("入選2周內會有法說會"))) {
                         score += 1; // 法說會特別加分
                     }
 
@@ -1551,7 +1604,7 @@ JSON 規格範例：
             // Save matched criteria in storage
             localStorage.setItem('reports_history', JSON.stringify(reportsData));
             updateProgress(100, "✅ 量化分析運算完畢！");
-            
+
             setTimeout(() => {
                 progressContainer.style.display = 'none';
             }, 1500);
@@ -1586,7 +1639,7 @@ JSON 規格範例：
 
             // 1. Fetch historical price data
             const priceData = await fetchFinMindData('TaiwanStockPrice', stockId, startDateStr);
-            
+
             if (priceData && priceData.length > 20) {
                 // Parse numbers
                 priceData.forEach(d => {
@@ -1600,10 +1653,10 @@ JSON 規格範例：
                 // Calculate Day KD (rolling 9)
                 calculateKD(priceData);
                 const len = priceData.length;
-                const today_k = priceData[len-1].K;
-                const today_d = priceData[len-1].D;
-                const yest_k = priceData[len-2].K;
-                const yest_d = priceData[len-2].D;
+                const today_k = priceData[len - 1].K;
+                const today_d = priceData[len - 1].D;
+                const yest_k = priceData[len - 2].K;
+                const yest_d = priceData[len - 2].D;
 
                 if (today_k > today_d && yest_k < yest_d) {
                     matched.push("日KD黃金交叉");
@@ -1614,10 +1667,10 @@ JSON 規格範例：
                 if (weeklyData.length > 9) {
                     calculateKD(weeklyData);
                     const wLen = weeklyData.length;
-                    const wt_k = weeklyData[wLen-1].K;
-                    const wt_d = weeklyData[wLen-1].D;
-                    const wy_k = weeklyData[wLen-2].K;
-                    const wy_d = weeklyData[wLen-2].D;
+                    const wt_k = weeklyData[wLen - 1].K;
+                    const wt_d = weeklyData[wLen - 1].D;
+                    const wy_k = weeklyData[wLen - 2].K;
+                    const wy_d = weeklyData[wLen - 2].D;
 
                     if (wt_k > wt_d && wy_k < wy_d) {
                         matched.push("周KD黃金交叉");
@@ -1626,14 +1679,14 @@ JSON 規格範例：
 
                 // Volume check
                 if (priceData.length > 10 && weeklyData.length > 10) {
-                    let today_vol = priceData[len-1].Trading_Volume;
-                    let today_close = priceData[len-1].close;
-                    let today_open = priceData[len-1].open;
-                    
+                    let today_vol = priceData[len - 1].Trading_Volume;
+                    let today_close = priceData[len - 1].close;
+                    let today_open = priceData[len - 1].open;
+
                     if (today_vol === 0 && len > 1) {
-                        today_vol = priceData[len-2].Trading_Volume;
-                        today_close = priceData[len-2].close;
-                        today_open = priceData[len-2].open;
+                        today_vol = priceData[len - 2].Trading_Volume;
+                        today_close = priceData[len - 2].close;
+                        today_open = priceData[len - 2].open;
                     }
 
                     const today_vol_lots = today_vol / 1000;
@@ -1641,13 +1694,13 @@ JSON 規格範例：
 
                     // calculate 10-day volume average of yesterday
                     let sum10d = 0;
-                    for (let j = len-11; j < len-1; j++) sum10d += priceData[j].Trading_Volume;
+                    for (let j = len - 11; j < len - 1; j++) sum10d += priceData[j].Trading_Volume;
                     const vol_10d_avg = sum10d / 10;
 
                     // calculate 10-week volume average of yesterday
                     let sum10w = 0;
                     const wLen = weeklyData.length;
-                    for (let k = wLen-11; k < wLen-1; k++) sum10w += weeklyData[k].Trading_Volume;
+                    for (let k = wLen - 11; k < wLen - 1; k++) sum10w += weeklyData[k].Trading_Volume;
                     const vol_10w_avg = sum10w / 10;
                     const vol_10w_avg_daily = vol_10w_avg / 5;
 
@@ -1657,8 +1710,8 @@ JSON 規格範例：
                     const cond_4 = today_vol > (3 * vol_10d_avg);
                     const cond_5 = today_close > today_open;
 
-                    if (cond_1 && cond_2 && cond_3 && cond_4 && cond_5) {
-                        matched.push(`爆量紅K(${Math.round(today_vol_lots)}張,${(turnover/1e8).toFixed(1)}億)`);
+                    if (cond_3 && cond_4) {
+                        matched.push("成交量>十週平均量且>3倍十日均量");
                     }
                 }
             }
@@ -1668,7 +1721,7 @@ JSON 規格範例：
             chipStart.setDate(chipStart.getDate() - 8);
             const chipStartStr = chipStart.toISOString().split('T')[0];
             const chipsData = await fetchFinMindData('TaiwanStockInstitutionalInvestorsBuySell', stockId, chipStartStr);
-            
+
             if (chipsData && chipsData.length > 0) {
                 // Find latest date
                 const dates = chipsData.map(c => c.date);
@@ -1696,13 +1749,13 @@ JSON 規格範例：
                     trust90Start.setDate(trust90Start.getDate() - 90);
                     const trust90StartStr = trust90Start.toISOString().split('T')[0];
                     const m3Chips = await fetchFinMindData('TaiwanStockInstitutionalInvestorsBuySell', stockId, trust90StartStr);
-                    
+
                     if (m3Chips && m3Chips.length > 0) {
                         // Filter past trust buys (excluding latest date)
                         const trustBuys = m3Chips.filter(c => c.name.includes('Investment_Trust') && c.date < latestDate);
                         const hasBuy = trustBuys.some(c => (parseFloat(c.buy) - parseFloat(c.sell)) > 0);
                         if (!hasBuy) {
-                            matched.push("投信第一天買且近三月未買");
+                            matched.push("投信第一天買, 且過去三個月沒有買過");
                         }
                     }
                 }
@@ -1718,8 +1771,8 @@ JSON 規格範例：
                 // Sort by date/year/month
                 revData.sort((a, b) => a.date.localeCompare(b.date));
                 const len = revData.length;
-                const latest_rev = revData[len-1];
-                const prev_rev = revData[len-2];
+                const latest_rev = revData[len - 1];
+                const prev_rev = revData[len - 2];
                 const latest_revenue = parseFloat(latest_rev.revenue);
                 const prev_revenue = parseFloat(prev_rev.revenue);
 
@@ -1738,17 +1791,14 @@ JSON 規格範例：
                     }
                 }
 
-                if (mom_growth && yoy_growth) {
-                    matched.push("近月營收月增且年增");
-                }
+                // if (mom_growth && yoy_growth) {
+                //     matched.push("近月營收月增且年增");
+                // }
             }
 
             // 4. Config-based event checking
-            if (config.bigPlayers.includes(stockId)) {
-                matched.push("大戶持股比例成長");
-            }
             if (config.cbStocks.includes(stockId)) {
-                matched.push("近期將發行CB");
+                matched.push("入選要發行CB");
             }
             if (config.cbIssued[stockId]) {
                 const info = config.cbIssued[stockId];
@@ -1756,7 +1806,7 @@ JSON 規格範例：
                 if (priceData && priceData.length > 0) {
                     const lastPrice = priceData[priceData.length - 1].close;
                     if (lastPrice < info.conv_price && info.balance_pct < 10) {
-                        matched.push("已發行CB未轉換比例低於10%");
+                        matched.push("若已有發行的CB,且股價低於轉換價,並且轉換比例<10%");
                     }
                 }
             }
@@ -1767,7 +1817,7 @@ JSON 規格範例：
         // Resample daily data array to weekly data array
         function resampleToWeekly(prices) {
             const weeksMap = {};
-            
+
             prices.forEach(day => {
                 const dateObj = new Date(day.date);
                 // Get Monday of the week
@@ -1783,7 +1833,7 @@ JSON 規格範例：
             });
 
             const weeklyList = [];
-            
+
             Object.keys(weeksMap).sort().forEach(mondayStr => {
                 const weekDays = weeksMap[mondayStr];
                 // Sort by date
@@ -1834,8 +1884,8 @@ JSON 規格範例：
                 }
 
                 // ewm com=2 -> K = 1/3 * RSV + 2/3 * K_prev
-                k = (1/3) * rsv + (2/3) * k;
-                d = (1/3) * k + (2/3) * d;
+                k = (1 / 3) * rsv + (2 / 3) * k;
+                d = (1 / 3) * k + (2 / 3) * d;
 
                 data[i].K = k;
                 data[i].D = d;
@@ -1845,7 +1895,7 @@ JSON 規格範例：
         // Render Champs visual dashboard panels
         function renderChampsGrid(scores, matches) {
             champsGrid.innerHTML = '';
-            
+
             const scoredStocks = Object.keys(scores)
                 .map(sid => ({
                     stockId: sid,
@@ -1863,16 +1913,16 @@ JSON 規格範例：
 
             champsSection.style.display = 'flex';
             const maxScore = scoredStocks[0].score;
-            
+
             // Only show the highest score champions (maxScore)
             const champs = scoredStocks.filter(x => x.score === maxScore);
 
             champs.forEach(champ => {
                 const card = document.createElement('div');
                 card.className = 'champ-card';
-                
+
                 let matchesHtml = champ.matches.map(m => `<span class="match-tag">⚡ ${m}</span>`).join('');
-                
+
                 card.innerHTML = `
                     <div class="champ-header">
                         <div class="champ-name">${champ.stockId} ${champ.name}</div>
@@ -1906,7 +1956,7 @@ JSON 規格範例：
                 showToast("❌ 請先在側邊欄填入 Google Apps Script 寫入網址！", true);
                 return;
             }
-            
+
             try {
                 showToast("☁️ 正在同步報告至雲端...");
                 syncAllBtn.disabled = true;
@@ -1957,4 +2007,5 @@ JSON 規格範例：
         });
     </script>
 </body>
+
 </html>
