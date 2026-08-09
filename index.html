@@ -605,7 +605,7 @@
         <div class="sidebar-section">
             <h3>📊 籌碼與事件清單</h3>
             <div class="input-group">
-                <label>大戶選股積分</label>
+                <label>大戶持股</label>
                 <input type="file" id="big-score-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
                     <button class="btn" onclick="document.getElementById('big-score-upload').click()" style="width: 100%;">📥 上傳 CSV</button>
@@ -927,7 +927,7 @@
             }
         });
 
-        document.getElementById('big-score-upload').addEventListener('change', (e) => handleCsvUpload(e, '大戶選股積分'));
+        document.getElementById('big-score-upload').addEventListener('change', (e) => handleCsvUpload(e, '大戶持股'));
         document.getElementById('gross-margin-upload').addEventListener('change', (e) => handleCsvUpload(e, '毛利三季成長'));
         document.getElementById('revenue-upload').addEventListener('change', (e) => handleCsvUpload(e, '營收條件'));
         document.getElementById('earnings-call-upload').addEventListener('change', (e) => handleCsvUpload(e, '法說會'));
@@ -1265,7 +1265,7 @@ JSON 規格範例：
             container.innerHTML = ''; // clear
 
             const sheetsToRender = [
-                '大戶選股積分', '毛利三季成長', '營收條件', '法說會', '合約負債條件', '大戶持股', '可轉債CB'
+                '大戶持股', '毛利三季成長', '營收條件', '法說會', '合約負債條件', '可轉債CB'
             ];
 
             sheetsToRender.forEach(sheetName => {
@@ -1336,11 +1336,6 @@ JSON 規格範例：
                 if (!validStocks.includes(sid)) validStocks.push(sid);
             });
 
-            const bigScoreStocks = extractCodesFromTableData('大戶選股積分');
-            bigScoreStocks.forEach(sid => {
-                if (!validStocks.includes(sid)) validStocks.push(sid);
-            });
-
             const grossMarginStocks = extractCodesFromTableData('毛利三季成長');
             grossMarginStocks.forEach(sid => {
                 if (!validStocks.includes(sid)) validStocks.push(sid);
@@ -1404,8 +1399,8 @@ JSON 規格範例：
                     }
 
                     // Add new lists conditions
-                    if (bigScoreStocks.includes(stockId)) {
-                        matched.push("大戶選股積分");
+                    if (bigPlayerStocks.includes(stockId)) {
+                        matched.push("大戶持股");
                     }
                     if (grossMarginStocks.includes(stockId)) {
                         matched.push("符合毛利三季成長");

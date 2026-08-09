@@ -133,7 +133,7 @@ function doGet(e) {
     // 讀取 CSV 分頁，供網頁初始化繪製表格
     var sheetNamesToRead = [
       "大戶持股", "可轉債CB", "XQ選股", 
-      "大戶選股積分", "毛利三季成長", 
+      "毛利三季成長", 
       "營收條件", "法說會", "合約負債條件"
     ];
     var sheetData = {};
