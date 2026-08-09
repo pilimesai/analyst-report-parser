@@ -643,6 +643,14 @@
                     <button class="btn" onclick="document.getElementById('contract-liabilities-upload').click()" style="width: 100%;">📥 上傳 CSV</button>
                 </div>
             </div>
+
+            <div class="input-group">
+                <label>近期發行CB</label>
+                <input type="file" id="recent-cb-upload" accept=".csv" style="display:none;">
+                <div class="upload-actions">
+                    <button class="btn" onclick="document.getElementById('recent-cb-upload').click()" style="width: 100%;">📥 上傳 CSV</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -932,6 +940,7 @@
         document.getElementById('revenue-upload').addEventListener('change', (e) => handleCsvUpload(e, '營收條件'));
         document.getElementById('earnings-call-upload').addEventListener('change', (e) => handleCsvUpload(e, '法說會'));
         document.getElementById('contract-liabilities-upload').addEventListener('change', (e) => handleCsvUpload(e, '合約負債條件'));
+        document.getElementById('recent-cb-upload').addEventListener('change', (e) => handleCsvUpload(e, '近期發行CB'));
 
         function handleCsvUpload(e, targetSheetName) {
             const file = e.target.files[0];
@@ -1265,7 +1274,7 @@ JSON 規格範例：
             container.innerHTML = ''; // clear
 
             const sheetsToRender = [
-                '大戶持股', '毛利三季成長', '營收條件', '法說會', '合約負債條件', '可轉債CB'
+                '大戶持股', '毛利三季成長', '營收條件', '法說會', '合約負債條件', '近期發行CB'
             ];
 
             sheetsToRender.forEach(sheetName => {
@@ -1331,7 +1340,7 @@ JSON 規格範例：
                 if (!validStocks.includes(sid)) validStocks.push(sid);
             });
 
-            const cbStocks = extractCodesFromTableData('可轉債CB');
+            const cbStocks = extractCodesFromTableData('近期發行CB');
             cbStocks.forEach(sid => {
                 if (!validStocks.includes(sid)) validStocks.push(sid);
             });
