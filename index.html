@@ -604,44 +604,6 @@
 
         <div class="sidebar-section">
             <h3>📊 籌碼與事件清單</h3>
-            
-            <div class="input-group">
-                <label>大戶持股比例成長</label>
-                <input type="file" id="big-players-upload" accept=".csv" style="display:none;">
-                <div class="upload-actions">
-                    <button class="btn" onclick="document.getElementById('big-players-upload').click()">📥 上傳 CSV</button>
-                    <button class="btn" onclick="openTableModal('大戶持股')">👁️ 檢視表格</button>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label>近期將發行 CB 股票</label>
-                <input type="file" id="cb-stocks-upload" accept=".csv" style="display:none;">
-                <div class="upload-actions">
-                    <button class="btn" onclick="document.getElementById('cb-stocks-upload').click()">📥 上傳 CSV</button>
-                    <button class="btn" onclick="openTableModal('可轉債CB')">👁️ 檢視表格</button>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label>已發行 CB 轉換資料</label>
-                <input type="file" id="cb-issued-upload" accept=".csv" style="display:none;">
-                <div class="upload-actions">
-                    <button class="btn" onclick="document.getElementById('cb-issued-upload').click()">📥 上傳 CSV</button>
-                    <button class="btn" onclick="openTableModal('已發行CB轉換資料')">👁️ 檢視表格</button>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label>XQ 盤後精準選股</label>
-                <input type="file" id="xq-upload" accept=".csv" style="display:none;">
-                <div class="upload-actions">
-                    <button class="btn" onclick="document.getElementById('xq-upload').click()">📥 上傳 CSV</button>
-                    <button class="btn" onclick="openTableModal('XQ選股')">👁️ 檢視表格</button>
-                </div>
-                <div class="helper-text" id="xq-file-status"></div>
-            </div>
-
             <div class="input-group">
                 <label>大戶選股積分名單</label>
                 <input type="file" id="big-score-upload" accept=".csv" style="display:none;">
@@ -693,7 +655,8 @@
         </div>
 
         <!-- File Upload Zone -->
-        <div class="upload-zone" id="drop-zone">
+        <div id="main-reports-view">
+            <div class="upload-zone" id="drop-zone">
             <div class="upload-icon">📄</div>
             <div class="upload-text">
                 <h4>拖曳報告檔案至此處，或<span>點擊上傳</span></h4>
@@ -756,29 +719,30 @@
         </div>
     </div>
 
+    <!-- Table View Section (New) -->
+    <div class="reports-section" id="csv-table-section" style="display:none; margin-top: 20px;">
+        <div class="section-header">
+            <h2 id="modal-title">📊 CSV 資料預覽</h2>
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="closeTableModal()">🔙 返回解析報告</button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table id="modal-table">
+                <thead id="modal-thead"></thead>
+                <tbody id="modal-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+
     <!-- Notification Toast -->
     <div class="toast" id="toast">
         <span id="toast-icon">✅</span>
         <span id="toast-message">作業成功！</span>
     </div>
 
-    <!-- Table Data Modal -->
-    <div class="modal-overlay" id="table-modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modal-title">資料表</h3>
-                <button class="close-btn" onclick="closeTableModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table id="modal-table">
-                        <thead id="modal-thead"></thead>
-                        <tbody id="modal-tbody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <script>
         // Global variables
@@ -794,7 +758,6 @@
         const modelSelect = document.getElementById('model-select');
         const sheetUrlInput = document.getElementById('sheet-url');
         const scriptUrlInput = document.getElementById('script-url');
-        const xqFileStatus = document.getElementById('xq-file-status');
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
         const progressContainer = document.getElementById('progress-container');
@@ -971,22 +934,10 @@
             }
         });
 
-        // CSV upload handlers for Settings
-        document.getElementById('big-players-upload').addEventListener('change', (e) => handleCsvUpload(e, '大戶持股'));
-        document.getElementById('cb-stocks-upload').addEventListener('change', (e) => handleCsvUpload(e, '可轉債CB'));
-        document.getElementById('cb-issued-upload').addEventListener('change', (e) => handleCsvUpload(e, '已發行CB轉換資料'));
-        
         document.getElementById('big-score-upload').addEventListener('change', (e) => handleCsvUpload(e, '大戶選股積分名單'));
         document.getElementById('gross-margin-upload').addEventListener('change', (e) => handleCsvUpload(e, '毛利連續三季成長名單'));
         document.getElementById('revenue-upload').addEventListener('change', (e) => handleCsvUpload(e, '營收選股名單'));
         document.getElementById('earnings-call-upload').addEventListener('change', (e) => handleCsvUpload(e, '法說會追蹤'));
-
-        document.getElementById('xq-upload').addEventListener('change', (e) => {
-            handleCsvUpload(e, 'XQ選股');
-            if (e.target.files.length > 0) {
-                xqFileStatus.innerText = `已載入: ${e.target.files[0].name}`;
-            }
-        });
 
         function handleCsvUpload(e, targetSheetName) {
             const file = e.target.files[0];
@@ -1046,12 +997,17 @@
                     }).then(res => res.json()).then(resJson => {
                         if(resJson.status === 'success') {
                             showToast(`☁️ ${filename} 已成功同步至雲端分頁：${sheetName}`);
+                            openTableModal(sheetName);
                         } else {
                             showToast(`⚠️ 雲端同步失敗: ${resJson.message}`, true);
+                            openTableModal(sheetName); // 即使同步失敗，也在本地顯示
                         }
                     }).catch(err => {
                         showToast(`⚠️ 雲端連線失敗: ${err.message}`, true);
                     });
+                } else {
+                    showToast(`✅ ${filename} 已暫存於本地 (尚未設定 GAS 網址)`);
+                    openTableModal(sheetName);
                 }
                 
                 return true;
