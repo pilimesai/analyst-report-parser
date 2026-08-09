@@ -1294,9 +1294,21 @@ JSON 規格範例：
             if (!container) return;
             container.innerHTML = ''; // clear
 
-            const sheetsToRender = [
-                '大戶持股', '毛利三季成長', '營收條件', '法說會', '合約負債條件', '近期發行CB'
+            if (!window.tablesData) return;
+
+            const sheetsToRender = Object.keys(window.tablesData);
+            
+            // 定義要顯示的順序或白名單（如果不在此清單中，就接在後面顯示）
+            const preferredOrder = [
+                '大戶持股', '近期發行CB', '毛利三季成長', '營收條件', '法說會', '合約負債條件'
             ];
+            sheetsToRender.sort((a, b) => {
+                let idxA = preferredOrder.indexOf(a);
+                let idxB = preferredOrder.indexOf(b);
+                if (idxA === -1) idxA = 999;
+                if (idxB === -1) idxB = 999;
+                return idxA - idxB;
+            });
 
             sheetsToRender.forEach(sheetName => {
                 const data = window.tablesData[sheetName];

@@ -130,18 +130,14 @@ function doGet(e) {
       }
     }
     
-    // 讀取 CSV 分頁，供網頁初始化繪製表格
-    var sheetNamesToRead = [
-      "大戶持股", "近期發行CB", "XQ選股", 
-      "毛利三季成長", 
-      "營收條件", "法說會", "合約負債條件"
-    ];
+    // 自動讀取所有分頁
     var sheetData = {};
-    
-    for (var j = 0; j < sheetNamesToRead.length; j++) {
-      var sName = sheetNamesToRead[j];
-      var s = ss.getSheetByName(sName);
-      if (s && s.getLastRow() > 1) {
+    var allSheets = ss.getSheets();
+    for (var j = 0; j < allSheets.length; j++) {
+      var s = allSheets[j];
+      var sName = s.getName();
+      // 跳過 Settings 分頁
+      if (sName !== "Settings" && s.getLastRow() > 0) {
         var sValues = s.getDataRange().getValues();
         sheetData[sName] = sValues;
       }
