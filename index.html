@@ -727,6 +727,33 @@
             });
         }
 
+        // Fetch settings from Cloud if GAS URL is available
+        async function fetchSettingsFromCloud() {
+            const url = scriptUrlInput.value.trim();
+            if (!url) return;
+            try {
+                const response = await fetch(url, { method: 'GET' });
+                const result = await response.json();
+                if (result.status === 'success' && result.data) {
+                    if (result.data.big_players) {
+                        bigPlayersInput.value = result.data.big_players;
+                        localStorage.setItem('big_players', result.data.big_players);
+                    }
+                    if (result.data.cb_stocks) {
+                        cbStocksInput.value = result.data.cb_stocks;
+                        localStorage.setItem('cb_stocks', result.data.cb_stocks);
+                    }
+                    if (result.data.cb_issued) {
+                        cbIssuedInput.value = result.data.cb_issued;
+                        localStorage.setItem('cb_issued', result.data.cb_issued);
+                    }
+                    console.log("已從雲端同步設定");
+                }
+            } catch (err) {
+                console.log("雲端設定同步失敗 (可能是第一次執行或網路錯誤):", err);
+            }
+        }
+
         // Initial setup on load
         window.addEventListener('load', async () => {
             // Load saved settings
@@ -751,6 +778,8 @@
             if (localStorage.getItem('cb_issued')) {
                 cbIssuedInput.value = localStorage.getItem('cb_issued');
             }
+
+            fetchSettingsFromCloud();
             
             // Load historical reports
             let hasLoadedFromCloud = false;
@@ -794,7 +823,10 @@
         apiKeyInput.addEventListener('change', () => localStorage.setItem('gemini_api_key', apiKeyInput.value));
         modelSelect.addEventListener('change', () => localStorage.setItem('gemini_model', modelSelect.value));
         sheetUrlInput.addEventListener('change', () => localStorage.setItem('google_sheet_url', sheetUrlInput.value));
-        scriptUrlInput.addEventListener('change', () => localStorage.setItem('google_script_url', scriptUrlInput.value));
+        scriptUrlInput.addEventListener('change', () => {
+            localStorage.setItem('google_script_url', scriptUrlInput.value);
+            fetchSettingsFromCloud(); // 當網址變更時，自動嘗試抓取雲端設定
+        });
         bigPlayersInput.addEventListener('change', () => localStorage.setItem('big_players', bigPlayersInput.value));
         cbStocksInput.addEventListener('change', () => localStorage.setItem('cb_stocks', cbStocksInput.value));
         cbIssuedInput.addEventListener('change', () => localStorage.setItem('cb_issued', cbIssuedInput.value));
@@ -887,7 +919,21 @@
                 }
                 
                 xqFileStatus.innerText = `已載入: ${filename} (${Object.keys(xqPicksData).length} 檔)`;
-                showToast(`✅ 成功導入 ${Object.keys(xqPicksData).length} 筆 XQ 選股紀錄！`);
+                
+                // 自動帶入設定欄位邏輯
+                const stockCodes = Object.keys(xqPicksData).join(', ');
+                if (filename.includes('大戶')) {
+                    bigPlayersInput.value = stockCodes;
+                    localStorage.setItem('big_players', stockCodes);
+                    showToast(`✅ 成功導入 ${Object.keys(xqPicksData).length} 筆紀錄！已自動填入「大戶選股清單」`);
+                } else if (filename.includes('可轉債') || filename.toLowerCase().includes('cb')) {
+                    cbStocksInput.value = stockCodes;
+                    localStorage.setItem('cb_stocks', stockCodes);
+                    showToast(`✅ 成功導入 ${Object.keys(xqPicksData).length} 筆紀錄！已自動填入「可轉債選股清單」`);
+                } else {
+                    showToast(`✅ 成功導入 ${Object.keys(xqPicksData).length} 筆 XQ 選股紀錄！`);
+                }
+                
                 return true;
             } catch (err) {
                 if (isFallback) {
@@ -1563,17 +1609,37 @@ JSON 規格範例：
                 showToast("❌ 請先在側邊欄填入 Google Apps Script 寫入網址！", true);
                 return;
             }
-            if (reportsData.length === 0) {
-                showToast("⚠️ 目前沒有可供同步的報告資料！", true);
-                return;
-            }
             
             try {
-                showToast("☁️ 正在上傳同步全部資料...");
-                await syncToGoogleSheet(scriptUrl, reportsData);
-                showToast("✅ 所有資料已成功同步至 Google Sheets！");
+                showToast("☁️ 正在同步設定與報告至雲端...");
+                syncAllBtn.disabled = true;
+
+                // 1. 同步設定至雲端 (Settings)
+                const settingsPayload = {
+                    action: "save_settings",
+                    data: {
+                        big_players: bigPlayersInput.value,
+                        cb_stocks: cbStocksInput.value,
+                        cb_issued: cbIssuedInput.value
+                    }
+                };
+                await syncToGoogleSheet(scriptUrl, settingsPayload);
+
+                // 2. 同步報告至雲端 (Reports)
+                if (reportsData.length > 0) {
+                    const reportsPayload = {
+                        action: "append_reports",
+                        data: reportsData
+                    };
+                    await syncToGoogleSheet(scriptUrl, reportsPayload);
+                    showToast("✅ 所有設定與報告資料已成功同步至 Google Sheets！");
+                } else {
+                    showToast("✅ 設定同步成功！(目前無報告資料)");
+                }
             } catch (e) {
                 showToast(`❌ 同步失敗: ${e.message}`, true);
+            } finally {
+                syncAllBtn.disabled = false;
             }
         });
 
