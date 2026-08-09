@@ -285,29 +285,35 @@ HISTORY_FILE = os.path.join(BASE_DIR, "history.json")
 
 def get_gspread_client():
 
-    if "gcp_service_account" in st.secrets:
+    try:
 
-        try:
+        if "gcp_service_account" in st.secrets:
 
-            creds = Credentials.from_service_account_info(
+            try:
 
-                st.secrets["gcp_service_account"],
+                creds = Credentials.from_service_account_info(
 
-                scopes=[
+                    st.secrets["gcp_service_account"],
 
-                    "https://www.googleapis.com/auth/spreadsheets",
+                    scopes=[
 
-                    "https://www.googleapis.com/auth/drive"
+                        "https://www.googleapis.com/auth/spreadsheets",
 
-                ]
+                        "https://www.googleapis.com/auth/drive"
 
-            )
+                    ]
 
-            return gspread.authorize(creds)
+                )
 
-        except Exception as e:
+                return gspread.authorize(creds)
 
-            st.warning(f"Google 憑證錯誤: {e}")
+            except Exception as e:
+
+                st.warning(f"Google 憑證錯誤: {e}")
+
+    except Exception:
+
+        pass
 
     return None
 
@@ -315,19 +321,25 @@ def get_worksheet():
 
     client = get_gspread_client()
 
-    if client and "sheets" in st.secrets and "url" in st.secrets["sheets"]:
+    if client:
 
         try:
 
-            sheet = client.open_by_url(st.secrets["sheets"]["url"])
+            if "sheets" in st.secrets and "url" in st.secrets["sheets"]:
 
-            return sheet.sheet1
+                try:
 
-        except Exception as e:
+                    sheet = client.open_by_url(st.secrets["sheets"]["url"])
 
-            st.error(f"無法開啟指定的 Google Sheet: {e}")
+                    return sheet.sheet1
 
-            return None
+                except Exception as e:
+
+                    st.error(f"無法開啟指定的 Google Sheet: {e}")
+
+        except Exception:
+
+            pass
 
     return None
 

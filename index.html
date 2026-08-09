@@ -605,38 +605,42 @@
         <div class="sidebar-section">
             <h3>📊 籌碼與事件清單</h3>
             <div class="input-group">
-                <label>大戶選股積分名單</label>
+                <label>大戶選股積分</label>
                 <input type="file" id="big-score-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
-                    <button class="btn" onclick="document.getElementById('big-score-upload').click()">📥 上傳 CSV</button>
-                    <button class="btn" onclick="openTableModal('大戶選股積分名單')">👁️ 檢視表格</button>
+                    <button class="btn" onclick="document.getElementById('big-score-upload').click()" style="width: 100%;">📥 上傳 CSV</button>
                 </div>
             </div>
 
             <div class="input-group">
-                <label>毛利連續三季成長名單</label>
+                <label>毛利三季成長</label>
                 <input type="file" id="gross-margin-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
-                    <button class="btn" onclick="document.getElementById('gross-margin-upload').click()">📥 上傳 CSV</button>
-                    <button class="btn" onclick="openTableModal('毛利連續三季成長名單')">👁️ 檢視表格</button>
+                    <button class="btn" onclick="document.getElementById('gross-margin-upload').click()" style="width: 100%;">📥 上傳 CSV</button>
                 </div>
             </div>
 
             <div class="input-group">
-                <label>營收選股名單</label>
+                <label>營收條件</label>
                 <input type="file" id="revenue-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
-                    <button class="btn" onclick="document.getElementById('revenue-upload').click()">📥 上傳 CSV</button>
-                    <button class="btn" onclick="openTableModal('營收選股名單')">👁️ 檢視表格</button>
+                    <button class="btn" onclick="document.getElementById('revenue-upload').click()" style="width: 100%;">📥 上傳 CSV</button>
                 </div>
             </div>
 
             <div class="input-group">
-                <label>法說會追蹤</label>
+                <label>法說會</label>
                 <input type="file" id="earnings-call-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
-                    <button class="btn" onclick="document.getElementById('earnings-call-upload').click()">📥 上傳 CSV</button>
-                    <button class="btn" onclick="openTableModal('法說會追蹤')">👁️ 檢視表格</button>
+                    <button class="btn" onclick="document.getElementById('earnings-call-upload').click()" style="width: 100%;">📥 上傳 CSV</button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>合約負債條件</label>
+                <input type="file" id="contract-liabilities-upload" accept=".csv" style="display:none;">
+                <div class="upload-actions">
+                    <button class="btn" onclick="document.getElementById('contract-liabilities-upload').click()" style="width: 100%;">📥 上傳 CSV</button>
                 </div>
             </div>
         </div>
@@ -842,6 +846,7 @@
                     if (result.sheetData) {
                         window.tablesData = result.sheetData;
                         console.log("已從雲端同步設定與 CSV 分頁資料", window.tablesData);
+                        showToast("✅ 已成功從雲端自動載入大戶與試算表資料！");
                     }
                 }
             } catch (err) {
@@ -934,10 +939,11 @@
             }
         });
 
-        document.getElementById('big-score-upload').addEventListener('change', (e) => handleCsvUpload(e, '大戶選股積分名單'));
-        document.getElementById('gross-margin-upload').addEventListener('change', (e) => handleCsvUpload(e, '毛利連續三季成長名單'));
-        document.getElementById('revenue-upload').addEventListener('change', (e) => handleCsvUpload(e, '營收選股名單'));
-        document.getElementById('earnings-call-upload').addEventListener('change', (e) => handleCsvUpload(e, '法說會追蹤'));
+        document.getElementById('big-score-upload').addEventListener('change', (e) => handleCsvUpload(e, '大戶選股積分'));
+        document.getElementById('gross-margin-upload').addEventListener('change', (e) => handleCsvUpload(e, '毛利三季成長'));
+        document.getElementById('revenue-upload').addEventListener('change', (e) => handleCsvUpload(e, '營收條件'));
+        document.getElementById('earnings-call-upload').addEventListener('change', (e) => handleCsvUpload(e, '法說會'));
+        document.getElementById('contract-liabilities-upload').addEventListener('change', (e) => handleCsvUpload(e, '合約負債條件'));
 
         function handleCsvUpload(e, targetSheetName) {
             const file = e.target.files[0];
@@ -1222,6 +1228,84 @@ JSON 規格範例：
             return match ? match[0] : null;
         }
 
+        function extractCodesFromTableData(sheetName) {
+            const codes = [];
+            if (window.tablesData && window.tablesData[sheetName]) {
+                const data = window.tablesData[sheetName];
+                for (let i = 1; i < data.length; i++) {
+                    const row = data[i];
+                    let code = null;
+                    for (let j = 0; j < Math.min(row.length, 2); j++) {
+                        code = getStockId(String(row[j]));
+                        if (code) break;
+                    }
+                    if (code && !codes.includes(code)) {
+                        codes.push(code);
+                    }
+                }
+            }
+            return codes;
+        }
+
+        function parseCbIssuedFromTableData() {
+            const cbData = {};
+            if (window.tablesData && window.tablesData['可轉債CB']) {
+                const data = window.tablesData['可轉債CB'];
+                for (let i = 1; i < data.length; i++) {
+                    const row = data[i];
+                    const code = getStockId(String(row[0]));
+                    if (code) {
+                        cbData[code] = {
+                            conv_price: parseFloat(row[1]) || 0,
+                            balance_pct: parseFloat(row[2]) || 0
+                        };
+                    }
+                }
+            }
+            return cbData;
+        }
+
+        function openTableModal(sheetName) {
+            const data = window.tablesData[sheetName];
+            if (!data || data.length === 0) {
+                showToast(`⚠️ 尚無 ${sheetName} 的資料，請先上傳 CSV 或是等候雲端同步。`, true);
+                return;
+            }
+            
+            document.getElementById('modal-title').innerText = `📊 ${sheetName} 預覽`;
+            
+            const thead = document.getElementById('modal-thead');
+            const tbody = document.getElementById('modal-tbody');
+            thead.innerHTML = '';
+            tbody.innerHTML = '';
+            
+            const trHead = document.createElement('tr');
+            data[0].forEach(col => {
+                const th = document.createElement('th');
+                th.innerText = col;
+                trHead.appendChild(th);
+            });
+            thead.appendChild(trHead);
+            
+            for (let i = 1; i < data.length; i++) {
+                const tr = document.createElement('tr');
+                data[i].forEach(col => {
+                    const td = document.createElement('td');
+                    td.innerText = col;
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            }
+            
+            document.getElementById('csv-table-section').style.display = 'block';
+            document.getElementById('main-reports-view').style.display = 'none';
+        }
+
+        function closeTableModal() {
+            document.getElementById('csv-table-section').style.display = 'none';
+            document.getElementById('main-reports-view').style.display = 'block';
+        }
+
         // 🚀 QUANT SYSTEM IN JAVASCRIPT
         runQuantBtn.addEventListener('click', async () => {
             const validStocks = [];
@@ -1245,23 +1329,28 @@ JSON 規格範例：
                 if (!validStocks.includes(sid)) validStocks.push(sid);
             });
 
-            const bigScoreStocks = extractCodesFromTableData('大戶選股積分名單');
+            const bigScoreStocks = extractCodesFromTableData('大戶選股積分');
             bigScoreStocks.forEach(sid => {
                 if (!validStocks.includes(sid)) validStocks.push(sid);
             });
 
-            const grossMarginStocks = extractCodesFromTableData('毛利連續三季成長名單');
+            const grossMarginStocks = extractCodesFromTableData('毛利三季成長');
             grossMarginStocks.forEach(sid => {
                 if (!validStocks.includes(sid)) validStocks.push(sid);
             });
 
-            const revenueStocks = extractCodesFromTableData('營收選股名單');
+            const revenueStocks = extractCodesFromTableData('營收條件');
             revenueStocks.forEach(sid => {
                 if (!validStocks.includes(sid)) validStocks.push(sid);
             });
 
-            const earningsCallStocks = extractCodesFromTableData('法說會追蹤');
+            const earningsCallStocks = extractCodesFromTableData('法說會');
             earningsCallStocks.forEach(sid => {
+                if (!validStocks.includes(sid)) validStocks.push(sid);
+            });
+
+            const contractLiabilitiesStocks = extractCodesFromTableData('合約負債條件');
+            contractLiabilitiesStocks.forEach(sid => {
                 if (!validStocks.includes(sid)) validStocks.push(sid);
             });
 
@@ -1309,16 +1398,19 @@ JSON 規格範例：
 
                     // Add new lists conditions
                     if (bigScoreStocks.includes(stockId)) {
-                        matched.push("大戶選股積分名單");
+                        matched.push("大戶選股積分");
                     }
                     if (grossMarginStocks.includes(stockId)) {
-                        matched.push("符合毛利連續三季成長");
+                        matched.push("符合毛利三季成長");
                     }
                     if (revenueStocks.includes(stockId)) {
-                        matched.push("營收選股名單");
+                        matched.push("營收條件");
                     }
                     if (earningsCallStocks.includes(stockId)) {
-                        matched.push("法說會追蹤");
+                        matched.push("法說會");
+                    }
+                    if (contractLiabilitiesStocks.includes(stockId)) {
+                        matched.push("合約負債條件");
                     }
 
                     // Score logic
@@ -1707,19 +1799,8 @@ JSON 規格範例：
             }
             
             try {
-                showToast("☁️ 正在同步設定與報告至雲端...");
+                showToast("☁️ 正在同步報告至雲端...");
                 syncAllBtn.disabled = true;
-
-                // 1. 同步設定至雲端 (Settings)
-                const settingsPayload = {
-                    action: "save_settings",
-                    data: {
-                        big_players: bigPlayersInput.value,
-                        cb_stocks: cbStocksInput.value,
-                        cb_issued: cbIssuedInput.value
-                    }
-                };
-                await syncToGoogleSheet(scriptUrl, settingsPayload);
 
                 // 2. 同步報告至雲端 (Reports)
                 if (reportsData.length > 0) {
@@ -1728,9 +1809,9 @@ JSON 規格範例：
                         data: reportsData
                     };
                     await syncToGoogleSheet(scriptUrl, reportsPayload);
-                    showToast("✅ 所有設定與報告資料已成功同步至 Google Sheets！");
+                    showToast("✅ 所有報告資料已成功同步至 Google Sheets！");
                 } else {
-                    showToast("✅ 設定同步成功！(目前無報告資料)");
+                    showToast("✅ 目前無報告資料需要同步！");
                 }
             } catch (e) {
                 showToast(`❌ 同步失敗: ${e.message}`, true);

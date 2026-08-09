@@ -1,0 +1,14 @@
+.venv/
+.streamlit/
+__pycache__/
+*.pyc
+.env
+.env.txt
+debug.txt
+out.txt
+sys_out.txt
+temp_*.txt
+tmp.txt
+*.log
+node_modules/
+dist/
