@@ -988,7 +988,7 @@
                     showToast(`上傳中... 正在將 ${filename} 同步至雲端...`);
                     fetch(scriptUrl, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'text/plain' },
+                        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
                         body: JSON.stringify({
                             action: 'save_csv',
                             sheetName: sheetName,
@@ -1788,7 +1788,7 @@ JSON 規格範例：
         async function syncToGoogleSheet(scriptUrl, data) {
             const resp = await fetch(scriptUrl, {
                 method: 'POST',
-                headers: { 'Content-Type': 'text/plain' },
+                headers: { 'Content-Type': 'text/plain; charset=utf-8' },
                 body: JSON.stringify(data)
             });
             if (!resp.ok) throw new Error("HTTP 錯誤 " + resp.status);
