@@ -41,6 +41,27 @@ function doPost(e) {
       .setMimeType(ContentService.MimeType.JSON)
       .setHeader("Access-Control-Allow-Origin", "*");
       
+    } else if (action === "save_csv") {
+      var sheetName = payload.sheetName;
+      var csvData = payload.data; // Expected to be 2D array
+      var targetSheet = ss.getSheetByName(sheetName);
+      if (!targetSheet) {
+        targetSheet = ss.insertSheet(sheetName);
+      }
+      targetSheet.clear();
+      
+      // Write the 2D array in bulk
+      if (csvData && csvData.length > 0 && csvData[0].length > 0) {
+        targetSheet.getRange(1, 1, csvData.length, csvData[0].length).setValues(csvData);
+      }
+      
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "success", 
+        message: "CSV資料已成功同步至雲端分頁：" + sheetName
+      }))
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeader("Access-Control-Allow-Origin", "*");
+      
     } else {
       // 原本的新增報告邏輯 (action === "append_reports")
       var sheet = ss.getSheetByName("Reports") || ss.getActiveSheet();
@@ -113,9 +134,43 @@ function doGet(e) {
       }
     }
     
+    // 讀取 CSV 分頁，提取代碼供網頁初始化
+    var sheetNamesToRead = ["大戶持股", "可轉債CB", "XQ選股"];
+    var sheetData = {};
+    
+    for (var j = 0; j < sheetNamesToRead.length; j++) {
+      var sName = sheetNamesToRead[j];
+      var s = ss.getSheetByName(sName);
+      if (s && s.getLastRow() > 1) {
+        var sValues = s.getDataRange().getValues();
+        var headers = sValues[0];
+        var codeIdx = -1;
+        for (var c = 0; c < headers.length; c++) {
+          var h = String(headers[c]);
+          if (h.indexOf('代號') > -1 || h.indexOf('代碼') > -1 || h.indexOf('Code') > -1 || h.indexOf('股票') > -1) {
+            codeIdx = c;
+            break;
+          }
+        }
+        
+        var codes = [];
+        if (codeIdx > -1) {
+          for (var r = 1; r < sValues.length; r++) {
+            var cellVal = String(sValues[r][codeIdx]);
+            var match = cellVal.match(/\\d{4}/);
+            if (match) {
+              codes.push(match[0]);
+            }
+          }
+        }
+        sheetData[sName] = codes.join(", ");
+      }
+    }
+    
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",
-      data: settings
+      data: settings,
+      sheetData: sheetData
     }))
     .setMimeType(ContentService.MimeType.JSON)
     .setHeader("Access-Control-Allow-Origin", "*");

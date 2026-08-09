@@ -734,20 +734,32 @@
             try {
                 const response = await fetch(url, { method: 'GET' });
                 const result = await response.json();
-                if (result.status === 'success' && result.data) {
-                    if (result.data.big_players) {
-                        bigPlayersInput.value = result.data.big_players;
-                        localStorage.setItem('big_players', result.data.big_players);
+                if (result.status === 'success') {
+                    if (result.data) {
+                        if (result.data.big_players && !result.sheetData?.["大戶持股"]) {
+                            bigPlayersInput.value = result.data.big_players;
+                            localStorage.setItem('big_players', result.data.big_players);
+                        }
+                        if (result.data.cb_stocks && !result.sheetData?.["可轉債CB"]) {
+                            cbStocksInput.value = result.data.cb_stocks;
+                            localStorage.setItem('cb_stocks', result.data.cb_stocks);
+                        }
+                        if (result.data.cb_issued) {
+                            cbIssuedInput.value = result.data.cb_issued;
+                            localStorage.setItem('cb_issued', result.data.cb_issued);
+                        }
                     }
-                    if (result.data.cb_stocks) {
-                        cbStocksInput.value = result.data.cb_stocks;
-                        localStorage.setItem('cb_stocks', result.data.cb_stocks);
+                    if (result.sheetData) {
+                        if (result.sheetData["大戶持股"]) {
+                            bigPlayersInput.value = result.sheetData["大戶持股"];
+                            localStorage.setItem('big_players', result.sheetData["大戶持股"]);
+                        }
+                        if (result.sheetData["可轉債CB"]) {
+                            cbStocksInput.value = result.sheetData["可轉債CB"];
+                            localStorage.setItem('cb_stocks', result.sheetData["可轉債CB"]);
+                        }
                     }
-                    if (result.data.cb_issued) {
-                        cbIssuedInput.value = result.data.cb_issued;
-                        localStorage.setItem('cb_issued', result.data.cb_issued);
-                    }
-                    console.log("已從雲端同步設定");
+                    console.log("已從雲端同步設定與 CSV 分頁資料");
                 }
             } catch (err) {
                 console.log("雲端設定同步失敗 (可能是第一次執行或網路錯誤):", err);
@@ -894,15 +906,19 @@
                 
                 if (codeIdx === -1) {
                     if (isFallback) {
-                        showToast("❌ CSV 格式錯誤：找不到 [代碼/代號/Code] 欄位", true);
+                        showToast("❌ CSV 格式錯誤：找不到 [代碼/代號/Code/股票] 欄位", true);
                     }
                     return false;
                 }
+
+                let csvRows = [];
+                csvRows.push(headers);
 
                 xqPicksData = {};
                 for (let i = headerLineIdx + 1; i < lines.length; i++) {
                     if (!lines[i].trim()) continue;
                     const cols = lines[i].split(',').map(c => c.trim().replace(/["']/g, ''));
+                    csvRows.push(cols);
                     const code = cols[codeIdx];
                     if (!code) continue;
                     
@@ -922,16 +938,41 @@
                 
                 // 自動帶入設定欄位邏輯
                 const stockCodes = Object.keys(xqPicksData).join(', ');
+                let sheetName = "XQ選股";
                 if (filename.includes('大戶')) {
+                    sheetName = "大戶持股";
                     bigPlayersInput.value = stockCodes;
                     localStorage.setItem('big_players', stockCodes);
                     showToast(`✅ 成功導入 ${Object.keys(xqPicksData).length} 筆紀錄！已自動填入「大戶選股清單」`);
                 } else if (filename.includes('可轉債') || filename.toLowerCase().includes('cb')) {
+                    sheetName = "可轉債CB";
                     cbStocksInput.value = stockCodes;
                     localStorage.setItem('cb_stocks', stockCodes);
                     showToast(`✅ 成功導入 ${Object.keys(xqPicksData).length} 筆紀錄！已自動填入「可轉債選股清單」`);
                 } else {
                     showToast(`✅ 成功導入 ${Object.keys(xqPicksData).length} 筆 XQ 選股紀錄！`);
+                }
+                
+                const scriptUrl = scriptUrlInput.value.trim();
+                if (scriptUrl) {
+                    showToast(`上傳中... 正在將 ${filename} 同步至雲端...`);
+                    fetch(scriptUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: JSON.stringify({
+                            action: 'save_csv',
+                            sheetName: sheetName,
+                            data: csvRows
+                        })
+                    }).then(res => res.json()).then(resJson => {
+                        if(resJson.status === 'success') {
+                            showToast(`☁️ ${filename} 已成功同步至雲端分頁：${sheetName}`);
+                        } else {
+                            showToast(`⚠️ 雲端同步失敗: ${resJson.message}`, true);
+                        }
+                    }).catch(err => {
+                        showToast(`⚠️ 雲端連線失敗: ${err.message}`, true);
+                    });
                 }
                 
                 return true;
