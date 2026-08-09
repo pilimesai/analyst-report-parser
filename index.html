@@ -723,21 +723,8 @@
         </div>
     </div>
 
-    <!-- Table View Section (New) -->
-    <div class="reports-section" id="csv-table-section" style="display:none; margin-top: 20px;">
-        <div class="section-header">
-            <h2 id="modal-title">📊 CSV 資料預覽</h2>
-            <div class="action-buttons">
-                <button class="btn btn-primary" onclick="closeTableModal()">🔙 返回解析報告</button>
-            </div>
-        </div>
-        <div class="table-responsive">
-            <table id="modal-table">
-                <thead id="modal-thead"></thead>
-                <tbody id="modal-tbody"></tbody>
-            </table>
-        </div>
-    </div>
+    <!-- Persistent CSV Tables Container -->
+    <div id="persistent-csv-tables" style="display:flex; flex-direction:column; gap:20px; padding-bottom: 40px; margin-top: 2rem;"></div>
     </div>
 
     <!-- Notification Toast -->
@@ -847,6 +834,7 @@
                         window.tablesData = result.sheetData;
                         console.log("已從雲端同步設定與 CSV 分頁資料", window.tablesData);
                         showToast("✅ 已成功從雲端自動載入大戶與試算表資料！");
+                        renderPersistentTables();
                     }
                 }
             } catch (err) {
@@ -1009,17 +997,17 @@
                     }).then(res => res.json()).then(resJson => {
                         if(resJson.status === 'success') {
                             showToast(`☁️ ${filename} 已成功同步至雲端分頁：${sheetName}`);
-                            openTableModal(sheetName);
+                            renderPersistentTables();
                         } else {
                             showToast(`⚠️ 雲端同步失敗: ${resJson.message}`, true);
-                            openTableModal(sheetName); // 即使同步失敗，也在本地顯示
+                            renderPersistentTables();
                         }
                     }).catch(err => {
                         showToast(`⚠️ 雲端連線失敗: ${err.message}`, true);
                     });
                 } else {
                     showToast(`✅ ${filename} 已暫存於本地 (尚未設定 GAS 網址)`);
-                    openTableModal(sheetName);
+                    renderPersistentTables();
                 }
                 
                 return true;
@@ -1271,45 +1259,58 @@ JSON 規格範例：
             return cbData;
         }
 
-        function openTableModal(sheetName) {
-            const data = window.tablesData[sheetName];
-            if (!data || data.length === 0) {
-                showToast(`⚠️ 尚無 ${sheetName} 的資料，請先上傳 CSV 或是等候雲端同步。`, true);
-                return;
-            }
-            
-            document.getElementById('modal-title').innerText = `📊 ${sheetName} 預覽`;
-            
-            const thead = document.getElementById('modal-thead');
-            const tbody = document.getElementById('modal-tbody');
-            thead.innerHTML = '';
-            tbody.innerHTML = '';
-            
-            const trHead = document.createElement('tr');
-            data[0].forEach(col => {
-                const th = document.createElement('th');
-                th.innerText = col;
-                trHead.appendChild(th);
-            });
-            thead.appendChild(trHead);
-            
-            for (let i = 1; i < data.length; i++) {
-                const tr = document.createElement('tr');
-                data[i].forEach(col => {
-                    const td = document.createElement('td');
-                    td.innerText = col;
-                    tr.appendChild(td);
-                });
-                tbody.appendChild(tr);
-            }
-            
-            document.getElementById('csv-table-section').style.display = 'block';
-            document.getElementById('main-reports-view').style.display = 'none';
-        }
+        function renderPersistentTables() {
+            const container = document.getElementById('persistent-csv-tables');
+            if (!container) return;
+            container.innerHTML = ''; // clear
 
-        function closeTableModal() {
-            document.getElementById('csv-table-section').style.display = 'none';
-            document.getElementById('main-reports-view').style.display = 'block';
+            const sheetsToRender = [
+                '大戶選股積分', '毛利三季成長', '營收條件', '法說會', '合約負債條件', '大戶持股', '可轉債CB'
+            ];
+
+            sheetsToRender.forEach(sheetName => {
+                const data = window.tablesData[sheetName];
+                if (!data || data.length === 0) return; // skip empty
+
+                const section = document.createElement('div');
+                section.className = 'reports-section';
+                
+                const header = document.createElement('div');
+                header.className = 'section-header';
+                header.innerHTML = `<h2>📊 ${sheetName}</h2>`;
+                section.appendChild(header);
+
+                const tableContainer = document.createElement('div');
+                tableContainer.className = 'table-responsive';
+                
+                const table = document.createElement('table');
+                
+                const thead = document.createElement('thead');
+                const trHead = document.createElement('tr');
+                data[0].forEach(col => {
+                    const th = document.createElement('th');
+                    th.innerText = col;
+                    trHead.appendChild(th);
+                });
+                thead.appendChild(trHead);
+                table.appendChild(thead);
+
+                const tbody = document.createElement('tbody');
+                for (let i = 1; i < data.length; i++) {
+                    const tr = document.createElement('tr');
+                    data[i].forEach(col => {
+                        const td = document.createElement('td');
+                        td.innerText = col;
+                        tr.appendChild(td);
+                    });
+                    tbody.appendChild(tr);
+                }
+                table.appendChild(tbody);
+
+                tableContainer.appendChild(table);
+                section.appendChild(tableContainer);
+                container.appendChild(section);
+            });
         }
 
         // 🚀 QUANT SYSTEM IN JAVASCRIPT
