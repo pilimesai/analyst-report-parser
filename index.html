@@ -1112,21 +1112,77 @@
                 if (lines.length < 2) throw new Error("CSV structure too simple");
 
                 let csvRows = [];
-                let maxCols = 0;
                 for (let i = 0; i < lines.length; i++) {
                     if (!lines[i].trim()) continue;
                     const cols = lines[i].split(',').map(c => c.trim().replace(/["']/g, ''));
                     csvRows.push(cols);
-                    if (cols.length > maxCols) {
-                        maxCols = cols.length;
-                    }
                 }
 
-                // 將所有行的欄位數補齊，避免 Apps Script setValues 時發生不一致長度的錯誤
-                csvRows = csvRows.map(row => {
-                    while (row.length < maxCols) row.push("");
-                    return row;
-                });
+                if (csvRows.length > 0) {
+                    let headerIdx = 0;
+                    let codeColIdx = -1;
+                    let nameColIdx = -1;
+                    let dateColIdx = -1;
+
+                    // 尋找包含「代號」或「代碼」的標題列（掃描前 5 列）
+                    for (let i = 0; i < Math.min(5, csvRows.length); i++) {
+                        const row = csvRows[i];
+                        let cIdx = row.findIndex(h => typeof h === 'string' && (h.includes('代號') || h.includes('代碼') || h.includes('股號') || h.includes('股票')));
+                        if (cIdx !== -1) {
+                            headerIdx = i;
+                            codeColIdx = cIdx;
+                            nameColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('名稱') || h.includes('公司') || h.includes('股名') || h.includes('簡稱') || h.includes('商品')));
+                            if (sheetName === '法說會') {
+                                dateColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('日期') || h.includes('時間')));
+                            }
+                            break;
+                        }
+                    }
+
+                    // 如果沒找到明確標題，退回檢查哪一欄有4碼數字
+                    if (codeColIdx === -1 && csvRows.length > 1) {
+                        for (let i = 0; i < Math.min(5, csvRows.length); i++) {
+                            const cIdx = csvRows[i].findIndex(c => /^\d{4}(\.TW|\.TWO)?$/.test(String(c).trim()));
+                            if (cIdx !== -1) {
+                                codeColIdx = cIdx;
+                                nameColIdx = (cIdx + 1 < csvRows[i].length) ? cIdx + 1 : cIdx;
+                                headerIdx = i > 0 ? i - 1 : 0;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (codeColIdx === -1) codeColIdx = 0;
+                    if (nameColIdx === -1) nameColIdx = 1;
+                    if (sheetName === '法說會' && dateColIdx === -1) dateColIdx = 2;
+
+                    const newCsvRows = [];
+                    // 保留過濾後的標題與資料
+                    for (let i = headerIdx; i < csvRows.length; i++) {
+                        const row = csvRows[i];
+                        if (i === headerIdx) {
+                            if (sheetName === '法說會') {
+                                newCsvRows.push(['股號', '公司名', '日期']);
+                            } else {
+                                newCsvRows.push(['股號', '公司名']);
+                            }
+                            continue;
+                        }
+                        
+                        const cCode = row[codeColIdx] || '';
+                        const cName = row[nameColIdx] || '';
+                        // 若無代碼或太短則略過
+                        if (!cCode) continue;
+
+                        if (sheetName === '法說會') {
+                            const cDate = row[dateColIdx] || '';
+                            newCsvRows.push([cCode, cName, cDate]);
+                        } else {
+                            newCsvRows.push([cCode, cName]);
+                        }
+                    }
+                    csvRows = newCsvRows.length > 0 ? newCsvRows : csvRows;
+                }
 
                 // Update local tablesData
                 window.tablesData[sheetName] = csvRows;
