@@ -38,8 +38,7 @@ function doPost(e) {
         status: "success", 
         message: "設定已成功同步至雲端！"
       }))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeader("Access-Control-Allow-Origin", "*");
+      .setMimeType(ContentService.MimeType.JSON);
       
     } else if (action === "save_csv") {
       var sheetName = payload.sheetName;
@@ -59,8 +58,7 @@ function doPost(e) {
         status: "success", 
         message: "CSV資料已成功同步至雲端分頁：" + sheetName
       }))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeader("Access-Control-Allow-Origin", "*");
+      .setMimeType(ContentService.MimeType.JSON);
       
     } else {
       // 原本的新增報告邏輯 (action === "append_reports")
@@ -105,8 +103,7 @@ function doPost(e) {
         status: "success", 
         message: "雲端 Sheets 資料同步成功，共寫入 " + records.length + " 筆！"
       }))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeader("Access-Control-Allow-Origin", "*");
+      .setMimeType(ContentService.MimeType.JSON);
     }
     
   } catch (err) {
@@ -114,8 +111,7 @@ function doPost(e) {
       status: "error", 
       message: "寫入失敗: " + err.toString()
     }))
-    .setMimeType(ContentService.MimeType.JSON)
-    .setHeader("Access-Control-Allow-Origin", "*");
+    .setMimeType(ContentService.MimeType.JSON);
   }
 }
 
@@ -156,24 +152,13 @@ function doGet(e) {
       data: settings,
       sheetData: sheetData
     }))
-    .setMimeType(ContentService.MimeType.JSON)
-    .setHeader("Access-Control-Allow-Origin", "*");
+    .setMimeType(ContentService.MimeType.JSON);
     
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({
       status: "error", 
       message: "讀取失敗: " + err.toString()
     }))
-    .setMimeType(ContentService.MimeType.JSON)
-    .setHeader("Access-Control-Allow-Origin", "*");
+    .setMimeType(ContentService.MimeType.JSON);
   }
-}
-
-// 處理瀏覽器 CORS 預檢 OPTIONS 請求
-function doOptions(e) {
-  return ContentService.createTextOutput("")
-    .setMimeType(ContentService.MimeType.TEXT)
-    .setHeader("Access-Control-Allow-Origin", "*")
-    .setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-    .setHeader("Access-Control-Allow-Headers", "Content-Type");
 }

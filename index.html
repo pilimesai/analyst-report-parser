@@ -1013,11 +1013,21 @@
                 if (lines.length < 2) throw new Error("CSV structure too simple");
                 
                 let csvRows = [];
+                let maxCols = 0;
                 for (let i = 0; i < lines.length; i++) {
                     if (!lines[i].trim()) continue;
                     const cols = lines[i].split(',').map(c => c.trim().replace(/["']/g, ''));
                     csvRows.push(cols);
+                    if (cols.length > maxCols) {
+                        maxCols = cols.length;
+                    }
                 }
+
+                // 將所有行的欄位數補齊，避免 Apps Script setValues 時發生不一致長度的錯誤
+                csvRows = csvRows.map(row => {
+                    while (row.length < maxCols) row.push("");
+                    return row;
+                });
 
                 // Update local tablesData
                 window.tablesData[sheetName] = csvRows;
