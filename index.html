@@ -670,13 +670,22 @@
         <!-- File Upload Zone -->
         <div id="main-reports-view">
             <div class="upload-zone" id="drop-zone">
-            <div class="upload-icon">📄</div>
-            <div class="upload-text">
-                <h4>拖曳報告檔案至此處，或<span>點擊上傳</span></h4>
-                <p>支援 PDF, TXT, Excel (XLSX/XLS), CSV</p>
+                <div class="upload-icon">📄</div>
+                <div class="upload-text">
+                    <h4>拖曳報告檔案至此處，或<span>點擊上傳</span></h4>
+                    <p>支援 PDF, TXT, Excel (XLSX/XLS), CSV</p>
+                </div>
+                <input type="file" id="file-input" multiple accept=".pdf,.txt,.xlsx,.xls,.csv" style="display:none;">
             </div>
-            <input type="file" id="file-input" multiple accept=".pdf,.txt,.xlsx,.xls,.csv" style="display:none;">
-        </div>
+
+            <!-- Paste Text Zone -->
+            <div class="text-input-zone" style="margin-top: 15px; background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: 1rem; padding: 1.5rem;">
+                <h4 style="margin-bottom: 12px; font-weight: 600; font-size: 1.1rem; color: var(--text-primary);">📝 或直接貼上法人日報文字</h4>
+                <textarea id="raw-text-input" placeholder="在此貼上文字報告、新聞稿或長篇券商分析..." rows="5" style="width: 100%; border-radius: 0.5rem; border: 1px solid var(--card-border); padding: 1rem; background-color: rgba(255,255,255,0.02); color: var(--text-primary); font-family: inherit; resize: vertical; margin-bottom: 15px; font-size: 0.95rem; line-height: 1.5;"></textarea>
+                <div style="text-align: right;">
+                    <button class="btn btn-primary" id="analyze-text-btn" style="padding: 0.75rem 2rem; font-size: 1rem;">🚀 開始分析文字</button>
+                </div>
+            </div>
 
         <!-- Progress Tracking -->
         <div class="progress-container" id="progress-container">
@@ -760,6 +769,8 @@
         const scriptUrlInput = document.getElementById('script-url');
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
+        const rawTextInput = document.getElementById('raw-text-input');
+        const analyzeTextBtn = document.getElementById('analyze-text-btn');
         const progressContainer = document.getElementById('progress-container');
         const progressStatus = document.getElementById('progress-status');
         const progressPercent = document.getElementById('progress-percent');
@@ -920,6 +931,59 @@
         scriptUrlInput.addEventListener('change', () => {
             localStorage.setItem('google_script_url', scriptUrlInput.value);
             fetchSettingsFromCloud(); // 當網址變更時，自動嘗試抓取雲端設定
+        });
+
+        // Handle pasted raw text
+        analyzeTextBtn.addEventListener('click', async () => {
+            const text = rawTextInput.value.trim();
+            if (!text) {
+                showToast("❌ 請先貼上文字內容！", true);
+                return;
+            }
+
+            const apiKey = apiKeyInput.value.trim();
+            if (!apiKey) {
+                showToast("❌ 請先輸入您的 Gemini API Key！", true);
+                return;
+            }
+
+            progressContainer.style.display = 'flex';
+            updateProgress(10, `正在準備分析文字...`);
+            
+            try {
+                // Call Gemini API
+                updateProgress(30, `正在使用 AI 分析貼上文字...`);
+                const modelName = modelSelect.value;
+                const parsedObj = await analyzeReportWithGemini(apiKey, text, modelName);
+                
+                if (parsedObj) {
+                    // Append and save locally
+                    reportsData.push(parsedObj);
+                    localStorage.setItem('reports_history', JSON.stringify(reportsData));
+                    
+                    // Auto-sync if script URL is configured
+                    const scriptUrl = scriptUrlInput.value.trim();
+                    if (scriptUrl) {
+                        updateProgress(80, `正在同步至 Google Sheets: ${parsedObj.stock}`);
+                        try {
+                            const payload = { action: 'append_reports', data: [parsedObj] };
+                            await syncToGoogleSheet(scriptUrl, payload);
+                        } catch (err) {
+                            console.error("Auto sync failed", err);
+                        }
+                    }
+
+                    renderReportsTable();
+                    showToast(`✅ 成功解析貼上文字: ${parsedObj.stock || '未知'}`);
+                    rawTextInput.value = ''; // clear input after success
+                }
+            } catch (error) {
+                console.error(error);
+                showToast(`❌ 處理文字失敗: ${error.message}`, true);
+            }
+
+            updateProgress(100, "✅ 分析完成！");
+            setTimeout(() => { progressContainer.style.display = 'none'; }, 2000);
         });
 
         // Drag & Drop handlers (For reports parsing only)
