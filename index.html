@@ -952,7 +952,13 @@
             const reader = new FileReader();
             reader.onload = function(evt) {
                 const text = evt.target.result;
-                if (!parseAndSyncCsv(text, file.name, targetSheetName, false)) {
+                if (text.includes('\uFFFD')) {
+                    const readerBig5 = new FileReader();
+                    readerBig5.onload = function(evtBig5) {
+                        parseAndSyncCsv(evtBig5.target.result, file.name, targetSheetName, true);
+                    };
+                    readerBig5.readAsText(file, "Big5");
+                } else if (!parseAndSyncCsv(text, file.name, targetSheetName, false)) {
                     const readerBig5 = new FileReader();
                     readerBig5.onload = function(evtBig5) {
                         parseAndSyncCsv(evtBig5.target.result, file.name, targetSheetName, true);
@@ -1235,7 +1241,7 @@ JSON 規格範例：
                 for (let i = 1; i < data.length; i++) {
                     const row = data[i];
                     let code = null;
-                    for (let j = 0; j < Math.min(row.length, 2); j++) {
+                    for (let j = 0; j < Math.min(row.length, 5); j++) {
                         code = getStockId(String(row[j]));
                         if (code) break;
                     }
