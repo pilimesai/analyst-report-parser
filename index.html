@@ -827,29 +827,48 @@
             const reader = new FileReader();
             reader.onload = function(evt) {
                 const text = evt.target.result;
-                parseXqCsv(text, file.name);
+                // 嘗試以 UTF-8 解析，若找不到欄位 (回傳 false)，則改用 Big5 重新讀取
+                if (!parseXqCsv(text, file.name, false)) {
+                    const readerBig5 = new FileReader();
+                    readerBig5.onload = function(evtBig5) {
+                        parseXqCsv(evtBig5.target.result, file.name, true);
+                    };
+                    readerBig5.readAsText(file, "Big5");
+                }
             };
-            // Try reading as UTF-8 first, fallback to Big5/CP950 if needed
             reader.readAsText(file, "UTF-8");
         });
 
-        function parseXqCsv(text, filename) {
+        function parseXqCsv(text, filename, isFallback = false) {
             try {
-                // simple CSV parsing logic
                 const lines = text.split(/\r?\n/);
                 if (lines.length < 2) throw new Error("CSV structure too simple");
                 
-                // Identify columns
-                const headers = lines[0].split(',').map(h => h.trim().replace(/["']/g, ''));
-                const codeIdx = headers.findIndex(h => h.includes('代號') || h.includes('Code') || h.includes('股票'));
+                let headers = [];
+                let codeIdx = -1;
+                let headerLineIdx = 0;
+
+                // 掃描前 10 行尋找表頭 (包含 代碼/代號/Code/股票)
+                for (let i = 0; i < Math.min(10, lines.length); i++) {
+                    const row = lines[i].split(',').map(h => h.trim().replace(/["']/g, ''));
+                    const idx = row.findIndex(h => h.includes('代號') || h.includes('代碼') || h.includes('Code') || h.includes('股票'));
+                    if (idx !== -1) {
+                        headers = row;
+                        codeIdx = idx;
+                        headerLineIdx = i;
+                        break;
+                    }
+                }
                 
                 if (codeIdx === -1) {
-                    showToast("❌ CSV 格式錯誤：找不到 [代號/Code] 欄位", true);
-                    return;
+                    if (isFallback) {
+                        showToast("❌ CSV 格式錯誤：找不到 [代碼/代號/Code] 欄位", true);
+                    }
+                    return false;
                 }
 
                 xqPicksData = {};
-                for (let i = 1; i < lines.length; i++) {
+                for (let i = headerLineIdx + 1; i < lines.length; i++) {
                     if (!lines[i].trim()) continue;
                     const cols = lines[i].split(',').map(c => c.trim().replace(/["']/g, ''));
                     const code = cols[codeIdx];
@@ -859,7 +878,6 @@
                     if (cleanCode) {
                         const stockId = cleanCode[0];
                         xqPicksData[stockId] = {};
-                        // Grab any matched columns
                         headers.forEach((header, index) => {
                             if (index !== codeIdx && cols[index]) {
                                 xqPicksData[stockId][header] = cols[index];
@@ -870,8 +888,12 @@
                 
                 xqFileStatus.innerText = `已載入: ${filename} (${Object.keys(xqPicksData).length} 檔)`;
                 showToast(`✅ 成功導入 ${Object.keys(xqPicksData).length} 筆 XQ 選股紀錄！`);
+                return true;
             } catch (err) {
-                showToast("❌ 解析 CSV 檔案失敗，請檢查編碼或欄位是否正確", true);
+                if (isFallback) {
+                    showToast("❌ 解析 CSV 檔案失敗，請檢查編碼或欄位是否正確", true);
+                }
+                return false;
             }
         }
 
