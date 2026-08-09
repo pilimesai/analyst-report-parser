@@ -928,13 +928,17 @@
                     if (file.name.endsWith('.pdf')) {
                         const arrayBuffer = await file.arrayBuffer();
                         text = await extractTextFromPdf(arrayBuffer);
-                    } else if (file.name.endsWith('.txt')) {
-                        text = await file.text();
                     } else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
                         const arrayBuffer = await file.arrayBuffer();
                         text = parseExcel(arrayBuffer);
-                    } else if (file.name.endsWith('.csv')) {
+                    } else if (file.name.endsWith('.txt') || file.name.endsWith('.csv')) {
                         text = await file.text();
+                        // 如果有大量 UTF-8 解碼失敗的替換字元，可能為 Big5 (ANSI) 編碼
+                        if (text.includes('')) {
+                            const arrayBuffer = await file.arrayBuffer();
+                            const decoder = new TextDecoder('big5');
+                            text = decoder.decode(arrayBuffer);
+                        }
                     } else {
                         throw new Error("不支援的檔案格式");
                     }
