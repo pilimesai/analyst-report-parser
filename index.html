@@ -1197,6 +1197,7 @@
                     let codeColIdx = -1;
                     let nameColIdx = -1;
                     let dateColIdx = -1;
+                    let priceColIdx = -1;
 
                     // 尋找包含「代號」或「代碼」的標題列（掃描前 5 列）
                     for (let i = 0; i < Math.min(5, csvRows.length); i++) {
@@ -1208,6 +1209,9 @@
                             nameColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('名稱') || h.includes('公司') || h.includes('股名') || h.includes('簡稱') || h.includes('商品')));
                             if (sheetName === '法說會') {
                                 dateColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('日期') || h.includes('時間')));
+                            }
+                            if (sheetName === '近期發行CB') {
+                                priceColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('定價') || h.includes('轉換價') || h.includes('價格') || h.includes('發行價')));
                             }
                             break;
                         }
@@ -1239,6 +1243,8 @@
                                 newCsvRows.push(['股號', '公司名']);
                             } else if (sheetName === '法說會') {
                                 newCsvRows.push(['股號', '公司名', '日期']);
+                            } else if (sheetName === '近期發行CB') {
+                                newCsvRows.push(['股號', '公司名', '定價']);
                             } else {
                                 newCsvRows.push(row); // 保留所有原始欄位
                             }
@@ -1255,6 +1261,9 @@
                         } else if (sheetName === '法說會') {
                             const cDate = row[dateColIdx] || '';
                             newCsvRows.push([cCode, cName, cDate]);
+                        } else if (sheetName === '近期發行CB') {
+                            const cPrice = priceColIdx !== -1 ? (row[priceColIdx] || '') : '';
+                            newCsvRows.push([cCode, cName, cPrice]);
                         } else {
                             newCsvRows.push(row); // 保留所有原始欄位
                         }
