@@ -1202,11 +1202,20 @@
                     // 尋找包含「代號」或「代碼」的標題列（掃描前 5 列）
                     for (let i = 0; i < Math.min(5, csvRows.length); i++) {
                         const row = csvRows[i];
-                        let cIdx = row.findIndex(h => typeof h === 'string' && (h.includes('代號') || h.includes('代碼') || h.includes('股號') || h.includes('股票')));
+                        
+                        let cIdx = row.findIndex(h => typeof h === 'string' && (h === '代號' || h === '股號' || h === '股票代號' || h === '代碼'));
+                        if (cIdx === -1) {
+                            cIdx = row.findIndex(h => typeof h === 'string' && (h.includes('代號') || h.includes('代碼') || h.includes('股號') || h.includes('股票')));
+                        }
+
                         if (cIdx !== -1) {
                             headerIdx = i;
                             codeColIdx = cIdx;
-                            nameColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('名稱') || h.includes('公司') || h.includes('股名') || h.includes('簡稱') || h.includes('商品')));
+                            
+                            nameColIdx = row.findIndex(h => typeof h === 'string' && (h === '名稱' || h === '公司名稱' || h === '股名' || h === '簡稱'));
+                            if (nameColIdx === -1) {
+                                nameColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('名稱') || h.includes('公司') || h.includes('股名') || h.includes('簡稱') || h.includes('商品')));
+                            }
                             if (sheetName === '法說會' || sheetName === '近期發行CB') {
                                 dateColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('日期') || h.includes('時間') || h.includes('掛牌')));
                             }
