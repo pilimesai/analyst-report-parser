@@ -623,6 +623,11 @@
             .action-buttons {
                 flex-wrap: wrap;
             }
+            
+            /* 手機版隱藏 API Key 及網址設定區塊 */
+            #group-api, #group-sheet, #group-script, #unlock-settings-btn {
+                display: none !important;
+            }
         }
     </style>
 </head>
@@ -637,35 +642,38 @@
         </div>
 
         <div class="sidebar-section">
-            <h3>⚙️ 核心設定</h3>
-            <div class="input-group">
+            <h3 style="display: flex; justify-content: space-between; align-items: center;">
+                <span>⚙️ 核心設定</span>
+                <button id="unlock-settings-btn" class="btn" style="padding: 0.2rem 0.5rem; font-size: 0.75rem; background: rgba(255,255,255,0.1); border: 1px solid var(--card-border);">解鎖修改</button>
+            </h3>
+            <div class="input-group" id="group-api">
                 <label for="api-key">Gemini API Key</label>
-                <input type="password" id="api-key" placeholder="輸入 API 金鑰">
+                <input type="password" id="api-key" placeholder="輸入 API 金鑰" disabled>
                 <div class="helper-text">
                     金鑰將儲存於您的瀏覽器快取。<a href="https://aistudio.google.com/app/apikey" target="_blank">取得金鑰 ↗</a>
                 </div>
             </div>
 
-            <div class="input-group">
+            <div class="input-group" id="group-model">
                 <label for="model-select">AI 模型</label>
-                <select id="model-select">
+                <select id="model-select" disabled>
                     <option value="gemini-2.5-flash">gemini-2.5-flash (推薦)</option>
                     <option value="gemini-2.0-flash">gemini-2.0-flash</option>
                     <option value="gemini-2.0-flash-lite">gemini-2.0-flash-lite</option>
                 </select>
             </div>
 
-            <div class="input-group">
+            <div class="input-group" id="group-sheet">
                 <label for="sheet-url">Google 試算表連結 (唯讀導入)</label>
-                <input type="text" id="sheet-url" placeholder="貼上共用連結">
+                <input type="text" id="sheet-url" placeholder="貼上共用連結" disabled>
                 <div class="helper-text">
                     自動導入歷史紀錄。請先將 Sheets 共用設定為「知道連結的任何人均可檢視」。
                 </div>
             </div>
 
-            <div class="input-group">
+            <div class="input-group" id="group-script">
                 <label for="script-url">Google Apps Script 寫入網址</label>
-                <input type="text" id="script-url" placeholder="貼上部署的 Web App 網址">
+                <input type="text" id="script-url" placeholder="貼上部署的 Web App 網址" disabled>
                 <div class="helper-text">
                     設定後，解析新報告或點擊同步按鈕時會直接寫入 Sheets 中。
                 </div>
@@ -838,6 +846,16 @@
 
 
     <script>
+        // ==========================================
+        // 🔧 手機版免填設定 (Hardcoded Settings)
+        // 您可以將金鑰與網址直接填入下方的雙引號中。
+        // 若有設定，網頁載入時將自動帶入並隱藏原本的輸入框。
+        // 警告：請勿將帶有金鑰的檔案上傳至公開的 GitHub 儲存庫！
+        // ==========================================
+        const CONFIG_API_KEY = ""; 
+        const CONFIG_SHEET_URL = ""; 
+        const CONFIG_SCRIPT_URL = ""; 
+
         // Global variables
         let reportsData = [];
         let stockNameMap = {};
@@ -954,28 +972,54 @@
 
         // Initial setup on load
         window.addEventListener('load', async () => {
-            // Load saved settings
-            if (localStorage.getItem('gemini_api_key')) {
-                apiKeyInput.value = localStorage.getItem('gemini_api_key');
+            // Check URL parameters for one-time auto-fill
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('api_key')) localStorage.setItem('gemini_api_key', urlParams.get('api_key'));
+            if (urlParams.get('sheet_url')) localStorage.setItem('google_sheet_url', urlParams.get('sheet_url'));
+            if (urlParams.get('script_url')) localStorage.setItem('google_script_url', urlParams.get('script_url'));
+
+            // Load saved settings (Keep them visible but disabled by default)
+            const activeApiKey = CONFIG_API_KEY || localStorage.getItem('gemini_api_key');
+            if (activeApiKey) {
+                apiKeyInput.value = activeApiKey;
             }
+
             if (localStorage.getItem('gemini_model')) {
                 modelSelect.value = localStorage.getItem('gemini_model');
             }
-            if (localStorage.getItem('google_sheet_url')) {
-                sheetUrlInput.value = localStorage.getItem('google_sheet_url');
-            }
-            if (localStorage.getItem('google_script_url')) {
-                scriptUrlInput.value = localStorage.getItem('google_script_url');
+
+            const activeSheetUrl = CONFIG_SHEET_URL || localStorage.getItem('google_sheet_url');
+            if (activeSheetUrl) {
+                sheetUrlInput.value = activeSheetUrl;
             }
 
+            const activeScriptUrl = CONFIG_SCRIPT_URL || localStorage.getItem('google_script_url');
+            if (activeScriptUrl) {
+                scriptUrlInput.value = activeScriptUrl;
+            }
+
+            // 解鎖按鈕邏輯
+            document.getElementById('unlock-settings-btn').addEventListener('click', () => {
+                const pwd = prompt("請輸入密碼以解鎖修改：");
+                if (pwd === "0000") {
+                    apiKeyInput.disabled = false;
+                    modelSelect.disabled = false;
+                    sheetUrlInput.disabled = false;
+                    scriptUrlInput.disabled = false;
+                    showToast("🔓 已解鎖，現在可以修改核心設定！");
+                } else if (pwd !== null) {
+                    showToast("❌ 密碼錯誤！", true);
+                }
+            });
+
+            // Sync from cloud if script URL is available
             fetchSettingsFromCloud();
 
             // Load historical reports
             let hasLoadedFromCloud = false;
-            if (localStorage.getItem('google_sheet_url')) {
+            if (activeSheetUrl) {
                 try {
-                    const sheetUrl = localStorage.getItem('google_sheet_url');
-                    const sheetRows = await loadGoogleSheet(sheetUrl);
+                    const sheetRows = await loadGoogleSheet(activeSheetUrl);
                     if (sheetRows && sheetRows.length > 0) {
                         reportsData = sheetRows;
                         renderReportsTable();
