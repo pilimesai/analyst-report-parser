@@ -1207,8 +1207,8 @@
                             headerIdx = i;
                             codeColIdx = cIdx;
                             nameColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('名稱') || h.includes('公司') || h.includes('股名') || h.includes('簡稱') || h.includes('商品')));
-                            if (sheetName === '法說會') {
-                                dateColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('日期') || h.includes('時間')));
+                            if (sheetName === '法說會' || sheetName === '近期發行CB') {
+                                dateColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('日期') || h.includes('時間') || h.includes('掛牌')));
                             }
                             if (sheetName === '近期發行CB') {
                                 priceColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('定價') || h.includes('轉換價') || h.includes('價格') || h.includes('發行價')));
@@ -1244,7 +1244,7 @@
                             } else if (sheetName === '法說會') {
                                 newCsvRows.push(['股號', '公司名', '日期']);
                             } else if (sheetName === '近期發行CB') {
-                                newCsvRows.push(['股號', '公司名', '定價']);
+                                newCsvRows.push(['股號', '名稱', '轉換價', '掛牌日']);
                             } else {
                                 newCsvRows.push(row); // 保留所有原始欄位
                             }
@@ -1263,7 +1263,8 @@
                             newCsvRows.push([cCode, cName, cDate]);
                         } else if (sheetName === '近期發行CB') {
                             const cPrice = priceColIdx !== -1 ? (row[priceColIdx] || '') : '';
-                            newCsvRows.push([cCode, cName, cPrice]);
+                            const cDate = dateColIdx !== -1 ? (row[dateColIdx] || '') : '';
+                            newCsvRows.push([cCode, cName, cPrice, cDate]);
                         } else {
                             newCsvRows.push(row); // 保留所有原始欄位
                         }
