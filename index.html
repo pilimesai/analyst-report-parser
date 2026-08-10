@@ -1235,10 +1235,12 @@
                     for (let i = headerIdx; i < csvRows.length; i++) {
                         const row = csvRows[i];
                         if (i === headerIdx) {
-                            if (sheetName === '法說會') {
+                            if (sheetName === '營收條件' || sheetName === '合約負債條件') {
+                                newCsvRows.push(['股號', '公司名']);
+                            } else if (sheetName === '法說會') {
                                 newCsvRows.push(['股號', '公司名', '日期']);
                             } else {
-                                newCsvRows.push(['股號', '公司名']);
+                                newCsvRows.push(row); // 保留所有原始欄位
                             }
                             continue;
                         }
@@ -1248,11 +1250,13 @@
                         // 若無代碼或太短則略過
                         if (!cCode) continue;
 
-                        if (sheetName === '法說會') {
+                        if (sheetName === '營收條件' || sheetName === '合約負債條件') {
+                            newCsvRows.push([cCode, cName]);
+                        } else if (sheetName === '法說會') {
                             const cDate = row[dateColIdx] || '';
                             newCsvRows.push([cCode, cName, cDate]);
                         } else {
-                            newCsvRows.push([cCode, cName]);
+                            newCsvRows.push(row); // 保留所有原始欄位
                         }
                     }
                     csvRows = newCsvRows.length > 0 ? newCsvRows : csvRows;
