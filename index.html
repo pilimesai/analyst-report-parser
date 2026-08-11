@@ -1471,13 +1471,43 @@ JSON 規格範例：
             });
 
             if (!response.ok) {
-                throw new Error(`Gemini API 失敗: ${response.status} ${response.statusText}`);
+                // Try to read error body for more details
+                let errBody = '';
+                try { errBody = await response.text(); } catch (_) {}
+
+                const statusHints = {
+                    400: '請求格式錯誤，請確認模型名稱是否正確。',
+                    401: 'API Key 無效或已過期，請重新取得。',
+                    403: [
+                        'API Key 未授權（403）。常見原因：',
+                        '① Key 打錯或有多餘空格 — 請重新複製',
+                        '② Generative Language API 尚未啟用 — 請至 Google Cloud Console 啟用',
+                        '③ Key 設有 IP / 網域限制，不允許從本頁面呼叫',
+                        '④ 免費配額已用完，需升級計費方案',
+                        errBody ? `\n伺服器回應：${errBody.slice(0, 200)}` : ''
+                    ].join('\n'),
+                    404: `找不到模型「${modelName}」，請換用 gemini-2.0-flash 或 gemini-2.0-flash-lite。`,
+                    429: '呼叫頻率過高（429 Rate Limit），請稍候 30 秒後再試。',
+                    500: 'Gemini 伺服器內部錯誤，請稍後重試。',
+                    503: 'Gemini 服務暫時不可用，請稍後重試。',
+                };
+                const hint = statusHints[response.status] || `未知錯誤 ${response.status}${errBody ? '\n伺服器回應：' + errBody.slice(0, 200) : ''}`;
+                throw new Error(hint);
             }
 
             const data = await response.json();
             if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0]) {
                 const responseText = data.candidates[0].content.parts[0].text;
-                return JSON.parse(responseText.trim());
+                try {
+                    return JSON.parse(responseText.trim());
+                } catch (parseErr) {
+                    console.error('JSON 解析失敗，原始回應：', responseText);
+                    throw new Error(`AI 回應格式錯誤，無法解析 JSON。請再試一次，或換用其他模型。\n原始回應片段：${responseText.slice(0, 100)}`);
+                }
+            }
+            // candidates 存在但沒有內容，可能是安全過濾
+            if (data.candidates && data.candidates[0].finishReason) {
+                throw new Error(`AI 拒絕回應（原因：${data.candidates[0].finishReason}），可能觸發內容安全過濾，請確認輸入文字。`);
             }
             return null;
         }
