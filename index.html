@@ -1594,15 +1594,31 @@ JSON 規格範例（多股票）：
 
         function parseCbIssuedFromTableData() {
             const cbData = {};
-            if (window.tablesData && window.tablesData['可轉債CB']) {
-                const data = window.tablesData['可轉債CB'];
+            if (window.tablesData && window.tablesData['近期發行CB']) {
+                const data = window.tablesData['近期發行CB'];
+                if (data.length < 2) return cbData;
+
+                // 從標題列找欄位索引（支援新舊格式）
+                const header = data[0].map(h => String(h));
+                const idxStock   = header.findIndex(h => h.includes('股票代號') || h.includes('股號') || h === '代號');
+                const idxPrice   = header.findIndex(h => h.includes('轉換價格') || h.includes('轉換價') || h.includes('定價'));
+                const idxBalance = header.findIndex(h => h.includes('餘額比例') || h.includes('餘額'));
+                const idxExpiry  = header.findIndex(h => h.includes('到期日') || h.includes('到期'));
+
+                // 若找不到標題，退回舊的固定索引（股票代號在col0）
+                const stockCol   = idxStock   >= 0 ? idxStock   : 0;
+                const priceCol   = idxPrice   >= 0 ? idxPrice   : 3;
+                const balanceCol = idxBalance >= 0 ? idxBalance : 7;
+                const expiryCol  = idxExpiry  >= 0 ? idxExpiry  : -1;
+
                 for (let i = 1; i < data.length; i++) {
                     const row = data[i];
-                    const code = getStockId(String(row[0]));
+                    const code = getStockId(String(row[stockCol] || ''));
                     if (code) {
                         cbData[code] = {
-                            conv_price: parseFloat(row[1]) || 0,
-                            balance_pct: parseFloat(row[2]) || 0
+                            conv_price:  parseFloat(row[priceCol])   || 0,
+                            balance_pct: parseFloat(row[balanceCol]) || 0,
+                            expiry_date: expiryCol >= 0 ? (row[expiryCol] || '') : ''
                         };
                     }
                 }
