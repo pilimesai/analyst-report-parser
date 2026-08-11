@@ -1472,10 +1472,7 @@ JSON 規格範例（多股票）：
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    contents: [{ parts: [{ text: systemPrompt + text }] }],
-                    generationConfig: {
-                        responseMimeType: "application/json"
-                    }
+                    contents: [{ parts: [{ text: systemPrompt + text }] }]
                 })
             });
 
@@ -1507,22 +1504,25 @@ JSON 規格範例（多股票）：
             const data = await response.json();
             if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0]) {
                 const responseText = data.candidates[0].content.parts[0].text.trim();
+                // Strip markdown fences if present
+                const cleaned = responseText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+                console.log('[Gemini raw response]', cleaned.slice(0, 300));
                 try {
-                    const parsed = JSON.parse(responseText);
+                    const parsed = JSON.parse(cleaned);
                     // Return array always; wrap single object if needed
                     return Array.isArray(parsed) ? parsed : [parsed];
                 } catch (parseErr) {
                     // Try to extract JSON array or object from response
-                    const arrMatch = responseText.match(/(\[\s*\{[\s\S]*\}\s*\])/);
-                    const objMatch = responseText.match(/(\{[\s\S]*\})/);
+                    const arrMatch = cleaned.match(/(\[\s*\{[\s\S]*\}\s*\])/);
+                    const objMatch = cleaned.match(/(\{[\s\S]*\})/);
                     if (arrMatch) {
                         try { return JSON.parse(arrMatch[1]); } catch (_) {}
                     }
                     if (objMatch) {
                         try { return [JSON.parse(objMatch[1])]; } catch (_) {}
                     }
-                    console.error('JSON 解析失敗，原始回應：', responseText);
-                    throw new Error(`AI 回應格式錯誤，無法解析 JSON。請再試一次，或換用其他模型。\n原始回應片段：${responseText.slice(0, 150)}`);
+                    console.error('JSON 解析失敗，原始回應：', cleaned);
+                    throw new Error(`AI 回應格式錯誤，無法解析 JSON。請再試一次，或換用其他模型。\n原始回應片段：${cleaned.slice(0, 150)}`);
                 }
             }
             // candidates 存在但沒有內容，可能是安全過濾
