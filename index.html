@@ -1079,22 +1079,25 @@
             updateProgress(10, `正在準備分析文字...`);
 
             try {
-                // Call Gemini API
+                // Call Gemini API (supports single or multi-stock reports)
                 updateProgress(30, `正在使用 AI 分析貼上文字...`);
                 const modelName = modelSelect.value;
-                const parsedObj = await analyzeReportWithGemini(apiKey, text, modelName);
+                const rawResult = await analyzeReportWithGemini(apiKey, text, modelName);
 
-                if (parsedObj) {
-                    // Append and save locally
-                    reportsData.push(parsedObj);
+                // Normalize to array (handles both single object and array responses)
+                const parsedList = Array.isArray(rawResult) ? rawResult : (rawResult ? [rawResult] : []);
+
+                if (parsedList.length > 0) {
+                    // Append all parsed stocks
+                    parsedList.forEach(item => reportsData.push(item));
                     localStorage.setItem('reports_history', JSON.stringify(reportsData));
 
                     // Auto-sync if script URL is configured
                     const scriptUrl = scriptUrlInput.value.trim();
                     if (scriptUrl) {
-                        updateProgress(80, `正在同步至 Google Sheets: ${parsedObj.stock}`);
+                        updateProgress(80, `正在同步 ${parsedList.length} 筆資料至 Google Sheets...`);
                         try {
-                            const payload = { action: 'append_reports', data: [parsedObj] };
+                            const payload = { action: 'append_reports', data: parsedList };
                             await syncToGoogleSheet(scriptUrl, payload);
                         } catch (err) {
                             console.error("Auto sync failed", err);
@@ -1102,8 +1105,11 @@
                     }
 
                     renderReportsTable();
-                    showToast(`✅ 成功解析貼上文字: ${parsedObj.stock || '未知'}`);
+                    const stockNames = parsedList.map(p => p.stock || '未知').join('、');
+                    showToast(`✅ 成功解析 ${parsedList.length} 檔股票: ${stockNames}`);
                     rawTextInput.value = ''; // clear input after success
+                } else {
+                    showToast('⚠️ AI 未能解析出任何股票資料，請確認文字內容。', true);
                 }
             } catch (error) {
                 console.error(error);
@@ -1438,22 +1444,25 @@
         // Call Gemini HTTP endpoint
         async function analyzeReportWithGemini(apiKey, text, modelName) {
             const systemPrompt = `你是一個專業的證券分析師助理。請閱讀以下券商分析報告，並以 JSON 格式回傳報告中的關鍵資訊。
-            
+
+報告可能包含「單一股票」或「多隻股票（法人日報）」，請針對每一隻股票各產生一筆記錄。
+
 重要欄位說明：
-1. date: 報告出爐日期，請以 YYYY-MM-DD 格式回傳。
+1. date: 報告出爐日期，請以 YYYY-MM-DD 格式回傳。若文中只有月日（如 2026/08/11），請補齊年份。
 2. stock: 報告目標個股，需包含「4碼代號」與「股票名稱」，例如 "2330 台積電"。
-3. brokerage: 撰寫該分析報告的券商名稱，例如 "元大投顧"。
+3. brokerage: 撰寫該段分析的券商名稱，例如 "元大投顧"。若同一股票有多家券商，以第一家為主。
 4. rating: 券商給予的評等（如買進、中立、強力買進、區間操作、減碼等）。
 5. target_price: 目標價格（若有寫明，否則填"N/A"）。
-6. eps: 報告預估之今年或明年 EPS。
+6. eps: 報告預估之今年或明年 EPS（格式如 "今年31.28/明年46.37"）。
 7. summary: 簡短的報告摘要（100字內）。
 8. daily_stock_selection: 報告是否具備量化選股特徵（例如提及法說會、CB發行等），無則填"無"。
 9. matched_criteria: 陣列，只填以下出現的項目："投信第一天買, 且過去三個月沒有買過"、"三大法人同買"、"日KD黃金交叉"、"周KD黃金交叉"、"成交量>十週平均量且>3倍十日均量"、"入選合約負債"、"入選2周內會有法說會"、"入選要發行CB"、"入選營收條件"、"入選大戶持股"、"表格裡面目前股價低於20PE"、"券商給的是正面評價,例如買進,調升TP"、"若已有發行的CB,且股價低於轉換價,並且轉換比例<10%"、"入選毛利三季成長"；無則填[]
 
-請回傳「單一 JSON 格式字串」，且不得包含 Markdown 語法外框，例如不要寫 \`\`\`json 框限。
+請回傳「JSON 陣列」，每一個元素對應一隻股票，不得包含 Markdown 語法外框（不要寫 \`\`\`json）。
+若只有一隻股票，仍請以陣列包裝，例如：[{...}]
 
-JSON 規格範例：
-{"date":"2026-08-01","stock":"2330 台積電","brokerage":"元大投顧","rating":"買進","target_price":"1100","eps":"45.5","summary":"受惠先進製程與 AI 強勁需求，營收展望佳。","daily_stock_selection":"無","matched_criteria":[]}
+JSON 規格範例（多股票）：
+[{"date":"2026-08-01","stock":"2330 台積電","brokerage":"元大投顧","rating":"買進","target_price":"1100","eps":"今年45.5/明年52","summary":"受惠先進製程與 AI 強勁需求，營收展望佳。","daily_stock_selection":"無","matched_criteria":[]},{"date":"2026-08-01","stock":"2454 聯發科","brokerage":"凱基投顧","rating":"中立","target_price":"N/A","eps":"今年100","summary":"手機晶片需求回溫，惟競爭壓力大。","daily_stock_selection":"無","matched_criteria":[]}]
 
 報告內容：
 `;
@@ -1497,19 +1506,30 @@ JSON 規格範例：
 
             const data = await response.json();
             if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0]) {
-                const responseText = data.candidates[0].content.parts[0].text;
+                const responseText = data.candidates[0].content.parts[0].text.trim();
                 try {
-                    return JSON.parse(responseText.trim());
+                    const parsed = JSON.parse(responseText);
+                    // Return array always; wrap single object if needed
+                    return Array.isArray(parsed) ? parsed : [parsed];
                 } catch (parseErr) {
+                    // Try to extract JSON array or object from response
+                    const arrMatch = responseText.match(/(\[\s*\{[\s\S]*\}\s*\])/);
+                    const objMatch = responseText.match(/(\{[\s\S]*\})/);
+                    if (arrMatch) {
+                        try { return JSON.parse(arrMatch[1]); } catch (_) {}
+                    }
+                    if (objMatch) {
+                        try { return [JSON.parse(objMatch[1])]; } catch (_) {}
+                    }
                     console.error('JSON 解析失敗，原始回應：', responseText);
-                    throw new Error(`AI 回應格式錯誤，無法解析 JSON。請再試一次，或換用其他模型。\n原始回應片段：${responseText.slice(0, 100)}`);
+                    throw new Error(`AI 回應格式錯誤，無法解析 JSON。請再試一次，或換用其他模型。\n原始回應片段：${responseText.slice(0, 150)}`);
                 }
             }
             // candidates 存在但沒有內容，可能是安全過濾
             if (data.candidates && data.candidates[0].finishReason) {
                 throw new Error(`AI 拒絕回應（原因：${data.candidates[0].finishReason}），可能觸發內容安全過濾，請確認輸入文字。`);
             }
-            return null;
+            return [];
         }
 
         // Render reports database inside Table
