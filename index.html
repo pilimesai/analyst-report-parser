@@ -1061,6 +1061,32 @@
             fetchSettingsFromCloud(); // 當網址變更時，自動嘗試抓取雲端設定
         });
 
+        // Criteria code -> full text lookup table
+        const CRITERIA_MAP = {
+            'A': '投信第一天買, 且過去三個月沒有買過',
+            'B': '三大法人同買',
+            'C': '日KD黃金交叉',
+            'D': '周KD黃金交叉',
+            'E': '成交量>十週平均量且>3倍十日均量',
+            'F': '入選合約負債',
+            'G': '入選2周內會有法說會',
+            'H': '入選要發行CB',
+            'I': '入選營收條件',
+            'J': '入選大戶持股',
+            'K': '表格裡面目前股價低於20PE',
+            'L': '券商給的是正面評價,例如買進,調升TP',
+            'M': '若已有發行的CB,且股價低於轉換價,並且轉換比例<10%',
+            'N': '入選毛利三季成長'
+        };
+
+        function expandCriteria(criteriaArr) {
+            if (!Array.isArray(criteriaArr)) return [];
+            return criteriaArr.map(code => {
+                const upper = String(code).trim().toUpperCase();
+                return CRITERIA_MAP[upper] || code; // 若已是全文則原樣保留
+            });
+        }
+
         // Handle pasted raw text
         analyzeTextBtn.addEventListener('click', async () => {
             const text = rawTextInput.value.trim();
@@ -1085,7 +1111,12 @@
                 const rawResult = await analyzeReportWithGemini(apiKey, text, modelName);
 
                 // Normalize to array (handles both single object and array responses)
-                const parsedList = Array.isArray(rawResult) ? rawResult : (rawResult ? [rawResult] : []);
+                const rawList = Array.isArray(rawResult) ? rawResult : (rawResult ? [rawResult] : []);
+                // Expand any short-code matched_criteria (A-N) to full text
+                const parsedList = rawList.map(item => ({
+                    ...item,
+                    matched_criteria: expandCriteria(item.matched_criteria || [])
+                }));
 
                 if (parsedList.length > 0) {
                     // Append all parsed stocks
@@ -1443,29 +1474,30 @@
 
         // Call Gemini HTTP endpoint
         async function analyzeReportWithGemini(apiKey, text, modelName) {
-            const systemPrompt = `你是一個專業的證券分析師助理。請閱讀以下券商分析報告，並以 JSON 格式回傳報告中的關鍵資訊。
+            const systemPrompt = `You are a securities analyst assistant. Read the broker report and return JSON.
+Report may cover one or multiple stocks — produce one record per stock.
 
-報告可能包含「單一股票」或「多隻股票（法人日報）」，請針對每一隻股票各產生一筆記錄。
+Fields:
+1. date: YYYY-MM-DD (infer year if missing)
+2. stock: "4-digit code + name" e.g. "2330 台積電"
+3. brokerage: broker name (first one if multiple)
+4. rating: e.g. 買進/中立/區間操作/減碼
+5. target_price: number or "N/A"
+6. eps: e.g. "今年31.28/明年46.37"
+7. summary: ≤80 chars
+8. daily_stock_selection: brief note or "無"
+9. matched_criteria: array of codes from below that apply, else []
+  A=投信第一天買且近3月未買 B=三大法人同買 C=日KD黃金交叉 D=周KD黃金交叉
+  E=量>10週均量且>3倍10日均量 F=入選合約負債 G=2周內法說會 H=入選要發行CB
+  I=入選營收條件 J=入選大戶持股 K=股價低於20PE L=券商正面評價(買進/調升TP)
+  M=已發行CB且股價<轉換價且轉換比例<10% N=毛利三季成長
 
-重要欄位說明：
-1. date: 報告出爐日期，請以 YYYY-MM-DD 格式回傳。若文中只有月日（如 2026/08/11），請補齊年份。
-2. stock: 報告目標個股，需包含「4碼代號」與「股票名稱」，例如 "2330 台積電"。
-3. brokerage: 撰寫該段分析的券商名稱，例如 "元大投顧"。若同一股票有多家券商，以第一家為主。
-4. rating: 券商給予的評等（如買進、中立、強力買進、區間操作、減碼等）。
-5. target_price: 目標價格（若有寫明，否則填"N/A"）。
-6. eps: 報告預估之今年或明年 EPS（格式如 "今年31.28/明年46.37"）。
-7. summary: 簡短的報告摘要（100字內）。
-8. daily_stock_selection: 報告是否具備量化選股特徵（例如提及法說會、CB發行等），無則填"無"。
-9. matched_criteria: 陣列，只填以下出現的項目："投信第一天買, 且過去三個月沒有買過"、"三大法人同買"、"日KD黃金交叉"、"周KD黃金交叉"、"成交量>十週平均量且>3倍十日均量"、"入選合約負債"、"入選2周內會有法說會"、"入選要發行CB"、"入選營收條件"、"入選大戶持股"、"表格裡面目前股價低於20PE"、"券商給的是正面評價,例如買進,調升TP"、"若已有發行的CB,且股價低於轉換價,並且轉換比例<10%"、"入選毛利三季成長"；無則填[]
+Return a JSON array (one object per stock). No markdown fences.
+Single stock: [{...}]
 
-請回傳「JSON 陣列」，每一個元素對應一隻股票，不得包含 Markdown 語法外框（不要寫 \`\`\`json）。
-若只有一隻股票，仍請以陣列包裝，例如：[{...}]
-
-JSON 規格範例（多股票）：
-[{"date":"2026-08-01","stock":"2330 台積電","brokerage":"元大投顧","rating":"買進","target_price":"1100","eps":"今年45.5/明年52","summary":"受惠先進製程與 AI 強勁需求，營收展望佳。","daily_stock_selection":"無","matched_criteria":[]},{"date":"2026-08-01","stock":"2454 聯發科","brokerage":"凱基投顧","rating":"中立","target_price":"N/A","eps":"今年100","summary":"手機晶片需求回溫，惟競爭壓力大。","daily_stock_selection":"無","matched_criteria":[]}]
-
-報告內容：
+Report:
 `;
+
 
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
             const response = await fetch(url, {
