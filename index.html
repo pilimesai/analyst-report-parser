@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📈 券商報告自動分析器 (Serverless 版)</title>
+    <title>?? ?��??��??��??��???(Serverless ??</title>
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts - v2 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -502,7 +502,7 @@
             word-break: break-word;
         }
 
-        /* 避免較短的資料欄位被不自然換行，並將它們的寬度縮至最小 */
+        /* ?��?較短?��??��?位被不自?��?行�?並�?它們�?寬度縮至?��?*/
         td:nth-child(1),
         td:nth-child(2),
         td:nth-child(3),
@@ -513,7 +513,7 @@
             width: 1%;
         }
 
-        /* 讓長文字內容有最大高度，超過時出現捲軸 */
+        /* 讓長?��??�容?��?大�?度�?超�??�出?�捲�?*/
         .scrollable-cell {
             max-height: 80px;
             overflow-y: auto;
@@ -526,13 +526,13 @@
             font-weight: 600;
             color: var(--text-secondary);
             background-color: #1e293b;
-            /* 使用不透明背景，避免捲動文字透出 */
+            /* 使用不透�??�景，避?�捲?��?字透出 */
             white-space: nowrap;
             position: sticky;
             top: 0;
             z-index: 10;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-            /* 增加底部陰影區隔 */
+            /* 增�?底部?�影?�??*/
         }
 
         tr:hover td {
@@ -624,7 +624,7 @@
                 flex-wrap: wrap;
             }
             
-            /* 手機版隱藏 API Key 及網址設定區塊 */
+            /* ?��??�隱??API Key ?�網?�設�??��?*/
             #group-api, #group-sheet, #group-script, #unlock-settings-btn {
                 display: none !important;
             }
@@ -637,104 +637,104 @@
     <!-- Sidebar Settings Panel -->
     <div class="sidebar">
         <div class="logo-area">
-            <span>📈</span>
-            <span>報告分析器</span>
+            <span>??</span>
+            <span>?��??��???/span>
         </div>
 
         <div class="sidebar-section">
             <h3 style="display: flex; justify-content: space-between; align-items: center;">
-                <span>⚙️ 核心設定</span>
-                <button id="unlock-settings-btn" class="btn" style="padding: 0.2rem 0.5rem; font-size: 0.75rem; background: rgba(255,255,255,0.1); border: 1px solid var(--card-border);">解鎖修改</button>
+                <span>?��? ?��?設�?</span>
+                <button id="unlock-settings-btn" class="btn" style="padding: 0.2rem 0.5rem; font-size: 0.75rem; background: rgba(255,255,255,0.1); border: 1px solid var(--card-border);">�??修改</button>
             </h3>
             <div class="input-group" id="group-api">
                 <label for="api-key">Gemini API Key</label>
-                <input type="password" id="api-key" placeholder="輸入 API 金鑰" disabled>
+                <input type="password" id="api-key" placeholder="輸入 API ?�鑰" disabled>
                 <div class="helper-text">
-                    金鑰將儲存於您的瀏覽器快取。<a href="https://aistudio.google.com/app/apikey" target="_blank">取得金鑰 ↗</a>
+                    ?�鑰將儲存於?��??�覽?�快?��?a href="https://aistudio.google.com/app/apikey" target="_blank">?��??�鑰 ??/a>
                 </div>
             </div>
 
             <div class="input-group" id="group-model">
-                <label for="model-select">AI 模型</label>
+                <label for="model-select">AI 模�?</label>
                 <select id="model-select" disabled>
-                    <option value="gemini-2.5-flash">gemini-2.5-flash (推薦)</option>
+                    <option value="gemini-2.5-flash">gemini-2.5-flash (?�薦)</option>
                     <option value="gemini-2.0-flash">gemini-2.0-flash</option>
                     <option value="gemini-2.0-flash-lite">gemini-2.0-flash-lite</option>
                 </select>
             </div>
 
             <div class="input-group" id="group-sheet">
-                <label for="sheet-url">Google 試算表連結 (唯讀導入)</label>
-                <input type="text" id="sheet-url" placeholder="貼上共用連結" disabled>
+                <label for="sheet-url">Google 試�?表�?? (?��?導入)</label>
+                <input type="text" id="sheet-url" placeholder="貼�??�用???" disabled>
                 <div class="helper-text">
-                    自動導入歷史紀錄。請先將 Sheets 共用設定為「知道連結的任何人均可檢視」。
+                    ?��?導入歷史紀?�。�??��? Sheets ?�用設�??�「知?��???�任何人?�可檢�??��?
                 </div>
             </div>
 
             <div class="input-group" id="group-script">
-                <label for="script-url">Google Apps Script 寫入網址</label>
-                <input type="text" id="script-url" placeholder="貼上部署的 Web App 網址" disabled>
+                <label for="script-url">Google Apps Script 寫入網�?</label>
+                <input type="text" id="script-url" placeholder="貼�??�署??Web App 網�?" disabled>
                 <div class="helper-text">
-                    設定後，解析新報告或點擊同步按鈕時會直接寫入 Sheets 中。
+                    設�?後�?�???�報?��?點�??�步?��??��??�接寫入 Sheets 中�?
                 </div>
             </div>
         </div>
 
         <div class="sidebar-section">
-            <h3>📊 籌碼與事件清單</h3>
+            <h3>?? 籌碼?��?件�???/h3>
             <div class="input-group">
-                <label>大戶持股</label>
+                <label>大戶?�股</label>
                 <input type="file" id="big-score-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
                     <button class="btn" onclick="document.getElementById('big-score-upload').click()"
-                        style="width: 100%;">📥 上傳 CSV</button>
+                        style="width: 100%;">?�� 上傳 CSV</button>
                 </div>
             </div>
 
             <div class="input-group">
-                <label>毛利三季成長</label>
+                <label>毛利三季?�長</label>
                 <input type="file" id="gross-margin-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
                     <button class="btn" onclick="document.getElementById('gross-margin-upload').click()"
-                        style="width: 100%;">📥 上傳 CSV</button>
+                        style="width: 100%;">?�� 上傳 CSV</button>
                 </div>
             </div>
 
             <div class="input-group">
-                <label>營收條件</label>
+                <label>?�收條件</label>
                 <input type="file" id="revenue-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
                     <button class="btn" onclick="document.getElementById('revenue-upload').click()"
-                        style="width: 100%;">📥 上傳 CSV</button>
+                        style="width: 100%;">?�� 上傳 CSV</button>
                 </div>
             </div>
 
             <div class="input-group">
-                <label>法說會</label>
+                <label>法說??/label>
                 <input type="file" id="earnings-call-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
                     <button class="btn" onclick="document.getElementById('earnings-call-upload').click()"
-                        style="width: 100%;">📥 上傳 CSV</button>
+                        style="width: 100%;">?�� 上傳 CSV</button>
                 </div>
             </div>
 
             <div class="input-group">
-                <label>合約負債條件</label>
+                <label>?��?負債條件</label>
                 <input type="file" id="contract-liabilities-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
                     <button class="btn" onclick="document.getElementById('contract-liabilities-upload').click()"
-                        style="width: 100%;">📥 上傳 CSV</button>
+                        style="width: 100%;">?�� 上傳 CSV</button>
                 </div>
             </div>
 
             <div class="input-group">
-                <label>近期發行CB</label>
+                <label>近�??��?CB</label>
                 <input type="file" id="recent-cb-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
                     <button class="btn" onclick="document.getElementById('recent-cb-upload').click()"
-                        style="width: 48%;">📥 上傳 CSV</button>
+                        style="width: 48%;">?�� 上傳 CSV</button>
                     <button class="btn btn-primary" onclick="fetchCBFromGithub()"
-                        style="width: 48%; background: #4a6fa5;">🤖 AI自動獲取</button>
+                        style="width: 48%; background: #4a6fa5;">?? AI?��??��?</button>
                 </div>
             </div>
         </div>
@@ -744,21 +744,21 @@
     <div class="main-content">
         <div class="header-section">
             <div class="header-title">
-                <h1>📈 券商報告自動分析器</h1>
-                <p>上傳 PDF / TXT 券商報告，結合 FinMind 即時量化數據進行二次篩選</p>
+                <h1>?? ?��??��??��??��???/h1>
+                <p>上傳 PDF / TXT ?��??��?，�???FinMind ?��??��??��??��?二次篩選</p>
             </div>
             <div>
-                <button class="btn btn-primary" id="run-quant-btn">🚀 執行即時量化運算</button>
+                <button class="btn btn-primary" id="run-quant-btn">?? ?��??��??��??��?</button>
             </div>
         </div>
 
         <!-- File Upload Zone -->
         <div id="main-reports-view">
             <div class="upload-zone" id="drop-zone">
-                <div class="upload-icon">📄</div>
+                <div class="upload-icon">??</div>
                 <div class="upload-text">
-                    <h4>拖曳報告檔案至此處，或<span>點擊上傳</span></h4>
-                    <p>支援 PDF, TXT, Excel (XLSX/XLS), CSV</p>
+                    <h4>?�曳?��?檔�??�此?��???span>點�?上傳</span></h4>
+                    <p>?�援 PDF, TXT, Excel (XLSX/XLS), CSV</p>
                 </div>
                 <input type="file" id="file-input" multiple accept=".pdf,.txt,.xlsx,.xls,.csv" style="display:none;">
             </div>
@@ -766,20 +766,20 @@
             <!-- Paste Text Zone -->
             <div class="text-input-zone"
                 style="margin-top: 15px; background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: 1rem; padding: 1.5rem;">
-                <h4 style="margin-bottom: 12px; font-weight: 600; font-size: 1.1rem; color: var(--text-primary);">📝
-                    或直接貼上法人日報文字</h4>
-                <textarea id="raw-text-input" placeholder="在此貼上文字報告、新聞稿或長篇券商分析..." rows="5"
+                <h4 style="margin-bottom: 12px; font-weight: 600; font-size: 1.1rem; color: var(--text-primary);">??
+                    ?�直?�貼上�?人日?��?�?/h4>
+                <textarea id="raw-text-input" placeholder="?�此貼�??��??��??�新?�稿?�長篇券?��???.." rows="5"
                     style="width: 100%; border-radius: 0.5rem; border: 1px solid var(--card-border); padding: 1rem; background-color: rgba(255,255,255,0.02); color: var(--text-primary); font-family: inherit; resize: vertical; margin-bottom: 15px; font-size: 0.95rem; line-height: 1.5;"></textarea>
                 <div style="text-align: right;">
                     <button class="btn btn-primary" id="analyze-text-btn"
-                        style="padding: 0.75rem 2rem; font-size: 1rem;">🚀 開始分析文字</button>
+                        style="padding: 0.75rem 2rem; font-size: 1rem;">?? ?��??��??��?</button>
                 </div>
             </div>
 
             <!-- Progress Tracking -->
             <div class="progress-container" id="progress-container">
                 <div class="progress-header">
-                    <span id="progress-status">正在解析報告...</span>
+                    <span id="progress-status">�?���???��?...</span>
                     <span id="progress-percent">0%</span>
                 </div>
                 <div class="progress-bar-bg">
@@ -789,7 +789,7 @@
 
             <!-- Top Scored Quant Champs -->
             <div class="champs-section" id="champs-section">
-                <div class="champs-title">🏆 純量化嚴選標的</div>
+                <div class="champs-title">?? 純�??�嚴?��???/div>
                 <div class="champs-grid" id="champs-grid">
                     <!-- Champ cards insert here -->
                 </div>
@@ -798,25 +798,25 @@
             <!-- Analysis Results Table -->
             <div class="reports-section">
                 <div class="section-header">
-                    <h2>📊 報告解析結果總覽</h2>
+                    <h2>?? ?��?�??結�?總覽</h2>
                     <div class="action-buttons">
-                        <button class="btn" id="sync-all-btn">☁️ 同步至 Sheets</button>
-                        <button class="btn" id="export-json-btn">📤 導出 JSON</button>
-                        <button class="btn btn-danger" id="clear-all-btn">🔴 清空紀錄</button>
+                        <button class="btn" id="sync-all-btn">?��? ?�步??Sheets</button>
+                        <button class="btn" id="export-json-btn">?�� 導出 JSON</button>
+                        <button class="btn btn-danger" id="clear-all-btn">?�� 清空紀??/button>
                     </div>
                 </div>
                 <div class="table-responsive">
                     <table>
                         <thead>
                             <tr>
-                                <th>日期</th>
-                                <th>個股</th>
-                                <th>券商</th>
-                                <th>評等</th>
-                                <th>目標價</th>
-                                <th>預估 EPS</th>
-                                <th>摘要</th>
-                                <th>量化條件符合項目</th>
+                                <th>?��?</th>
+                                <th>?�股</th>
+                                <th>?��?</th>
+                                <th>評�?</th>
+                                <th>?��???/th>
+                                <th>?�估 EPS</th>
+                                <th>?��?</th>
+                                <th>?��?條件符�??�目</th>
                             </tr>
                         </thead>
                         <tbody id="reports-tbody">
@@ -824,7 +824,7 @@
                             <tr id="empty-row">
                                 <td colspan="8"
                                     style="text-align: center; color: var(--text-secondary); padding: 2rem;">
-                                    尚無報告資料，請先上傳報告進行解析。</td>
+                                    尚無?��?資�?，�??��??�報?�進�?�????/td>
                             </tr>
                         </tbody>
                     </table>
@@ -839,20 +839,20 @@
 
     <!-- Notification Toast -->
     <div class="toast" id="toast">
-        <span id="toast-icon">✅</span>
-        <span id="toast-message">作業成功！</span>
+        <span id="toast-icon">??/span>
+        <span id="toast-message">作業?��?�?/span>
     </div>
 
 
 
     <script>
         // ==========================================
-        // 🔧 手機版免填設定 (Hardcoded Settings)
-        // 您可以將金鑰與網址直接填入下方的雙引號中。
-        // 若有設定，網頁載入時將自動帶入並隱藏原本的輸入框。
-        // 警告：請勿將帶有金鑰的檔案上傳至公開的 GitHub 儲存庫！
+        // ?�� ?��??��?填設�?(Hardcoded Settings)
+        // ?�可以�??�鑰?�網?�?�接填入下方?��?引�?中�?
+        // ?��?設�?，網?��??��?將自?�帶?�並?��??�本?�輸?��???
+        // 警�?：�??��?帶�??�鑰?��?案�??�至?��???GitHub ?��?庫�?
         // ==========================================
-        const CONFIG_API_KEY = ""; // Key 透過 URL 參數 ?api_key=... 或 localStorage 載入，請勿在此填入
+        const CONFIG_API_KEY = ""; // Key ?��? URL ?�數 ?api_key=... ??localStorage 載入，�??�在此填??
         const CONFIG_SHEET_URL = "https://docs.google.com/spreadsheets/d/1_EcbUNZvYz7_qow5T6UxvTN8r0hYvN8P3XOjgz9HPuc/edit?gid=0#gid=0"; 
         const CONFIG_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzm7ZXZyAe_8XhARcC8VKw2DDsWtaW_OdrANnA87lTQo2ozlM-2F4XsFFOXIC1HynqM/exec"; 
 
@@ -890,7 +890,7 @@
         // Load Google Sheets data
         async function loadGoogleSheet(url) {
             const match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
-            if (!match) throw new Error("無效的 Google 試算表連結格式");
+            if (!match) throw new Error("?��???Google 試�?表�???��?");
             const id = match[1];
 
             let gid = "0";
@@ -899,7 +899,7 @@
 
             const csvUrl = `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${gid}`;
             const resp = await fetch(csvUrl);
-            if (!resp.ok) throw new Error("讀取失敗，請確認共用權限設為『知道連結的任何人均可檢視』");
+            if (!resp.ok) throw new Error("讀?�失?��?請確認共?��??�設?�『知?��???�任何人?�可檢�???);
 
             const text = await resp.text();
             const workbook = XLSX.read(text, { type: 'string' });
@@ -915,13 +915,13 @@
                     } else if (typeof row.matched_criteria === 'string') {
                         matchedCriteria = row.matched_criteria.split(',').map(x => x.trim()).filter(Boolean);
                     }
-                } else if (row['量化條件符合項目']) {
-                    matchedCriteria = String(row['量化條件符合項目']).split('/').map(x => x.trim()).filter(Boolean);
+                } else if (row['?��?條件符�??�目']) {
+                    matchedCriteria = String(row['?��?條件符�??�目']).split('/').map(x => x.trim()).filter(Boolean);
                 }
-                let rawDate = row.date || row['日期'] || '';
+                let rawDate = row.date || row['?��?'] || '';
                 let formattedDate = rawDate;
 
-                // 檢查是否為 Excel 的日期序列號 (例如 46104.333...)
+                // 檢查?�否??Excel ?�日?��??��? (例�? 46104.333...)
                 if (!isNaN(parseFloat(rawDate)) && isFinite(rawDate) && rawDate > 10000) {
                     const dateObj = new Date(Math.round((parseFloat(rawDate) - 25569) * 86400 * 1000));
                     // 轉為 YYYY/MM/DD
@@ -932,13 +932,13 @@
 
                 return {
                     date: formattedDate,
-                    stock: row.stock || row['個股'] || row['股票'] || '',
-                    brokerage: row.brokerage || row['券商'] || '',
-                    rating: row.rating || row['評等'] || '',
-                    target_price: row.target_price || row['目標價'] || '',
-                    eps: row.eps || row['預估 EPS'] || row['EPS'] || '',
-                    summary: row.summary || row['摘要'] || '',
-                    daily_stock_selection: row.daily_stock_selection || row['量化選股'] || '無',
+                    stock: row.stock || row['?�股'] || row['?�票'] || '',
+                    brokerage: row.brokerage || row['?��?'] || '',
+                    rating: row.rating || row['評�?'] || '',
+                    target_price: row.target_price || row['?��???] || '',
+                    eps: row.eps || row['?�估 EPS'] || row['EPS'] || '',
+                    summary: row.summary || row['?��?'] || '',
+                    daily_stock_selection: row.daily_stock_selection || row['?��??�股'] || '??,
                     matched_criteria: matchedCriteria
                 };
             });
@@ -954,19 +954,19 @@
                 if (result.status === 'success') {
                     if (result.sheetData) {
                         window.tablesData = result.sheetData;
-                        console.log("已從雲端同步設定與 CSV 分頁資料", window.tablesData);
+                        console.log("已�??�端?�步設�???CSV ?��?資�?", window.tablesData);
 
-                        // 檢查是否為舊版 Apps Script
-                        if (window.tablesData['可轉債CB'] && !window.tablesData['近期發行CB']) {
-                            alert("⚠️ 系統偵測到您的 Apps Script 還在舊版本！\n\n請務必到 Apps Script 編輯器：\n1. 貼上最新版 google_apps_script.js 程式碼\n2. 點擊右上角「部署」->「管理部署作業」\n3. 點擊鉛筆(編輯) -> 版本選擇「新版本」-> 儲存！\n\n這樣「近期發行CB」才會正常顯示喔！");
+                        // 檢查?�否?��???Apps Script
+                        if (window.tablesData['?��??�CB'] && !window.tablesData['近�??��?CB']) {
+                            alert("?��? 系統?�測?�您??Apps Script ?�在?��??��?\n\n請�?必到 Apps Script 編輯?��?\n1. 貼�??�?��? google_apps_script.js 程�?碼\n2. 點�??��?角「部署�?>?�管?�部署�?業」\n3. 點�??��?(編輯) -> ?�本?��??�新?�本??> ?��?！\n\n?�樣?��??�發行CB?��??�正常顯示�?�?);
                         }
 
-                        showToast("✅ 已成功從雲端自動載入大戶與試算表資料！");
+                        showToast("??已�??��??�端?��?載入大戶?�試算表資�?�?);
                         renderPersistentTables();
                     }
                 }
             } catch (err) {
-                console.log("雲端設定同步失敗 (可能是第一次執行或網路錯誤):", err);
+                console.log("?�端設�??�步失�? (?�能?�第一次執行�?網路?�誤):", err);
             }
         }
 
@@ -998,21 +998,21 @@
                 scriptUrlInput.value = activeScriptUrl;
             }
 
-            // 解鎖按鈕邏輯
+            // �???��??�輯
             document.getElementById('unlock-settings-btn').addEventListener('click', () => {
-                const pwd = prompt("請輸入密碼以解鎖修改：");
+                const pwd = prompt("請輸?��?碼以�??修改�?);
                 if (pwd === "0000") {
                     apiKeyInput.disabled = false;
                     modelSelect.disabled = false;
                     sheetUrlInput.disabled = false;
                     scriptUrlInput.disabled = false;
-                    showToast("🔓 已解鎖，現在可以修改核心設定！");
+                    showToast("?? 已解?��??�在?�以修改?��?設�?�?);
                 } else if (pwd !== null) {
-                    showToast("❌ 密碼錯誤！", true);
+                    showToast("??密碼?�誤�?, true);
                 }
             });
 
-            // API Key 變更時，同步儲存到雲端 GAS
+            // API Key 變更?��??�步?��??�雲�?GAS
             apiKeyInput.addEventListener('change', async () => {
                 const key = apiKeyInput.value.trim();
                 localStorage.setItem('gemini_api_key', key);
@@ -1024,9 +1024,9 @@
                             headers: { 'Content-Type': 'text/plain; charset=utf-8' },
                             body: JSON.stringify({ action: 'save_api_key', apiKey: key })
                         });
-                        showToast("☁️ API Key 已同步儲存至雲端，所有裝置都能直接使用！");
+                        showToast("?��? API Key 已�?步儲存至?�端，�??��?置都?�直?�使?��?");
                     } catch(e) {
-                        console.warn("同步 Key 失敗", e);
+                        console.warn("?�步 Key 失�?", e);
                     }
                 }
             });
@@ -1042,11 +1042,11 @@
                     if (sheetRows && sheetRows.length > 0) {
                         reportsData = sheetRows;
                         renderReportsTable();
-                        showToast(`☁️ 成功導入 Google Sheets 的 ${sheetRows.length} 筆紀錄！`);
+                        showToast(`?��? ?��?導入 Google Sheets ??${sheetRows.length} 筆�??��?`);
                         hasLoadedFromCloud = true;
                     }
                 } catch (e) {
-                    showToast(`⚠️ 雲端 Sheets 載入失敗: ${e.message}`, true);
+                    showToast(`?��? ?�端 Sheets 載入失�?: ${e.message}`, true);
                 }
             }
 
@@ -1064,7 +1064,7 @@
                 const response = await fetch('stock_names.json');
                 if (response.ok) {
                     stockNameMap = await response.json();
-                    showToast("✅ 成功載入台股名稱資料庫！");
+                    showToast("???��?載入?�股?�稱資�?庫�?");
                 }
             } catch (e) {
                 console.warn("Could not load stock_names.json locally, will fall back to using symbol strings.");
@@ -1077,32 +1077,32 @@
         sheetUrlInput.addEventListener('change', () => localStorage.setItem('google_sheet_url', sheetUrlInput.value));
         scriptUrlInput.addEventListener('change', () => {
             localStorage.setItem('google_script_url', scriptUrlInput.value);
-            fetchSettingsFromCloud(); // 當網址變更時，自動嘗試抓取雲端設定
+            fetchSettingsFromCloud(); // ?�網?�變更?��??��??�試?��??�端設�?
         });
 
         // Criteria code -> full text lookup table
         const CRITERIA_MAP = {
-            'A': '投信第一天買, 且過去三個月沒有買過',
-            'B': '三大法人同買',
-            'C': '日KD黃金交叉',
-            'D': '周KD黃金交叉',
-            'E': '成交量>十週平均量且>3倍十日均量',
-            'F': '入選合約負債',
-            'G': '入選2周內會有法說會',
-            'H': '入選要發行CB',
-            'I': '入選營收條件',
-            'J': '入選大戶持股',
-            'K': '表格裡面目前股價低於20PE',
-            'L': '券商給的是正面評價,例如買進,調升TP',
-            'M': '若已有發行的CB,且股價低於轉換價,並且轉換比例<10%',
-            'N': '入選毛利三季成長'
+            'A': '?�信第�?天買, 且�??��??��?沒�?買�?',
+            'B': '三大法人?�買',
+            'C': '?�KD黃�?交�?',
+            'D': '?�KD黃�?交�?',
+            'E': '?�交???�週平?��?�?3?��??��???,
+            'F': '?�選?��?負債',
+            'G': '?�選2?�內?��?法說??,
+            'H': '?�選要發行CB',
+            'I': '?�選?�收條件',
+            'J': '?�選大戶?�股',
+            'K': '表格裡面?��??�價低於20PE',
+            'L': '?��?給�??�正?��???例�?買�?調�?TP',
+            'M': '?�已?�發行�?CB,且股?��??��??�價,並�?轉�?比�?<10%',
+            'N': '?�選毛利三季?�長'
         };
 
         function expandCriteria(criteriaArr) {
             if (!Array.isArray(criteriaArr)) return [];
             return criteriaArr.map(code => {
                 const upper = String(code).trim().toUpperCase();
-                return CRITERIA_MAP[upper] || code; // 若已是全文則原樣保留
+                return CRITERIA_MAP[upper] || code; // ?�已?�全?��??�樣保�?
             });
         }
 
@@ -1110,22 +1110,22 @@
         analyzeTextBtn.addEventListener('click', async () => {
             const text = rawTextInput.value.trim();
             if (!text) {
-                showToast("❌ 請先貼上文字內容！", true);
+                showToast("??請�?貼�??��??�容�?, true);
                 return;
             }
 
             const apiKey = CONFIG_API_KEY || apiKeyInput.value.trim();
             if (!apiKey) {
-                showToast("❌ 請先輸入您的 Gemini API Key！", true);
+                showToast("??請�?輸入?��? Gemini API Key�?, true);
                 return;
             }
 
             progressContainer.style.display = 'flex';
-            updateProgress(10, `正在準備分析文字...`);
+            updateProgress(10, `�?��準�??��??��?...`);
 
             try {
                 // Call Gemini API (supports single or multi-stock reports)
-                updateProgress(30, `正在使用 AI 分析貼上文字...`);
+                updateProgress(30, `�?��使用 AI ?��?貼�??��?...`);
                 const modelName = modelSelect.value;
                 const rawResult = await analyzeReportWithGemini(apiKey, text, modelName);
 
@@ -1145,7 +1145,7 @@
                     // Auto-sync if script URL is configured
                     const scriptUrl = scriptUrlInput.value.trim();
                     if (scriptUrl) {
-                        updateProgress(80, `正在同步 ${parsedList.length} 筆資料至 Google Sheets...`);
+                        updateProgress(80, `�?��?�步 ${parsedList.length} 筆�??�至 Google Sheets...`);
                         try {
                             const payload = { action: 'append_reports', data: parsedList };
                             await syncToGoogleSheet(scriptUrl, payload);
@@ -1155,18 +1155,18 @@
                     }
 
                     renderReportsTable();
-                    const stockNames = parsedList.map(p => p.stock || '未知').join('、');
-                    showToast(`✅ 成功解析 ${parsedList.length} 檔股票: ${stockNames}`);
+                    const stockNames = parsedList.map(p => p.stock || '?�知').join('??);
+                    showToast(`???��?�?? ${parsedList.length} 檔股�? ${stockNames}`);
                     rawTextInput.value = ''; // clear input after success
                 } else {
-                    showToast('⚠️ AI 未能解析出任何股票資料，請確認文字內容。', true);
+                    showToast('?��? AI ?�能�???�任何股票�??��?請確認�?字內容�?, true);
                 }
             } catch (error) {
                 console.error(error);
-                showToast(`❌ 處理文字失敗: ${error.message}`, true);
+                showToast(`???��??��?失�?: ${error.message}`, true);
             }
 
-            updateProgress(100, "✅ 分析完成！");
+            updateProgress(100, "???��?完�?�?);
             setTimeout(() => { progressContainer.style.display = 'none'; }, 2000);
         });
 
@@ -1190,24 +1190,24 @@
             }
         });
 
-        document.getElementById('big-score-upload').addEventListener('change', (e) => handleCsvUpload(e, '大戶持股'));
-        document.getElementById('gross-margin-upload').addEventListener('change', (e) => handleCsvUpload(e, '毛利三季成長'));
-        document.getElementById('revenue-upload').addEventListener('change', (e) => handleCsvUpload(e, '營收條件'));
-        document.getElementById('earnings-call-upload').addEventListener('change', (e) => handleCsvUpload(e, '法說會'));
-        document.getElementById('contract-liabilities-upload').addEventListener('change', (e) => handleCsvUpload(e, '合約負債條件'));
-        document.getElementById('recent-cb-upload').addEventListener('change', (e) => handleCsvUpload(e, '近期發行CB'));
+        document.getElementById('big-score-upload').addEventListener('change', (e) => handleCsvUpload(e, '大戶?�股'));
+        document.getElementById('gross-margin-upload').addEventListener('change', (e) => handleCsvUpload(e, '毛利三季?�長'));
+        document.getElementById('revenue-upload').addEventListener('change', (e) => handleCsvUpload(e, '?�收條件'));
+        document.getElementById('earnings-call-upload').addEventListener('change', (e) => handleCsvUpload(e, '法說??));
+        document.getElementById('contract-liabilities-upload').addEventListener('change', (e) => handleCsvUpload(e, '?��?負債條件'));
+        document.getElementById('recent-cb-upload').addEventListener('change', (e) => handleCsvUpload(e, '近�??��?CB'));
 
         async function fetchCBFromGithub() {
             try {
-                showToast("正在透過 AI 從資料庫獲取最新 CB 名單...");
+                showToast("�?��?��? AI 從�??�庫?��??�??CB ?�單...");
                 // Fetch from the raw github user content
                 const res = await fetch("https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/%E8%BF%91%E6%9C%9F%E7%99%BC%E8%A1%8CCB.csv?v=" + new Date().getTime());
-                if (!res.ok) throw new Error("無法獲取資料");
+                if (!res.ok) throw new Error("?��??��?資�?");
                 const text = await res.text();
 
-                parseAndSyncCsv(text, "AI自動獲取", "近期發行CB", false);
+                parseAndSyncCsv(text, "AI?��??��?", "近�??��?CB", false);
             } catch (e) {
-                showToast("獲取失敗: " + e.message, true);
+                showToast("?��?失�?: " + e.message, true);
             }
         }
 
@@ -1255,34 +1255,34 @@
                     let dateColIdx = -1;
                     let priceColIdx = -1;
 
-                    // 尋找包含「代號」或「代碼」的標題列（掃描前 5 列）
+                    // 尋找?�含?�代?�」�??�代碼」�?標�??��??��???5 ?��?
                     for (let i = 0; i < Math.min(5, csvRows.length); i++) {
                         const row = csvRows[i];
                         
-                        let cIdx = row.findIndex(h => typeof h === 'string' && (h === '代號' || h === '股號' || h === '股票代號' || h === '代碼'));
+                        let cIdx = row.findIndex(h => typeof h === 'string' && (h === '�??' || h === '?��?' || h === '?�票�??' || h === '�?��'));
                         if (cIdx === -1) {
-                            cIdx = row.findIndex(h => typeof h === 'string' && (h.includes('代號') || h.includes('代碼') || h.includes('股號') || h.includes('股票')));
+                            cIdx = row.findIndex(h => typeof h === 'string' && (h.includes('�??') || h.includes('�?��') || h.includes('?��?') || h.includes('?�票')));
                         }
 
                         if (cIdx !== -1) {
                             headerIdx = i;
                             codeColIdx = cIdx;
                             
-                            nameColIdx = row.findIndex(h => typeof h === 'string' && (h === '名稱' || h === '公司名稱' || h === '股名' || h === '簡稱'));
+                            nameColIdx = row.findIndex(h => typeof h === 'string' && (h === '?�稱' || h === '?�司?�稱' || h === '?��?' || h === '簡稱'));
                             if (nameColIdx === -1) {
-                                nameColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('名稱') || h.includes('公司') || h.includes('股名') || h.includes('簡稱') || h.includes('商品')));
+                                nameColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('?�稱') || h.includes('?�司') || h.includes('?��?') || h.includes('簡稱') || h.includes('?��?')));
                             }
-                            if (sheetName === '法說會' || sheetName === '近期發行CB') {
-                                dateColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('日期') || h.includes('時間') || h.includes('掛牌')));
+                            if (sheetName === '法說?? || sheetName === '近�??��?CB') {
+                                dateColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('?��?') || h.includes('?��?') || h.includes('?��?')));
                             }
-                            if (sheetName === '近期發行CB') {
-                                priceColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('定價') || h.includes('轉換價') || h.includes('價格') || h.includes('發行價')));
+                            if (sheetName === '近�??��?CB') {
+                                priceColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('定價') || h.includes('轉�???) || h.includes('?�格') || h.includes('?��???)));
                             }
                             break;
                         }
                     }
 
-                    // 如果沒找到明確標題，退回檢查哪一欄有4碼數字
+                    // 如�?沒找?��?確�?題�??�?�檢?�哪一欄�?4碼數�?
                     if (codeColIdx === -1 && csvRows.length > 1) {
                         for (let i = 0; i < Math.min(5, csvRows.length); i++) {
                             const cIdx = csvRows[i].findIndex(c => /^\d{4}(\.TW|\.TWO)?$/.test(String(c).trim()));
@@ -1297,41 +1297,41 @@
 
                     if (codeColIdx === -1) codeColIdx = 0;
                     if (nameColIdx === -1) nameColIdx = 1;
-                    if (sheetName === '法說會' && dateColIdx === -1) dateColIdx = 2;
+                    if (sheetName === '法說?? && dateColIdx === -1) dateColIdx = 2;
 
                     const newCsvRows = [];
-                    // 保留過濾後的標題與資料
+                    // 保�??�濾後�?標�??��???
                     for (let i = headerIdx; i < csvRows.length; i++) {
                         const row = csvRows[i];
                         if (i === headerIdx) {
-                            if (sheetName === '營收條件' || sheetName === '合約負債條件') {
-                                newCsvRows.push(['股號', '公司名']);
-                            } else if (sheetName === '法說會') {
-                                newCsvRows.push(['股號', '公司名', '日期']);
-                            } else if (sheetName === '近期發行CB') {
-                                newCsvRows.push(['股號', '名稱', '轉換價', '掛牌日']);
+                            if (sheetName === '?�收條件' || sheetName === '?��?負債條件') {
+                                newCsvRows.push(['?��?', '?�司??]);
+                            } else if (sheetName === '法說??) {
+                                newCsvRows.push(['?��?', '?�司??, '?��?']);
+                            } else if (sheetName === '近�??��?CB') {
+                                newCsvRows.push(['?��?', '?�稱', '轉�???, '?��???]);
                             } else {
-                                newCsvRows.push(row); // 保留所有原始欄位
+                                newCsvRows.push(row); // 保�??�?��?始�?�?
                             }
                             continue;
                         }
                         
                         const cCode = row[codeColIdx] || '';
                         const cName = row[nameColIdx] || '';
-                        // 若無代碼或太短則略過
+                        // ?�無�?��?�太?��??��?
                         if (!cCode) continue;
 
-                        if (sheetName === '營收條件' || sheetName === '合約負債條件') {
+                        if (sheetName === '?�收條件' || sheetName === '?��?負債條件') {
                             newCsvRows.push([cCode, cName]);
-                        } else if (sheetName === '法說會') {
+                        } else if (sheetName === '法說??) {
                             const cDate = row[dateColIdx] || '';
                             newCsvRows.push([cCode, cName, cDate]);
-                        } else if (sheetName === '近期發行CB') {
+                        } else if (sheetName === '近�??��?CB') {
                             const cPrice = priceColIdx !== -1 ? (row[priceColIdx] || '') : '';
                             const cDate = dateColIdx !== -1 ? (row[dateColIdx] || '') : '';
                             newCsvRows.push([cCode, cName, cPrice, cDate]);
                         } else {
-                            newCsvRows.push(row); // 保留所有原始欄位
+                            newCsvRows.push(row); // 保�??�?��?始�?�?
                         }
                     }
                     csvRows = newCsvRows.length > 0 ? newCsvRows : csvRows;
@@ -1342,7 +1342,7 @@
 
                 const scriptUrl = scriptUrlInput.value.trim();
                 if (scriptUrl) {
-                    showToast(`上傳中... 正在將 ${filename} 同步至雲端...`);
+                    showToast(`上傳�?.. �?���?${filename} ?�步?�雲�?..`);
                     fetch(scriptUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'text/plain; charset=utf-8' },
@@ -1353,24 +1353,24 @@
                         })
                     }).then(res => res.json()).then(resJson => {
                         if (resJson.status === 'success') {
-                            showToast(`☁️ ${filename} 已成功同步至雲端分頁：${sheetName}`);
+                            showToast(`?��? ${filename} 已�??��?步至?�端?��?�?{sheetName}`);
                             renderPersistentTables();
                         } else {
-                            showToast(`⚠️ 雲端同步失敗: ${resJson.message}`, true);
+                            showToast(`?��? ?�端?�步失�?: ${resJson.message}`, true);
                             renderPersistentTables();
                         }
                     }).catch(err => {
-                        showToast(`⚠️ 雲端連線失敗: ${err.message}`, true);
+                        showToast(`?��? ?�端???失�?: ${err.message}`, true);
                     });
                 } else {
-                    showToast(`✅ ${filename} 已暫存於本地 (尚未設定 GAS 網址)`);
+                    showToast(`??${filename} 已暫存於?�地 (尚未設�? GAS 網�?)`);
                     renderPersistentTables();
                 }
 
                 return true;
             } catch (err) {
                 if (isFallback) {
-                    showToast("❌ 解析 CSV 檔案失敗，請檢查編碼或欄位是否正確", true);
+                    showToast("??�?? CSV 檔�?失�?，�?檢查編碼?��?位是?�正�?, true);
                 }
                 return false;
             }
@@ -1379,7 +1379,7 @@
         // Notification Helper
         function showToast(message, isError = false) {
             toast.className = 'toast' + (isError ? ' error' : '');
-            document.getElementById('toast-icon').innerText = isError ? '❌' : '✅';
+            document.getElementById('toast-icon').innerText = isError ? '?? : '??;
             document.getElementById('toast-message').innerText = message;
             toast.style.display = 'flex';
             setTimeout(() => {
@@ -1391,7 +1391,7 @@
         async function handleUploadedFiles(files) {
             const apiKey = CONFIG_API_KEY || apiKeyInput.value.trim();
             if (!apiKey) {
-                showToast("❌ 請先輸入您的 Gemini API Key！", true);
+                showToast("??請�?輸入?��? Gemini API Key�?, true);
                 return;
             }
 
@@ -1400,7 +1400,7 @@
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 const percent = Math.round((i / files.length) * 100);
-                updateProgress(percent, `正在解析: ${file.name}`);
+                updateProgress(percent, `�?���??: ${file.name}`);
 
                 try {
                     let text = "";
@@ -1412,22 +1412,22 @@
                         text = parseExcel(arrayBuffer);
                     } else if (file.name.endsWith('.txt') || file.name.endsWith('.csv')) {
                         text = await file.text();
-                        // 如果有大量 UTF-8 解碼失敗的替換字元，可能為 Big5 (ANSI) 編碼
+                        // 如�??�大??UTF-8 �?��失�??�替?��??��??�能??Big5 (ANSI) 編碼
                         if (text.includes('')) {
                             const arrayBuffer = await file.arrayBuffer();
                             const decoder = new TextDecoder('big5');
                             text = decoder.decode(arrayBuffer);
                         }
                     } else {
-                        throw new Error("不支援的檔案格式");
+                        throw new Error("不支?��?檔�??��?");
                     }
 
                     if (!text.trim()) {
-                        throw new Error("檔案內容為空或無法提取文字");
+                        throw new Error("檔�??�容?�空?�無法�??��?�?);
                     }
 
                     // Call Gemini API
-                    updateProgress(percent + 5, `正在使用 AI 分析: ${file.name}`);
+                    updateProgress(percent + 5, `�?��使用 AI ?��?: ${file.name}`);
                     const modelName = modelSelect.value;
                     const parsedObj = await analyzeReportWithGemini(apiKey, text, modelName);
 
@@ -1439,25 +1439,25 @@
                         // Auto-sync if script URL is configured
                         const scriptUrl = scriptUrlInput.value.trim();
                         if (scriptUrl) {
-                            updateProgress(percent + 8, `正在同步至 Google Sheets: ${parsedObj.stock}`);
+                            updateProgress(percent + 8, `�?��?�步??Google Sheets: ${parsedObj.stock}`);
                             try {
                                 await syncToGoogleSheet(scriptUrl, parsedObj);
-                                showToast("☁️ 已成功同步至 Google Sheets！");
+                                showToast("?��? 已�??��?步至 Google Sheets�?);
                             } catch (sheetErr) {
-                                showToast(`⚠️ 同步雲端失敗: ${sheetErr.message}`, true);
+                                showToast(`?��? ?�步?�端失�?: ${sheetErr.message}`, true);
                             }
                         }
 
                         renderReportsTable();
-                        showToast(`🎉 成功解析報告: ${parsedObj.stock || '未識別'}`);
+                        showToast(`?? ?��?�???��?: ${parsedObj.stock || '?��???}`);
                     }
                 } catch (e) {
                     console.error(e);
-                    showToast(`❌ 處理 ${file.name} 時失敗: ${e.message}`, true);
+                    showToast(`???��? ${file.name} ?�失?? ${e.message}`, true);
                 }
             }
 
-            updateProgress(100, "✅ 所有檔案解析完成！");
+            updateProgress(100, "???�?��?案解?��??��?");
             setTimeout(() => {
                 progressContainer.style.display = 'none';
             }, 2000);
@@ -1488,28 +1488,28 @@
             const sheetName = workbook.SheetNames[0];
             const sheet = workbook.Sheets[sheetName];
             const csv = XLSX.utils.sheet_to_csv(sheet);
-            return "這是一份表格資料：\n" + csv;
+            return "?�是一份表?��??��?\n" + csv;
         }
 
         // Call Gemini HTTP endpoint
         async function analyzeReportWithGemini(apiKey, text, modelName) {
             const systemPrompt = `You are a securities analyst assistant. Read the broker report and return JSON.
-Report may cover one or multiple stocks — produce one record per stock.
+Report may cover one or multiple stocks ??produce one record per stock.
 
 Fields:
 1. date: YYYY-MM-DD (infer year if missing)
-2. stock: "4-digit code + name" e.g. "2330 台積電"
+2. stock: "4-digit code + name" e.g. "2330 ?��???
 3. brokerage: broker name (first one if multiple)
-4. rating: e.g. 買進/中立/區間操作/減碼
+4. rating: e.g. 買�?中�?/?�?��?�?減碼
 5. target_price: number or "N/A"
-6. eps: e.g. "今年31.28/明年46.37"
-7. summary: ≤80 chars
-8. daily_stock_selection: brief note or "無"
+6. eps: e.g. "今年31.28/?�年46.37"
+7. summary: ??0 chars
+8. daily_stock_selection: brief note or "??
 9. matched_criteria: array of codes from below that apply, else []
-  A=投信第一天買且近3月未買 B=三大法人同買 C=日KD黃金交叉 D=周KD黃金交叉
-  E=量>10週均量且>3倍10日均量 F=入選合約負債 G=2周內法說會 H=入選要發行CB
-  I=入選營收條件 J=入選大戶持股 K=股價低於20PE L=券商正面評價(買進/調升TP)
-  M=已發行CB且股價<轉換價且轉換比例<10% N=毛利三季成長
+  A=?�信第�?天買且�?3?�未�?B=三大法人?�買 C=?�KD黃�?交�? D=?�KD黃�?交�?
+  E=??10?��??��?>3??0?��???F=?�選?��?負債 G=2?�內法說??H=?�選要發行CB
+  I=?�選?�收條件 J=?�選大戶?�股 K=?�價低於20PE L=?��?�?��評價(買�?調�?TP)
+  M=已發行CB且股??轉�??��?轉�?比�?<10% N=毛利三季?�長
 
 Return a JSON array (one object per stock). No markdown fences.
 Single stock: [{...}]
@@ -1533,22 +1533,22 @@ Report:
                 try { errBody = await response.text(); } catch (_) {}
 
                 const statusHints = {
-                    400: '請求格式錯誤，請確認模型名稱是否正確。',
-                    401: 'API Key 無效或已過期，請重新取得。',
+                    400: '請�??��??�誤，�?確�?模�??�稱?�否�?��??,
+                    401: 'API Key ?��??�已?��?，�??�新?��???,
                     403: [
-                        'API Key 未授權（403）。常見原因：',
-                        '① Key 打錯或有多餘空格 — 請重新複製',
-                        '② Generative Language API 尚未啟用 — 請至 Google Cloud Console 啟用',
-                        '③ Key 設有 IP / 網域限制，不允許從本頁面呼叫',
-                        '④ 免費配額已用完，需升級計費方案',
-                        errBody ? `\n伺服器回應：${errBody.slice(0, 200)}` : ''
+                        'API Key ?��?權�?403）。常見�??��?',
+                        '??Key ?�錯?��?多�?空格 ??請�??��?�?,
+                        '??Generative Language API 尚未?�用 ??請至 Google Cloud Console ?�用',
+                        '??Key 設�? IP / 網�??�制，�??�許從本?�面?�叫',
+                        '???�費?��?已用完�??�?��?計費?��?',
+                        errBody ? `\n伺�??��??��?${errBody.slice(0, 200)}` : ''
                     ].join('\n'),
-                    404: `找不到模型「${modelName}」，請換用 gemini-2.0-flash 或 gemini-2.0-flash-lite。`,
-                    429: '呼叫頻率過高（429 Rate Limit），請稍候 30 秒後再試。',
-                    500: 'Gemini 伺服器內部錯誤，請稍後重試。',
-                    503: 'Gemini 服務暫時不可用，請稍後重試。',
+                    404: `?��??�模?��?{modelName}?��?請�???gemini-2.0-flash ??gemini-2.0-flash-lite?�`,
+                    429: '?�叫?��??��?�?29 Rate Limit）�?請�???30 秒�??�試??,
+                    500: 'Gemini 伺�??�內?�錯誤�?請�?後�?試�?,
+                    503: 'Gemini ?��??��?不可?��?請�?後�?試�?,
                 };
-                const hint = statusHints[response.status] || `未知錯誤 ${response.status}${errBody ? '\n伺服器回應：' + errBody.slice(0, 200) : ''}`;
+                const hint = statusHints[response.status] || `?�知?�誤 ${response.status}${errBody ? '\n伺�??��??��?' + errBody.slice(0, 200) : ''}`;
                 throw new Error(hint);
             }
 
@@ -1572,13 +1572,13 @@ Report:
                     if (objMatch) {
                         try { return [JSON.parse(objMatch[1])]; } catch (_) {}
                     }
-                    console.error('JSON 解析失敗，原始回應：', cleaned);
-                    throw new Error(`AI 回應格式錯誤，無法解析 JSON。請再試一次，或換用其他模型。\n原始回應片段：${cleaned.slice(0, 150)}`);
+                    console.error('JSON �??失�?，�?始�??��?', cleaned);
+                    throw new Error(`AI ?��??��??�誤，無法解??JSON?��??�試一次�??��??�其他模?�。\n?��??��??�段�?{cleaned.slice(0, 150)}`);
                 }
             }
-            // candidates 存在但沒有內容，可能是安全過濾
+            // candidates 存在但�??�內容�??�能?��??��?�?
             if (data.candidates && data.candidates[0].finishReason) {
-                throw new Error(`AI 拒絕回應（原因：${data.candidates[0].finishReason}），可能觸發內容安全過濾，請確認輸入文字。`);
+                throw new Error(`AI ?��??��?（�??��?${data.candidates[0].finishReason}）�??�能觸發?�容安全?�濾，�?確�?輸入?��??�`);
             }
             return [];
         }
@@ -1598,9 +1598,9 @@ Report:
                 // Rating styling
                 let ratingClass = 'rating-neutral';
                 const rat = String(row.rating).toLowerCase();
-                if (rat.includes('買') || rat.includes('buy') || rat.includes('overweight') || rat.includes('加碼')) {
+                if (rat.includes('�?) || rat.includes('buy') || rat.includes('overweight') || rat.includes('?�碼')) {
                     ratingClass = 'rating-buy';
-                } else if (rat.includes('賣') || rat.includes('sell') || rat.includes('underperform') || rat.includes('減碼')) {
+                } else if (rat.includes('�?) || rat.includes('sell') || rat.includes('underperform') || rat.includes('減碼')) {
                     ratingClass = 'rating-sell';
                 }
 
@@ -1612,7 +1612,7 @@ Report:
                     <td>${row.target_price || 'N/A'}</td>
                     <td>${row.eps || 'N/A'}</td>
                     <td><div class="scrollable-cell">${row.summary || 'N/A'}</div></td>
-                    <td id="criteria-${index}"><div class="scrollable-cell">${(row.matched_criteria && row.matched_criteria.length > 0) ? row.matched_criteria.join(' / ') : '進行量化運算以比對...'}</div></td>
+                    <td id="criteria-${index}"><div class="scrollable-cell">${(row.matched_criteria && row.matched_criteria.length > 0) ? row.matched_criteria.join(' / ') : '?��??��??��?以�?�?..'}</div></td>
                 `;
                 reportsTbody.appendChild(tr);
             });
@@ -1645,18 +1645,18 @@ Report:
 
         function parseCbIssuedFromTableData() {
             const cbData = {};
-            if (window.tablesData && window.tablesData['近期發行CB']) {
-                const data = window.tablesData['近期發行CB'];
+            if (window.tablesData && window.tablesData['近�??��?CB']) {
+                const data = window.tablesData['近�??��?CB'];
                 if (data.length < 2) return cbData;
 
-                // 從標題列找欄位索引（支援新舊格式）
+                // 從�?題�??��?位索引�??�援?��??��?�?
                 const header = data[0].map(h => String(h));
-                const idxStock   = header.findIndex(h => h.includes('股票代號') || h.includes('股號') || h === '代號');
-                const idxPrice   = header.findIndex(h => h.includes('轉換價格') || h.includes('轉換價') || h.includes('定價'));
-                const idxBalance = header.findIndex(h => h.includes('餘額比例') || h.includes('餘額'));
-                const idxExpiry  = header.findIndex(h => h.includes('到期日') || h.includes('到期'));
+                const idxStock   = header.findIndex(h => h.includes('?�票�??') || h.includes('?��?') || h === '�??');
+                const idxPrice   = header.findIndex(h => h.includes('轉�??�格') || h.includes('轉�???) || h.includes('定價'));
+                const idxBalance = header.findIndex(h => h.includes('餘�?比�?') || h.includes('餘�?'));
+                const idxExpiry  = header.findIndex(h => h.includes('?��???) || h.includes('?��?'));
 
-                // 若找不到標題，退回舊的固定索引（股票代號在col0）
+                // ?�找不到標�?，退?��??�固定索引�??�票�???�col0�?
                 const stockCol   = idxStock   >= 0 ? idxStock   : 0;
                 const priceCol   = idxPrice   >= 0 ? idxPrice   : 3;
                 const balanceCol = idxBalance >= 0 ? idxBalance : 7;
@@ -1686,9 +1686,9 @@ Report:
 
             const sheetsToRender = Object.keys(window.tablesData);
 
-            // 定義要顯示的順序或白名單（如果不在此清單中，就接在後面顯示）
+            // 定義要顯示�??��??�白?�單（�??��??�此清單中�?就接?��??�顯示�?
             const preferredOrder = [
-                '大戶持股', '近期發行CB', '毛利三季成長', '營收條件', '法說會', '合約負債條件'
+                '大戶?�股', '近�??��?CB', '毛利三季?�長', '?�收條件', '法說??, '?��?負債條件'
             ];
             sheetsToRender.sort((a, b) => {
                 let idxA = preferredOrder.indexOf(a);
@@ -1708,7 +1708,7 @@ Report:
 
                 const header = document.createElement('div');
                 header.className = 'section-header';
-                header.innerHTML = `<h2>📊 ${sheetName}</h2>`;
+                header.innerHTML = `<h2>?? ${sheetName}</h2>`;
                 section.appendChild(header);
 
                 const tableContainer = document.createElement('div');
@@ -1744,7 +1744,7 @@ Report:
             });
         }
 
-        // 🚀 QUANT SYSTEM IN JAVASCRIPT
+        // ?? QUANT SYSTEM IN JAVASCRIPT
         runQuantBtn.addEventListener('click', async () => {
             const validStocks = [];
 
@@ -1756,39 +1756,39 @@ Report:
                 }
             });
 
-            // Add missing stocks from events (法說會, 大戶持股)
-            const bigPlayerStocks = extractCodesFromTableData('大戶持股');
+            // Add missing stocks from events (法說?? 大戶?�股)
+            const bigPlayerStocks = extractCodesFromTableData('大戶?�股');
             bigPlayerStocks.forEach(sid => {
                 if (!validStocks.includes(sid)) validStocks.push(sid);
             });
 
-            const cbStocks = extractCodesFromTableData('近期發行CB');
+            const cbStocks = extractCodesFromTableData('近�??��?CB');
             cbStocks.forEach(sid => {
                 if (!validStocks.includes(sid)) validStocks.push(sid);
             });
 
-            const grossMarginStocks = extractCodesFromTableData('毛利三季成長');
+            const grossMarginStocks = extractCodesFromTableData('毛利三季?�長');
             grossMarginStocks.forEach(sid => {
                 if (!validStocks.includes(sid)) validStocks.push(sid);
             });
 
-            const revenueStocks = extractCodesFromTableData('營收條件');
+            const revenueStocks = extractCodesFromTableData('?�收條件');
             revenueStocks.forEach(sid => {
                 if (!validStocks.includes(sid)) validStocks.push(sid);
             });
 
-            const earningsCallStocks = extractCodesFromTableData('法說會');
+            const earningsCallStocks = extractCodesFromTableData('法說??);
             earningsCallStocks.forEach(sid => {
                 if (!validStocks.includes(sid)) validStocks.push(sid);
             });
 
-            const contractLiabilitiesStocks = extractCodesFromTableData('合約負債條件');
+            const contractLiabilitiesStocks = extractCodesFromTableData('?��?負債條件');
             contractLiabilitiesStocks.forEach(sid => {
                 if (!validStocks.includes(sid)) validStocks.push(sid);
             });
 
             if (validStocks.length === 0) {
-                showToast("⚠️ 列表內無可供量化計算的股票代號，請先上傳報告或大戶等 CSV 檔案。", true);
+                showToast("?��? ?�表?�無?��??��?計�??�股票代?��?請�?上傳?��??�大?��? CSV 檔�???, true);
                 return;
             }
 
@@ -1808,7 +1808,7 @@ Report:
                 const stockName = stockNameMap[stockId] || '';
                 const fullName = `${stockId} ${stockName}`.trim();
 
-                updateProgress(Math.round((i / validStocks.length) * 100), `🔍 正在對 ${fullName} 進行即時量化運算...`);
+                updateProgress(Math.round((i / validStocks.length) * 100), `?? �?���?${fullName} ?��??��??��??��?...`);
 
                 try {
                     const matched = await evaluateStockQuant(stockId, config);
@@ -1818,40 +1818,40 @@ Report:
                     if (reportRows.length > 0) {
                         const firstRow = reportRows[0];
                         const peText = String(firstRow.summary + firstRow.daily_stock_selection).toLowerCase();
-                        if (peText.includes('低於20倍') || peText.includes('pe低於20') || peText.includes('估值偏低')) {
-                            matched.push("表格裡面目前股價低於20PE");
+                        if (peText.includes('低於20??) || peText.includes('pe低於20') || peText.includes('估值�?�?)) {
+                            matched.push("表格裡面?��??�價低於20PE");
                         }
                         // Broker rating
                         const ratText = String(firstRow.rating).toLowerCase();
-                        if (ratText.includes('買') || ratText.includes('buy') || ratText.includes('overweight')) {
-                            matched.push("券商給的是正面評價,例如買進,調升TP");
+                        if (ratText.includes('�?) || ratText.includes('buy') || ratText.includes('overweight')) {
+                            matched.push("?��?給�??�正?��???例�?買�?調�?TP");
                         }
                     }
 
                     // Add new lists conditions
                     if (bigPlayerStocks.includes(stockId)) {
-                        matched.push("入選大戶持股");
+                        matched.push("?�選大戶?�股");
                     }
                     if (grossMarginStocks.includes(stockId)) {
-                        matched.push("入選毛利三季成長");
+                        matched.push("?�選毛利三季?�長");
                     }
                     if (revenueStocks.includes(stockId)) {
-                        matched.push("入選營收條件");
+                        matched.push("?�選?�收條件");
                     }
                     if (earningsCallStocks.includes(stockId)) {
-                        matched.push("入選2周內會有法說會");
+                        matched.push("?�選2?�內?��?法說??);
                     }
                     if (contractLiabilitiesStocks.includes(stockId)) {
-                        matched.push("入選合約負債");
+                        matched.push("?�選?��?負債");
                     }
 
                     // Score logic
                     let score = matched.length;
-                    if (matched.some(m => m.includes("入選大戶持股"))) {
-                        score += 1; // 大戶相關特別加分
+                    if (matched.some(m => m.includes("?�選大戶?�股"))) {
+                        score += 1; // 大戶?��??�別?��?
                     }
-                    if (matched.some(m => m.includes("入選2周內會有法說會"))) {
-                        score += 1; // 法說會特別加分
+                    if (matched.some(m => m.includes("?�選2?�內?��?法說??))) {
+                        score += 1; // 法說?�特?��???
                     }
 
                     liveScores[stockId] = score;
@@ -1862,7 +1862,7 @@ Report:
                         if (getStockId(row.stock) === stockId) {
                             row.matched_criteria = matched;
                             const tdCell = document.getElementById(`criteria-${rIdx}`);
-                            if (tdCell) tdCell.innerText = matched.length > 0 ? matched.join(' / ') : '量化算畢 (無符合)';
+                            if (tdCell) tdCell.innerText = matched.length > 0 ? matched.join(' / ') : '?��?算畢 (?�符??';
                         }
                     });
 
@@ -1873,7 +1873,7 @@ Report:
 
             // Save matched criteria in storage
             localStorage.setItem('reports_history', JSON.stringify(reportsData));
-            updateProgress(100, "✅ 量化分析運算完畢！");
+            updateProgress(100, "???��??��??��?完畢�?);
 
             setTimeout(() => {
                 progressContainer.style.display = 'none';
@@ -1929,7 +1929,7 @@ Report:
                 const yest_d = priceData[len - 2].D;
 
                 if (today_k > today_d && yest_k < yest_d) {
-                    matched.push("日KD黃金交叉");
+                    matched.push("?�KD黃�?交�?");
                 }
 
                 // Resample to weekly data
@@ -1943,7 +1943,7 @@ Report:
                     const wy_d = weeklyData[wLen - 2].D;
 
                     if (wt_k > wt_d && wy_k < wy_d) {
-                        matched.push("周KD黃金交叉");
+                        matched.push("?�KD黃�?交�?");
                     }
                 }
 
@@ -1981,7 +1981,7 @@ Report:
                     const cond_5 = today_close > today_open;
 
                     if (cond_3 && cond_4) {
-                        matched.push("成交量>十週平均量且>3倍十日均量");
+                        matched.push("?�交???�週平?��?�?3?��??��???);
                     }
                 }
             }
@@ -2011,7 +2011,7 @@ Report:
                 });
 
                 if (buy_foreign > 0 && buy_trust > 0 && buy_dealer > 0) {
-                    matched.push("三大法人同買");
+                    matched.push("三大法人?�買");
                 }
 
                 if (buy_trust > 0) {
@@ -2025,7 +2025,7 @@ Report:
                         const trustBuys = m3Chips.filter(c => c.name.includes('Investment_Trust') && c.date < latestDate);
                         const hasBuy = trustBuys.some(c => (parseFloat(c.buy) - parseFloat(c.sell)) > 0);
                         if (!hasBuy) {
-                            matched.push("投信第一天買, 且過去三個月沒有買過");
+                            matched.push("?�信第�?天買, 且�??��??��?沒�?買�?");
                         }
                     }
                 }
@@ -2048,7 +2048,7 @@ Report:
 
                 const mom_growth = latest_revenue > prev_revenue;
 
-                // YoY 年增
+                // YoY 年�?
                 const latest_month = parseInt(latest_rev.revenue_month);
                 const latest_year = parseInt(latest_rev.revenue_year);
                 let yoy_growth = false;
@@ -2062,13 +2062,13 @@ Report:
                 }
 
                 // if (mom_growth && yoy_growth) {
-                //     matched.push("近月營收月增且年增");
+                //     matched.push("近�??�收?��?且年�?);
                 // }
             }
 
             // 4. Config-based event checking
             if (config.cbStocks.includes(stockId)) {
-                matched.push("入選要發行CB");
+                matched.push("?�選要發行CB");
             }
             if (config.cbIssued[stockId]) {
                 const info = config.cbIssued[stockId];
@@ -2076,7 +2076,7 @@ Report:
                 if (priceData && priceData.length > 0) {
                     const lastPrice = priceData[priceData.length - 1].close;
                     if (lastPrice < info.conv_price && info.balance_pct < 10) {
-                        matched.push("若已有發行的CB,且股價低於轉換價,並且轉換比例<10%");
+                        matched.push("?�已?�發行�?CB,且股?��??��??�價,並�?轉�?比�?<10%");
                     }
                 }
             }
@@ -2191,12 +2191,12 @@ Report:
                 const card = document.createElement('div');
                 card.className = 'champ-card';
 
-                let matchesHtml = champ.matches.map(m => `<span class="match-tag">⚡ ${m}</span>`).join('');
+                let matchesHtml = champ.matches.map(m => `<span class="match-tag">??${m}</span>`).join('');
 
                 card.innerHTML = `
                     <div class="champ-header">
                         <div class="champ-name">${champ.stockId} ${champ.name}</div>
-                        <div class="champ-score">${champ.score} 分</div>
+                        <div class="champ-score">${champ.score} ??/div>
                     </div>
                     <div class="champ-matches">
                         ${matchesHtml}
@@ -2213,7 +2213,7 @@ Report:
                 headers: { 'Content-Type': 'text/plain; charset=utf-8' },
                 body: JSON.stringify(data)
             });
-            if (!resp.ok) throw new Error("HTTP 錯誤 " + resp.status);
+            if (!resp.ok) throw new Error("HTTP ?�誤 " + resp.status);
             const resJson = await resp.json();
             if (resJson.status === "error") throw new Error(resJson.message);
             return resJson;
@@ -2223,27 +2223,27 @@ Report:
         syncAllBtn.addEventListener('click', async () => {
             const scriptUrl = scriptUrlInput.value.trim();
             if (!scriptUrl) {
-                showToast("❌ 請先在側邊欄填入 Google Apps Script 寫入網址！", true);
+                showToast("??請�??�側?��?填入 Google Apps Script 寫入網�?�?, true);
                 return;
             }
 
             try {
-                showToast("☁️ 正在同步報告至雲端...");
+                showToast("?��? �?��?�步?��??�雲�?..");
                 syncAllBtn.disabled = true;
 
-                // 2. 同步報告至雲端 (Reports)
+                // 2. ?�步?��??�雲�?(Reports)
                 if (reportsData.length > 0) {
                     const reportsPayload = {
                         action: "append_reports",
                         data: reportsData
                     };
                     await syncToGoogleSheet(scriptUrl, reportsPayload);
-                    showToast("✅ 所有報告資料已成功同步至 Google Sheets！");
+                    showToast("???�?�報?��??�已?��??�步??Google Sheets�?);
                 } else {
-                    showToast("✅ 目前無報告資料需要同步！");
+                    showToast("???��??�報?��??��?要�?步�?");
                 }
             } catch (e) {
-                showToast(`❌ 同步失敗: ${e.message}`, true);
+                showToast(`???�步失�?: ${e.message}`, true);
             } finally {
                 syncAllBtn.disabled = false;
             }
@@ -2252,7 +2252,7 @@ Report:
         // Export Data to JSON File
         exportJsonBtn.addEventListener('click', () => {
             if (reportsData.length === 0) {
-                showToast("⚠️ 目前沒有任何解析資料可供導出！", true);
+                showToast("?��? ?��?沒�?任�?�??資�??��?導出�?, true);
                 return;
             }
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(reportsData, null, 2));
@@ -2262,17 +2262,17 @@ Report:
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
-            showToast("✅ 資料已成功匯出成 JSON 檔案！");
+            showToast("??資�?已�??�匯?��? JSON 檔�?�?);
         });
 
         // Clear All local settings and tables
         clearAllBtn.addEventListener('click', () => {
-            if (confirm("🔴 您確定要清空所有的報告紀錄嗎？這會清除瀏覽器的本地存儲。")) {
+            if (confirm("?�� ?�確定�?清空?�?��??��?紀?��?？這�?清除?�覽?��??�地存儲??)) {
                 reportsData = [];
                 localStorage.removeItem('reports_history');
                 renderReportsTable();
                 champsSection.style.display = 'none';
-                showToast("✅ 歷史紀錄已全部清除！");
+                showToast("??歷史紀?�已?�部清除�?);
             }
         });
     </script>
