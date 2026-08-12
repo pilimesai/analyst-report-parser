@@ -60,6 +60,16 @@ function doPost(e) {
       }))
       .setMimeType(ContentService.MimeType.JSON);
       
+    } else if (action === "save_api_key") {
+      // 將 API Key 儲存至 Script Properties（伺服器端，不寫入試算表）
+      var props = PropertiesService.getScriptProperties();
+      props.setProperty("GEMINI_API_KEY", payload.apiKey || "");
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "success",
+        message: "API Key 已安全儲存至雲端！"
+      }))
+      .setMimeType(ContentService.MimeType.JSON);
+
     } else {
       // 原本的新增報告邏輯 (action === "append_reports")
       var sheet = ss.getSheetByName("Reports") || ss.getActiveSheet();
@@ -143,10 +153,15 @@ function doGet(e) {
       }
     }
     
+    // 從 Script Properties 讀取 API Key（安全，不存在試算表）
+    var props = PropertiesService.getScriptProperties();
+    var geminiApiKey = props.getProperty("GEMINI_API_KEY") || "";
+    
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",
       data: settings,
-      sheetData: sheetData
+      sheetData: sheetData,
+      geminiApiKey: geminiApiKey  // 回傳給前端自動填入
     }))
     .setMimeType(ContentService.MimeType.JSON);
     

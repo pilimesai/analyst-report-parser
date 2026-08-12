@@ -1012,6 +1012,25 @@
                 }
             });
 
+            // API Key 變更時，同步儲存到雲端 GAS
+            apiKeyInput.addEventListener('change', async () => {
+                const key = apiKeyInput.value.trim();
+                localStorage.setItem('gemini_api_key', key);
+                const url = scriptUrlInput.value.trim();
+                if (url && key) {
+                    try {
+                        await fetch(url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+                            body: JSON.stringify({ action: 'save_api_key', apiKey: key })
+                        });
+                        showToast("☁️ API Key 已同步儲存至雲端，所有裝置都能直接使用！");
+                    } catch(e) {
+                        console.warn("同步 Key 失敗", e);
+                    }
+                }
+            });
+
             // Sync from cloud if script URL is available
             fetchSettingsFromCloud();
 
