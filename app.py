@@ -1946,18 +1946,22 @@ if st.session_state.history:
 
         df_display = pd.DataFrame(consolidated)
 
-        # 依股號由小到大排序（取出 4 位數字做數值排序）
+        # 依最新報告日期由新到舊排序
         if not df_display.empty:
-            import re as _re_sort
-            def _extract_code(s):
-                m = _re_sort.search(r'\d{4}', str(s))
-                return int(m.group()) if m else 99999
-            # 先建立排序鍵，只對「股票名稱/代號」非空的首列排序，其餘列維持原有順序
-            # 方法：將每個股票群組提取代號 → 依代號排序 sorted_stocks 的順序
+            # 取得每檔股票的最新報告日期，作為排序鍵
+            stock_latest_date = {}
             _unique_stocks_ordered = list(dict.fromkeys(
                 df_display['股票名稱/代號'].replace('', float('NaN')).ffill()
             ))
-            _unique_stocks_sorted = sorted(_unique_stocks_ordered, key=_extract_code)
+            
+            for s in _unique_stocks_ordered:
+                s_rows = df_display[df_display['股票名稱/代號'].replace('', float('NaN')).ffill() == s]
+                valid_dates = [str(d) for d in s_rows['發布日期'] if str(d).strip() not in ['', '未知日期', '尚無報告', 'N/A', 'nan'] and ('-' in str(d) or '/' in str(d))]
+                stock_latest_date[s] = max(valid_dates) if valid_dates else '0000-00-00'
+                
+            # 依據最新日期降冪排序 (最新的在最上面)
+            _unique_stocks_sorted = sorted(_unique_stocks_ordered, key=lambda s: stock_latest_date.get(s, '0000-00-00'), reverse=True)
+            
             _order_map = {s: i for i, s in enumerate(_unique_stocks_sorted)}
             df_display['_sort_key'] = df_display['股票名稱/代號'].replace('', float('NaN')).ffill().map(_order_map)
             df_display = df_display.sort_values('_sort_key', kind='stable').drop(columns=['_sort_key']).reset_index(drop=True)
