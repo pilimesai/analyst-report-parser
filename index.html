@@ -805,6 +805,9 @@
                         <button class="btn btn-danger" id="clear-all-btn">🔴 清空紀錄</button>
                     </div>
                 </div>
+                <div style="margin-bottom: 15px;">
+                    <input type="text" id="report-search-input" placeholder="🔍 搜尋股票代號或名稱..." autocomplete="off">
+                </div>
                 <div class="table-responsive">
                     <table>
                         <thead>
@@ -1084,6 +1087,12 @@
             localStorage.setItem('google_script_url', scriptUrlInput.value);
             fetchSettingsFromCloud(); // 當網址變更時，自動嘗試抓取雲端設定
         });
+
+        // Search Input Event
+        const searchInput = document.getElementById('report-search-input');
+        if (searchInput) {
+            searchInput.addEventListener('input', renderReportsTable);
+        }
 
         // Criteria code -> full text lookup table
         const CRITERIA_MAP = {
@@ -1585,20 +1594,37 @@
         function renderReportsTable() {
             reportsTbody.innerHTML = '';
 
-            if (reportsData.length === 0) {
+            const searchInput = document.getElementById('report-search-input');
+            const searchKeyword = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+            let filteredData = reportsData;
+            if (searchKeyword) {
+                filteredData = reportsData.filter(row => {
+                    const stockStr = String(row.stock || '').toLowerCase();
+                    return stockStr.includes(searchKeyword);
+                });
+            }
+
+            if (filteredData.length === 0) {
+                const emptyCell = emptyRow.querySelector('td');
+                if (searchKeyword) {
+                    emptyCell.innerText = '找不到符合「' + searchKeyword + '」的股票資料。';
+                } else {
+                    emptyCell.innerText = '尚無報告資料，請先上傳報告進行解析。';
+                }
                 reportsTbody.appendChild(emptyRow);
                 return;
             }
 
             // 確保每次渲染前，資料都依照日期由新到舊排序
-            reportsData.sort((a, b) => {
+            filteredData.sort((a, b) => {
                 const dateA = new Date(a.date || '1900-01-01');
                 const dateB = new Date(b.date || '1900-01-01');
                 return dateB - dateA;
             });
 
             const fragment = document.createDocumentFragment();
-            reportsData.forEach((row, index) => {
+            filteredData.forEach((row, index) => {
                 const tr = document.createElement('tr');
 
                 // Rating styling
