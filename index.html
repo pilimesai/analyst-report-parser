@@ -1662,15 +1662,29 @@
                 const idxPrice   = header.findIndex(h => h.includes('轉換價格') || h.includes('轉換價') || h.includes('定價'));
                 const idxBalance = header.findIndex(h => h.includes('餘額比例') || h.includes('餘額'));
                 const idxExpiry  = header.findIndex(h => h.includes('到期日') || h.includes('到期'));
+                const idxDate    = header.findIndex(h => h.includes('發行日期') || h.includes('掛牌日'));
 
                 // 若找不到標題，退回舊的固定索引（股票代號在col0）
                 const stockCol   = idxStock   >= 0 ? idxStock   : 0;
                 const priceCol   = idxPrice   >= 0 ? idxPrice   : 3;
                 const balanceCol = idxBalance >= 0 ? idxBalance : 7;
                 const expiryCol  = idxExpiry  >= 0 ? idxExpiry  : -1;
+                const dateCol    = idxDate    >= 0 ? idxDate    : -1;
+
+                const today = new Date();
+                today.setHours(0,0,0,0);
 
                 for (let i = 1; i < data.length; i++) {
                     const row = data[i];
+
+                    if (dateCol >= 0) {
+                        const dateVal = row[dateCol];
+                        if (dateVal) {
+                            const d = new Date(dateVal);
+                            if (!isNaN(d) && d < today) continue;
+                        }
+                    }
+
                     const code = getStockId(String(row[stockCol] || ''));
                     if (code) {
                         cbData[code] = {
@@ -1734,11 +1748,32 @@
                 table.appendChild(thead);
 
                 const tbody = document.createElement('tbody');
+                
+                let dateIdx = -1;
+                if (sheetName === '近期發行CB') {
+                    dateIdx = data[0].findIndex(h => String(h).includes('掛牌') || String(h).includes('發行日期'));
+                }
+                const today = new Date();
+                today.setHours(0,0,0,0);
+
                 for (let i = 1; i < data.length; i++) {
+                    if (sheetName === '近期發行CB' && dateIdx !== -1) {
+                        const dateVal = data[i][dateIdx];
+                        if (dateVal) {
+                            const d = new Date(dateVal);
+                            if (!isNaN(d) && d < today) continue;
+                        }
+                    }
+
                     const tr = document.createElement('tr');
                     data[i].forEach(col => {
                         const td = document.createElement('td');
-                        td.innerText = col;
+                        let displayVal = col;
+                        if (typeof displayVal === 'string' && displayVal.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)) {
+                            const d = new Date(displayVal);
+                            if (!isNaN(d)) displayVal = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
+                        }
+                        td.innerText = displayVal;
                         tr.appendChild(td);
                     });
                     tbody.appendChild(tr);
