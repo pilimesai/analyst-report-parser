@@ -1041,23 +1041,8 @@
             // Sync from cloud if script URL is available
             fetchSettingsFromCloud();
 
-            // Load historical reports
-            let hasLoadedFromCloud = false;
-            if (activeSheetUrl) {
-                try {
-                    const sheetRows = await loadGoogleSheet(activeSheetUrl);
-                    if (sheetRows && sheetRows.length > 0) {
-                        reportsData = sheetRows;
-                        renderReportsTable();
-                        showToast(`☁️ 成功導入 Google Sheets 的 ${sheetRows.length} 筆紀錄！`);
-                        hasLoadedFromCloud = true;
-                    }
-                } catch (e) {
-                    showToast(`⚠️ 雲端 Sheets 載入失敗: ${e.message}`, true);
-                }
-            }
-
-            if (!hasLoadedFromCloud && localStorage.getItem('reports_history')) {
+            // Load historical reports (SWR Pattern for instant UI)
+            if (localStorage.getItem('reports_history')) {
                 try {
                     reportsData = JSON.parse(localStorage.getItem('reports_history'));
                     renderReportsTable();
@@ -1066,16 +1051,29 @@
                 }
             }
 
-            // Load stock names map
-            try {
-                const response = await fetch('stock_names.json');
+            if (activeSheetUrl) {
+                // 背景非同步載入雲端最新報告
+                loadGoogleSheet(activeSheetUrl).then(sheetRows => {
+                    if (sheetRows && sheetRows.length > 0) {
+                        reportsData = sheetRows;
+                        localStorage.setItem('reports_history', JSON.stringify(reportsData));
+                        renderReportsTable();
+                        showToast(`☁️ 成功導入 Google Sheets 的 ${sheetRows.length} 筆紀錄！`);
+                    }
+                }).catch(e => {
+                    showToast(`⚠️ 雲端 Sheets 載入失敗: ${e.message}`, true);
+                });
+            }
+
+            // Load stock names map in background
+            fetch('stock_names.json').then(async (response) => {
                 if (response.ok) {
                     stockNameMap = await response.json();
                     showToast("✅ 成功載入台股名稱資料庫！");
                 }
-            } catch (e) {
+            }).catch(e => {
                 console.warn("Could not load stock_names.json locally, will fall back to using symbol strings.");
-            }
+            });
         });
 
         // Event listeners for saving settings
