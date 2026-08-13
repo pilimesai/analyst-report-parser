@@ -1592,6 +1592,13 @@
                 return;
             }
 
+            // 確保每次渲染前，資料都依照日期由新到舊排序
+            reportsData.sort((a, b) => {
+                const dateA = new Date(a.date || '1900-01-01');
+                const dateB = new Date(b.date || '1900-01-01');
+                return dateB - dateA;
+            });
+
             reportsData.forEach((row, index) => {
                 const tr = document.createElement('tr');
 
