@@ -2782,12 +2782,17 @@ if st.session_state.history:
                 live_scores = {}
                 live_matches = {}
                 
-                for i, s in enumerate(valid_stocks):
-                    status.text(f"🔍 正在爬取並計算 {s} 的即時量化指標...")
-                    
-                    # 取出真正代號
-                    stock_id_match = re.search(r'\d{4}', str(s))
-                    if stock_id_match:
+                import concurrent.futures
+                
+                # 在主執行緒先取得 bp_list，避免在多執行緒內存取 st.session_state
+                bp_list = st.session_state.get('big_player_stocks', [])
+                
+                def process_stock(s):
+                    try:
+                        stock_id_match = re.search(r'\d{4}', str(s))
+                        if not stock_id_match:
+                            return s, 0, []
+                            
                         stock_id = stock_id_match.group()
                         
                         # 呼叫純 Python 的 quant_engine (傳入所有預載資料)
@@ -2802,7 +2807,7 @@ if st.session_state.history:
                                     matched.append("目前股價低於20倍PE")
                         except Exception as e:
                             print(f"PE條件錯誤: {e}")
-                        
+                            
                         # 條件 12: 券商給予正面評價（從報告表格讀取）
                         try:
                             if not stock_rows.empty and '券商評等' in df_display.columns:
@@ -2815,27 +2820,45 @@ if st.session_state.history:
                                         break
                         except Exception as e:
                             print(f"評等條件錯誤: {e}")
-                        
+                            
                         # 條件 13: 大戶持股比例成長（從手動名單讀取）
                         try:
-                            bp_list = st.session_state.get('big_player_stocks', [])
                             if stock_id in bp_list:
                                 matched.append("大戶持股比例成長")
                         except Exception as e:
                             print(f"大戶條件錯誤: {e}")
-                        
+                            
                         score = len(matched)
                         if "大戶持股比例成長" in matched or any("大戶持股增加" in m for m in matched):
                             score += 1  # 大戶選股符合，積分加二 (額外加 1 分)
                         if any("兩周內有法說會" in m for m in matched):
                             score += 1  # 法說會符合，積分加二 (額外加 1 分)
-                        live_scores[s] = score
-                        live_matches[s] = matched
-                    else:
-                        live_scores[s] = 0
-                        live_matches[s] = []
-                        
-                    progress_bar.progress((i + 1) / len(valid_stocks))
+                            
+                        return s, score, matched
+                    except Exception as e:
+                        print(f"Stock {s} processing error: {e}")
+                        return s, 0, []
+
+                status.text(f"🔍 正在爬取並計算 {len(valid_stocks)} 檔標的的即時量化指標... (開啟多執行緒加速)")
+                completed_count = 0
+                
+                # 使用 ThreadPoolExecutor 平行處理
+                with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+                    future_to_stock = {executor.submit(process_stock, s): s for s in valid_stocks}
+                    for future in concurrent.futures.as_completed(future_to_stock):
+                        s = future_to_stock[future]
+                        try:
+                            _, score, matched = future.result()
+                            live_scores[s] = score
+                            live_matches[s] = matched
+                        except Exception as exc:
+                            print(f"{s} generated an exception: {exc}")
+                            live_scores[s] = 0
+                            live_matches[s] = []
+                            
+                        completed_count += 1
+                        progress_bar.progress(completed_count / len(valid_stocks))
+                        status.text(f"🔍 正在爬取並計算量化指標... ({completed_count}/{len(valid_stocks)})")
                     
                 status.text("✅ Python 量化運算完成！")
                 
