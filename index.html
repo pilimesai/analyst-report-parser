@@ -1500,29 +1500,16 @@
 
         // Call Gemini HTTP endpoint
         async function analyzeReportWithGemini(apiKey, text, modelName) {
-            const systemPrompt = `You are a securities analyst assistant. Read the broker report and return JSON.
-Report may cover one or multiple stocks — produce one record per stock.
+            // 系統提示（透過 system_instruction 傳送，不佔 user turn token）
+            const systemInstruction = `你是券商報告解析器。從報告中提取結構化資料，回傳 JSON 陣列，每檔股票一個物件。
+欄位：date(YYYY-MM-DD), stock(代號+名稱,如"2330 台積電"), brokerage(券商), rating(評等), target_price(數字或N/A), eps(如"今年31/明年46"), summary(≤60字), daily_stock_selection(選股摘要或"無"), matched_criteria([]即可,前端自行計算)
+規則：若報告含多股，每股一筆；不確定留空字串；直接輸出 JSON 陣列，禁止 markdown。`;
 
-Fields:
-1. date: YYYY-MM-DD (infer year if missing)
-2. stock: "4-digit code + name" e.g. "2330 台積電"
-3. brokerage: broker name (first one if multiple)
-4. rating: e.g. 買進/中立/區間操作/減碼
-5. target_price: number or "N/A"
-6. eps: e.g. "今年31.28/明年46.37"
-7. summary: ≤80 chars
-8. daily_stock_selection: brief note or "無"
-9. matched_criteria: array of codes from below that apply, else []
-  A=投信第一天買且近3月未買 B=三大法人同買 C=日KD黃金交叉 D=周KD黃金交叉
-  E=量>10週均量且>3倍10日均量 F=入選合約負債 G=2周內法說會 H=入選要發行CB
-  I=入選營收條件 J=入選大戶持股 K=股價低於20PE L=券商正面評價(買進/調升TP)
-  M=已發行CB且股價<轉換價且轉換比例<10% N=毛利三季成長
-
-Return a JSON array (one object per stock). No markdown fences.
-Single stock: [{...}]
-
-Report:
-`;
+            // 截斷過長文字（超過 3000 字只保留前段，節省 token）
+            const MAX_CHARS = 3000;
+            const truncatedText = text.length > MAX_CHARS
+                ? text.slice(0, MAX_CHARS) + '\n...(截斷)'
+                : text;
 
 
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
@@ -1530,7 +1517,13 @@ Report:
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    contents: [{ parts: [{ text: systemPrompt + text }] }]
+                    system_instruction: { parts: [{ text: systemInstruction }] },
+                    contents: [{ role: 'user', parts: [{ text: truncatedText }] }],
+                    generationConfig: {
+                        temperature: 0,        // 確定性輸出，不隨機，速度更快
+                        maxOutputTokens: 512,  // 限制輸出長度，避免 AI 過度輸出
+                        responseMimeType: 'application/json'  // 直接要求 JSON 格式輸出
+                    }
                 })
             });
 
