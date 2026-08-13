@@ -1479,7 +1479,7 @@ if st.session_state.history:
 
         df_raw['sort_date'] = df_raw['date'].astype(str).str.replace('未知.*', '0000', regex=True)
 
-        df_raw = df_raw.sort_values('sort_date', ascending=True)
+        df_raw = df_raw.sort_values('sort_date', ascending=False)
 
         
 
@@ -1505,9 +1505,9 @@ if st.session_state.history:
 
         
 
-        # 保留每個群組的「最後一筆」(時間最新)
+        # 保留每個群組的「第一筆」(降冪排序後即為時間最新)
 
-        clean_df = df_raw.drop_duplicates(subset=['norm_stock', 'norm_broker'], keep='last')
+        clean_df = df_raw.drop_duplicates(subset=['norm_stock', 'norm_broker'], keep='first')
 
         
 
