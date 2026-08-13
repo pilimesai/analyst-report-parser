@@ -1475,10 +1475,8 @@ if st.session_state.history:
 
             
 
-        # 處理日期排序，將「未知」替換成「0000」排在最前
-
-        df_raw['sort_date'] = df_raw['date'].astype(str).str.replace('未知.*', '0000', regex=True)
-
+        # 處理日期排序，將「未知」替換成「1900-01-01」排在最後
+        df_raw['sort_date'] = pd.to_datetime(df_raw['date'].astype(str).str.replace('未知.*', '1900-01-01', regex=True), errors='coerce').fillna(pd.Timestamp('1900-01-01'))
         df_raw = df_raw.sort_values('sort_date', ascending=False)
 
         
@@ -1957,10 +1955,11 @@ if st.session_state.history:
             for s in _unique_stocks_ordered:
                 s_rows = df_display[df_display['股票名稱/代號'].replace('', float('NaN')).ffill() == s]
                 valid_dates = [str(d) for d in s_rows['發布日期'] if str(d).strip() not in ['', '未知日期', '尚無報告', 'N/A', 'nan'] and ('-' in str(d) or '/' in str(d))]
-                stock_latest_date[s] = max(valid_dates) if valid_dates else '0000-00-00'
+                parsed_dates = pd.to_datetime(valid_dates, errors='coerce').dropna()
+                stock_latest_date[s] = parsed_dates.max() if not parsed_dates.empty else pd.Timestamp('1900-01-01')
                 
             # 依據最新日期降冪排序 (最新的在最上面)
-            _unique_stocks_sorted = sorted(_unique_stocks_ordered, key=lambda s: stock_latest_date.get(s, '0000-00-00'), reverse=True)
+            _unique_stocks_sorted = sorted(_unique_stocks_ordered, key=lambda s: stock_latest_date.get(s, pd.Timestamp('1900-01-01')), reverse=True)
             
             _order_map = {s: i for i, s in enumerate(_unique_stocks_sorted)}
             df_display['_sort_key'] = df_display['股票名稱/代號'].replace('', float('NaN')).ffill().map(_order_map)
