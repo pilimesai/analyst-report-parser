@@ -952,6 +952,13 @@
                 const response = await fetch(url, { method: 'GET' });
                 const result = await response.json();
                 if (result.status === 'success') {
+                    // 🔑 從雲端讀取 API Key（無痕模式 / 新裝置時 localStorage 為空，靠此填入）
+                    if (result.geminiApiKey && !apiKeyInput.value.trim()) {
+                        apiKeyInput.value = result.geminiApiKey;
+                        localStorage.setItem('gemini_api_key', result.geminiApiKey);
+                        console.log("✅ 已從雲端自動填入 Gemini API Key");
+                    }
+
                     if (result.sheetData) {
                         window.tablesData = result.sheetData;
                         console.log("已從雲端同步設定與 CSV 分頁資料", window.tablesData);
