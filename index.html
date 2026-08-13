@@ -1597,6 +1597,7 @@
                 return dateB - dateA;
             });
 
+            const fragment = document.createDocumentFragment();
             reportsData.forEach((row, index) => {
                 const tr = document.createElement('tr');
 
@@ -1619,8 +1620,9 @@
                     <td><div class="scrollable-cell">${row.summary || 'N/A'}</div></td>
                     <td id="criteria-${index}"><div class="scrollable-cell">${(row.matched_criteria && row.matched_criteria.length > 0) ? row.matched_criteria.join(' / ') : '進行量化運算以比對...'}</div></td>
                 `;
-                reportsTbody.appendChild(tr);
+                fragment.appendChild(tr);
             });
+            reportsTbody.appendChild(fragment);
         }
 
         // Helper: Format stock id to 4-digit TW/TWO tickers
@@ -2192,6 +2194,7 @@
             // Only show the highest score champions (maxScore)
             const champs = scoredStocks.filter(x => x.score === maxScore);
 
+            const fragment = document.createDocumentFragment();
             champs.forEach(champ => {
                 const card = document.createElement('div');
                 card.className = 'champ-card';
@@ -2207,8 +2210,9 @@
                         ${matchesHtml}
                     </div>
                 `;
-                champsGrid.appendChild(card);
+                fragment.appendChild(card);
             });
+            champsGrid.appendChild(fragment);
         }
 
         // Sync data to Google Sheet via Google Apps Script
