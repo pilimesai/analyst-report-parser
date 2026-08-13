@@ -146,8 +146,8 @@ function doGet(e) {
     for (var j = 0; j < allSheets.length; j++) {
       var s = allSheets[j];
       var sName = s.getName();
-      // 跳過 Settings 分頁
-      if (sName !== "Settings" && s.getLastRow() > 0) {
+      // 過濾掉 Settings、預設的工作表，以及備份表單
+      if (sName !== "Settings" && !sName.match(/^工作表\d*$/) && !sName.includes("備份") && s.getLastRow() > 0) {
         var sValues = s.getDataRange().getValues();
         sheetData[sName] = sValues;
       }
