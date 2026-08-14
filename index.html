@@ -1528,7 +1528,7 @@
                     contents: [{ role: 'user', parts: [{ text: truncatedText }] }],
                     generationConfig: {
                         temperature: 0,        // 確定性輸出，不隨機，速度更快
-                        maxOutputTokens: 512,  // 限制輸出長度，避免 AI 過度輸出
+                        maxOutputTokens: 4096,  // 限制輸出長度，放寬以避免 JSON 被截斷
                         responseMimeType: 'application/json'  // 直接要求 JSON 格式輸出
                     }
                 })
