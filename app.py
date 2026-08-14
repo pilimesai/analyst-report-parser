@@ -838,7 +838,7 @@ def parse_report_with_gemini(text, api_key, source_name="未知來源", _rate_pl
     
 
     import time as _time
-    _models_to_try = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.0-flash-lite']
+    _models_to_try = ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-pro', 'gemini-1.5-flash']
     _max_wait_retries = 2  # 遇到全模型限速時最多等待重試幾次
 
     def _parse_retry_delay(err_str):
@@ -984,7 +984,7 @@ def evaluate_stock_with_search(stock, api_key):
 
     try:
         import time as _time2
-        _models_s = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.0-flash-lite']
+        _models_s = ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-pro', 'gemini-1.5-flash']
         _max_wait_s = 2
 
         def _parse_delay(es):
