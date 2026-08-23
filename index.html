@@ -1322,10 +1322,8 @@
                                 newCsvRows.push(['股號', '公司名']);
                             } else if (sheetName === '法說會') {
                                 newCsvRows.push(['股號', '公司名', '日期']);
-                            } else if (sheetName === '近期發行CB') {
-                                newCsvRows.push(['股號', '名稱', '轉換價', '掛牌日']);
                             } else {
-                                newCsvRows.push(row); // 保留所有原始欄位
+                                newCsvRows.push(row); // 保留所有原始欄位 (包含近期發行CB的所有豐富欄位)
                             }
                             continue;
                         }
@@ -1340,10 +1338,6 @@
                         } else if (sheetName === '法說會') {
                             const cDate = row[dateColIdx] || '';
                             newCsvRows.push([cCode, cName, cDate]);
-                        } else if (sheetName === '近期發行CB') {
-                            const cPrice = priceColIdx !== -1 ? (row[priceColIdx] || '') : '';
-                            const cDate = dateColIdx !== -1 ? (row[dateColIdx] || '') : '';
-                            newCsvRows.push([cCode, cName, cPrice, cDate]);
                         } else {
                             newCsvRows.push(row); // 保留所有原始欄位
                         }
@@ -1684,18 +1678,16 @@
 
                 // 從標題列找欄位索引（支援新舊格式）
                 const header = data[0].map(h => String(h));
-                const idxStock   = header.findIndex(h => h.includes('股票代號') || h.includes('股號') || h === '代號');
+                const idxStock   = header.findIndex(h => h.includes('股票代號') || h.includes('股號') || h === '代號' || h.includes('代碼'));
                 const idxPrice   = header.findIndex(h => h.includes('轉換價格') || h.includes('轉換價') || h.includes('定價'));
                 const idxBalance = header.findIndex(h => h.includes('餘額比例') || h.includes('餘額'));
                 const idxExpiry  = header.findIndex(h => h.includes('到期日') || h.includes('到期'));
-                const idxDate    = header.findIndex(h => h.includes('發行日期') || h.includes('掛牌日'));
 
                 // 若找不到標題，退回舊的固定索引（股票代號在col0）
                 const stockCol   = idxStock   >= 0 ? idxStock   : 0;
                 const priceCol   = idxPrice   >= 0 ? idxPrice   : 3;
                 const balanceCol = idxBalance >= 0 ? idxBalance : 7;
                 const expiryCol  = idxExpiry  >= 0 ? idxExpiry  : -1;
-                const dateCol    = idxDate    >= 0 ? idxDate    : -1;
 
                 const today = new Date();
                 today.setHours(0,0,0,0);
@@ -1703,10 +1695,11 @@
                 for (let i = 1; i < data.length; i++) {
                     const row = data[i];
 
-                    if (dateCol >= 0) {
-                        const dateVal = row[dateCol];
-                        if (dateVal) {
-                            const d = new Date(dateVal);
+                    // 只有在明確有「到期日」且小於今天的情況下才過濾（過期可轉債）
+                    if (expiryCol >= 0) {
+                        const expiryVal = row[expiryCol];
+                        if (expiryVal) {
+                            const d = new Date(expiryVal);
                             if (!isNaN(d) && d < today) continue;
                         }
                     }
@@ -1775,18 +1768,19 @@
 
                 const tbody = document.createElement('tbody');
                 
-                let dateIdx = -1;
+                let expiryIdx = -1;
                 if (sheetName === '近期發行CB') {
-                    dateIdx = data[0].findIndex(h => String(h).includes('掛牌') || String(h).includes('發行日期'));
+                    expiryIdx = data[0].findIndex(h => String(h).includes('到期日') || String(h).includes('到期'));
                 }
                 const today = new Date();
                 today.setHours(0,0,0,0);
 
                 for (let i = 1; i < data.length; i++) {
-                    if (sheetName === '近期發行CB' && dateIdx !== -1) {
-                        const dateVal = data[i][dateIdx];
-                        if (dateVal) {
-                            const d = new Date(dateVal);
+                    // 只有明確為過期CB (到期日 < 今天) 才過濾；不可過濾發行日期
+                    if (sheetName === '近期發行CB' && expiryIdx !== -1) {
+                        const expVal = data[i][expiryIdx];
+                        if (expVal) {
+                            const d = new Date(expVal);
                             if (!isNaN(d) && d < today) continue;
                         }
                     }
@@ -2135,15 +2129,16 @@
             }
 
             // 4. Config-based event checking
-            if (config.cbStocks.includes(stockId)) {
+            if (config.cbStocks && config.cbStocks.includes(stockId)) {
                 matched.push("入選要發行CB");
             }
-            if (config.cbIssued[stockId]) {
+            if (config.cbIssued && config.cbIssued[stockId]) {
                 const info = config.cbIssued[stockId];
                 // Check conversion criteria if price details available
                 if (priceData && priceData.length > 0) {
                     const lastPrice = priceData[priceData.length - 1].close;
-                    if (lastPrice < info.conv_price && info.balance_pct < 10) {
+                    const conversionPct = 100 - info.balance_pct;
+                    if (lastPrice > 0 && info.conv_price > 0 && lastPrice < info.conv_price && conversionPct < 10) {
                         matched.push("若已有發行的CB,且股價低於轉換價,並且轉換比例<10%");
                     }
                 }
