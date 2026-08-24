@@ -1906,6 +1906,9 @@
                     if (contractLiabilitiesStocks.includes(stockId)) {
                         matched.push("入選合約負債");
                     }
+                    if (cbStocks.includes(stockId) && !matched.includes("入選要發行CB")) {
+                        matched.push("入選要發行CB");
+                    }
 
                     // Score logic
                     let score = matched.length;
