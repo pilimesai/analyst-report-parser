@@ -502,15 +502,109 @@
             word-break: break-word;
         }
 
-        /* 避免較短的資料欄位被不自然換行，並將它們的寬度縮至最小 */
-        td:nth-child(1),
-        td:nth-child(2),
-        td:nth-child(3),
-        td:nth-child(4),
-        td:nth-child(5),
-        td:nth-child(6) {
+        /* 避免報告總覽較短的資料欄位被不自然換行，並將它們的寬度縮至最小 */
+        #reports-tbody td:nth-child(1),
+        #reports-tbody td:nth-child(2),
+        #reports-tbody td:nth-child(3),
+        #reports-tbody td:nth-child(4),
+        #reports-tbody td:nth-child(5),
+        #reports-tbody td:nth-child(6) {
             white-space: nowrap;
             width: 1%;
+        }
+
+        /* Persistent CSV Tables & CB Table Styling - Fit on one page without horizontal scroll */
+        .persistent-table-section {
+            width: 100%;
+        }
+
+        .persistent-table-container {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 70vh;
+        }
+
+        .cb-table-container {
+            overflow-x: hidden;
+        }
+
+        .cb-table {
+            width: 100% !important;
+            table-layout: fixed !important;
+            font-size: 0.82rem;
+            border-collapse: collapse;
+        }
+
+        .cb-table th,
+        .cb-table td {
+            padding: 0.45rem 0.35rem;
+            vertical-align: middle;
+            word-break: break-word;
+            white-space: normal;
+        }
+
+        .cb-table th {
+            font-size: 0.82rem;
+            text-align: center;
+            background-color: #1e293b;
+            padding: 0.5rem 0.35rem;
+            white-space: nowrap;
+        }
+
+        .cb-col-stock { width: 7.5%; text-align: center; font-weight: 700; color: #60a5fa; }
+        .cb-col-name { width: 11%; font-weight: 600; }
+        .cb-col-code { width: 7.5%; text-align: center; color: var(--text-secondary); font-size: 0.8rem; }
+        .cb-col-status { width: 9.5%; text-align: center; }
+        .cb-col-broker { width: 9%; text-align: center; color: var(--text-secondary); }
+        .cb-col-size { width: 7.5%; text-align: center; }
+        .cb-col-price { width: 9%; text-align: center; font-weight: 600; color: #f59e0b; }
+        .cb-col-date { width: 11%; text-align: center; font-size: 0.8rem; }
+        .cb-col-notes { width: 28%; font-size: 0.76rem; line-height: 1.35; color: #cbd5e1; text-align: left; }
+
+        .cb-badge {
+            display: inline-block;
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .cb-badge-listed {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .cb-badge-effective {
+            background-color: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .cb-badge-neutral {
+            background-color: rgba(148, 163, 184, 0.12);
+            color: #cbd5e1;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .count-badge {
+            background-color: rgba(255, 255, 255, 0.08);
+            color: var(--text-secondary);
+            padding: 0.15rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 900px) {
+            .cb-table-container {
+                overflow-x: auto;
+            }
+            .cb-table {
+                min-width: 760px;
+            }
         }
 
         /* 讓長文字內容有最大高度，超過時出現捲軸 */
@@ -1743,24 +1837,58 @@
                 if (!data || data.length === 0) return; // skip empty
                 if (data.length === 1 && data[0].length === 1 && data[0][0] === "") return; // skip completely empty sheet in google sheets
 
-                const section = document.createElement('div');
-                section.className = 'reports-section';
+                const isCbSheet = (sheetName === '近期發行CB');
 
+                const section = document.createElement('div');
+                section.className = 'reports-section persistent-table-section' + (isCbSheet ? ' cb-table-section' : '');
+
+                // Header with title, count badge, and quick search
                 const header = document.createElement('div');
                 header.className = 'section-header';
-                header.innerHTML = `<h2>📊 ${sheetName}</h2>`;
+                
+                const titleWrapper = document.createElement('div');
+                titleWrapper.style.cssText = 'display:flex; align-items:center; gap:0.75rem;';
+                titleWrapper.innerHTML = `<h2>📊 ${sheetName}</h2>`;
+
+                const countBadge = document.createElement('span');
+                countBadge.className = 'count-badge';
+                titleWrapper.appendChild(countBadge);
+                header.appendChild(titleWrapper);
+
+                const actionsWrapper = document.createElement('div');
+                actionsWrapper.style.cssText = 'display:flex; gap:0.5rem; align-items:center;';
+                
+                const searchInput = document.createElement('input');
+                searchInput.type = 'text';
+                searchInput.placeholder = isCbSheet ? '🔍 搜尋 CB 股票/代號/券商...' : '🔍 搜尋此表...';
+                searchInput.style.cssText = 'padding:0.35rem 0.75rem; font-size:0.8rem; border-radius:0.5rem; background:rgba(255,255,255,0.04); border:1px solid var(--card-border); color:#fff; width:180px; outline:none; transition:all 0.2s;';
+                actionsWrapper.appendChild(searchInput);
+                header.appendChild(actionsWrapper);
+
                 section.appendChild(header);
 
                 const tableContainer = document.createElement('div');
-                tableContainer.className = 'table-responsive';
+                tableContainer.className = 'table-responsive persistent-table-container' + (isCbSheet ? ' cb-table-container' : '');
 
                 const table = document.createElement('table');
+                if (isCbSheet) {
+                    table.className = 'cb-table';
+                }
 
+                // Table Header
                 const thead = document.createElement('thead');
                 const trHead = document.createElement('tr');
-                data[0].forEach(col => {
+                const colClasses = isCbSheet ? [
+                    'cb-col-stock', 'cb-col-name', 'cb-col-code', 'cb-col-status', 
+                    'cb-col-broker', 'cb-col-size', 'cb-col-price', 'cb-col-date', 'cb-col-notes'
+                ] : [];
+
+                data[0].forEach((col, cIdx) => {
                     const th = document.createElement('th');
                     th.innerText = col;
+                    if (isCbSheet && colClasses[cIdx]) {
+                        th.className = colClasses[cIdx];
+                    }
                     trHead.appendChild(th);
                 });
                 thead.appendChild(trHead);
@@ -1769,37 +1897,90 @@
                 const tbody = document.createElement('tbody');
                 
                 let expiryIdx = -1;
-                if (sheetName === '近期發行CB') {
+                if (isCbSheet) {
                     expiryIdx = data[0].findIndex(h => String(h).includes('到期日') || String(h).includes('到期'));
                 }
                 const today = new Date();
                 today.setHours(0,0,0,0);
 
+                let visibleRows = [];
+
                 for (let i = 1; i < data.length; i++) {
                     // 只有明確為過期CB (到期日 < 今天) 才過濾；不可過濾發行日期
-                    if (sheetName === '近期發行CB' && expiryIdx !== -1) {
+                    if (isCbSheet && expiryIdx !== -1) {
                         const expVal = data[i][expiryIdx];
                         if (expVal) {
                             const d = new Date(expVal);
                             if (!isNaN(d) && d < today) continue;
                         }
                     }
-
-                    const tr = document.createElement('tr');
-                    data[i].forEach(col => {
-                        const td = document.createElement('td');
-                        let displayVal = col;
-                        if (typeof displayVal === 'string' && displayVal.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)) {
-                            const d = new Date(displayVal);
-                            if (!isNaN(d)) displayVal = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
-                        }
-                        td.innerText = displayVal;
-                        tr.appendChild(td);
-                    });
-                    tbody.appendChild(tr);
+                    visibleRows.push(data[i]);
                 }
-                table.appendChild(tbody);
 
+                countBadge.innerText = `${visibleRows.length} 筆`;
+
+                function renderRows(rowsToRender) {
+                    tbody.innerHTML = '';
+                    if (rowsToRender.length === 0) {
+                        const emptyTr = document.createElement('tr');
+                        const emptyTd = document.createElement('td');
+                        emptyTd.colSpan = data[0].length;
+                        emptyTd.style.cssText = 'text-align:center; padding:1.5rem; color:var(--text-secondary);';
+                        emptyTd.innerText = '無符合條件的資料';
+                        emptyTr.appendChild(emptyTd);
+                        tbody.appendChild(emptyTr);
+                        return;
+                    }
+
+                    rowsToRender.forEach(row => {
+                        const tr = document.createElement('tr');
+                        row.forEach((col, cIdx) => {
+                            const td = document.createElement('td');
+                            let displayVal = col;
+                            if (typeof displayVal === 'string' && displayVal.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)) {
+                                const d = new Date(displayVal);
+                                if (!isNaN(d)) displayVal = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
+                            }
+
+                            if (isCbSheet) {
+                                if (colClasses[cIdx]) td.className = colClasses[cIdx];
+                                // Format status badge for column 3
+                                if (cIdx === 3) {
+                                    const stStr = String(displayVal || '');
+                                    let badgeClass = 'cb-badge-neutral';
+                                    if (stStr.includes('掛牌')) badgeClass = 'cb-badge-listed';
+                                    else if (stStr.includes('生效')) badgeClass = 'cb-badge-effective';
+                                    td.innerHTML = `<span class="cb-badge ${badgeClass}">${displayVal || '—'}</span>`;
+                                } else if (cIdx === 0) {
+                                    td.innerHTML = `<strong>${displayVal || ''}</strong>`;
+                                } else {
+                                    td.innerText = displayVal !== undefined && displayVal !== null ? displayVal : '';
+                                }
+                            } else {
+                                td.innerText = displayVal !== undefined && displayVal !== null ? displayVal : '';
+                            }
+                            tr.appendChild(td);
+                        });
+                        tbody.appendChild(tr);
+                    });
+                }
+
+                renderRows(visibleRows);
+
+                // Live search filter for this table
+                searchInput.addEventListener('input', (e) => {
+                    const q = e.target.value.toLowerCase().trim();
+                    if (!q) {
+                        renderRows(visibleRows);
+                        countBadge.innerText = `${visibleRows.length} 筆`;
+                    } else {
+                        const filtered = visibleRows.filter(r => r.some(cell => String(cell).toLowerCase().includes(q)));
+                        renderRows(filtered);
+                        countBadge.innerText = `${filtered.length} / ${visibleRows.length} 筆`;
+                    }
+                });
+
+                table.appendChild(tbody);
                 tableContainer.appendChild(table);
                 section.appendChild(tableContainer);
                 container.appendChild(section);
