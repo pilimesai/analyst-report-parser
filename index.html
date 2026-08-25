@@ -544,12 +544,13 @@
         }
 
         .cb-table th {
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             font-weight: 600;
             text-align: center;
             background-color: #1e293b;
-            padding: 0.5rem 0.25rem;
+            padding: 0.5rem 0.15rem;
             white-space: nowrap !important;
+            letter-spacing: -0.2px;
         }
 
         /* 9大欄位寬度與文字防折斷規則 (總計 100%) */
@@ -576,7 +577,7 @@
             white-space: nowrap !important;
         }
         .cb-col-status {
-            width: 9.5%;
+            width: 9%;
             text-align: center !important;
             white-space: nowrap !important;
         }
@@ -587,9 +588,10 @@
             white-space: nowrap !important;
         }
         .cb-col-size {
-            width: 6.5%;
+            width: 8%;
             text-align: center !important;
             white-space: nowrap !important;
+            font-size: 0.78rem;
         }
         .cb-col-price {
             width: 8%;
@@ -599,14 +601,14 @@
             white-space: nowrap !important;
         }
         .cb-col-date {
-            width: 11%;
+            width: 10.5%;
             text-align: center !important;
             font-size: 0.78rem;
             font-family: monospace, Outfit, sans-serif;
             white-space: nowrap !important;
         }
         .cb-col-notes {
-            width: 32.5%;
+            width: 32%;
             font-size: 0.75rem;
             line-height: 1.35;
             color: #cbd5e1;
@@ -1943,7 +1945,7 @@
                         if (cIdx === 0 && (col.includes('代號') || col.includes('股號'))) headerText = '代號';
                         else if (cIdx === 3 && col.includes('狀態')) headerText = '狀態';
                         else if (cIdx === 4 && col.includes('券商')) headerText = '主辦券商';
-                        else if (cIdx === 5 && col.includes('發行量')) headerText = '規模(億)';
+                        else if (cIdx === 5 && (col.includes('發行量') || col.includes('規模') || col.includes('發行') || col.includes('量'))) headerText = '規模(億)';
                         else if (cIdx === 6 && col.includes('轉換')) headerText = '轉換價';
                         else if (cIdx === 7 && (col.includes('掛牌') || col.includes('進度'))) headerText = '掛牌日';
                     }
