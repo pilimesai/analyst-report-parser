@@ -221,12 +221,12 @@
         /* Main Content Container */
         .main-content {
             margin-left: 320px;
-            padding: 2.5rem;
+            padding: 1.75rem 1.25rem;
             flex: 1;
             min-width: 0;
             display: flex;
             flex-direction: column;
-            gap: 2.5rem;
+            gap: 2rem;
         }
 
         .header-section {
@@ -532,43 +532,96 @@
         .cb-table {
             width: 100% !important;
             table-layout: fixed !important;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             border-collapse: collapse;
         }
 
         .cb-table th,
         .cb-table td {
-            padding: 0.45rem 0.35rem;
+            padding: 0.45rem 0.25rem;
             vertical-align: middle;
+            font-size: 0.8rem;
+        }
+
+        .cb-table th {
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-align: center;
+            background-color: #1e293b;
+            padding: 0.5rem 0.25rem;
+            white-space: nowrap !important;
+        }
+
+        /* 9大欄位寬度與文字防折斷規則 (總計 100%) */
+        .cb-col-stock {
+            width: 6.5%;
+            text-align: center !important;
+            font-weight: 700;
+            color: #60a5fa;
+            white-space: nowrap !important;
+        }
+        .cb-col-name {
+            width: 10.5%;
+            font-weight: 600;
+            text-align: left !important;
+            white-space: nowrap !important;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .cb-col-code {
+            width: 7%;
+            text-align: center !important;
+            color: var(--text-secondary);
+            font-size: 0.78rem;
+            white-space: nowrap !important;
+        }
+        .cb-col-status {
+            width: 9.5%;
+            text-align: center !important;
+            white-space: nowrap !important;
+        }
+        .cb-col-broker {
+            width: 8.5%;
+            text-align: center !important;
+            color: #e2e8f0;
+            white-space: nowrap !important;
+        }
+        .cb-col-size {
+            width: 6.5%;
+            text-align: center !important;
+            white-space: nowrap !important;
+        }
+        .cb-col-price {
+            width: 8%;
+            text-align: center !important;
+            font-weight: 600;
+            color: #f59e0b;
+            white-space: nowrap !important;
+        }
+        .cb-col-date {
+            width: 11%;
+            text-align: center !important;
+            font-size: 0.78rem;
+            font-family: monospace, Outfit, sans-serif;
+            white-space: nowrap !important;
+        }
+        .cb-col-notes {
+            width: 32.5%;
+            font-size: 0.75rem;
+            line-height: 1.35;
+            color: #cbd5e1;
+            text-align: left !important;
             word-break: break-word;
             white-space: normal;
         }
 
-        .cb-table th {
-            font-size: 0.82rem;
-            text-align: center;
-            background-color: #1e293b;
-            padding: 0.5rem 0.35rem;
-            white-space: nowrap;
-        }
-
-        .cb-col-stock { width: 7.5%; text-align: center; font-weight: 700; color: #60a5fa; }
-        .cb-col-name { width: 11%; font-weight: 600; }
-        .cb-col-code { width: 7.5%; text-align: center; color: var(--text-secondary); font-size: 0.8rem; }
-        .cb-col-status { width: 9.5%; text-align: center; }
-        .cb-col-broker { width: 9%; text-align: center; color: var(--text-secondary); }
-        .cb-col-size { width: 7.5%; text-align: center; }
-        .cb-col-price { width: 9%; text-align: center; font-weight: 600; color: #f59e0b; }
-        .cb-col-date { width: 11%; text-align: center; font-size: 0.8rem; }
-        .cb-col-notes { width: 28%; font-size: 0.76rem; line-height: 1.35; color: #cbd5e1; text-align: left; }
-
         .cb-badge {
             display: inline-block;
-            padding: 0.15rem 0.4rem;
+            padding: 0.12rem 0.35rem;
             border-radius: 0.25rem;
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             font-weight: 600;
-            white-space: nowrap;
+            white-space: nowrap !important;
         }
 
         .cb-badge-listed {
@@ -1885,7 +1938,16 @@
 
                 data[0].forEach((col, cIdx) => {
                     const th = document.createElement('th');
-                    th.innerText = col;
+                    let headerText = col;
+                    if (isCbSheet) {
+                        if (cIdx === 0 && (col.includes('代號') || col.includes('股號'))) headerText = '代號';
+                        else if (cIdx === 3 && col.includes('狀態')) headerText = '狀態';
+                        else if (cIdx === 4 && col.includes('券商')) headerText = '主辦券商';
+                        else if (cIdx === 5 && col.includes('發行量')) headerText = '規模(億)';
+                        else if (cIdx === 6 && col.includes('轉換')) headerText = '轉換價';
+                        else if (cIdx === 7 && (col.includes('掛牌') || col.includes('進度'))) headerText = '掛牌日';
+                    }
+                    th.innerText = headerText;
                     if (isCbSheet && colClasses[cIdx]) {
                         th.className = colClasses[cIdx];
                     }
@@ -1953,6 +2015,8 @@
                                     td.innerHTML = `<span class="cb-badge ${badgeClass}">${displayVal || '—'}</span>`;
                                 } else if (cIdx === 0) {
                                     td.innerHTML = `<strong>${displayVal || ''}</strong>`;
+                                } else if (cIdx === 6) {
+                                    td.innerHTML = `<span style="font-weight:600; color:#f59e0b;">${displayVal || '—'}</span>`;
                                 } else {
                                     td.innerText = displayVal !== undefined && displayVal !== null ? displayVal : '';
                                 }
