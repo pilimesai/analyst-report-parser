@@ -617,6 +617,63 @@
             white-space: normal;
         }
 
+        /* 目前股價低於CB轉換價 表格專用樣式 */
+        .cb-below-col-stock {
+            width: 7.5%;
+            text-align: center !important;
+            font-weight: 700;
+            color: #60a5fa;
+            white-space: nowrap !important;
+        }
+        .cb-below-col-name {
+            width: 14%;
+            font-weight: 600;
+            text-align: left !important;
+            white-space: nowrap !important;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .cb-below-col-price {
+            width: 9.5%;
+            text-align: center !important;
+            font-weight: 700;
+            color: #38bdf8;
+            white-space: nowrap !important;
+        }
+        .cb-below-col-conv {
+            width: 9.5%;
+            text-align: center !important;
+            font-weight: 700;
+            color: #f59e0b;
+            white-space: nowrap !important;
+        }
+        .cb-below-col-diff {
+            width: 10.5%;
+            text-align: center !important;
+            white-space: nowrap !important;
+        }
+        .cb-below-col-status {
+            width: 9.5%;
+            text-align: center !important;
+            white-space: nowrap !important;
+        }
+        .cb-below-col-date {
+            width: 11.5%;
+            text-align: center !important;
+            font-family: monospace, Outfit, sans-serif;
+            font-size: 0.78rem;
+            white-space: nowrap !important;
+        }
+        .cb-below-col-notes {
+            width: 28%;
+            font-size: 0.75rem;
+            line-height: 1.35;
+            color: #cbd5e1;
+            text-align: left !important;
+            word-break: break-word;
+            white-space: normal;
+        }
+
         .cb-badge {
             display: inline-block;
             padding: 0.12rem 0.35rem;
@@ -884,6 +941,17 @@
                         style="width: 48%;">📥 上傳 CSV</button>
                     <button class="btn btn-primary" onclick="fetchCBFromGithub()"
                         style="width: 48%; background: #4a6fa5;">🤖 AI自動獲取</button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>目前股價低於CB轉換價</label>
+                <input type="file" id="cb-below-conv-upload" accept=".csv" style="display:none;">
+                <div class="upload-actions">
+                    <button class="btn" onclick="document.getElementById('cb-below-conv-upload').click()"
+                        style="width: 48%;">📥 上傳 CSV</button>
+                    <button class="btn btn-primary" onclick="calculateAndDisplayCbBelowConv()"
+                        style="width: 48%; background: #059669;">⚡ 即時比對</button>
                 </div>
             </div>
         </div>
@@ -1359,6 +1427,7 @@
         document.getElementById('earnings-call-upload').addEventListener('change', (e) => handleCsvUpload(e, '法說會'));
         document.getElementById('contract-liabilities-upload').addEventListener('change', (e) => handleCsvUpload(e, '合約負債條件'));
         document.getElementById('recent-cb-upload').addEventListener('change', (e) => handleCsvUpload(e, '近期發行CB'));
+        document.getElementById('cb-below-conv-upload').addEventListener('change', (e) => handleCsvUpload(e, '目前股價低於CB轉換價'));
 
         async function fetchCBFromGithub() {
             try {
@@ -1372,6 +1441,131 @@
             } catch (e) {
                 showToast("獲取失敗: " + e.message, true);
             }
+        }
+
+        async function calculateAndDisplayCbBelowConv() {
+            showToast("🔍 正在從近期 CB 名單獲取轉換價並比對即時股價...");
+            
+            // 確保有 CB 資料
+            if (!window.tablesData || !window.tablesData['近期發行CB'] || window.tablesData['近期發行CB'].length < 2) {
+                await fetchCBFromGithub();
+            }
+
+            const cbRows = window.tablesData['近期發行CB'];
+            if (!cbRows || cbRows.length < 2) {
+                showToast("⚠️ 尚無 CB 資料可供比對，請先上傳或點擊 AI 自動獲取近期發行 CB。", true);
+                return;
+            }
+
+            const header = cbRows[0].map(h => String(h).trim());
+            const statusIdx = header.findIndex(h => (h.includes('狀態') || h === '進度') && !h.includes('日') && !h.includes('期'));
+            const dateIdx = header.findIndex(h => (h.includes('日') || h.includes('期') || h.includes('掛牌')) && !h.includes('狀態'));
+            const expiryIdx = header.findIndex(h => h.includes('到期日') || h.includes('到期'));
+            const stockIdx = header.findIndex(h => h.includes('股票代號') || h.includes('股號') || h === '代號' || h.includes('代碼')) >= 0 ? header.findIndex(h => h.includes('股票代號') || h.includes('股號') || h === '代號' || h.includes('代碼')) : 0;
+            const cbNameIdx = header.findIndex(h => h.includes('CB名稱') || h.includes('名稱') || h.includes('商品')) >= 0 ? header.findIndex(h => h.includes('CB名稱') || h.includes('名稱') || h.includes('商品')) : 1;
+            const priceIdx = header.findIndex(h => h.includes('轉換價格') || h.includes('轉換價') || h.includes('定價') || h.includes('發行價')) >= 0 ? header.findIndex(h => h.includes('轉換價格') || h.includes('轉換價') || h.includes('定價') || h.includes('發行價')) : 6;
+            const remarkIdx = header.findIndex(h => h.includes('備註')) >= 0 ? header.findIndex(h => h.includes('備註')) : 8;
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const candidateCbs = [];
+            for (let i = 1; i < cbRows.length; i++) {
+                const row = cbRows[i];
+                if (isCbRowExpired(row, statusIdx, dateIdx, expiryIdx, today)) {
+                    continue; // 排除已發行過期的 CB
+                }
+                const sid = getStockId(row[stockIdx]);
+                const rawPrice = String(row[priceIdx] || '').replace(/[^0-9.]/g, '');
+                const convPrice = parseFloat(rawPrice);
+                if (sid && !isNaN(convPrice) && convPrice > 0) {
+                    candidateCbs.push({
+                        stockId: sid,
+                        cbName: row[cbNameIdx] || '',
+                        status: statusIdx >= 0 ? (row[statusIdx] || '') : '',
+                        convPrice: convPrice,
+                        date: dateIdx >= 0 ? (row[dateIdx] || '') : '',
+                        remark: remarkIdx >= 0 ? (row[remarkIdx] || '') : ''
+                    });
+                }
+            }
+
+            if (candidateCbs.length === 0) {
+                showToast("⚠️ 未找到具備明確轉換價格的有效 CB 標的。", true);
+                return;
+            }
+
+            progressContainer.style.display = 'flex';
+            updateProgress(10, `正在獲取 ${candidateCbs.length} 檔 CB 股票即時價格...`);
+
+            const oneMonthAgo = new Date();
+            oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
+            const startDateStr = oneMonthAgo.toISOString().split('T')[0];
+
+            const resultRows = [];
+            const resultHeaders = ['股票代號', 'CB名稱', '目前股價', 'CB轉換價', '折價幅度', '進度狀態', '掛牌日/進度日', '備註'];
+
+            for (let i = 0; i < candidateCbs.length; i++) {
+                const cb = candidateCbs[i];
+                const percent = Math.round(10 + (i / candidateCbs.length) * 80);
+                updateProgress(percent, `正在比對 ${cb.stockId} ${cb.cbName} (${i + 1}/${candidateCbs.length})...`);
+
+                try {
+                    const priceData = await fetchFinMindData('TaiwanStockPrice', cb.stockId, startDateStr);
+                    if (priceData && priceData.length > 0) {
+                        const lastClose = parseFloat(priceData[priceData.length - 1].close);
+                        if (lastClose > 0 && lastClose < cb.convPrice) {
+                            const diffPct = ((lastClose - cb.convPrice) / cb.convPrice * 100).toFixed(1) + '%';
+                            resultRows.push([
+                                cb.stockId,
+                                cb.cbName,
+                                lastClose.toFixed(1),
+                                cb.convPrice.toFixed(1),
+                                diffPct,
+                                cb.status,
+                                cb.date,
+                                cb.remark
+                            ]);
+                        }
+                    }
+                } catch (err) {
+                    console.warn(`查詢 ${cb.stockId} 股價失敗:`, err);
+                }
+            }
+
+            // 依照折價幅度排序（折價最多排在最前）
+            resultRows.sort((a, b) => parseFloat(a[4]) - parseFloat(b[4]));
+
+            const fullTableData = [resultHeaders, ...resultRows];
+            window.tablesData['目前股價低於CB轉換價'] = fullTableData;
+
+            // 若有設定 GAS 寫入網址，同步儲存到雲端 Sheets 分頁
+            const scriptUrl = scriptUrlInput.value.trim();
+            if (scriptUrl) {
+                try {
+                    fetch(scriptUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+                        body: JSON.stringify({
+                            action: 'save_csv',
+                            sheetName: '目前股價低於CB轉換價',
+                            data: fullTableData
+                        })
+                    }).then(r => r.json()).then(res => {
+                        if (res.status === 'success') {
+                            showToast("☁️ 已成功同步「目前股價低於CB轉換價」至雲端試算表！");
+                        }
+                    }).catch(e => console.warn("同步失敗", e));
+                } catch (e) {
+                    console.warn(e);
+                }
+            }
+
+            updateProgress(100, `✅ 比對完成，共 ${resultRows.length} 檔低於轉換價！`);
+            setTimeout(() => { progressContainer.style.display = 'none'; }, 1500);
+
+            renderPersistentTables();
+            showToast(`🎉 比對完成！共找出 ${resultRows.length} 檔目前股價低於 CB 轉換價的標的！`);
         }
 
         function handleCsvUpload(e, targetSheetName) {
@@ -1800,12 +1994,105 @@
             return match ? match[0] : null;
         }
 
+        // Helper: Parse various date formats safely
+        function parseDateHelper(dateVal) {
+            if (!dateVal) return null;
+            if (dateVal instanceof Date) {
+                if (isNaN(dateVal.getTime())) return null;
+                return new Date(dateVal.getFullYear(), dateVal.getMonth(), dateVal.getDate());
+            }
+            const s = String(dateVal).trim();
+            if (!s) return null;
+
+            // ISO string e.g. 2026-08-17T00:00:00.000Z
+            if (s.includes('T')) {
+                const d = new Date(s);
+                if (!isNaN(d.getTime())) {
+                    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+                }
+            }
+
+            // ROC year e.g. 115/08/17 or 113-08-17 or 113.08.17
+            const rocMatch = s.match(/^(\d{2,3})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})/);
+            if (rocMatch && parseInt(rocMatch[1], 10) < 1900) {
+                const year = parseInt(rocMatch[1], 10) + 1911;
+                const month = parseInt(rocMatch[2], 10) - 1;
+                const day = parseInt(rocMatch[3], 10);
+                return new Date(year, month, day);
+            }
+
+            // Standard YYYY/MM/DD, YYYY-MM-DD, YYYY.MM.DD
+            const stdMatch = s.match(/^(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})/);
+            if (stdMatch) {
+                const year = parseInt(stdMatch[1], 10);
+                const month = parseInt(stdMatch[2], 10) - 1;
+                const day = parseInt(stdMatch[3], 10);
+                return new Date(year, month, day);
+            }
+
+            const d = new Date(s);
+            if (!isNaN(d.getTime())) {
+                return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+            }
+            return null;
+        }
+
+        // Helper: Check if a CB table row is expired (到期或發行日已過)
+        function isCbRowExpired(row, statusIdx, dateIdx, expiryIdx, today) {
+            // 1. 若有到期日欄位且到期日 < 今天，則視為過期
+            if (expiryIdx >= 0 && row[expiryIdx]) {
+                const expDate = parseDateHelper(row[expiryIdx]);
+                if (expDate && expDate < today) return true;
+            }
+
+            // 2. 發行日/掛牌日判斷：
+            if (dateIdx >= 0 && row[dateIdx]) {
+                const d = parseDateHelper(row[dateIdx]);
+                if (d) {
+                    if (statusIdx >= 0) {
+                        const statusStr = String(row[statusIdx] || '').trim();
+                        const isListedOrPriced = statusStr.includes('掛牌') || statusStr.includes('已定價') || statusStr.includes('發行') || statusStr.includes('上市') || statusStr.includes('上櫃');
+                        if (isListedOrPriced && d < today) {
+                            return true; // 發行日/掛牌日已過期
+                        }
+                    } else {
+                        // 無狀態欄位時（如簡化欄位：股號/名稱/轉換價/掛牌日），直接依掛牌日是否過期過濾
+                        if (d < today) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
         function extractCodesFromTableData(sheetName) {
             const codes = [];
             if (window.tablesData && window.tablesData[sheetName]) {
                 const data = window.tablesData[sheetName];
+                if (data.length < 2) return codes;
+
+                const isCbSheet = (sheetName === '近期發行CB');
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                let statusIdx = -1;
+                let dateIdx = -1;
+                let expiryIdx = -1;
+                if (isCbSheet) {
+                    const header = data[0].map(h => String(h).trim());
+                    statusIdx = header.findIndex(h => (h.includes('狀態') || h === '進度') && !h.includes('日') && !h.includes('期'));
+                    dateIdx = header.findIndex(h => (h.includes('日') || h.includes('期') || h.includes('掛牌')) && !h.includes('狀態'));
+                    expiryIdx = header.findIndex(h => h.includes('到期日') || h.includes('到期'));
+                }
+
                 for (let i = 1; i < data.length; i++) {
                     const row = data[i];
+                    if (isCbSheet && isCbRowExpired(row, statusIdx, dateIdx, expiryIdx, today)) {
+                        continue; // 過濾掉發行日已過期的 CB
+                    }
+
                     let code = null;
                     for (let j = 0; j < Math.min(row.length, 5); j++) {
                         code = getStockId(String(row[j]));
@@ -1845,12 +2132,9 @@
                     const row = data[i];
 
                     // 只有在明確有「到期日」且小於今天的情況下才過濾（過期可轉債）
-                    if (expiryCol >= 0) {
-                        const expiryVal = row[expiryCol];
-                        if (expiryVal) {
-                            const d = new Date(expiryVal);
-                            if (!isNaN(d) && d < today) continue;
-                        }
+                    if (expiryCol >= 0 && row[expiryCol]) {
+                        const d = parseDateHelper(row[expiryCol]);
+                        if (d && d < today) continue;
                     }
 
                     const code = getStockId(String(row[stockCol] || ''));
@@ -1877,7 +2161,7 @@
 
             // 定義要顯示的順序或白名單（如果不在此清單中，就接在後面顯示）
             const preferredOrder = [
-                '大戶持股', '近期發行CB', '毛利三季成長', '營收條件', '法說會', '合約負債條件'
+                '大戶持股', '近期發行CB', '目前股價低於CB轉換價', '毛利三季成長', '營收條件', '法說會', '合約負債條件'
             ];
             sheetsToRender.sort((a, b) => {
                 let idxA = preferredOrder.indexOf(a);
@@ -1893,9 +2177,10 @@
                 if (data.length === 1 && data[0].length === 1 && data[0][0] === "") return; // skip completely empty sheet in google sheets
 
                 const isCbSheet = (sheetName === '近期發行CB');
+                const isCbBelowSheet = (sheetName === '目前股價低於CB轉換價' || sheetName.includes('股價低於CB轉換價') || sheetName.includes('低於轉換價'));
 
                 const section = document.createElement('div');
-                section.className = 'reports-section persistent-table-section' + (isCbSheet ? ' cb-table-section' : '');
+                section.className = 'reports-section persistent-table-section' + ((isCbSheet || isCbBelowSheet) ? ' cb-table-section' : '');
 
                 // Header with title, count badge, and quick search
                 const header = document.createElement('div');
@@ -1915,7 +2200,7 @@
                 
                 const searchInput = document.createElement('input');
                 searchInput.type = 'text';
-                searchInput.placeholder = isCbSheet ? '🔍 搜尋 CB 股票/代號/券商...' : '🔍 搜尋此表...';
+                searchInput.placeholder = isCbBelowSheet ? '🔍 搜尋低於轉換價股票/代號...' : (isCbSheet ? '🔍 搜尋 CB 股票/代號/券商...' : '🔍 搜尋此表...');
                 searchInput.style.cssText = 'padding:0.35rem 0.75rem; font-size:0.8rem; border-radius:0.5rem; background:rgba(255,255,255,0.04); border:1px solid var(--card-border); color:#fff; width:180px; outline:none; transition:all 0.2s;';
                 actionsWrapper.appendChild(searchInput);
                 header.appendChild(actionsWrapper);
@@ -1923,20 +2208,28 @@
                 section.appendChild(header);
 
                 const tableContainer = document.createElement('div');
-                tableContainer.className = 'table-responsive persistent-table-container' + (isCbSheet ? ' cb-table-container' : '');
+                tableContainer.className = 'table-responsive persistent-table-container' + ((isCbSheet || isCbBelowSheet) ? ' cb-table-container' : '');
 
                 const table = document.createElement('table');
-                if (isCbSheet) {
+                if (isCbSheet || isCbBelowSheet) {
                     table.className = 'cb-table';
                 }
 
                 // Table Header
                 const thead = document.createElement('thead');
                 const trHead = document.createElement('tr');
-                const colClasses = isCbSheet ? [
-                    'cb-col-stock', 'cb-col-name', 'cb-col-code', 'cb-col-status', 
-                    'cb-col-broker', 'cb-col-size', 'cb-col-price', 'cb-col-date', 'cb-col-notes'
-                ] : [];
+                let colClasses = [];
+                if (isCbSheet) {
+                    colClasses = [
+                        'cb-col-stock', 'cb-col-name', 'cb-col-code', 'cb-col-status', 
+                        'cb-col-broker', 'cb-col-size', 'cb-col-price', 'cb-col-date', 'cb-col-notes'
+                    ];
+                } else if (isCbBelowSheet) {
+                    colClasses = [
+                        'cb-below-col-stock', 'cb-below-col-name', 'cb-below-col-price', 'cb-below-col-conv',
+                        'cb-below-col-diff', 'cb-below-col-status', 'cb-below-col-date', 'cb-below-col-notes'
+                    ];
+                }
 
                 data[0].forEach((col, cIdx) => {
                     const th = document.createElement('th');
@@ -1950,7 +2243,7 @@
                         else if (cIdx === 7 && (col.includes('掛牌') || col.includes('進度'))) headerText = '掛牌日';
                     }
                     th.innerText = headerText;
-                    if (isCbSheet && colClasses[cIdx]) {
+                    if ((isCbSheet || isCbBelowSheet) && colClasses[cIdx]) {
                         th.className = colClasses[cIdx];
                     }
                     trHead.appendChild(th);
@@ -1960,9 +2253,14 @@
 
                 const tbody = document.createElement('tbody');
                 
+                let statusIdx = -1;
+                let dateIdx = -1;
                 let expiryIdx = -1;
                 if (isCbSheet) {
-                    expiryIdx = data[0].findIndex(h => String(h).includes('到期日') || String(h).includes('到期'));
+                    const header = data[0].map(h => String(h).trim());
+                    statusIdx = header.findIndex(h => (h.includes('狀態') || h === '進度') && !h.includes('日') && !h.includes('期'));
+                    dateIdx = header.findIndex(h => (h.includes('日') || h.includes('期') || h.includes('掛牌')) && !h.includes('狀態'));
+                    expiryIdx = header.findIndex(h => h.includes('到期日') || h.includes('到期'));
                 }
                 const today = new Date();
                 today.setHours(0,0,0,0);
@@ -1970,15 +2268,12 @@
                 let visibleRows = [];
 
                 for (let i = 1; i < data.length; i++) {
-                    // 只有明確為過期CB (到期日 < 今天) 才過濾；不可過濾發行日期
-                    if (isCbSheet && expiryIdx !== -1) {
-                        const expVal = data[i][expiryIdx];
-                        if (expVal) {
-                            const d = new Date(expVal);
-                            if (!isNaN(d) && d < today) continue;
-                        }
+                    const row = data[i];
+                    // 過濾掉發行日已過期的 CB
+                    if (isCbSheet && isCbRowExpired(row, statusIdx, dateIdx, expiryIdx, today)) {
+                        continue;
                     }
-                    visibleRows.push(data[i]);
+                    visibleRows.push(row);
                 }
 
                 countBadge.innerText = `${visibleRows.length} 筆`;
@@ -2019,6 +2314,29 @@
                                     td.innerHTML = `<strong>${displayVal || ''}</strong>`;
                                 } else if (cIdx === 6) {
                                     td.innerHTML = `<span style="font-weight:600; color:#f59e0b;">${displayVal || '—'}</span>`;
+                                } else {
+                                    td.innerText = displayVal !== undefined && displayVal !== null ? displayVal : '';
+                                }
+                            } else if (isCbBelowSheet) {
+                                if (colClasses[cIdx]) td.className = colClasses[cIdx];
+                                if (cIdx === 0) {
+                                    td.innerHTML = `<strong>${displayVal || ''}</strong>`;
+                                } else if (cIdx === 2) {
+                                    // 目前股價
+                                    td.innerHTML = `<span style="font-weight:700; color:#38bdf8;">${displayVal || '—'}</span>`;
+                                } else if (cIdx === 3) {
+                                    // CB 轉換價
+                                    td.innerHTML = `<span style="font-weight:700; color:#f59e0b;">${displayVal || '—'}</span>`;
+                                } else if (cIdx === 4) {
+                                    // 折價幅度
+                                    td.innerHTML = `<span class="cb-badge" style="background:rgba(239,68,68,0.18); color:#f87171; font-weight:700; border:1px solid rgba(239,68,68,0.3);">${displayVal || '—'}</span>`;
+                                } else if (cIdx === 5) {
+                                    // 狀態
+                                    const stStr = String(displayVal || '');
+                                    let badgeClass = 'cb-badge-neutral';
+                                    if (stStr.includes('掛牌')) badgeClass = 'cb-badge-listed';
+                                    else if (stStr.includes('生效')) badgeClass = 'cb-badge-effective';
+                                    td.innerHTML = `<span class="cb-badge ${badgeClass}">${displayVal || '—'}</span>`;
                                 } else {
                                     td.innerText = displayVal !== undefined && displayVal !== null ? displayVal : '';
                                 }
@@ -2073,6 +2391,11 @@
 
             const cbStocks = extractCodesFromTableData('近期發行CB');
             cbStocks.forEach(sid => {
+                if (!validStocks.includes(sid)) validStocks.push(sid);
+            });
+
+            const cbBelowStocks = extractCodesFromTableData('目前股價低於CB轉換價');
+            cbBelowStocks.forEach(sid => {
                 if (!validStocks.includes(sid)) validStocks.push(sid);
             });
 
@@ -2155,6 +2478,9 @@
                     }
                     if (cbStocks.includes(stockId) && !matched.includes("入選要發行CB")) {
                         matched.push("入選要發行CB");
+                    }
+                    if (cbBelowStocks.includes(stockId) && !matched.includes("若已有發行的CB,且股價低於轉換價,並且轉換比例<10%")) {
+                        matched.push("若已有發行的CB,且股價低於轉換價,並且轉換比例<10%");
                     }
 
                     // Score logic
