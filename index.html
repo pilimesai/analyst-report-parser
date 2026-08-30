@@ -577,18 +577,18 @@
             white-space: nowrap !important;
         }
         .cb-col-status {
-            width: 9%;
+            width: 10%;
             text-align: center !important;
             white-space: nowrap !important;
         }
         .cb-col-broker {
-            width: 8.5%;
+            width: 9%;
             text-align: center !important;
             color: #e2e8f0;
             white-space: nowrap !important;
         }
         .cb-col-size {
-            width: 8%;
+            width: 7.5%;
             text-align: center !important;
             white-space: nowrap !important;
             font-size: 0.78rem;
@@ -608,7 +608,7 @@
             white-space: nowrap !important;
         }
         .cb-col-notes {
-            width: 32%;
+            width: 30.5%;
             font-size: 0.75rem;
             line-height: 1.35;
             color: #cbd5e1;
@@ -2037,7 +2037,7 @@
             return null;
         }
 
-        // Helper: Check if a CB table row is expired (到期或發行日已過)
+        // Helper: Check if a CB table row is expired (到期或發行日/掛牌日已過)
         function isCbRowExpired(row, statusIdx, dateIdx, expiryIdx, today) {
             // 1. 若有到期日欄位且到期日 < 今天，則視為過期
             if (expiryIdx >= 0 && row[expiryIdx]) {
@@ -2045,22 +2045,11 @@
                 if (expDate && expDate < today) return true;
             }
 
-            // 2. 發行日/掛牌日判斷：
+            // 2. 掛牌日/發行日/進度日判斷：只要該日期早於今天（已在過去），即判定為過期移除
             if (dateIdx >= 0 && row[dateIdx]) {
                 const d = parseDateHelper(row[dateIdx]);
-                if (d) {
-                    if (statusIdx >= 0) {
-                        const statusStr = String(row[statusIdx] || '').trim();
-                        const isListedOrPriced = statusStr.includes('掛牌') || statusStr.includes('已定價') || statusStr.includes('發行') || statusStr.includes('上市') || statusStr.includes('上櫃');
-                        if (isListedOrPriced && d < today) {
-                            return true; // 發行日/掛牌日已過期
-                        }
-                    } else {
-                        // 無狀態欄位時（如簡化欄位：股號/名稱/轉換價/掛牌日），直接依掛牌日是否過期過濾
-                        if (d < today) {
-                            return true;
-                        }
-                    }
+                if (d && d < today) {
+                    return true;
                 }
             }
 
