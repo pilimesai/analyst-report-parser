@@ -617,61 +617,66 @@
             white-space: normal;
         }
 
-        /* 目前股價低於CB轉換價 表格專用樣式 */
+        /* 目前股價低於CB轉換價 表格專用樣式 (9大欄位) */
         .cb-below-col-stock {
-            width: 7.5%;
+            width: 8%;
             text-align: center !important;
             font-weight: 700;
             color: #60a5fa;
             white-space: nowrap !important;
         }
         .cb-below-col-name {
-            width: 14%;
+            width: 15%;
             font-weight: 600;
             text-align: left !important;
             white-space: nowrap !important;
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        .cb-below-col-code {
+            width: 8%;
+            text-align: center !important;
+            color: var(--text-secondary);
+            font-size: 0.78rem;
+            white-space: nowrap !important;
+        }
         .cb-below-col-price {
-            width: 9.5%;
+            width: 10%;
             text-align: center !important;
             font-weight: 700;
             color: #38bdf8;
             white-space: nowrap !important;
         }
         .cb-below-col-conv {
-            width: 9.5%;
+            width: 10%;
             text-align: center !important;
             font-weight: 700;
             color: #f59e0b;
             white-space: nowrap !important;
         }
         .cb-below-col-diff {
-            width: 10.5%;
-            text-align: center !important;
-            white-space: nowrap !important;
-        }
-        .cb-below-col-status {
-            width: 9.5%;
+            width: 11%;
             text-align: center !important;
             white-space: nowrap !important;
         }
         .cb-below-col-date {
-            width: 11.5%;
+            width: 12%;
             text-align: center !important;
             font-family: monospace, Outfit, sans-serif;
             font-size: 0.78rem;
             white-space: nowrap !important;
         }
-        .cb-below-col-notes {
-            width: 28%;
-            font-size: 0.75rem;
-            line-height: 1.35;
-            color: #cbd5e1;
-            text-align: left !important;
-            word-break: break-word;
-            white-space: normal;
+        .cb-below-col-balance {
+            width: 13%;
+            text-align: center !important;
+            white-space: nowrap !important;
+            font-size: 0.78rem;
+        }
+        .cb-below-col-size {
+            width: 13%;
+            text-align: center !important;
+            white-space: nowrap !important;
+            font-size: 0.78rem;
         }
 
         .cb-badge {
@@ -950,8 +955,8 @@
                 <div class="upload-actions">
                     <button class="btn" onclick="document.getElementById('cb-below-conv-upload').click()"
                         style="width: 48%;">📥 上傳 CSV</button>
-                    <button class="btn btn-primary" onclick="calculateAndDisplayCbBelowConv()"
-                        style="width: 48%; background: #059669;">⚡ 即時比對</button>
+                    <button class="btn btn-primary" onclick="fetchCbBelowConvFromGithub()"
+                        style="width: 48%; background: #059669;">🤖 AI自動獲取</button>
                 </div>
             </div>
         </div>
@@ -1431,8 +1436,7 @@
 
         async function fetchCBFromGithub() {
             try {
-                showToast("正在透過 AI 從資料庫獲取最新 CB 名單...");
-                // Fetch from the raw github user content
+                showToast("正在透過 AI 從資料庫獲取最新預計發行 CB 名單...");
                 const res = await fetch("https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/%E8%BF%91%E6%9C%9F%E7%99%BC%E8%A1%8CCB.csv?v=" + new Date().getTime());
                 if (!res.ok) throw new Error("無法獲取資料");
                 const text = await res.text();
@@ -1443,129 +1447,22 @@
             }
         }
 
+        async function fetchCbBelowConvFromGithub() {
+            try {
+                showToast("正在透過 AI 從資料庫獲取全市場「股價低於CB轉換價」最新名單...");
+                const res = await fetch("https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/%E7%9B%AE%E5%89%8D%E8%82%A1%E5%83%B9%E4%BD%8E%E6%96%BCCB%E8%BD%89%E6%8F%9B%E5%83%B9.csv?v=" + new Date().getTime());
+                if (!res.ok) throw new Error("無法獲取資料");
+                const text = await res.text();
+
+                parseAndSyncCsv(text, "AI自動獲取", "目前股價低於CB轉換價", false);
+            } catch (e) {
+                showToast("獲取失敗: " + e.message, true);
+            }
+        }
+
         async function calculateAndDisplayCbBelowConv() {
-            showToast("🔍 正在從近期 CB 名單獲取轉換價並比對即時股價...");
-            
-            // 確保有 CB 資料
-            if (!window.tablesData || !window.tablesData['近期發行CB'] || window.tablesData['近期發行CB'].length < 2) {
-                await fetchCBFromGithub();
-            }
-
-            const cbRows = window.tablesData['近期發行CB'];
-            if (!cbRows || cbRows.length < 2) {
-                showToast("⚠️ 尚無 CB 資料可供比對，請先上傳或點擊 AI 自動獲取近期發行 CB。", true);
-                return;
-            }
-
-            const header = cbRows[0].map(h => String(h).trim());
-            const statusIdx = header.findIndex(h => (h.includes('狀態') || h === '進度') && !h.includes('日') && !h.includes('期'));
-            const dateIdx = header.findIndex(h => (h.includes('日') || h.includes('期') || h.includes('掛牌')) && !h.includes('狀態'));
-            const expiryIdx = header.findIndex(h => h.includes('到期日') || h.includes('到期'));
-            const stockIdx = header.findIndex(h => h.includes('股票代號') || h.includes('股號') || h === '代號' || h.includes('代碼')) >= 0 ? header.findIndex(h => h.includes('股票代號') || h.includes('股號') || h === '代號' || h.includes('代碼')) : 0;
-            const cbNameIdx = header.findIndex(h => h.includes('CB名稱') || h.includes('名稱') || h.includes('商品')) >= 0 ? header.findIndex(h => h.includes('CB名稱') || h.includes('名稱') || h.includes('商品')) : 1;
-            const priceIdx = header.findIndex(h => h.includes('轉換價格') || h.includes('轉換價') || h.includes('定價') || h.includes('發行價')) >= 0 ? header.findIndex(h => h.includes('轉換價格') || h.includes('轉換價') || h.includes('定價') || h.includes('發行價')) : 6;
-            const remarkIdx = header.findIndex(h => h.includes('備註')) >= 0 ? header.findIndex(h => h.includes('備註')) : 8;
-
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            const candidateCbs = [];
-            for (let i = 1; i < cbRows.length; i++) {
-                const row = cbRows[i];
-                if (isCbRowExpired(row, statusIdx, dateIdx, expiryIdx, today)) {
-                    continue; // 排除已發行過期的 CB
-                }
-                const sid = getStockId(row[stockIdx]);
-                const rawPrice = String(row[priceIdx] || '').replace(/[^0-9.]/g, '');
-                const convPrice = parseFloat(rawPrice);
-                if (sid && !isNaN(convPrice) && convPrice > 0) {
-                    candidateCbs.push({
-                        stockId: sid,
-                        cbName: row[cbNameIdx] || '',
-                        status: statusIdx >= 0 ? (row[statusIdx] || '') : '',
-                        convPrice: convPrice,
-                        date: dateIdx >= 0 ? (row[dateIdx] || '') : '',
-                        remark: remarkIdx >= 0 ? (row[remarkIdx] || '') : ''
-                    });
-                }
-            }
-
-            if (candidateCbs.length === 0) {
-                showToast("⚠️ 未找到具備明確轉換價格的有效 CB 標的。", true);
-                return;
-            }
-
-            progressContainer.style.display = 'flex';
-            updateProgress(10, `正在獲取 ${candidateCbs.length} 檔 CB 股票即時價格...`);
-
-            const oneMonthAgo = new Date();
-            oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
-            const startDateStr = oneMonthAgo.toISOString().split('T')[0];
-
-            const resultRows = [];
-            const resultHeaders = ['股票代號', 'CB名稱', '目前股價', 'CB轉換價', '折價幅度', '進度狀態', '掛牌日/進度日', '備註'];
-
-            for (let i = 0; i < candidateCbs.length; i++) {
-                const cb = candidateCbs[i];
-                const percent = Math.round(10 + (i / candidateCbs.length) * 80);
-                updateProgress(percent, `正在比對 ${cb.stockId} ${cb.cbName} (${i + 1}/${candidateCbs.length})...`);
-
-                try {
-                    const priceData = await fetchFinMindData('TaiwanStockPrice', cb.stockId, startDateStr);
-                    if (priceData && priceData.length > 0) {
-                        const lastClose = parseFloat(priceData[priceData.length - 1].close);
-                        if (lastClose > 0 && lastClose < cb.convPrice) {
-                            const diffPct = ((lastClose - cb.convPrice) / cb.convPrice * 100).toFixed(1) + '%';
-                            resultRows.push([
-                                cb.stockId,
-                                cb.cbName,
-                                lastClose.toFixed(1),
-                                cb.convPrice.toFixed(1),
-                                diffPct,
-                                cb.status,
-                                cb.date,
-                                cb.remark
-                            ]);
-                        }
-                    }
-                } catch (err) {
-                    console.warn(`查詢 ${cb.stockId} 股價失敗:`, err);
-                }
-            }
-
-            // 依照折價幅度排序（折價最多排在最前）
-            resultRows.sort((a, b) => parseFloat(a[4]) - parseFloat(b[4]));
-
-            const fullTableData = [resultHeaders, ...resultRows];
-            window.tablesData['目前股價低於CB轉換價'] = fullTableData;
-
-            // 若有設定 GAS 寫入網址，同步儲存到雲端 Sheets 分頁
-            const scriptUrl = scriptUrlInput.value.trim();
-            if (scriptUrl) {
-                try {
-                    fetch(scriptUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-                        body: JSON.stringify({
-                            action: 'save_csv',
-                            sheetName: '目前股價低於CB轉換價',
-                            data: fullTableData
-                        })
-                    }).then(r => r.json()).then(res => {
-                        if (res.status === 'success') {
-                            showToast("☁️ 已成功同步「目前股價低於CB轉換價」至雲端試算表！");
-                        }
-                    }).catch(e => console.warn("同步失敗", e));
-                } catch (e) {
-                    console.warn(e);
-                }
-            }
-
-            updateProgress(100, `✅ 比對完成，共 ${resultRows.length} 檔低於轉換價！`);
-            setTimeout(() => { progressContainer.style.display = 'none'; }, 1500);
-
-            renderPersistentTables();
-            showToast(`🎉 比對完成！共找出 ${resultRows.length} 檔目前股價低於 CB 轉換價的標的！`);
+            // 優先直接透過 GitHub 抓取全市場已篩選好之最新全量資料
+            await fetchCbBelowConvFromGithub();
         }
 
         function handleCsvUpload(e, targetSheetName) {
@@ -2308,24 +2205,17 @@
                                 }
                             } else if (isCbBelowSheet) {
                                 if (colClasses[cIdx]) td.className = colClasses[cIdx];
-                                if (cIdx === 0) {
+                                const colH = String(data[0][cIdx] || '');
+                                if (colH.includes('代號') && !colH.includes('CB')) {
                                     td.innerHTML = `<strong>${displayVal || ''}</strong>`;
-                                } else if (cIdx === 2) {
-                                    // 目前股價
+                                } else if (colH.includes('目前股價') || colH.includes('現價') || colH.includes('股市價')) {
                                     td.innerHTML = `<span style="font-weight:700; color:#38bdf8;">${displayVal || '—'}</span>`;
-                                } else if (cIdx === 3) {
-                                    // CB 轉換價
+                                } else if (colH.includes('轉換價') || colH.includes('轉換價格')) {
                                     td.innerHTML = `<span style="font-weight:700; color:#f59e0b;">${displayVal || '—'}</span>`;
-                                } else if (cIdx === 4) {
-                                    // 折價幅度
+                                } else if (colH.includes('折價') || colH.includes('幅度') || colH.includes('價內外') || colH.includes('溢價')) {
                                     td.innerHTML = `<span class="cb-badge" style="background:rgba(239,68,68,0.18); color:#f87171; font-weight:700; border:1px solid rgba(239,68,68,0.3);">${displayVal || '—'}</span>`;
-                                } else if (cIdx === 5) {
-                                    // 狀態
-                                    const stStr = String(displayVal || '');
-                                    let badgeClass = 'cb-badge-neutral';
-                                    if (stStr.includes('掛牌')) badgeClass = 'cb-badge-listed';
-                                    else if (stStr.includes('生效')) badgeClass = 'cb-badge-effective';
-                                    td.innerHTML = `<span class="cb-badge ${badgeClass}">${displayVal || '—'}</span>`;
+                                } else if (colH.includes('餘額')) {
+                                    td.innerHTML = `<span style="color:#a7f3d0; font-weight:600;">${displayVal || '—'}</span>`;
                                 } else {
                                     td.innerText = displayVal !== undefined && displayVal !== null ? displayVal : '';
                                 }
