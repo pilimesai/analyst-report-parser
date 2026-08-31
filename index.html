@@ -925,7 +925,9 @@
                 <input type="file" id="earnings-call-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
                     <button class="btn" onclick="document.getElementById('earnings-call-upload').click()"
-                        style="width: 100%;">📥 上傳 CSV</button>
+                        style="width: 48%;">📥 上傳 CSV</button>
+                    <button class="btn btn-primary" onclick="fetchEarningsCallFromGithub()"
+                        style="width: 48%; background: #7c3aed;">🤖 AI自動獲取</button>
                 </div>
             </div>
 
@@ -1463,6 +1465,19 @@
         async function calculateAndDisplayCbBelowConv() {
             // 優先直接透過 GitHub 抓取全市場已篩選好之最新全量資料
             await fetchCbBelowConvFromGithub();
+        }
+
+        async function fetchEarningsCallFromGithub() {
+            try {
+                showToast("正在透過 AI 從資料庫獲取兩週內法說會名單...");
+                const res = await fetch("https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/%E8%BF%91%E6%9C%9F%E6%B3%95%E8%AA%AA%E6%9C%83.csv?v=" + new Date().getTime());
+                if (!res.ok) throw new Error("無法獲取資料（狀態碼 " + res.status + "）");
+                const text = await res.text();
+                parseAndSyncCsv(text, "AI自動獲取", "法說會", false);
+                showToast("✅ 法說會名單已更新！");
+            } catch (e) {
+                showToast("獲取失敗: " + e.message, true);
+            }
         }
 
         function handleCsvUpload(e, targetSheetName) {
@@ -2160,6 +2175,24 @@
                         continue;
                     }
                     visibleRows.push(row);
+                }
+
+                // 「目前股價低於CB轉換價」表格：依到期日由近到遠排序（快到期排最上面）
+                if (isCbBelowSheet) {
+                    const headers = data[0].map(h => String(h).trim());
+                    const expiryColIdx = headers.findIndex(h => h.includes('到期日') || h.includes('到期'));
+                    if (expiryColIdx >= 0) {
+                        visibleRows.sort((a, b) => {
+                            const parseDate = v => {
+                                if (!v) return Infinity;
+                                const s = String(v).trim();
+                                // 支援 ISO datetime、YYYY/MM/DD、YYYY-MM-DD 格式
+                                const d = new Date(s.replace(/\//g, '-'));
+                                return isNaN(d) ? Infinity : d.getTime();
+                            };
+                            return parseDate(a[expiryColIdx]) - parseDate(b[expiryColIdx]);
+                        });
+                    }
                 }
 
                 countBadge.innerText = `${visibleRows.length} 筆`;
