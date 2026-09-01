@@ -422,17 +422,34 @@
             align-items: center;
             gap: 0.5rem;
             overflow-x: auto;
-            padding: 0.25rem 0.25rem 0.5rem 0.25rem;
-            scrollbar-width: thin;
+            padding: 0.25rem 0.25rem 0.65rem 0.25rem;
+            scrollbar-width: auto;
+            scrollbar-color: #6366f1 rgba(255, 255, 255, 0.08);
         }
 
         .nav-tabs-container::-webkit-scrollbar {
-            height: 4px;
+            height: 12px;
+        }
+
+        .nav-tabs-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
         }
 
         .nav-tabs-container::-webkit-scrollbar-thumb {
-            background: var(--card-border);
-            border-radius: 4px;
+            background: #6366f1;
+            border-radius: 6px;
+            cursor: grab;
+            transition: background 0.2s;
+        }
+
+        .nav-tabs-container::-webkit-scrollbar-thumb:hover {
+            background: #818cf8;
+        }
+
+        .nav-tabs-container::-webkit-scrollbar-thumb:active {
+            background: #a5b4fc;
+            cursor: grabbing;
         }
 
         .tab-btn {
@@ -2396,6 +2413,17 @@
                     }
                 });
             }
+        }
+
+        // 支援滑鼠滾輪水平滾動分頁按鈕列
+        const navTabsContainer = document.getElementById('nav-tabs-container');
+        if (navTabsContainer) {
+            navTabsContainer.addEventListener('wheel', (e) => {
+                if (e.deltaY !== 0) {
+                    e.preventDefault();
+                    navTabsContainer.scrollLeft += e.deltaY;
+                }
+            }, { passive: false });
         }
 
         function renderPersistentTables() {
