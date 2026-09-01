@@ -502,15 +502,138 @@
             word-break: break-word;
         }
 
-        /* 避免報告總覽較短的資料欄位被不自然換行，並將它們的寬度縮至最小 */
-        #reports-tbody td:nth-child(1),
-        #reports-tbody td:nth-child(2),
-        #reports-tbody td:nth-child(3),
-        #reports-tbody td:nth-child(4),
-        #reports-tbody td:nth-child(5),
-        #reports-tbody td:nth-child(6) {
-            white-space: nowrap;
-            width: 1%;
+        /* 報告解析總覽表格專用樣式 - 仿照 CB 表格精緻比例 */
+        .reports-table {
+            width: 100% !important;
+            table-layout: fixed !important;
+            font-size: 0.8rem;
+            border-collapse: collapse;
+        }
+
+        .reports-table th,
+        .reports-table td {
+            padding: 0.45rem 0.35rem;
+            vertical-align: middle;
+            font-size: 0.8rem;
+        }
+
+        .reports-table th {
+            font-size: 0.76rem;
+            font-weight: 600;
+            text-align: center;
+            background-color: #1e293b;
+            white-space: nowrap !important;
+            letter-spacing: -0.2px;
+        }
+
+        .rep-col-date {
+            width: 8%;
+            text-align: center !important;
+            font-size: 0.78rem;
+            font-family: monospace, Outfit, sans-serif;
+            white-space: nowrap !important;
+        }
+
+        .rep-col-stock {
+            width: 9.5%;
+            text-align: center !important;
+            font-weight: 700;
+            color: #60a5fa;
+            white-space: nowrap !important;
+        }
+
+        .rep-col-broker {
+            width: 8%;
+            text-align: center !important;
+            color: #e2e8f0;
+            white-space: nowrap !important;
+        }
+
+        .rep-col-rating {
+            width: 7%;
+            text-align: center !important;
+            white-space: nowrap !important;
+        }
+
+        .rep-col-tp {
+            width: 6.5%;
+            text-align: center !important;
+            font-weight: 700;
+            color: #f59e0b;
+            white-space: nowrap !important;
+        }
+
+        .rep-col-eps {
+            width: 7%;
+            text-align: center !important;
+            white-space: nowrap !important;
+            font-size: 0.78rem;
+        }
+
+        .rep-col-summary {
+            width: 27%;
+            text-align: left !important;
+            font-size: 0.76rem;
+            line-height: 1.35;
+            color: #cbd5e1;
+            word-break: break-word;
+        }
+
+        .rep-col-criteria {
+            width: 27%;
+            text-align: left !important;
+            font-size: 0.76rem;
+            line-height: 1.35;
+            color: #38bdf8;
+            word-break: break-word;
+        }
+
+        /* 2欄 / 3欄 事件表格 (大戶持股、營收、毛利、合約負債、法說會等) - 精簡適中欄寬，仿照發行CB風格 */
+        .compact-event-table {
+            width: auto !important;
+            min-width: 300px;
+            max-width: 480px;
+            table-layout: auto;
+            font-size: 0.82rem;
+            border-collapse: collapse;
+            border: 1px solid var(--card-border);
+        }
+
+        .compact-event-table th,
+        .compact-event-table td {
+            padding: 0.45rem 0.85rem;
+            vertical-align: middle;
+            font-size: 0.82rem;
+        }
+
+        .compact-event-table th {
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-align: center;
+            background-color: #1e293b;
+            white-space: nowrap !important;
+        }
+
+        .event-col-stock {
+            width: 90px;
+            text-align: center !important;
+            font-weight: 700;
+            color: #60a5fa;
+            white-space: nowrap !important;
+        }
+
+        .event-col-name {
+            min-width: 130px;
+            max-width: 180px;
+            font-weight: 600;
+            text-align: left !important;
+            white-space: nowrap !important;
+        }
+
+        .event-col-date {
+            min-width: 140px;
+            text-align: center !important;
+            white-space: nowrap !important;
         }
 
         /* Persistent CSV Tables & CB Table Styling - Fit on one page without horizontal scroll */
@@ -1033,17 +1156,17 @@
                     <input type="text" id="report-search-input" placeholder="🔍 搜尋股票代號或名稱..." autocomplete="off">
                 </div>
                 <div class="table-responsive">
-                    <table>
+                    <table class="reports-table" id="reports-table">
                         <thead>
                             <tr>
-                                <th>日期</th>
-                                <th>個股</th>
-                                <th>券商</th>
-                                <th>評等</th>
-                                <th>目標價</th>
-                                <th>預估 EPS</th>
-                                <th>摘要</th>
-                                <th>量化條件符合項目</th>
+                                <th class="rep-col-date">日期</th>
+                                <th class="rep-col-stock">個股</th>
+                                <th class="rep-col-broker">券商</th>
+                                <th class="rep-col-rating">評等</th>
+                                <th class="rep-col-tp">目標價</th>
+                                <th class="rep-col-eps">預估 EPS</th>
+                                <th class="rep-col-summary">摘要</th>
+                                <th class="rep-col-criteria">量化條件符合項目</th>
                             </tr>
                         </thead>
                         <tbody id="reports-tbody">
@@ -1896,14 +2019,14 @@
                 }
 
                 tr.innerHTML = `
-                    <td>${row.date || 'N/A'}</td>
-                    <td><strong>${row.stock || 'N/A'}</strong></td>
-                    <td>${row.brokerage || 'N/A'}</td>
-                    <td><span class="rating-badge ${ratingClass}">${row.rating || 'N/A'}</span></td>
-                    <td>${row.target_price || 'N/A'}</td>
-                    <td>${row.eps || 'N/A'}</td>
-                    <td><div class="scrollable-cell">${row.summary || 'N/A'}</div></td>
-                    <td id="criteria-${index}"><div class="scrollable-cell">${(row.matched_criteria && row.matched_criteria.length > 0) ? row.matched_criteria.join(' / ') : '進行量化運算以比對...'}</div></td>
+                    <td class="rep-col-date">${row.date || 'N/A'}</td>
+                    <td class="rep-col-stock"><strong>${row.stock || 'N/A'}</strong></td>
+                    <td class="rep-col-broker">${row.brokerage || 'N/A'}</td>
+                    <td class="rep-col-rating"><span class="rating-badge ${ratingClass}">${row.rating || 'N/A'}</span></td>
+                    <td class="rep-col-tp">${row.target_price || 'N/A'}</td>
+                    <td class="rep-col-eps">${row.eps || 'N/A'}</td>
+                    <td class="rep-col-summary"><div class="scrollable-cell">${row.summary || 'N/A'}</div></td>
+                    <td class="rep-col-criteria" id="criteria-${index}"><div class="scrollable-cell">${(row.matched_criteria && row.matched_criteria.length > 0) ? row.matched_criteria.join(' / ') : '進行量化運算以比對...'}</div></td>
                 `;
                 fragment.appendChild(tr);
             });
@@ -2189,6 +2312,8 @@
                 const table = document.createElement('table');
                 if (isCbSheet || isCbBelowSheet) {
                     table.className = 'cb-table';
+                } else {
+                    table.className = 'compact-event-table';
                 }
 
                 // Table Header
@@ -2205,6 +2330,10 @@
                         'cb-below-col-stock', 'cb-below-col-name', 'cb-below-col-price', 'cb-below-col-conv',
                         'cb-below-col-diff', 'cb-below-col-status', 'cb-below-col-date', 'cb-below-col-notes'
                     ];
+                } else if (isEarningsSheet) {
+                    colClasses = ['event-col-stock', 'event-col-name', 'event-col-date'];
+                } else {
+                    colClasses = ['event-col-stock', 'event-col-name'];
                 }
 
                 data[0].forEach((col, cIdx) => {
@@ -2219,7 +2348,7 @@
                         else if (cIdx === 7 && (col.includes('掛牌') || col.includes('進度'))) headerText = '掛牌日';
                     }
                     th.innerText = headerText;
-                    if ((isCbSheet || isCbBelowSheet) && colClasses[cIdx]) {
+                    if (colClasses[cIdx]) {
                         th.className = colClasses[cIdx];
                     }
                     trHead.appendChild(th);
@@ -2353,6 +2482,7 @@
                                     td.innerText = displayVal !== undefined && displayVal !== null ? displayVal : '';
                                 }
                             } else if (isEarningsSheet) {
+                                if (colClasses[cIdx]) td.className = colClasses[cIdx];
                                 const colH = String(data[0][cIdx] || '');
                                 if (colH.includes('代號') || colH.includes('股號')) {
                                     td.innerHTML = `<strong>${displayVal || ''}</strong>`;
@@ -2375,7 +2505,12 @@
                                     td.innerText = displayVal !== undefined && displayVal !== null ? displayVal : '';
                                 }
                             } else {
-                                td.innerText = displayVal !== undefined && displayVal !== null ? displayVal : '';
+                                if (colClasses[cIdx]) td.className = colClasses[cIdx];
+                                if (cIdx === 0) {
+                                    td.innerHTML = `<strong>${displayVal || ''}</strong>`;
+                                } else {
+                                    td.innerText = displayVal !== undefined && displayVal !== null ? displayVal : '';
+                                }
                             }
                             tr.appendChild(td);
                         });
