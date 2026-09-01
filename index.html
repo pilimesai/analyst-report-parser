@@ -410,6 +410,79 @@
             color: var(--text-secondary);
         }
 
+        /* Navigation Tab Bar */
+        .nav-tabs-wrapper {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 0.75rem;
+        }
+
+        .nav-tabs-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding: 0.25rem 0.25rem 0.5rem 0.25rem;
+            scrollbar-width: thin;
+        }
+
+        .nav-tabs-container::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .nav-tabs-container::-webkit-scrollbar-thumb {
+            background: var(--card-border);
+            border-radius: 4px;
+        }
+
+        .tab-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.55rem 1rem;
+            border-radius: 0.65rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.25);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.28), rgba(59, 130, 246, 0.22));
+            border-color: #6366f1;
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .tab-btn .tab-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-secondary);
+            font-size: 0.72rem;
+            padding: 0.1rem 0.45rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active .tab-badge {
+            background: rgba(99, 102, 241, 0.4);
+            color: #a5b4fc;
+        }
+
         /* Reports Table Section */
         .reports-section {
             background-color: var(--card-bg);
@@ -1100,7 +1173,18 @@
             </div>
         </div>
 
-        <!-- File Upload Zone -->
+        <!-- Navigation Tab Bar -->
+        <div class="nav-tabs-wrapper">
+            <div class="nav-tabs-container" id="nav-tabs-container">
+                <button class="tab-btn active" data-tab="main-reports" onclick="switchActiveTab('main-reports')">
+                    <span class="tab-icon">📊</span>
+                    <span class="tab-text">報告解析總覽</span>
+                    <span class="tab-badge" id="badge-reports">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- File Upload Zone & Reports Table -->
         <div id="main-reports-view">
             <div class="upload-zone" id="drop-zone">
                 <div class="upload-icon">📄</div>
@@ -1736,6 +1820,7 @@
 
                 // Update local tablesData
                 window.tablesData[sheetName] = csvRows;
+                currentActiveTab = sheetName;
 
                 const scriptUrl = scriptUrlInput.value.trim();
                 if (scriptUrl) {
@@ -1976,6 +2061,11 @@
         // Render reports database inside Table
         function renderReportsTable() {
             reportsTbody.innerHTML = '';
+
+            const repBadge = document.getElementById('badge-reports');
+            if (repBadge) {
+                repBadge.innerText = reportsData ? reportsData.length : 0;
+            }
 
             const searchInput = document.getElementById('report-search-input');
             const searchKeyword = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -2249,12 +2339,87 @@
             return cbData;
         }
 
+        // ==========================================
+        // 📑 分頁導覽系統 (Tab Navigation System)
+        // ==========================================
+        let currentActiveTab = 'main-reports';
+
+        function getSheetIcon(sheetName) {
+            if (sheetName.includes('大戶')) return '📈';
+            if (sheetName.includes('近期發行') || sheetName.includes('發行CB') || (sheetName.includes('CB') && !sheetName.includes('低於'))) return '💎';
+            if (sheetName.includes('低於') || sheetName.includes('轉換價')) return '📉';
+            if (sheetName.includes('毛利')) return '💹';
+            if (sheetName.includes('營收')) return '💰';
+            if (sheetName.includes('法說') || sheetName.includes('法人說明')) return '📅';
+            if (sheetName.includes('合約負債')) return '📑';
+            return '📊';
+        }
+
+        function switchActiveTab(tabId) {
+            currentActiveTab = tabId;
+            
+            // 1. Update active state on tab buttons
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            let foundActive = false;
+            tabButtons.forEach(btn => {
+                if (btn.getAttribute('data-tab') === tabId) {
+                    btn.classList.add('active');
+                    foundActive = true;
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // If tabId was not found (e.g. invalid tab), fallback to main-reports
+            if (!foundActive) {
+                currentActiveTab = 'main-reports';
+                const mainBtn = document.querySelector('.tab-btn[data-tab="main-reports"]');
+                if (mainBtn) mainBtn.classList.add('active');
+            }
+
+            // 2. Toggle main reports view
+            const mainReportsView = document.getElementById('main-reports-view');
+            if (mainReportsView) {
+                mainReportsView.style.display = (currentActiveTab === 'main-reports') ? 'block' : 'none';
+            }
+
+            // 3. Toggle persistent tables container and sections
+            const persistentContainer = document.getElementById('persistent-csv-tables');
+            if (persistentContainer) {
+                persistentContainer.style.display = (currentActiveTab === 'main-reports') ? 'none' : 'flex';
+                const sections = persistentContainer.querySelectorAll('.persistent-table-section');
+                sections.forEach(sec => {
+                    if (sec.getAttribute('data-sheet-name') === currentActiveTab) {
+                        sec.style.display = 'flex';
+                    } else {
+                        sec.style.display = 'none';
+                    }
+                });
+            }
+        }
+
         function renderPersistentTables() {
             const container = document.getElementById('persistent-csv-tables');
             if (!container) return;
             container.innerHTML = ''; // clear
 
-            if (!window.tablesData) return;
+            // Update main reports badge
+            const repBadge = document.getElementById('badge-reports');
+            if (repBadge) {
+                repBadge.innerText = reportsData ? reportsData.length : 0;
+            }
+
+            const tabsContainer = document.getElementById('nav-tabs-container');
+            if (tabsContainer) {
+                // Keep only the main-reports tab button, remove dynamic ones
+                const dynamicTabs = tabsContainer.querySelectorAll('.tab-btn:not([data-tab="main-reports"])');
+                dynamicTabs.forEach(t => t.remove());
+            }
+
+            if (!window.tablesData) {
+                switchActiveTab(currentActiveTab);
+                return;
+            }
 
             const sheetsToRender = Object.keys(window.tablesData);
 
@@ -2278,9 +2443,11 @@
                 const isCbSheet = (sheetName === '近期發行CB' || sheetName.includes('發行CB') || (sheetName.includes('CB') && !sheetName.includes('低於')));
                 const isEarningsSheet = (sheetName.includes('法說') || sheetName.includes('法人說明會'));
                 const isCbBelowSheet = (sheetName === '目前股價低於CB轉換價' || sheetName.includes('股價低於CB轉換價') || sheetName.includes('低於轉換價'));
+                const icon = getSheetIcon(sheetName);
 
                 const section = document.createElement('div');
                 section.className = 'reports-section persistent-table-section' + ((isCbSheet || isCbBelowSheet) ? ' cb-table-section' : '');
+                section.setAttribute('data-sheet-name', sheetName);
 
                 // Header with title, count badge, and quick search
                 const header = document.createElement('div');
@@ -2288,7 +2455,7 @@
                 
                 const titleWrapper = document.createElement('div');
                 titleWrapper.style.cssText = 'display:flex; align-items:center; gap:0.75rem;';
-                titleWrapper.innerHTML = `<h2>📊 ${sheetName}</h2>`;
+                titleWrapper.innerHTML = `<h2>${icon} ${sheetName}</h2>`;
 
                 const countBadge = document.createElement('span');
                 countBadge.className = 'count-badge';
@@ -2427,6 +2594,20 @@
 
                 countBadge.innerText = `${visibleRows.length} 筆`;
 
+                // Add Tab Button to Nav Bar
+                if (tabsContainer) {
+                    const tabBtn = document.createElement('button');
+                    tabBtn.className = 'tab-btn' + (currentActiveTab === sheetName ? ' active' : '');
+                    tabBtn.setAttribute('data-tab', sheetName);
+                    tabBtn.innerHTML = `
+                        <span class="tab-icon">${icon}</span>
+                        <span class="tab-text">${sheetName}</span>
+                        <span class="tab-badge">${visibleRows.length}</span>
+                    `;
+                    tabBtn.onclick = () => switchActiveTab(sheetName);
+                    tabsContainer.appendChild(tabBtn);
+                }
+
                 function renderRows(rowsToRender) {
                     tbody.innerHTML = '';
                     if (rowsToRender.length === 0) {
@@ -2539,6 +2720,9 @@
                 section.appendChild(tableContainer);
                 container.appendChild(section);
             });
+
+            // Ensure correct tab and section visibility
+            switchActiveTab(currentActiveTab);
         }
 
         // 🚀 QUANT SYSTEM IN JAVASCRIPT
