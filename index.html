@@ -1541,10 +1541,14 @@
                             if (nameColIdx === -1) {
                                 nameColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('名稱') || h.includes('公司') || h.includes('股名') || h.includes('簡稱') || h.includes('商品')));
                             }
-                            if (sheetName === '法說會' || sheetName === '近期發行CB') {
-                                dateColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('日期') || h.includes('時間') || h.includes('掛牌')));
+                            
+                            const isEarnings = (sheetName.includes('法說') || sheetName.includes('法人說明會'));
+                            const isCb = (sheetName === '近期發行CB' || sheetName.includes('發行CB') || (sheetName.includes('CB') && !sheetName.includes('低於')));
+
+                            if (isEarnings || isCb) {
+                                dateColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('日期') || h.includes('時間') || h.includes('掛牌') || h.includes('法說')));
                             }
-                            if (sheetName === '近期發行CB') {
+                            if (isCb) {
                                 priceColIdx = row.findIndex(h => typeof h === 'string' && (h.includes('定價') || h.includes('轉換價') || h.includes('價格') || h.includes('發行價')));
                             }
                             break;
@@ -1592,6 +1596,12 @@
                             newCsvRows.push([cCode, cName]);
                         } else if (sheetName === '法說會') {
                             const cDate = row[dateColIdx] || '';
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            const parsedD = parseDateHelper(cDate);
+                            if (parsedD && parsedD < today) {
+                                continue; // 過濾掉已過期法說會
+                            }
                             newCsvRows.push([cCode, cName, cDate]);
                         } else {
                             newCsvRows.push(row); // 保留所有原始欄位
@@ -1968,30 +1978,64 @@
             return false;
         }
 
+        // Helper: Check if a 法說會 table row is expired (法說日期早於今天)
+        function isEarningsCallRowExpired(row, dateIdx, today) {
+            if (dateIdx >= 0 && row[dateIdx]) {
+                const d = parseDateHelper(row[dateIdx]);
+                if (d && d < today) {
+                    return true;
+                }
+            }
+            // 容錯檢查：若指定欄位沒讀出日期，掃描前 5 欄位找日期字串
+            for (let j = 0; j < Math.min(row.length, 5); j++) {
+                const val = String(row[j] || '').trim();
+                if (val.match(/^\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2}/) || val.match(/^\d{2,3}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2}/) || val.includes('T')) {
+                    const d = parseDateHelper(val);
+                    if (d && d < today) return true;
+                }
+            }
+            return false;
+        }
+
         function extractCodesFromTableData(sheetName) {
             const codes = [];
-            if (window.tablesData && window.tablesData[sheetName]) {
-                const data = window.tablesData[sheetName];
-                if (data.length < 2) return codes;
+            if (window.tablesData) {
+                let matchedKey = sheetName;
+                if (!window.tablesData[matchedKey]) {
+                    const keys = Object.keys(window.tablesData);
+                    const found = keys.find(k => k.trim() === sheetName || k.includes(sheetName) || (sheetName.includes('法說') && k.includes('法說')) || (sheetName.includes('CB') && k.includes('CB')));
+                    if (found) matchedKey = found;
+                }
+                const data = window.tablesData[matchedKey];
+                if (!data || data.length < 2) return codes;
 
-                const isCbSheet = (sheetName === '近期發行CB');
+                const isCbSheet = (matchedKey === '近期發行CB' || matchedKey.includes('發行CB') || (matchedKey.includes('CB') && !matchedKey.includes('低於')));
+                const isEarningsSheet = (matchedKey.includes('法說') || matchedKey.includes('法人說明會'));
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
 
                 let statusIdx = -1;
                 let dateIdx = -1;
                 let expiryIdx = -1;
+                let earnDateIdx = -1;
                 if (isCbSheet) {
                     const header = data[0].map(h => String(h).trim());
                     statusIdx = header.findIndex(h => (h.includes('狀態') || h === '進度') && !h.includes('日') && !h.includes('期'));
                     dateIdx = header.findIndex(h => (h.includes('日') || h.includes('期') || h.includes('掛牌')) && !h.includes('狀態'));
                     expiryIdx = header.findIndex(h => h.includes('到期日') || h.includes('到期'));
+                } else if (isEarningsSheet) {
+                    const header = data[0].map(h => String(h).trim());
+                    earnDateIdx = header.findIndex(h => h.includes('日期') || h.includes('時間') || h.includes('法說'));
+                    if (earnDateIdx === -1) earnDateIdx = 2;
                 }
 
                 for (let i = 1; i < data.length; i++) {
                     const row = data[i];
                     if (isCbSheet && isCbRowExpired(row, statusIdx, dateIdx, expiryIdx, today)) {
                         continue; // 過濾掉發行日已過期的 CB
+                    }
+                    if (isEarningsSheet && isEarningsCallRowExpired(row, earnDateIdx, today)) {
+                        continue; // 過濾掉日期已過期的法說會
                     }
 
                     let code = null;
@@ -2009,9 +2053,15 @@
 
         function parseCbIssuedFromTableData() {
             const cbData = {};
-            if (window.tablesData && window.tablesData['近期發行CB']) {
-                const data = window.tablesData['近期發行CB'];
-                if (data.length < 2) return cbData;
+            if (window.tablesData) {
+                let matchedKey = '近期發行CB';
+                if (!window.tablesData[matchedKey]) {
+                    const keys = Object.keys(window.tablesData);
+                    const found = keys.find(k => k.includes('發行CB') || k.includes('近期發行CB') || (k.includes('CB') && !k.includes('低於')));
+                    if (found) matchedKey = found;
+                }
+                const data = window.tablesData[matchedKey];
+                if (!data || data.length < 2) return cbData;
 
                 // 從標題列找欄位索引（支援新舊格式）
                 const header = data[0].map(h => String(h));
@@ -2065,8 +2115,8 @@
                 '大戶持股', '近期發行CB', '目前股價低於CB轉換價', '毛利三季成長', '營收條件', '法說會', '合約負債條件'
             ];
             sheetsToRender.sort((a, b) => {
-                let idxA = preferredOrder.indexOf(a);
-                let idxB = preferredOrder.indexOf(b);
+                let idxA = preferredOrder.findIndex(p => a === p || a.includes(p) || (p === '法說會' && a.includes('法說')));
+                let idxB = preferredOrder.findIndex(p => b === p || b.includes(p) || (p === '法說會' && b.includes('法說')));
                 if (idxA === -1) idxA = 999;
                 if (idxB === -1) idxB = 999;
                 return idxA - idxB;
@@ -2077,7 +2127,8 @@
                 if (!data || data.length === 0) return; // skip empty
                 if (data.length === 1 && data[0].length === 1 && data[0][0] === "") return; // skip completely empty sheet in google sheets
 
-                const isCbSheet = (sheetName === '近期發行CB');
+                const isCbSheet = (sheetName === '近期發行CB' || sheetName.includes('發行CB') || (sheetName.includes('CB') && !sheetName.includes('低於')));
+                const isEarningsSheet = (sheetName.includes('法說') || sheetName.includes('法人說明會'));
                 const isCbBelowSheet = (sheetName === '目前股價低於CB轉換價' || sheetName.includes('股價低於CB轉換價') || sheetName.includes('低於轉換價'));
 
                 const section = document.createElement('div');
@@ -2101,7 +2152,7 @@
                 
                 const searchInput = document.createElement('input');
                 searchInput.type = 'text';
-                searchInput.placeholder = isCbBelowSheet ? '🔍 搜尋低於轉換價股票/代號...' : (isCbSheet ? '🔍 搜尋 CB 股票/代號/券商...' : '🔍 搜尋此表...');
+                searchInput.placeholder = isCbBelowSheet ? '🔍 搜尋低於轉換價股票/代號...' : (isCbSheet ? '🔍 搜尋 CB 股票/代號/券商...' : (isEarningsSheet ? '🔍 搜尋法說會股票/代號...' : '🔍 搜尋此表...'));
                 searchInput.style.cssText = 'padding:0.35rem 0.75rem; font-size:0.8rem; border-radius:0.5rem; background:rgba(255,255,255,0.04); border:1px solid var(--card-border); color:#fff; width:180px; outline:none; transition:all 0.2s;';
                 actionsWrapper.appendChild(searchInput);
                 header.appendChild(actionsWrapper);
@@ -2157,11 +2208,16 @@
                 let statusIdx = -1;
                 let dateIdx = -1;
                 let expiryIdx = -1;
+                let earnDateIdx = -1;
                 if (isCbSheet) {
                     const header = data[0].map(h => String(h).trim());
                     statusIdx = header.findIndex(h => (h.includes('狀態') || h === '進度') && !h.includes('日') && !h.includes('期'));
                     dateIdx = header.findIndex(h => (h.includes('日') || h.includes('期') || h.includes('掛牌')) && !h.includes('狀態'));
                     expiryIdx = header.findIndex(h => h.includes('到期日') || h.includes('到期'));
+                } else if (isEarningsSheet) {
+                    const header = data[0].map(h => String(h).trim());
+                    earnDateIdx = header.findIndex(h => h.includes('日期') || h.includes('時間') || h.includes('法說'));
+                    if (earnDateIdx === -1) earnDateIdx = 2;
                 }
                 const today = new Date();
                 today.setHours(0,0,0,0);
@@ -2174,7 +2230,20 @@
                     if (isCbSheet && isCbRowExpired(row, statusIdx, dateIdx, expiryIdx, today)) {
                         continue;
                     }
+                    // 過濾掉日期已過期的法說會
+                    if (isEarningsSheet && isEarningsCallRowExpired(row, earnDateIdx, today)) {
+                        continue;
+                    }
                     visibleRows.push(row);
+                }
+
+                // 「法說會」表格：依法說日期由近到遠排序（即將舉行的排最前面）
+                if (isEarningsSheet && earnDateIdx >= 0) {
+                    visibleRows.sort((a, b) => {
+                        const dateA = parseDateHelper(a[earnDateIdx]) || new Date('9999-12-31');
+                        const dateB = parseDateHelper(b[earnDateIdx]) || new Date('9999-12-31');
+                        return dateA.getTime() - dateB.getTime();
+                    });
                 }
 
                 // 「目前股價低於CB轉換價」表格：依到期日由近到遠排序（快到期排最上面）
@@ -2249,6 +2318,28 @@
                                     td.innerHTML = `<span class="cb-badge" style="background:rgba(239,68,68,0.18); color:#f87171; font-weight:700; border:1px solid rgba(239,68,68,0.3);">${displayVal || '—'}</span>`;
                                 } else if (colH.includes('餘額')) {
                                     td.innerHTML = `<span style="color:#a7f3d0; font-weight:600;">${displayVal || '—'}</span>`;
+                                } else {
+                                    td.innerText = displayVal !== undefined && displayVal !== null ? displayVal : '';
+                                }
+                            } else if (isEarningsSheet) {
+                                const colH = String(data[0][cIdx] || '');
+                                if (colH.includes('代號') || colH.includes('股號')) {
+                                    td.innerHTML = `<strong>${displayVal || ''}</strong>`;
+                                } else if (colH.includes('日期') || colH.includes('時間') || colH.includes('法說') || cIdx === earnDateIdx) {
+                                    const parsed = parseDateHelper(displayVal);
+                                    if (parsed) {
+                                        const y = parsed.getFullYear();
+                                        const m = String(parsed.getMonth() + 1).padStart(2, '0');
+                                        const d = String(parsed.getDate()).padStart(2, '0');
+                                        const diffDays = Math.round((parsed - today) / (1000 * 60 * 60 * 24));
+                                        let badgeText = '';
+                                        if (diffDays === 0) badgeText = ` <span class="cb-badge cb-badge-effective" style="font-size:0.75rem; margin-left:0.35rem;">今日登場</span>`;
+                                        else if (diffDays <= 7) badgeText = ` <span class="cb-badge cb-badge-listed" style="font-size:0.75rem; margin-left:0.35rem;">${diffDays}天後</span>`;
+                                        else if (diffDays <= 14) badgeText = ` <span class="cb-badge cb-badge-neutral" style="font-size:0.75rem; margin-left:0.35rem;">${diffDays}天後</span>`;
+                                        td.innerHTML = `<span style="font-weight:600; color:#38bdf8;">${y}/${m}/${d}</span>${badgeText}`;
+                                    } else {
+                                        td.innerText = displayVal !== undefined && displayVal !== null ? displayVal : '';
+                                    }
                                 } else {
                                     td.innerText = displayVal !== undefined && displayVal !== null ? displayVal : '';
                                 }
