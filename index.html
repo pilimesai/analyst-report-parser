@@ -2656,10 +2656,13 @@
                     // Score logic
                     let score = matched.length;
                     if (matched.some(m => m.includes("入選大戶持股"))) {
-                        score += 1; // 大戶相關特別加分
+                        score += 1; // 大戶相關特別加分 (總分2分)
                     }
                     if (matched.some(m => m.includes("入選2周內會有法說會"))) {
-                        score += 1; // 法說會特別加分
+                        score += 1; // 法說會特別加分 (總分2分)
+                    }
+                    if (matched.some(m => m.includes("低於轉換價"))) {
+                        score += 1; // 股價低於CB轉換價特別加分 (總分2分)
                     }
 
                     liveScores[stockId] = score;

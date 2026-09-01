@@ -485,6 +485,8 @@ def save_history(history):
 
 def load_conf_dates():
     _conf_cache_path = os.path.join(BASE_DIR, "conf_dates.json")
+    from datetime import datetime as _dt
+    today = _dt.now().date()
     ws = get_worksheet()
     if ws:
         try:
@@ -492,7 +494,16 @@ def load_conf_dates():
             ws_conf = spreadsheet.worksheet("法說會")
             records = ws_conf.get_all_records()
             if records:
-                conf_map = {str(r.get("代號", "")).strip(): str(r.get("日期", "")) for r in records if r.get("代號")}
+                conf_map = {}
+                for r in records:
+                    code = str(r.get("代號", "")).strip()
+                    d_str = str(r.get("日期", "")).strip()
+                    if code and d_str:
+                        try:
+                            d = pd.to_datetime(d_str).date()
+                            if d < today: continue
+                        except: pass
+                        conf_map[code] = d_str
                 st.toast(f"☁️ 成功從 Google Sheets (法說會) 載入 {len(conf_map)} 筆紀錄！", icon="📅")
                 return conf_map
         except Exception as e:
@@ -503,7 +514,14 @@ def load_conf_dates():
     if os.path.exists(_conf_cache_path):
         try:
             with open(_conf_cache_path, 'r', encoding='utf-8') as _f:
-                conf_map = json.load(_f)
+                raw_map = json.load(_f)
+                conf_map = {}
+                for code, d_str in raw_map.items():
+                    try:
+                        d = pd.to_datetime(d_str).date()
+                        if d < today: continue
+                    except: pass
+                    conf_map[str(code).strip()] = str(d_str).strip()
                 st.toast(f"✅ 成功從本地檔案載入 {len(conf_map)} 筆法說會紀錄！", icon="📅")
                 return conf_map
         except Exception as e:
@@ -1669,6 +1687,8 @@ if st.session_state.history:
                 score += 1  # 大戶選股符合，積分加二 (額外加 1 分)
             if "兩周內有法說會" in all_c:
                 score += 1  # 法說會符合，積分加二 (額外加 1 分)
+            if any("低於轉換價" in str(c) for c in all_c):
+                score += 1  # 股價低於CB轉換價符合，積分加二 (額外加 1 分)
             group_scores[stock_clean] = score
             group_criteria[stock_clean] = all_c
             
