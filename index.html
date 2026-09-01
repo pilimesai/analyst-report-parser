@@ -502,23 +502,24 @@
             word-break: break-word;
         }
 
-        /* 報告解析總覽表格專用樣式 - 仿照 CB 表格精緻比例 */
+        /* 報告解析總覽表格專用樣式 - 緊湊適中、防文字重疊 */
         .reports-table {
-            width: 100% !important;
-            table-layout: fixed !important;
-            font-size: 0.8rem;
+            width: 100%;
+            table-layout: auto;
+            font-size: 0.82rem;
             border-collapse: collapse;
         }
 
         .reports-table th,
         .reports-table td {
-            padding: 0.45rem 0.35rem;
+            padding: 0.45rem 0.55rem;
             vertical-align: middle;
-            font-size: 0.8rem;
+            font-size: 0.82rem;
+            border: 1px solid var(--card-border);
         }
 
         .reports-table th {
-            font-size: 0.76rem;
+            font-size: 0.78rem;
             font-weight: 600;
             text-align: center;
             background-color: #1e293b;
@@ -527,65 +528,65 @@
         }
 
         .rep-col-date {
-            width: 8%;
-            text-align: center !important;
-            font-size: 0.78rem;
-            font-family: monospace, Outfit, sans-serif;
             white-space: nowrap !important;
+            text-align: center !important;
+            font-size: 0.8rem;
+            font-family: monospace, Outfit, sans-serif;
+            width: 90px;
         }
 
         .rep-col-stock {
-            width: 9.5%;
+            white-space: nowrap !important;
             text-align: center !important;
             font-weight: 700;
             color: #60a5fa;
-            white-space: nowrap !important;
+            width: 110px;
         }
 
         .rep-col-broker {
-            width: 8%;
+            white-space: nowrap !important;
             text-align: center !important;
             color: #e2e8f0;
-            white-space: nowrap !important;
+            width: 80px;
         }
 
         .rep-col-rating {
-            width: 7%;
-            text-align: center !important;
             white-space: nowrap !important;
+            text-align: center !important;
+            width: 85px;
         }
 
         .rep-col-tp {
-            width: 6.5%;
+            white-space: nowrap !important;
             text-align: center !important;
             font-weight: 700;
             color: #f59e0b;
-            white-space: nowrap !important;
+            width: 80px;
         }
 
         .rep-col-eps {
-            width: 7%;
-            text-align: center !important;
             white-space: nowrap !important;
-            font-size: 0.78rem;
+            text-align: center !important;
+            font-size: 0.8rem;
+            width: 110px;
         }
 
         .rep-col-summary {
-            width: 27%;
             text-align: left !important;
-            font-size: 0.76rem;
-            line-height: 1.35;
+            font-size: 0.8rem;
+            line-height: 1.45;
             color: #cbd5e1;
             word-break: break-word;
+            min-width: 220px;
         }
 
         .rep-col-criteria {
-            width: 27%;
             text-align: left !important;
-            font-size: 0.76rem;
-            line-height: 1.35;
+            font-size: 0.8rem;
+            line-height: 1.45;
             color: #38bdf8;
             word-break: break-word;
+            min-width: 200px;
         }
 
         /* 2欄 / 3欄 事件表格 (大戶持股、營收、毛利、合約負債、法說會等) - 精簡適中欄寬，仿照發行CB風格 */
@@ -2025,8 +2026,8 @@
                     <td class="rep-col-rating"><span class="rating-badge ${ratingClass}">${row.rating || 'N/A'}</span></td>
                     <td class="rep-col-tp">${row.target_price || 'N/A'}</td>
                     <td class="rep-col-eps">${row.eps || 'N/A'}</td>
-                    <td class="rep-col-summary"><div class="scrollable-cell">${row.summary || 'N/A'}</div></td>
-                    <td class="rep-col-criteria" id="criteria-${index}"><div class="scrollable-cell">${(row.matched_criteria && row.matched_criteria.length > 0) ? row.matched_criteria.join(' / ') : '進行量化運算以比對...'}</div></td>
+                    <td class="rep-col-summary">${row.summary || 'N/A'}</td>
+                    <td class="rep-col-criteria" id="criteria-${index}">${(row.matched_criteria && row.matched_criteria.length > 0) ? row.matched_criteria.join(' / ') : '進行量化運算以比對...'}</td>
                 `;
                 fragment.appendChild(tr);
             });
