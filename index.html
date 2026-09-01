@@ -1978,6 +1978,23 @@
             return false;
         }
 
+        // Helper: Check if a CB below conversion table row is expired (到期日早於今天)
+        function isCbBelowRowExpired(row, expiryIdx, today) {
+            if (expiryIdx >= 0 && row[expiryIdx]) {
+                const expDate = parseDateHelper(row[expiryIdx]);
+                if (expDate && expDate < today) return true;
+            }
+            // 容錯檢查：若指定欄位沒讀出日期，掃描前 8 欄位找日期字串
+            for (let j = 0; j < Math.min(row.length, 8); j++) {
+                const val = String(row[j] || '').trim();
+                if (val.match(/^\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2}/) || val.match(/^\d{2,3}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2}/) || val.includes('T')) {
+                    const d = parseDateHelper(val);
+                    if (d && d < today) return true;
+                }
+            }
+            return false;
+        }
+
         // Helper: Check if a 法說會 table row is expired (法說日期早於今天)
         function isEarningsCallRowExpired(row, dateIdx, today) {
             if (dateIdx >= 0 && row[dateIdx]) {
@@ -2010,6 +2027,7 @@
                 if (!data || data.length < 2) return codes;
 
                 const isCbSheet = (matchedKey === '近期發行CB' || matchedKey.includes('發行CB') || (matchedKey.includes('CB') && !matchedKey.includes('低於')));
+                const isCbBelowSheet = (matchedKey === '目前股價低於CB轉換價' || matchedKey.includes('股價低於CB轉換價') || matchedKey.includes('低於轉換價'));
                 const isEarningsSheet = (matchedKey.includes('法說') || matchedKey.includes('法人說明會'));
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
@@ -2023,6 +2041,9 @@
                     statusIdx = header.findIndex(h => (h.includes('狀態') || h === '進度') && !h.includes('日') && !h.includes('期'));
                     dateIdx = header.findIndex(h => (h.includes('日') || h.includes('期') || h.includes('掛牌')) && !h.includes('狀態'));
                     expiryIdx = header.findIndex(h => h.includes('到期日') || h.includes('到期'));
+                } else if (isCbBelowSheet) {
+                    const header = data[0].map(h => String(h).trim());
+                    expiryIdx = header.findIndex(h => h.includes('到期日') || h.includes('到期'));
                 } else if (isEarningsSheet) {
                     const header = data[0].map(h => String(h).trim());
                     earnDateIdx = header.findIndex(h => h.includes('日期') || h.includes('時間') || h.includes('法說'));
@@ -2033,6 +2054,9 @@
                     const row = data[i];
                     if (isCbSheet && isCbRowExpired(row, statusIdx, dateIdx, expiryIdx, today)) {
                         continue; // 過濾掉發行日已過期的 CB
+                    }
+                    if (isCbBelowSheet && isCbBelowRowExpired(row, expiryIdx, today)) {
+                        continue; // 過濾掉到期日已過期的 CB
                     }
                     if (isEarningsSheet && isEarningsCallRowExpired(row, earnDateIdx, today)) {
                         continue; // 過濾掉日期已過期的法說會
@@ -2214,6 +2238,9 @@
                     statusIdx = header.findIndex(h => (h.includes('狀態') || h === '進度') && !h.includes('日') && !h.includes('期'));
                     dateIdx = header.findIndex(h => (h.includes('日') || h.includes('期') || h.includes('掛牌')) && !h.includes('狀態'));
                     expiryIdx = header.findIndex(h => h.includes('到期日') || h.includes('到期'));
+                } else if (isCbBelowSheet) {
+                    const header = data[0].map(h => String(h).trim());
+                    expiryIdx = header.findIndex(h => h.includes('到期日') || h.includes('到期'));
                 } else if (isEarningsSheet) {
                     const header = data[0].map(h => String(h).trim());
                     earnDateIdx = header.findIndex(h => h.includes('日期') || h.includes('時間') || h.includes('法說'));
@@ -2228,6 +2255,10 @@
                     const row = data[i];
                     // 過濾掉發行日已過期的 CB
                     if (isCbSheet && isCbRowExpired(row, statusIdx, dateIdx, expiryIdx, today)) {
+                        continue;
+                    }
+                    // 過濾掉到期日已過期的 CB (目前股價低於CB轉換價)
+                    if (isCbBelowSheet && isCbBelowRowExpired(row, expiryIdx, today)) {
                         continue;
                     }
                     // 過濾掉日期已過期的法說會
