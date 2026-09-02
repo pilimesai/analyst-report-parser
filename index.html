@@ -16,9 +16,9 @@
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
         rel="stylesheet">
 
-    <!-- PDF.js & SheetJS CDNs -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- PDF.js & SheetJS CDNs (Deferred for non-blocking initial paint) -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
         :root {
@@ -411,6 +411,37 @@
             padding: 0.25rem 0.5rem;
             font-size: 0.75rem;
             color: var(--text-secondary);
+        }
+
+        /* Quant Table & Stats Styling */
+        .quant-table {
+            width: 100% !important;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+            border: 1px solid var(--card-border);
+        }
+
+        .quant-table th,
+        .quant-table td {
+            padding: 0.5rem 0.6rem;
+            border: 1px solid var(--card-border);
+            vertical-align: middle;
+        }
+
+        .quant-table th {
+            background-color: #1e293b;
+            font-size: 0.78rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .quant-stat-card {
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .quant-stat-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(99, 102, 241, 0.4);
         }
 
         /* Navigation Tab Bar */
@@ -1341,10 +1372,15 @@
                     <span class="tab-text">報告解析總覽</span>
                     <span class="tab-badge" id="badge-reports">0</span>
                 </button>
+                <button class="tab-btn" data-tab="quant-results" onclick="switchActiveTab('quant-results')">
+                    <span class="tab-icon">🏆</span>
+                    <span class="tab-text">量化選股結果</span>
+                    <span class="tab-badge" id="badge-quant">0</span>
+                </button>
             </div>
         </div>
 
-        <!-- File Upload Zone & Reports Table -->
+        <!-- File Upload Zone & Reports Table (純報告解析) -->
         <div id="main-reports-view">
             <div class="upload-zone" id="drop-zone">
                 <div class="upload-icon">📄</div>
@@ -1365,14 +1401,6 @@
                 <div style="text-align: right;">
                     <button class="btn btn-primary" id="analyze-text-btn"
                         style="padding: 0.75rem 2rem; font-size: 1rem;">🚀 開始分析文字</button>
-                </div>
-            </div>
-
-            <!-- Top Scored Quant Champs -->
-            <div class="champs-section" id="champs-section">
-                <div class="champs-title">🏆 純量化嚴選標的</div>
-                <div class="champs-grid" id="champs-grid">
-                    <!-- Champ cards insert here -->
                 </div>
             </div>
 
@@ -1422,6 +1450,78 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Standalone Quant Selection View (獨立量化選股結果專屬頁面) -->
+        <div id="quant-results-view" style="display:none; flex-direction:column; gap:20px; padding-bottom: 40px;">
+            <div class="reports-section">
+                <div class="section-header">
+                    <div>
+                        <h2>🏆 量化選股嚴選標的</h2>
+                        <p style="font-size:0.82rem; color:var(--text-secondary); margin-top:4px;">結合籌碼(法人/大戶)、技術指標(日周KD/爆量)、營收成長、法說會、發行CB及合約負債綜合篩選</p>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="quant-re-run-btn">🚀 執行即時量化運算</button>
+                        <button class="btn" id="export-quant-btn">📤 導出選股清單</button>
+                    </div>
+                </div>
+
+                <!-- Quant Summary Metrics -->
+                <div class="quant-stats-grid" id="quant-stats-grid" style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:0.5rem;">
+                    <div class="quant-stat-card" style="flex:1; min-width:180px; background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:0.75rem; padding:1rem;">
+                        <div style="font-size:0.75rem; color:var(--text-secondary);">評估標的總數</div>
+                        <div style="font-size:1.5rem; font-weight:700; color:var(--text-primary); margin-top:0.25rem;" id="quant-stat-total">0</div>
+                    </div>
+                    <div class="quant-stat-card" style="flex:1; min-width:180px; background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:0.75rem; padding:1rem;">
+                        <div style="font-size:0.75rem; color:var(--text-secondary);">符合條件標的</div>
+                        <div style="font-size:1.5rem; font-weight:700; color:var(--accent-emerald); margin-top:0.25rem;" id="quant-stat-passed">0</div>
+                    </div>
+                    <div class="quant-stat-card" style="flex:1; min-width:180px; background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:0.75rem; padding:1rem;">
+                        <div style="font-size:0.75rem; color:var(--text-secondary);">最高符合分數</div>
+                        <div style="font-size:1.5rem; font-weight:700; color:#f59e0b; margin-top:0.25rem;" id="quant-stat-max">0 分</div>
+                    </div>
+                </div>
+
+                <!-- Top Scored Quant Champs Section -->
+                <div class="champs-section" id="champs-section" style="margin-top:1.5rem; display:none;">
+                    <div class="champs-title" style="font-size:1.1rem; font-weight:700; color:#a5b4fc; display:flex; align-items:center; gap:0.5rem;">
+                        <span>⭐</span> <span>最高分嚴選標的 (Top Champions)</span>
+                    </div>
+                    <div class="champs-grid" id="champs-grid" style="margin-top:0.75rem;">
+                        <!-- Champ cards insert here -->
+                    </div>
+                </div>
+
+                <!-- Full Scored Quant Ranking Table Section -->
+                <div style="margin-top:1.75rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:0.5rem;">
+                        <h3 style="font-size:1.05rem; font-weight:600; color:var(--text-primary);">📋 量化篩選總排名清單</h3>
+                        <input type="text" id="quant-search-input" placeholder="🔍 搜尋選股標的或條件..." style="width:240px; padding:0.4rem 0.75rem; font-size:0.82rem;" autocomplete="off">
+                    </div>
+                    <div class="table-responsive">
+                        <table class="quant-table" id="quant-table">
+                            <thead>
+                                <tr>
+                                    <th style="width:70px; text-align:center;">排名</th>
+                                    <th style="width:140px; text-align:center;">個股</th>
+                                    <th style="width:90px; text-align:center;">符合分數</th>
+                                    <th style="text-align:left;">量化條件符合項目</th>
+                                    <th style="min-width:200px; text-align:left;">券商報告摘要 / 觀點</th>
+                                </tr>
+                            </thead>
+                            <tbody id="quant-tbody">
+                                <tr>
+                                    <td colspan="5" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                                        <div style="font-size:1.5rem; margin-bottom:0.5rem;">🎯</div>
+                                        <div>尚未執行量化運算</div>
+                                        <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🚀 執行即時量化運算」按鈕，系統將自動分析日周KD、三大法人、營收、大戶、法說會與CB條件。</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1538,7 +1638,7 @@
             });
         }
 
-        // Fetch settings from Cloud if GAS URL is available
+        // Fetch settings from Cloud if GAS URL is available (SWR Background Sync)
         async function fetchSettingsFromCloud() {
             const url = scriptUrlInput.value.trim();
             if (!url) return;
@@ -1555,6 +1655,7 @@
 
                     if (result.sheetData) {
                         window.tablesData = result.sheetData;
+                        localStorage.setItem('cached_tables_data', JSON.stringify(result.sheetData));
                         console.log("已從雲端同步設定與 CSV 分頁資料", window.tablesData);
 
                         // 檢查是否為舊版 Apps Script
@@ -1562,7 +1663,6 @@
                             alert("⚠️ 系統偵測到您的 Apps Script 還在舊版本！\n\n請務必到 Apps Script 編輯器：\n1. 貼上最新版 google_apps_script.js 程式碼\n2. 點擊右上角「部署」->「管理部署作業」\n3. 點擊鉛筆(編輯) -> 版本選擇「新版本」-> 儲存！\n\n這樣「近期發行CB」才會正常顯示喔！");
                         }
 
-                        showToast("✅ 已成功從雲端自動載入大戶與試算表資料！");
                         renderPersistentTables();
                     }
                 }
@@ -1571,35 +1671,76 @@
             }
         }
 
-        // Initial setup on load
+        // 台股名稱資料庫非同步載入器 (帶本地快取與背景更新)
+        async function loadStockNames() {
+            if (localStorage.getItem('stock_names_cache')) {
+                try {
+                    stockNameMap = JSON.parse(localStorage.getItem('stock_names_cache'));
+                } catch (e) { }
+            }
+            try {
+                const response = await fetch('stock_names.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    stockNameMap = data;
+                    localStorage.setItem('stock_names_cache', JSON.stringify(data));
+                }
+            } catch (e) {
+                console.warn("Could not load stock_names.json locally, will fall back to using symbol strings.");
+            }
+        }
+
+        // Initial setup on load (0毫秒 SWR 極速載入架構)
         window.addEventListener('load', async () => {
-            // Check URL parameters for one-time auto-fill
+            // 1. 立即同步 URL 參數
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('api_key')) localStorage.setItem('gemini_api_key', urlParams.get('api_key'));
             if (urlParams.get('sheet_url')) localStorage.setItem('google_sheet_url', urlParams.get('sheet_url'));
             if (urlParams.get('script_url')) localStorage.setItem('google_script_url', urlParams.get('script_url'));
 
-            // Load saved settings (Keep them visible but disabled by default)
+            // 2. 立即還原表單設定
             const activeApiKey = CONFIG_API_KEY || localStorage.getItem('gemini_api_key');
-            if (activeApiKey) {
-                apiKeyInput.value = activeApiKey;
-            }
+            if (activeApiKey) apiKeyInput.value = activeApiKey;
 
             if (localStorage.getItem('gemini_model')) {
                 modelSelect.value = localStorage.getItem('gemini_model');
             }
 
             const activeSheetUrl = CONFIG_SHEET_URL || localStorage.getItem('google_sheet_url');
-            if (activeSheetUrl) {
-                sheetUrlInput.value = activeSheetUrl;
-            }
+            if (activeSheetUrl) sheetUrlInput.value = activeSheetUrl;
 
             const activeScriptUrl = CONFIG_SCRIPT_URL || localStorage.getItem('google_script_url');
-            if (activeScriptUrl) {
-                scriptUrlInput.value = activeScriptUrl;
+            if (activeScriptUrl) scriptUrlInput.value = activeScriptUrl;
+
+            // 3. 瞬間讀取本地所有快取 (0ms 秒開畫面)
+            if (localStorage.getItem('stock_names_cache')) {
+                try { stockNameMap = JSON.parse(localStorage.getItem('stock_names_cache')); } catch (e) { }
             }
 
-            // 解鎖按鈕邏輯
+            if (localStorage.getItem('reports_history')) {
+                try {
+                    reportsData = JSON.parse(localStorage.getItem('reports_history'));
+                    renderReportsTable();
+                } catch (e) { console.error("Error parsing history: ", e); }
+            }
+
+            if (localStorage.getItem('cached_tables_data')) {
+                try {
+                    window.tablesData = JSON.parse(localStorage.getItem('cached_tables_data'));
+                    renderPersistentTables();
+                } catch (e) { console.error("Error parsing cached tables: ", e); }
+            }
+
+            if (localStorage.getItem('quant_results_cache')) {
+                try {
+                    const savedQuant = JSON.parse(localStorage.getItem('quant_results_cache'));
+                    if (savedQuant && savedQuant.liveScores && savedQuant.liveMatches) {
+                        renderQuantResults(savedQuant.liveScores, savedQuant.liveMatches);
+                    }
+                } catch (e) { console.error("Error parsing quant cache: ", e); }
+            }
+
+            // 4. 解鎖按鈕事件
             document.getElementById('unlock-settings-btn').addEventListener('click', () => {
                 const pwd = prompt("請輸入密碼以解鎖修改：");
                 if (pwd === "0000") {
@@ -1613,7 +1754,7 @@
                 }
             });
 
-            // API Key 變更時，同步儲存到雲端 GAS
+            // 5. API Key 變更時同步儲存
             apiKeyInput.addEventListener('change', async () => {
                 const key = apiKeyInput.value.trim();
                 localStorage.setItem('gemini_api_key', key);
@@ -1626,48 +1767,24 @@
                             body: JSON.stringify({ action: 'save_api_key', apiKey: key })
                         });
                         showToast("☁️ API Key 已同步儲存至雲端，所有裝置都能直接使用！");
-                    } catch(e) {
+                    } catch (e) {
                         console.warn("同步 Key 失敗", e);
                     }
                 }
             });
 
-            // Sync from cloud if script URL is available
-            fetchSettingsFromCloud();
-
-            // Load historical reports (SWR Pattern for instant UI)
-            if (localStorage.getItem('reports_history')) {
-                try {
-                    reportsData = JSON.parse(localStorage.getItem('reports_history'));
-                    renderReportsTable();
-                } catch (e) {
-                    console.error("Error parsing history: ", e);
-                }
-            }
-
-            if (activeSheetUrl) {
-                // 背景非同步載入雲端最新報告
-                loadGoogleSheet(activeSheetUrl).then(sheetRows => {
+            // 6. 背景非同步平行刷新 (SWR 不阻斷畫面)
+            Promise.allSettled([
+                loadStockNames(),
+                fetchSettingsFromCloud(),
+                activeSheetUrl ? loadGoogleSheet(activeSheetUrl).then(sheetRows => {
                     if (sheetRows && sheetRows.length > 0) {
                         reportsData = sheetRows;
                         localStorage.setItem('reports_history', JSON.stringify(reportsData));
                         renderReportsTable();
-                        showToast(`☁️ 成功導入 Google Sheets 的 ${sheetRows.length} 筆紀錄！`);
                     }
-                }).catch(e => {
-                    showToast(`⚠️ 雲端 Sheets 載入失敗: ${e.message}`, true);
-                });
-            }
-
-            // Load stock names map in background
-            fetch('stock_names.json').then(async (response) => {
-                if (response.ok) {
-                    stockNameMap = await response.json();
-                    showToast("✅ 成功載入台股名稱資料庫！");
-                }
-            }).catch(e => {
-                console.warn("Could not load stock_names.json locally, will fall back to using symbol strings.");
-            });
+                }) : Promise.resolve()
+            ]);
         });
 
         // Event listeners for saving settings
@@ -2589,10 +2706,16 @@ JSON 欄位：
                 mainReportsView.style.display = (currentActiveTab === 'main-reports') ? 'block' : 'none';
             }
 
-            // 3. Toggle persistent tables container and sections
+            // 3. Toggle standalone quant results view
+            const quantResultsView = document.getElementById('quant-results-view');
+            if (quantResultsView) {
+                quantResultsView.style.display = (currentActiveTab === 'quant-results') ? 'flex' : 'none';
+            }
+
+            // 4. Toggle persistent tables container and sections
             const persistentContainer = document.getElementById('persistent-csv-tables');
             if (persistentContainer) {
-                persistentContainer.style.display = (currentActiveTab === 'main-reports') ? 'none' : 'flex';
+                persistentContainer.style.display = (currentActiveTab === 'main-reports' || currentActiveTab === 'quant-results') ? 'none' : 'flex';
                 const sections = persistentContainer.querySelectorAll('.persistent-table-section');
                 sections.forEach(sec => {
                     if (sec.getAttribute('data-sheet-name') === currentActiveTab) {
@@ -2628,8 +2751,8 @@ JSON 欄位：
 
             const tabsContainer = document.getElementById('nav-tabs-container');
             if (tabsContainer) {
-                // Keep only the main-reports tab button, remove dynamic ones
-                const dynamicTabs = tabsContainer.querySelectorAll('.tab-btn:not([data-tab="main-reports"])');
+                // Keep only main-reports and quant-results tab buttons, remove dynamic ones
+                const dynamicTabs = tabsContainer.querySelectorAll('.tab-btn:not([data-tab="main-reports"]):not([data-tab="quant-results"])');
                 dynamicTabs.forEach(t => t.remove());
             }
 
@@ -2942,11 +3065,33 @@ JSON 欄位：
             switchActiveTab(currentActiveTab);
         }
 
-        // 🚀 QUANT SYSTEM IN JAVASCRIPT
-        runQuantBtn.addEventListener('click', async () => {
+        // 🚀 高效快取與並行量化運算引擎 (High-Performance Parallel Quant Engine)
+        const finmindCache = new Map();
+
+        async function fetchFinMindData(dataset, dataId, startDate) {
+            const cacheKey = `${dataset}_${dataId}_${startDate}`;
+            if (finmindCache.has(cacheKey)) {
+                return finmindCache.get(cacheKey);
+            }
+            try {
+                const url = `https://api.finmindtrade.com/api/v4/data?dataset=${dataset}&data_id=${dataId}&start_date=${startDate}`;
+                const resp = await fetch(url);
+                if (resp.ok) {
+                    const resJson = await resp.json();
+                    const data = resJson.data || [];
+                    finmindCache.set(cacheKey, data);
+                    return data;
+                }
+            } catch (e) {
+                console.error(`FinMind API ${dataset} failed for ${dataId}`, e);
+            }
+            return [];
+        }
+
+        async function executeQuantPipeline() {
             const validStocks = [];
 
-            // Collect unique stock codes in current reports
+            // 收集當前報告中所有個股代號
             reportsData.forEach(row => {
                 const sid = getStockId(row.stock);
                 if (sid && !validStocks.includes(sid)) {
@@ -2954,48 +3099,33 @@ JSON 欄位：
                 }
             });
 
-            // Add missing stocks from events (法說會, 大戶持股)
+            // 加入事件分頁 (大戶持股, 近期發行CB, 目前股價低於CB轉換價, 毛利三季成長, 營收條件, 法說會, 合約負債條件) 中的標的
             const bigPlayerStocks = extractCodesFromTableData('大戶持股');
-            bigPlayerStocks.forEach(sid => {
-                if (!validStocks.includes(sid)) validStocks.push(sid);
-            });
+            bigPlayerStocks.forEach(sid => { if (!validStocks.includes(sid)) validStocks.push(sid); });
 
             const cbStocks = extractCodesFromTableData('近期發行CB');
-            cbStocks.forEach(sid => {
-                if (!validStocks.includes(sid)) validStocks.push(sid);
-            });
+            cbStocks.forEach(sid => { if (!validStocks.includes(sid)) validStocks.push(sid); });
 
             const cbBelowStocks = extractCodesFromTableData('目前股價低於CB轉換價');
-            cbBelowStocks.forEach(sid => {
-                if (!validStocks.includes(sid)) validStocks.push(sid);
-            });
+            cbBelowStocks.forEach(sid => { if (!validStocks.includes(sid)) validStocks.push(sid); });
 
             const grossMarginStocks = extractCodesFromTableData('毛利三季成長');
-            grossMarginStocks.forEach(sid => {
-                if (!validStocks.includes(sid)) validStocks.push(sid);
-            });
+            grossMarginStocks.forEach(sid => { if (!validStocks.includes(sid)) validStocks.push(sid); });
 
             const revenueStocks = extractCodesFromTableData('營收條件');
-            revenueStocks.forEach(sid => {
-                if (!validStocks.includes(sid)) validStocks.push(sid);
-            });
+            revenueStocks.forEach(sid => { if (!validStocks.includes(sid)) validStocks.push(sid); });
 
             const earningsCallStocks = extractCodesFromTableData('法說會');
-            earningsCallStocks.forEach(sid => {
-                if (!validStocks.includes(sid)) validStocks.push(sid);
-            });
+            earningsCallStocks.forEach(sid => { if (!validStocks.includes(sid)) validStocks.push(sid); });
 
             const contractLiabilitiesStocks = extractCodesFromTableData('合約負債條件');
-            contractLiabilitiesStocks.forEach(sid => {
-                if (!validStocks.includes(sid)) validStocks.push(sid);
-            });
+            contractLiabilitiesStocks.forEach(sid => { if (!validStocks.includes(sid)) validStocks.push(sid); });
 
             if (validStocks.length === 0) {
                 showToast("⚠️ 列表內無可供量化計算的股票代號，請先上傳報告或大戶等 CSV 檔案。", true);
                 return;
             }
 
-            // Prep configuration parameters
             const config = {
                 bigPlayers: bigPlayerStocks,
                 cbStocks: cbStocks,
@@ -3006,131 +3136,129 @@ JSON 欄位：
             const liveScores = {};
             const liveMatches = {};
 
-            for (let i = 0; i < validStocks.length; i++) {
-                const stockId = validStocks[i];
-                const stockName = stockNameMap[stockId] || '';
-                const fullName = `${stockId} ${stockName}`.trim();
+            const total = validStocks.length;
+            let completed = 0;
+            const CONCURRENCY_LIMIT = 6; // 6組並行加速處理
 
-                updateProgress(Math.round((i / validStocks.length) * 100), `🔍 正在對 ${fullName} 進行即時量化運算...`);
+            // 批次並行工作池 (Worker Pool)
+            let currentIndex = 0;
+            const workers = Array.from({ length: Math.min(CONCURRENCY_LIMIT, total) }, async () => {
+                while (currentIndex < total) {
+                    const idx = currentIndex++;
+                    const stockId = validStocks[idx];
+                    const stockName = stockNameMap[stockId] || '';
+                    const fullName = `${stockId} ${stockName}`.trim();
 
-                try {
-                    const matched = await evaluateStockQuant(stockId, config);
+                    try {
+                        const matched = await evaluateStockQuant(stockId, config);
 
-                    // Add report-based properties
-                    const reportRows = reportsData.filter(r => getStockId(r.stock) === stockId);
-                    if (reportRows.length > 0) {
-                        const firstRow = reportRows[0];
-                        const peText = String(firstRow.summary + firstRow.daily_stock_selection).toLowerCase();
-                        if (peText.includes('低於20倍') || peText.includes('pe低於20') || peText.includes('估值偏低')) {
-                            matched.push("表格裡面目前股價低於20PE");
+                        // 結合報告文字特徵
+                        const reportRows = reportsData.filter(r => getStockId(r.stock) === stockId);
+                        if (reportRows.length > 0) {
+                            const firstRow = reportRows[0];
+                            const peText = String(firstRow.summary + firstRow.daily_stock_selection).toLowerCase();
+                            if (peText.includes('低於20倍') || peText.includes('pe低於20') || peText.includes('估值偏低')) {
+                                matched.push("表格裡面目前股價低於20PE");
+                            }
+                            const ratText = String(firstRow.rating).toLowerCase();
+                            if (ratText.includes('買') || ratText.includes('buy') || ratText.includes('overweight')) {
+                                matched.push("券商給的是正面評價,例如買進,調升TP");
+                            }
                         }
-                        // Broker rating
-                        const ratText = String(firstRow.rating).toLowerCase();
-                        if (ratText.includes('買') || ratText.includes('buy') || ratText.includes('overweight')) {
-                            matched.push("券商給的是正面評價,例如買進,調升TP");
+
+                        // 結合清單條件 (記憶體中瞬時比對)
+                        if (bigPlayerStocks.includes(stockId)) matched.push("入選大戶持股");
+                        if (grossMarginStocks.includes(stockId)) matched.push("入選毛利三季成長");
+                        if (revenueStocks.includes(stockId)) matched.push("入選營收條件");
+                        if (earningsCallStocks.includes(stockId)) matched.push("入選2周內會有法說會");
+                        if (contractLiabilitiesStocks.includes(stockId)) matched.push("入選合約負債");
+                        if (cbStocks.includes(stockId) && !matched.includes("入選要發行CB")) matched.push("入選要發行CB");
+                        if (cbBelowStocks.includes(stockId) && !matched.includes("若已有發行的CB,且股價低於轉換價,並且轉換比例<10%")) {
+                            matched.push("若已有發行的CB,且股價低於轉換價,並且轉換比例<10%");
                         }
+
+                        // 計算加權總分
+                        let score = matched.length;
+                        if (matched.some(m => m.includes("入選大戶持股"))) score += 1;
+                        if (matched.some(m => m.includes("入選2周內會有法說會"))) score += 1;
+                        if (matched.some(m => m.includes("低於轉換價"))) score += 1;
+
+                        liveScores[stockId] = score;
+                        liveMatches[stockId] = matched;
+
+                    } catch (e) {
+                        console.error(`Error calculating quant for ${stockId}:`, e);
+                        liveScores[stockId] = 0;
+                        liveMatches[stockId] = [];
                     }
 
-                    // Add new lists conditions
-                    if (bigPlayerStocks.includes(stockId)) {
-                        matched.push("入選大戶持股");
-                    }
-                    if (grossMarginStocks.includes(stockId)) {
-                        matched.push("入選毛利三季成長");
-                    }
-                    if (revenueStocks.includes(stockId)) {
-                        matched.push("入選營收條件");
-                    }
-                    if (earningsCallStocks.includes(stockId)) {
-                        matched.push("入選2周內會有法說會");
-                    }
-                    if (contractLiabilitiesStocks.includes(stockId)) {
-                        matched.push("入選合約負債");
-                    }
-                    if (cbStocks.includes(stockId) && !matched.includes("入選要發行CB")) {
-                        matched.push("入選要發行CB");
-                    }
-                    if (cbBelowStocks.includes(stockId) && !matched.includes("若已有發行的CB,且股價低於轉換價,並且轉換比例<10%")) {
-                        matched.push("若已有發行的CB,且股價低於轉換價,並且轉換比例<10%");
-                    }
-
-                    // Score logic
-                    let score = matched.length;
-                    if (matched.some(m => m.includes("入選大戶持股"))) {
-                        score += 1; // 大戶相關特別加分 (總分2分)
-                    }
-                    if (matched.some(m => m.includes("入選2周內會有法說會"))) {
-                        score += 1; // 法說會特別加分 (總分2分)
-                    }
-                    if (matched.some(m => m.includes("低於轉換價"))) {
-                        score += 1; // 股價低於CB轉換價特別加分 (總分2分)
-                    }
-
-                    liveScores[stockId] = score;
-                    liveMatches[stockId] = matched;
-
-                    // Update UI table tags for this stock
-                    reportsData.forEach((row, rIdx) => {
-                        if (getStockId(row.stock) === stockId) {
-                            row.matched_criteria = matched;
-                            const tdCell = document.getElementById(`criteria-${rIdx}`);
-                            if (tdCell) tdCell.innerText = matched.length > 0 ? matched.join(' / ') : '量化算畢 (無符合)';
-                        }
-                    });
-
-                } catch (e) {
-                    console.error(`Error calculating quant for ${stockId}:`, e);
+                    completed++;
+                    const percent = Math.round((completed / total) * 100);
+                    updateProgress(percent, `⚡ 高速並行運算 (${completed}/${total})：${fullName}...`);
                 }
-            }
+            });
 
-            // Save matched criteria in storage
+            await Promise.all(workers);
+
+            // 更新報告表格中的量化欄位
+            reportsData.forEach((row, rIdx) => {
+                const sid = getStockId(row.stock);
+                if (sid && liveMatches[sid]) {
+                    row.matched_criteria = liveMatches[sid];
+                    const tdCell = document.getElementById(`criteria-${rIdx}`);
+                    if (tdCell) tdCell.innerText = liveMatches[sid].length > 0 ? liveMatches[sid].join(' / ') : '量化算畢 (無符合)';
+                }
+            });
+
+            // 儲存至本地快取
             localStorage.setItem('reports_history', JSON.stringify(reportsData));
+            localStorage.setItem('quant_results_cache', JSON.stringify({ liveScores, liveMatches }));
             updateProgress(100, "✅ 量化分析運算完畢！");
 
             setTimeout(() => {
                 progressContainer.style.display = 'none';
-            }, 1500);
+            }, 800);
 
-            // Render top scored champs cards
-            renderChampsGrid(liveScores, liveMatches);
-        });
-
-
-
-        // Async API fetch with fallback to dummy/empty
-        async function fetchFinMindData(dataset, dataId, startDate) {
-            try {
-                const url = `https://api.finmindtrade.com/api/v4/data?dataset=${dataset}&data_id=${dataId}&start_date=${startDate}`;
-                const resp = await fetch(url);
-                if (resp.ok) {
-                    const resJson = await resp.json();
-                    return resJson.data || [];
-                }
-            } catch (e) {
-                console.error(`FinMind API ${dataset} failed for ${dataId}`, e);
-            }
-            return [];
+            // 渲染獨立量化結果頁面並切換分頁
+            renderQuantResults(liveScores, liveMatches);
+            switchActiveTab('quant-results');
+            showToast("⚡ 量化分析快速運算完畢！已切換至「量化選股結果」分頁。");
         }
 
-        // EVALUATE QUANT ENGINE (JS translation of Python Logic)
+        runQuantBtn.addEventListener('click', executeQuantPipeline);
+        const quantReRunBtn = document.getElementById('quant-re-run-btn');
+        if (quantReRunBtn) {
+            quantReRunBtn.addEventListener('click', executeQuantPipeline);
+        }
+
+        // EVALUATE QUANT ENGINE (高速並行化最佳版)
         async function evaluateStockQuant(stockId, config) {
             const matched = [];
             const sixMonthsAgo = new Date();
             sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-            const startDateStr = sixMonthsAgo.toISOString().split('T')[0];
+            const priceStartStr = sixMonthsAgo.toISOString().split('T')[0];
 
-            // 1. Fetch historical price data
-            const priceData = await fetchFinMindData('TaiwanStockPrice', stockId, startDateStr);
+            const trust90Start = new Date();
+            trust90Start.setDate(trust90Start.getDate() - 90);
+            const chipStartStr = trust90Start.toISOString().split('T')[0];
 
+            // 1. 並行非同步抓取歷史股價與90天法人籌碼資料
+            const [priceData, chipsData] = await Promise.all([
+                fetchFinMindData('TaiwanStockPrice', stockId, priceStartStr),
+                fetchFinMindData('TaiwanStockInstitutionalInvestorsBuySell', stockId, chipStartStr)
+            ]);
+
+            // 技術指標計算 (KD 與 爆量)
             if (priceData && priceData.length > 20) {
-                // Parse numbers
-                priceData.forEach(d => {
+                // Parse numbers in place
+                for (let i = 0; i < priceData.length; i++) {
+                    const d = priceData[i];
                     d.open = parseFloat(d.open);
                     d.max = parseFloat(d.max);
                     d.min = parseFloat(d.min);
                     d.close = parseFloat(d.close);
                     d.Trading_Volume = parseFloat(d.Trading_Volume);
-                });
+                }
 
                 // Calculate Day KD (rolling 9)
                 calculateKD(priceData);
@@ -3171,9 +3299,6 @@ JSON 欄位：
                         today_open = priceData[len - 2].open;
                     }
 
-                    const today_vol_lots = today_vol / 1000;
-                    const turnover = today_close * today_vol;
-
                     // calculate 10-day volume average of yesterday
                     let sum10d = 0;
                     for (let j = len - 11; j < len - 1; j++) sum10d += priceData[j].Trading_Volume;
@@ -3186,11 +3311,8 @@ JSON 欄位：
                     const vol_10w_avg = sum10w / 10;
                     const vol_10w_avg_daily = vol_10w_avg / 5;
 
-                    const cond_1 = today_vol_lots > 2000;
-                    const cond_2 = turnover > 5e8;
                     const cond_3 = today_vol > vol_10w_avg_daily;
                     const cond_4 = today_vol > (3 * vol_10d_avg);
-                    const cond_5 = today_close > today_open;
 
                     if (cond_3 && cond_4) {
                         matched.push("成交量>十週平均量且>3倍十日均量");
@@ -3198,14 +3320,8 @@ JSON 欄位：
                 }
             }
 
-            // 2. Chips calculations
-            const chipStart = new Date();
-            chipStart.setDate(chipStart.getDate() - 8);
-            const chipStartStr = chipStart.toISOString().split('T')[0];
-            const chipsData = await fetchFinMindData('TaiwanStockInstitutionalInvestorsBuySell', stockId, chipStartStr);
-
+            // 2. 法人籌碼計算 (一次涵蓋最新三大法人同買與90天投信首買)
             if (chipsData && chipsData.length > 0) {
-                // Find latest date
                 const dates = chipsData.map(c => c.date);
                 const latestDate = dates.reduce((a, b) => a > b ? a : b);
                 const latestChips = chipsData.filter(c => c.date === latestDate);
@@ -3227,64 +3343,20 @@ JSON 欄位：
                 }
 
                 if (buy_trust > 0) {
-                    const trust90Start = new Date();
-                    trust90Start.setDate(trust90Start.getDate() - 90);
-                    const trust90StartStr = trust90Start.toISOString().split('T')[0];
-                    const m3Chips = await fetchFinMindData('TaiwanStockInstitutionalInvestorsBuySell', stockId, trust90StartStr);
-
-                    if (m3Chips && m3Chips.length > 0) {
-                        // Filter past trust buys (excluding latest date)
-                        const trustBuys = m3Chips.filter(c => c.name.includes('Investment_Trust') && c.date < latestDate);
-                        const hasBuy = trustBuys.some(c => (parseFloat(c.buy) - parseFloat(c.sell)) > 0);
-                        if (!hasBuy) {
-                            matched.push("投信第一天買, 且過去三個月沒有買過");
-                        }
+                    const trustBuys = chipsData.filter(c => c.name.includes('Investment_Trust') && c.date < latestDate);
+                    const hasPastBuy = trustBuys.some(c => (parseFloat(c.buy) - parseFloat(c.sell)) > 0);
+                    if (!hasPastBuy) {
+                        matched.push("投信第一天買, 且過去三個月沒有買過");
                     }
                 }
             }
 
-            // 3. Revenue calculations
-            const revStart = new Date();
-            revStart.setMonth(revStart.getMonth() - 14);
-            const revStartStr = revStart.toISOString().split('T')[0];
-            const revData = await fetchFinMindData('TaiwanStockMonthRevenue', stockId, revStartStr);
-
-            if (revData && revData.length >= 2) {
-                // Sort by date/year/month
-                revData.sort((a, b) => a.date.localeCompare(b.date));
-                const len = revData.length;
-                const latest_rev = revData[len - 1];
-                const prev_rev = revData[len - 2];
-                const latest_revenue = parseFloat(latest_rev.revenue);
-                const prev_revenue = parseFloat(prev_rev.revenue);
-
-                const mom_growth = latest_revenue > prev_revenue;
-
-                // YoY 年增
-                const latest_month = parseInt(latest_rev.revenue_month);
-                const latest_year = parseInt(latest_rev.revenue_year);
-                let yoy_growth = false;
-
-                const lastYearRecord = revData.find(r => parseInt(r.revenue_month) === latest_month && parseInt(r.revenue_year) === (latest_year - 1));
-                if (lastYearRecord) {
-                    const last_year_revenue = parseFloat(lastYearRecord.revenue);
-                    if (last_year_revenue > 0) {
-                        yoy_growth = latest_revenue > last_year_revenue;
-                    }
-                }
-
-                // if (mom_growth && yoy_growth) {
-                //     matched.push("近月營收月增且年增");
-                // }
-            }
-
-            // 4. Config-based event checking
+            // 3. CB 轉換價比對
             if (config.cbStocks && config.cbStocks.includes(stockId)) {
                 matched.push("入選要發行CB");
             }
             if (config.cbIssued && config.cbIssued[stockId]) {
                 const info = config.cbIssued[stockId];
-                // Check conversion criteria if price details available
                 if (priceData && priceData.length > 0) {
                     const lastPrice = priceData[priceData.length - 1].close;
                     const conversionPct = 100 - info.balance_pct;
@@ -3375,50 +3447,214 @@ JSON 欄位：
             }
         }
 
-        // Render Champs visual dashboard panels
-        function renderChampsGrid(scores, matches) {
-            champsGrid.innerHTML = '';
+        // ==========================================
+        // 🏆 獨立量化選股結果渲染模組 (Standalone Quant Engine UI)
+        // ==========================================
+        let quantResultsCache = { liveScores: {}, liveMatches: {} };
 
-            const scoredStocks = Object.keys(scores)
-                .map(sid => ({
-                    stockId: sid,
-                    name: stockNameMap[sid] || '',
-                    score: scores[sid],
-                    matches: matches[sid]
-                }))
-                .filter(x => x.score > 0)
-                .sort((a, b) => b.score - a.score);
+        function renderQuantResults(scores = {}, matches = {}) {
+            quantResultsCache = { liveScores: scores, liveMatches: matches };
 
-            if (scoredStocks.length === 0) {
-                champsSection.style.display = 'none';
+            const totalKeys = Object.keys(scores);
+            const badgeQuant = document.getElementById('badge-quant');
+            const statTotal = document.getElementById('quant-stat-total');
+            const statPassed = document.getElementById('quant-stat-passed');
+            const statMax = document.getElementById('quant-stat-max');
+
+            if (totalKeys.length === 0) {
+                if (badgeQuant) badgeQuant.innerText = '0';
+                if (statTotal) statTotal.innerText = '0';
+                if (statPassed) statPassed.innerText = '0';
+                if (statMax) statMax.innerText = '0 分';
+                if (champsSection) champsSection.style.display = 'none';
+                const quantTbody = document.getElementById('quant-tbody');
+                if (quantTbody) {
+                    quantTbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                                <div style="font-size:1.5rem; margin-bottom:0.5rem;">🎯</div>
+                                <div>尚未執行量化運算</div>
+                                <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🚀 執行即時量化運算」按鈕，系統將自動分析日周KD、三大法人、營收、大戶、法說會與CB條件。</div>
+                            </td>
+                        </tr>
+                    `;
+                }
                 return;
             }
 
-            champsSection.style.display = 'flex';
-            const maxScore = scoredStocks[0].score;
+            const scoredStocks = totalKeys.map(sid => {
+                const name = stockNameMap[sid] || '';
+                const matchingReports = reportsData.filter(r => getStockId(r.stock) === sid);
+                let reportSummary = '';
+                if (matchingReports.length > 0) {
+                    reportSummary = matchingReports.map(r => r.summary).filter(Boolean).join('； ');
+                }
+                return {
+                    stockId: sid,
+                    name: name,
+                    score: scores[sid] || 0,
+                    matches: matches[sid] || [],
+                    reportSummary: reportSummary
+                };
+            }).sort((a, b) => b.score - a.score);
 
-            // Only show the highest score champions (maxScore)
-            const champs = scoredStocks.filter(x => x.score === maxScore);
+            const passedStocks = scoredStocks.filter(x => x.score > 0);
+            const maxScore = scoredStocks.length > 0 ? scoredStocks[0].score : 0;
+
+            if (badgeQuant) badgeQuant.innerText = String(passedStocks.length);
+            if (statTotal) statTotal.innerText = String(scoredStocks.length);
+            if (statPassed) statPassed.innerText = String(passedStocks.length);
+            if (statMax) statMax.innerText = `${maxScore} 分`;
+
+            // Render Top Champions Showcase Cards
+            if (champsGrid && champsSection) {
+                champsGrid.innerHTML = '';
+                if (maxScore > 0) {
+                    champsSection.style.display = 'block';
+                    const champs = scoredStocks.filter(x => x.score === maxScore);
+                    const fragment = document.createDocumentFragment();
+                    champs.forEach(champ => {
+                        const card = document.createElement('div');
+                        card.className = 'champ-card';
+                        let matchesHtml = champ.matches.map(m => `<span class="match-tag">⚡ ${m}</span>`).join('');
+                        card.innerHTML = `
+                            <div class="champ-header">
+                                <div class="champ-name">${champ.stockId} ${champ.name}</div>
+                                <div class="champ-score">${champ.score} 分</div>
+                            </div>
+                            <div class="champ-matches">
+                                ${matchesHtml}
+                            </div>
+                        `;
+                        fragment.appendChild(card);
+                    });
+                    champsGrid.appendChild(fragment);
+                } else {
+                    champsSection.style.display = 'none';
+                }
+            }
+
+            // Render Scored Rankings Table
+            renderQuantTableRows(scoredStocks);
+        }
+
+        function renderQuantTableRows(stocksToRender) {
+            const quantTbody = document.getElementById('quant-tbody');
+            if (!quantTbody) return;
+            quantTbody.innerHTML = '';
+
+            const searchInput = document.getElementById('quant-search-input');
+            const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+            let list = stocksToRender;
+            if (query) {
+                list = stocksToRender.filter(s => 
+                    s.stockId.toLowerCase().includes(query) ||
+                    s.name.toLowerCase().includes(query) ||
+                    s.matches.some(m => m.toLowerCase().includes(query)) ||
+                    s.reportSummary.toLowerCase().includes(query)
+                );
+            }
+
+            if (list.length === 0) {
+                quantTbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align:center; color:var(--text-secondary); padding:2rem;">
+                            無符合「${query}」的量化選股結果
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
 
             const fragment = document.createDocumentFragment();
-            champs.forEach(champ => {
-                const card = document.createElement('div');
-                card.className = 'champ-card';
+            list.forEach((item, index) => {
+                const tr = document.createElement('tr');
 
-                let matchesHtml = champ.matches.map(m => `<span class="match-tag">⚡ ${m}</span>`).join('');
+                let rankBadge = `<span style="color:var(--text-secondary); font-weight:600;">#${index + 1}</span>`;
+                if (index === 0 && item.score > 0) rankBadge = `<span style="font-size:1.15rem;">🥇 1</span>`;
+                else if (index === 1 && item.score > 0) rankBadge = `<span style="font-size:1.15rem;">🥈 2</span>`;
+                else if (index === 2 && item.score > 0) rankBadge = `<span style="font-size:1.15rem;">🥉 3</span>`;
 
-                card.innerHTML = `
-                    <div class="champ-header">
-                        <div class="champ-name">${champ.stockId} ${champ.name}</div>
-                        <div class="champ-score">${champ.score} 分</div>
-                    </div>
-                    <div class="champ-matches">
-                        ${matchesHtml}
-                    </div>
+                let scoreBadgeClass = item.score >= 4 
+                    ? 'background:rgba(16,185,129,0.25); color:#34d399; border:1px solid rgba(16,185,129,0.4);' 
+                    : (item.score > 0 
+                        ? 'background:rgba(99,102,241,0.25); color:#a5b4fc; border:1px solid rgba(99,102,241,0.4);' 
+                        : 'background:rgba(255,255,255,0.05); color:#94a3b8;');
+
+                let matchesTags = item.matches.length > 0 
+                    ? item.matches.map(m => `<span class="match-tag" style="display:inline-block; margin:2px 3px; font-size:0.75rem;">⚡ ${m}</span>`).join('')
+                    : '<span style="color:#64748b; font-size:0.78rem;">未符合條件</span>';
+
+                tr.innerHTML = `
+                    <td style="text-align:center; vertical-align:middle;">${rankBadge}</td>
+                    <td style="text-align:center; vertical-align:middle; font-weight:700; color:#60a5fa;">
+                        ${item.stockId} ${item.name}
+                    </td>
+                    <td style="text-align:center; vertical-align:middle;">
+                        <span class="cb-badge" style="${scoreBadgeClass} padding:0.2rem 0.6rem; font-weight:700; font-size:0.85rem;">${item.score} 項</span>
+                    </td>
+                    <td style="text-align:left; vertical-align:middle; line-height:1.45;">
+                        ${matchesTags}
+                    </td>
+                    <td style="text-align:left; vertical-align:middle; font-size:0.78rem; color:#cbd5e1; line-height:1.35;">
+                        ${item.reportSummary || '<span style="color:#64748b;">—</span>'}
+                    </td>
                 `;
-                fragment.appendChild(card);
+                fragment.appendChild(tr);
             });
-            champsGrid.appendChild(fragment);
+            quantTbody.appendChild(fragment);
+        }
+
+        // Search Input in Quant Selection View
+        const quantSearchInput = document.getElementById('quant-search-input');
+        if (quantSearchInput) {
+            quantSearchInput.addEventListener('input', () => {
+                if (quantResultsCache && quantResultsCache.liveScores) {
+                    const scoredStocks = Object.keys(quantResultsCache.liveScores).map(sid => {
+                        const name = stockNameMap[sid] || '';
+                        const matchingReports = reportsData.filter(r => getStockId(r.stock) === sid);
+                        let reportSummary = '';
+                        if (matchingReports.length > 0) {
+                            reportSummary = matchingReports.map(r => r.summary).filter(Boolean).join('； ');
+                        }
+                        return {
+                            stockId: sid,
+                            name: name,
+                            score: quantResultsCache.liveScores[sid] || 0,
+                            matches: quantResultsCache.liveMatches[sid] || [],
+                            reportSummary: reportSummary
+                        };
+                    }).sort((a, b) => b.score - a.score);
+                    renderQuantTableRows(scoredStocks);
+                }
+            });
+        }
+
+        // Export Quant Selection List to JSON
+        const exportQuantBtn = document.getElementById('export-quant-btn');
+        if (exportQuantBtn) {
+            exportQuantBtn.addEventListener('click', () => {
+                if (!quantResultsCache.liveScores || Object.keys(quantResultsCache.liveScores).length === 0) {
+                    showToast("⚠️ 目前尚未執行量化運算，無選股結果可供導出！", true);
+                    return;
+                }
+                const exportList = Object.keys(quantResultsCache.liveScores).map(sid => ({
+                    stockId: sid,
+                    name: stockNameMap[sid] || '',
+                    score: quantResultsCache.liveScores[sid] || 0,
+                    matches: quantResultsCache.liveMatches[sid] || []
+                })).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
+
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportList, null, 2));
+                const downloadAnchor = document.createElement('a');
+                downloadAnchor.setAttribute("href", dataStr);
+                downloadAnchor.setAttribute("download", `quant_stock_selection_${new Date().toISOString().split('T')[0]}.json`);
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                downloadAnchor.remove();
+                showToast("✅ 量化選股清單已成功匯出成 JSON 檔案！");
+            });
         }
 
         // Sync data to Google Sheet via Google Apps Script
@@ -3484,10 +3720,14 @@ JSON 欄位：
         clearAllBtn.addEventListener('click', () => {
             if (confirm("🔴 您確定要清空所有的報告紀錄嗎？這會清除瀏覽器的本地存儲。")) {
                 reportsData = [];
+                window.tablesData = {};
                 localStorage.removeItem('reports_history');
+                localStorage.removeItem('quant_results_cache');
+                localStorage.removeItem('cached_tables_data');
                 renderReportsTable();
-                champsSection.style.display = 'none';
-                showToast("✅ 歷史紀錄已全部清除！");
+                renderPersistentTables();
+                renderQuantResults({}, {});
+                showToast("✅ 歷史紀錄、CSV 資料與量化結果已全部清除！");
             }
         });
     </script>
