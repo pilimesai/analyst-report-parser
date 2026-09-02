@@ -490,6 +490,21 @@
             font-weight: 700;
         }
 
+        .active-etf-grid-layout {
+            display: grid;
+            grid-template-columns: minmax(280px, 320px) minmax(0, 1fr);
+            gap: 1.5rem;
+            align-items: start;
+            width: 100%;
+            min-width: 0;
+        }
+
+        @media (max-width: 1080px) {
+            .active-etf-grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* Navigation Tab Bar */
         .nav-tabs-wrapper {
             margin-bottom: 1.5rem;
@@ -1578,26 +1593,44 @@
         </div>
 
         <!-- Standalone Active ETF Screener View (主動型ETF選股專屬頁面) -->
-        <div id="active-etf-view" style="display:none; flex-direction:column; gap:20px; padding-bottom: 40px;">
-            <div style="display:grid; grid-template-columns: 360px 1fr; gap: 1.5rem; align-items: start;">
+        <div id="active-etf-view" style="display:none; flex-direction:column; gap:20px; padding-bottom: 40px; width: 100%; min-width: 0;">
+            <div class="active-etf-grid-layout">
                 <!-- 左側：AI / 雲端抓取控制面板 -->
-                <div style="background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: 1rem; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
-                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
-                            <span>🤖</span> <span>AI / 雲端抓取 ETF</span>
-                        </h3>
-                        <span style="font-size: 0.72rem; padding: 0.2rem 0.5rem; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 0.375rem; font-weight: 600;">
-                            🛡️ 排除 984A/983A/989A/988A/990A/997A/986A
-                        </span>
+                <div style="background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: 1rem; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem; min-width: 0;">
+                    <!-- 標題與排除標籤 -->
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.4rem;">
+                            <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.4rem; margin: 0; white-space: nowrap;">
+                                <span>🤖</span> <span>AI / 雲端抓取 ETF</span>
+                            </h3>
+                            <span style="font-size: 0.68rem; padding: 0.2rem 0.55rem; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 9999px; font-weight: 600; white-space: nowrap;">
+                                🛡️ 已排除 7 檔 ETF
+                            </span>
+                        </div>
+                        <!-- 排除的 ETF 標籤清單 -->
+                        <div style="padding: 0.5rem 0.6rem; background: rgba(239, 68, 68, 0.05); border: 1px dashed rgba(239, 68, 68, 0.25); border-radius: 0.5rem;">
+                            <div style="font-size: 0.68rem; color: #f87171; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                                <span>🚫</span> <span>排除不納入計算之主動型 ETF：</span>
+                            </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                                <span style="font-size: 0.68rem; padding: 2px 6px; background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-radius: 4px; font-family: monospace; font-weight: 600;">00984A</span>
+                                <span style="font-size: 0.68rem; padding: 2px 6px; background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-radius: 4px; font-family: monospace; font-weight: 600;">00983A</span>
+                                <span style="font-size: 0.68rem; padding: 2px 6px; background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-radius: 4px; font-family: monospace; font-weight: 600;">00989A</span>
+                                <span style="font-size: 0.68rem; padding: 2px 6px; background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-radius: 4px; font-family: monospace; font-weight: 600;">00988A</span>
+                                <span style="font-size: 0.68rem; padding: 2px 6px; background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-radius: 4px; font-family: monospace; font-weight: 600;">00990A</span>
+                                <span style="font-size: 0.68rem; padding: 2px 6px; background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-radius: 4px; font-family: monospace; font-weight: 600;">00997A</span>
+                                <span style="font-size: 0.68rem; padding: 2px 6px; background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-radius: 4px; font-family: monospace; font-weight: 600;">00986A</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; background: rgba(15, 23, 42, 0.5); padding: 0.75rem; border-radius: 0.5rem; border: 1px solid var(--card-border);">
+                    <div style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.45; background: rgba(15, 23, 42, 0.5); padding: 0.65rem 0.75rem; border-radius: 0.5rem; border: 1px solid var(--card-border);">
                         <div>資料來源：<a href="https://goal-star.com/summary/fund-weights" target="_blank" style="color: #60a5fa; text-decoration: underline;">Goal Star 持股權重熱力圖 🔗</a></div>
-                        <div style="margin-top: 4px; color: #94a3b8;">分析全台主動型 ETF 最新持股，篩選被<b>最少隻 ETF 重複持有</b>的獨門標的。</div>
+                        <div style="margin-top: 3px; color: #94a3b8;">分析全台主動型 ETF 最新持股，篩選被<b>最少隻 ETF 重複持有</b>的獨門標的。</div>
                     </div>
 
                     <!-- 一鍵即時雲端抓取按鈕 -->
-                    <button class="btn btn-primary" id="fetch-etf-api-btn" style="width: 100%; padding: 0.75rem 1rem; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 600;">
+                    <button class="btn btn-primary" id="fetch-etf-api-btn" style="width: 100%; padding: 0.65rem 1rem; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 600;">
                         <span>🚀</span> <span>立即從 Goal Star 雲端抓取</span>
                     </button>
 
@@ -1613,52 +1646,52 @@
                     </div>
 
                     <!-- 貼上文字 / HTML 區塊 -->
-                    <div style="border-top: 1px solid var(--card-border); padding-top: 0.75rem;">
-                        <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: block;">
+                    <div style="border-top: 1px solid var(--card-border); padding-top: 0.65rem;">
+                        <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary); margin-bottom: 5px; display: block;">
                             📝 或貼上 Goal Star 網頁文字 / HTML
                         </label>
-                        <textarea id="etf-raw-input" placeholder="可直接複製 Goal Star 網頁內容或表格在此貼上..." rows="4" style="width: 100%; border-radius: 0.5rem; border: 1px solid var(--card-border); padding: 0.6rem; background-color: rgba(255,255,255,0.02); color: var(--text-primary); font-family: inherit; resize: vertical; font-size: 0.82rem; line-height: 1.4;"></textarea>
-                        <button class="btn" id="analyze-etf-text-btn" style="width: 100%; margin-top: 8px; font-size: 0.85rem; padding: 0.5rem 1rem;">
+                        <textarea id="etf-raw-input" placeholder="可直接複製 Goal Star 網頁內容或表格在此貼上..." rows="4" style="width: 100%; border-radius: 0.5rem; border: 1px solid var(--card-border); padding: 0.55rem; background-color: rgba(255,255,255,0.02); color: var(--text-primary); font-family: inherit; resize: vertical; font-size: 0.8rem; line-height: 1.4;"></textarea>
+                        <button class="btn" id="analyze-etf-text-btn" style="width: 100%; margin-top: 6px; font-size: 0.82rem; padding: 0.45rem 1rem;">
                             <span>🤖</span> <span>AI 智慧解析貼上內容</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- 右側：篩選指標、排序與資料表格 -->
-                <div class="reports-section" style="margin-top: 0;">
-                    <div class="section-header">
-                        <div>
-                            <h2>🎯 主動型 ETF 獨家重押篩選</h2>
-                            <p style="font-size:0.82rem; color:var(--text-secondary); margin-top:4px;">統計各檔股票被主動型 ETF 持有之檔數（由少到多），找出經理人獨門重押且籌碼集中的潛力股</p>
+                <div class="reports-section" style="margin-top: 0; min-width: 0; width: 100%; display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="section-header" style="flex-wrap: wrap; gap: 0.75rem; align-items: center;">
+                        <div style="min-width: 240px; flex: 1;">
+                            <h2 style="font-size: 1.25rem;">🎯 主動型 ETF 獨家重押篩選</h2>
+                            <p style="font-size:0.82rem; color:var(--text-secondary); margin-top:4px; line-height: 1.4;">統計各檔股票被主動型 ETF 持有之檔數（由少到多），找出經理人獨門重押且籌碼集中的潛力股</p>
                         </div>
-                        <div class="action-buttons">
+                        <div class="action-buttons" style="flex-shrink: 0;">
                             <button class="btn" id="export-etf-json-btn">📤 導出 JSON</button>
                             <button class="btn" id="export-etf-csv-btn">📄 導出 CSV</button>
                         </div>
                     </div>
 
-                    <!-- ETF 數據指標卡片 -->
-                    <div class="quant-stats-grid" style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:0.5rem;">
-                        <div class="quant-stat-card" style="flex:1; min-width:140px; background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:0.75rem; padding:0.85rem;">
+                    <!-- ETF 數據指標卡片 (響應式自動平均佈局) -->
+                    <div class="quant-stats-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:0.75rem;">
+                        <div class="quant-stat-card" style="background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:0.75rem; padding:0.85rem;">
                             <div style="font-size:0.72rem; color:var(--text-secondary);">主動型 ETF 檔數</div>
                             <div style="font-size:1.35rem; font-weight:700; color:var(--text-primary); margin-top:0.2rem;" id="etf-stat-funds">0 檔</div>
                         </div>
-                        <div class="quant-stat-card" style="flex:1; min-width:140px; background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:0.75rem; padding:0.85rem;">
+                        <div class="quant-stat-card" style="background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:0.75rem; padding:0.85rem;">
                             <div style="font-size:0.72rem; color:var(--text-secondary);">總持股股票數</div>
                             <div style="font-size:1.35rem; font-weight:700; color:var(--text-primary); margin-top:0.2rem;" id="etf-stat-stocks">0 檔</div>
                         </div>
-                        <div class="quant-stat-card" style="flex:1; min-width:140px; background:rgba(15,23,42,0.6); border:1px solid rgba(16,185,129,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div class="quant-stat-card" style="background:rgba(15,23,42,0.6); border:1px solid rgba(16,185,129,0.3); border-radius:0.75rem; padding:0.85rem;">
                             <div style="font-size:0.72rem; color:#34d399;">⭐ 1 檔獨家持有 (最少)</div>
                             <div style="font-size:1.35rem; font-weight:700; color:var(--accent-emerald); margin-top:0.2rem;" id="etf-stat-single">0 檔</div>
                         </div>
-                        <div class="quant-stat-card" style="flex:1; min-width:140px; background:rgba(15,23,42,0.6); border:1px solid rgba(99,102,241,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div class="quant-stat-card" style="background:rgba(15,23,42,0.6); border:1px solid rgba(99,102,241,0.3); border-radius:0.75rem; padding:0.85rem;">
                             <div style="font-size:0.72rem; color:#a5b4fc;">2 檔共同持有</div>
                             <div style="font-size:1.35rem; font-weight:700; color:#818cf8; margin-top:0.2rem;" id="etf-stat-double">0 檔</div>
                         </div>
                     </div>
 
                     <!-- 篩選器與搜尋列 -->
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.25rem; margin-bottom:12px; flex-wrap:wrap; gap:0.75rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.25rem; flex-wrap:wrap; gap:0.75rem;">
                         <!-- 快速篩選按鈕組 -->
                         <div style="display:flex; gap:0.4rem; flex-wrap:wrap;" id="etf-filter-buttons">
                             <button class="filter-chip active" data-filter="all">全部 (<span id="count-all">0</span>)</button>
@@ -1680,8 +1713,8 @@
                     </div>
 
                     <!-- 主動型 ETF 持股表格 -->
-                    <div class="table-responsive">
-                        <table class="quant-table" id="active-etf-table">
+                    <div class="table-responsive" style="min-width: 0; width: 100%;">
+                        <table class="quant-table" id="active-etf-table" style="width: 100%;">
                             <thead>
                                 <tr>
                                     <th style="width:60px; text-align:center;">排名</th>
