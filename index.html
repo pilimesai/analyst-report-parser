@@ -2132,127 +2132,136 @@
             return "這是一份表格資料：\n" + csv;
         }
 
-        // Call Gemini HTTP endpoint
+        // Call Gemini HTTP endpoint with Auto-Fallback across candidate models
         async function analyzeReportWithGemini(apiKey, text, modelName) {
             // 系統提示（透過 system_instruction 傳送，不佔 user turn token）
-            const systemInstruction = `你是券商報告解析器。從報告中提取結構化資料，回傳 JSON 陣列，每檔股票一個物件。
-欄位：date(YYYY-MM-DD), stock(代號+名稱,如"2330 台積電"), brokerage(券商), rating(評等), target_price(數字或N/A), eps(如"今年31/明年46"), summary(≤60字), daily_stock_selection(選股摘要或"無"), matched_criteria([]即可,前端自行計算)
-規則：若報告含多股，每股一筆；不確定留空字串；直接輸出 JSON 陣列，禁止 markdown。`;
+            const systemInstruction = `你是專業券商報告結構化解析器。從提供的文字中提取所有提到的股票資料，回傳乾淨的 JSON 陣列，每檔股票為一個物件。
+JSON 欄位：
+- date: 發布日期 (YYYY-MM-DD，如報告中無年份則帶入今年)
+- stock: 股票代號與名稱 (如 "2330 台積電", "9904 寶成")
+- brokerage: 券商名稱 (如 "永豐", "富邦" 等，若無請填 "未知")
+- rating: 評等 (如 "買進", "中立", "未評等")
+- target_price: 目標價數字或 "N/A"
+- eps: 預估EPS (如 "今年4.15/明年5.2")
+- summary: 重點摘要 (60字以內)
+- daily_stock_selection: "無"
+- matched_criteria: []
 
-            // 截斷過長文字（超過 3000 字只保留前段，節省 token）
-            const MAX_CHARS = 3000;
+規則：若報告含多股，每股一筆；必須直接回傳標準 JSON 陣列，禁止 markdown 語法。`;
+
+            // 截斷過長文字（超過 4000 字只保留前段，節省 token）
+            const MAX_CHARS = 4000;
             const truncatedText = text.length > MAX_CHARS
                 ? text.slice(0, MAX_CHARS) + '\n...(截斷)'
                 : text;
 
+            // 備援模型清單：若首選模型失敗，將自動依序切換重試
+            const fallbackChain = [
+                modelName || 'gemini-2.5-flash',
+                'gemini-2.0-flash',
+                'gemini-1.5-flash',
+                'gemini-2.0-flash-lite'
+            ].filter((v, i, a) => v && a.indexOf(v) === i);
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    system_instruction: { parts: [{ text: systemInstruction }] },
-                    contents: [{ role: 'user', parts: [{ text: truncatedText }] }],
-                    generationConfig: {
-                        temperature: 0,        // 確定性輸出，不隨機，速度更快
-                        maxOutputTokens: 4096,  // 限制輸出長度，放寬以避免 JSON 被截斷
-                        responseMimeType: 'application/json'  // 直接要求 JSON 格式輸出
-                    }
-                })
-            });
+            let lastError = null;
 
-            if (!response.ok) {
-                // Try to read error body for more details
-                let errBody = '';
-                try { errBody = await response.text(); } catch (_) {}
-
-                const statusHints = {
-                    400: '請求格式錯誤，請確認模型名稱是否正確。',
-                    401: 'API Key 無效或已過期，請重新取得。',
-                    403: [
-                        'API Key 未授權（403）。常見原因：',
-                        '① Key 打錯或有多餘空格 — 請重新複製',
-                        '② Generative Language API 尚未啟用 — 請至 Google Cloud Console 啟用',
-                        '③ Key 設有 IP / 網域限制，不允許從本頁面呼叫',
-                        '④ 免費配額已用完，需升級計費方案',
-                        errBody ? `\n伺服器回應：${errBody.slice(0, 200)}` : ''
-                    ].join('\n'),
-                    404: `找不到模型「${modelName}」，請換用 gemini-2.0-flash 或 gemini-2.0-flash-lite。`,
-                    429: '呼叫頻率過高（429 Rate Limit），請稍候 30 秒後再試。',
-                    500: 'Gemini 伺服器內部錯誤，請稍後重試。',
-                    503: 'Gemini 服務暫時不可用，請稍後重試。',
-                };
-                const hint = statusHints[response.status] || `未知錯誤 ${response.status}${errBody ? '\n伺服器回應：' + errBody.slice(0, 200) : ''}`;
-                throw new Error(hint);
-            }
-
-            const data = await response.json();
-            if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0]) {
-                const responseText = data.candidates[0].content.parts[0].text.trim();
-                // Strip markdown fences if present
-                const cleaned = responseText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-                console.log('[Gemini raw response]', cleaned.slice(0, 300));
-                
-                // 1. 優先嘗試標準 JSON 解析
+            for (let i = 0; i < fallbackChain.length; i++) {
+                const currentModel = fallbackChain[i];
                 try {
-                    const parsed = JSON.parse(cleaned);
-                    return Array.isArray(parsed) ? parsed : [parsed];
-                } catch (parseErr) {
-                    console.warn('標準 JSON 解析失敗，啟動智慧容錯修復模式...', parseErr);
-                }
-
-                // 2. 嘗試正規表達式提取標準陣列或物件
-                const arrMatch = cleaned.match(/(\[\s*\{[\s\S]*\}\s*\])/);
-                if (arrMatch) {
-                    try { return JSON.parse(arrMatch[1]); } catch (_) {}
-                }
-                const objMatch = cleaned.match(/(\{[\s\S]*\})/);
-                if (objMatch) {
-                    try { return [JSON.parse(objMatch[1])]; } catch (_) {}
-                }
-
-                // 3. 容錯修復：逐筆提取所有完整的個股物件
-                const extractedObjects = [];
-                const objPattern = /\{[^{}]*?"stock"\s*:[^{}]*?\}/g;
-                let m;
-                while ((m = objPattern.exec(cleaned)) !== null) {
-                    try {
-                        const parsedObj = JSON.parse(m[0]);
-                        if (parsedObj && (parsedObj.stock || parsedObj.date)) {
-                            extractedObjects.push(parsedObj);
-                        }
-                    } catch (_) {}
-                }
-                if (extractedObjects.length > 0) {
-                    return extractedObjects;
-                }
-
-                // 4. 容錯修復：自動補齊被截斷的結尾引號與括號
-                let repaired = cleaned.trim();
-                if (repaired.startsWith('[')) {
-                    if (!repaired.endsWith(']')) {
-                        if (!repaired.endsWith('"') && !repaired.endsWith('}')) {
-                            repaired += '"';
-                        }
-                        if (!repaired.endsWith('}')) {
-                            repaired += '}';
-                        }
-                        repaired += ']';
+                    console.log(`[AI Analysis] 嘗試使用模型: ${currentModel} (第 ${i + 1}/${fallbackChain.length} 個)...`);
+                    if (i > 0) {
+                        updateProgress(40 + i * 15, `⚡ 首選模型回應異常，自動切換至備用模型：${currentModel}...`);
                     }
-                    try {
-                        const parsed = JSON.parse(repaired);
-                        return Array.isArray(parsed) ? parsed : [parsed];
-                    } catch (_) {}
-                }
 
-                console.error('所有 JSON 解析方法均失敗，原始回應：', cleaned);
-                throw new Error(`AI 回應格式錯誤，無法解析 JSON。請再試一次，或換用其他模型。\n原始回應片段：${cleaned.slice(0, 150)}`);
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${apiKey}`;
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            system_instruction: { parts: [{ text: systemInstruction }] },
+                            contents: [{ role: 'user', parts: [{ text: truncatedText }] }],
+                            generationConfig: {
+                                temperature: 0.1,
+                                maxOutputTokens: 8192,
+                                responseMimeType: 'application/json'
+                            }
+                        })
+                    });
+
+                    if (!response.ok) {
+                        let errBody = '';
+                        try { errBody = await response.text(); } catch (_) {}
+                        throw new Error(`HTTP ${response.status}: ${errBody.slice(0, 150)}`);
+                    }
+
+                    const data = await response.json();
+                    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts[0]) {
+                        throw new Error("AI 未回傳有效內容");
+                    }
+
+                    const responseText = data.candidates[0].content.parts[0].text.trim();
+                    const cleaned = responseText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+                    console.log(`[${currentModel} response]`, cleaned.slice(0, 200));
+
+                    // 1. 優先嘗試標準 JSON 解析
+                    try {
+                        const parsed = JSON.parse(cleaned);
+                        const list = Array.isArray(parsed) ? parsed : [parsed];
+                        if (list.length > 0) return list;
+                    } catch (_) {}
+
+                    // 2. 嘗試正規表達式提取標準陣列或物件
+                    const arrMatch = cleaned.match(/(\[\s*\{[\s\S]*\}\s*\])/);
+                    if (arrMatch) {
+                        try {
+                            const parsed = JSON.parse(arrMatch[1]);
+                            return Array.isArray(parsed) ? parsed : [parsed];
+                        } catch (_) {}
+                    }
+                    const objMatch = cleaned.match(/(\{[\s\S]*\})/);
+                    if (objMatch) {
+                        try { return [JSON.parse(objMatch[1])]; } catch (_) {}
+                    }
+
+                    // 3. 容錯修復：逐筆提取所有完整物件
+                    const extractedObjects = [];
+                    const objPattern = /\{[^{}]*?"stock"\s*:[^{}]*?\}/g;
+                    let m;
+                    while ((m = objPattern.exec(cleaned)) !== null) {
+                        try {
+                            const parsedObj = JSON.parse(m[0]);
+                            if (parsedObj && (parsedObj.stock || parsedObj.date)) {
+                                extractedObjects.push(parsedObj);
+                            }
+                        } catch (_) {}
+                    }
+                    if (extractedObjects.length > 0) {
+                        return extractedObjects;
+                    }
+
+                    // 4. 容錯修復：自動補齊被截斷的結尾引號與括號
+                    let repaired = cleaned.trim();
+                    if (repaired.startsWith('[')) {
+                        if (!repaired.endsWith(']')) {
+                            if (!repaired.endsWith('"') && !repaired.endsWith('}')) repaired += '"';
+                            if (!repaired.endsWith('}')) repaired += '}';
+                            repaired += ']';
+                        }
+                        try {
+                            const parsed = JSON.parse(repaired);
+                            return Array.isArray(parsed) ? parsed : [parsed];
+                        } catch (_) {}
+                    }
+
+                    throw new Error(`無法解析回應為 JSON 格式 (長度 ${cleaned.length})`);
+                } catch (err) {
+                    console.warn(`[AI Analysis] 模型 ${currentModel} 執行異常:`, err);
+                    lastError = err;
+                    // 繼續自動嘗試下一個備援模型
+                }
             }
-            // candidates 存在但沒有內容，可能是安全過濾
-            if (data.candidates && data.candidates[0].finishReason) {
-                throw new Error(`AI 拒絕回應（原因：${data.candidates[0].finishReason}），可能觸發內容安全過濾，請確認輸入文字。`);
-            }
-            return [];
+
+            throw new Error(`AI 解析失敗: ${lastError ? lastError.message : '所有模型均未能正常產出資料'}`);
         }
 
         // Render reports database inside Table
