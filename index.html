@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>📈 券商報告自動分析器 (Serverless 版)</title>
 
     <!-- Google Fonts -->
@@ -1072,88 +1075,89 @@
 
             /* 手機版報告解析總覽表格專用緊湊欄寬優化 */
             .reports-section {
-                padding: 0.85rem 0.6rem;
+                padding: 0.6rem 0.35rem;
             }
 
             .reports-table {
                 width: 100% !important;
-                min-width: 600px !important;
+                min-width: 490px !important;
                 table-layout: fixed !important;
-                font-size: 0.74rem;
+                font-size: 0.72rem;
             }
 
             .reports-table th,
             .reports-table td {
-                padding: 0.3rem 0.25rem;
-                font-size: 0.73rem;
+                padding: 0.25rem 0.15rem !important;
+                font-size: 0.71rem;
                 overflow: hidden;
             }
 
             .reports-table th {
-                font-size: 0.72rem;
-                padding: 0.35rem 0.15rem;
+                font-size: 0.7rem;
+                padding: 0.3rem 0.1rem !important;
             }
 
             .rep-col-date {
-                width: 65px !important;
-                min-width: 65px !important;
-                max-width: 65px !important;
-                font-size: 0.72rem;
+                width: 58px !important;
+                min-width: 58px !important;
+                max-width: 58px !important;
+                font-size: 0.68rem;
+                letter-spacing: -0.5px;
             }
 
             .rep-col-stock {
-                width: 75px !important;
-                min-width: 75px !important;
-                max-width: 75px !important;
-                font-size: 0.75rem;
+                width: 68px !important;
+                min-width: 68px !important;
+                max-width: 68px !important;
+                font-size: 0.72rem;
             }
 
             .rep-col-broker {
-                width: 48px !important;
-                min-width: 48px !important;
-                max-width: 48px !important;
-                font-size: 0.72rem;
-            }
-
-            .rep-col-rating {
-                width: 52px !important;
-                min-width: 52px !important;
-                max-width: 52px !important;
-                font-size: 0.7rem;
-            }
-
-            .rating-badge {
-                padding: 0.12rem 0.3rem;
+                width: 38px !important;
+                min-width: 38px !important;
+                max-width: 38px !important;
                 font-size: 0.68rem;
             }
 
+            .rep-col-rating {
+                width: 44px !important;
+                min-width: 44px !important;
+                max-width: 44px !important;
+                font-size: 0.68rem;
+            }
+
+            .rating-badge {
+                padding: 0.08rem 0.2rem !important;
+                font-size: 0.65rem !important;
+            }
+
             .rep-col-tp {
-                width: 50px !important;
-                min-width: 50px !important;
-                max-width: 50px !important;
-                font-size: 0.74rem;
+                width: 44px !important;
+                min-width: 44px !important;
+                max-width: 44px !important;
+                font-size: 0.7rem;
             }
 
             .rep-col-eps {
-                width: 62px !important;
-                min-width: 62px !important;
-                max-width: 62px !important;
-                font-size: 0.72rem;
+                width: 52px !important;
+                min-width: 52px !important;
+                max-width: 52px !important;
+                font-size: 0.68rem;
             }
 
             .rep-col-summary {
-                width: 130px !important;
-                min-width: 130px !important;
-                font-size: 0.72rem;
-                line-height: 1.3;
+                width: 105px !important;
+                min-width: 105px !important;
+                font-size: 0.7rem;
+                line-height: 1.25;
                 white-space: normal !important;
             }
 
             .rep-col-criteria {
-                width: 118px !important;
-                min-width: 118px !important;
-                font-size: 0.72rem;
-                line-height: 1.3;
+                width: 95px !important;
+                min-width: 95px !important;
+                font-size: 0.7rem;
+                line-height: 1.25;
                 white-space: normal !important;
             }
         }
