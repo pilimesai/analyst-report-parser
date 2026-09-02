@@ -444,6 +444,52 @@
             border-color: rgba(99, 102, 241, 0.4);
         }
 
+        /* Active ETF Filter Chips & Weight Pills */
+        .filter-chip {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 9999px;
+            padding: 0.3rem 0.75rem;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-chip:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .filter-chip.active {
+            background: rgba(99, 102, 241, 0.25);
+            border-color: rgba(99, 102, 241, 0.5);
+            color: #a5b4fc;
+            font-weight: 600;
+        }
+
+        .etf-weight-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            margin: 2px 3px;
+        }
+
+        .etf-weight-pill .fund-code {
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        .etf-weight-pill .fund-ratio {
+            color: #34d399;
+            font-weight: 700;
+        }
+
         /* Navigation Tab Bar */
         .nav-tabs-wrapper {
             margin-bottom: 1.5rem;
@@ -1377,6 +1423,11 @@
                     <span class="tab-text">量化選股結果</span>
                     <span class="tab-badge" id="badge-quant">0</span>
                 </button>
+                <button class="tab-btn" data-tab="active-etf" onclick="switchActiveTab('active-etf')">
+                    <span class="tab-icon">🎯</span>
+                    <span class="tab-text">主動型ETF篩選</span>
+                    <span class="tab-badge" id="badge-etf">0</span>
+                </button>
             </div>
         </div>
 
@@ -1517,6 +1568,137 @@
                                         <div style="font-size:1.5rem; margin-bottom:0.5rem;">🎯</div>
                                         <div>尚未執行量化運算</div>
                                         <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🚀 執行即時量化運算」按鈕，系統將自動分析日周KD、三大法人、營收、大戶、法說會與CB條件。</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Standalone Active ETF Screener View (主動型ETF選股專屬頁面) -->
+        <div id="active-etf-view" style="display:none; flex-direction:column; gap:20px; padding-bottom: 40px;">
+            <div style="display:grid; grid-template-columns: 360px 1fr; gap: 1.5rem; align-items: start;">
+                <!-- 左側：AI / 雲端抓取控制面板 -->
+                <div style="background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: 1rem; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                            <span>🤖</span> <span>AI / 雲端抓取 ETF</span>
+                        </h3>
+                        <span style="font-size: 0.72rem; padding: 0.2rem 0.5rem; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 0.375rem; font-weight: 600;">
+                            🛡️ 排除 00984A
+                        </span>
+                    </div>
+
+                    <div style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; background: rgba(15, 23, 42, 0.5); padding: 0.75rem; border-radius: 0.5rem; border: 1px solid var(--card-border);">
+                        <div>資料來源：<a href="https://goal-star.com/summary/fund-weights" target="_blank" style="color: #60a5fa; text-decoration: underline;">Goal Star 持股權重熱力圖 🔗</a></div>
+                        <div style="margin-top: 4px; color: #94a3b8;">分析全台主動型 ETF 最新持股，篩選被<b>最少隻 ETF 重複持有</b>的獨門標的。</div>
+                    </div>
+
+                    <!-- 一鍵即時雲端抓取按鈕 -->
+                    <button class="btn btn-primary" id="fetch-etf-api-btn" style="width: 100%; padding: 0.75rem 1rem; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 600;">
+                        <span>🚀</span> <span>立即從 Goal Star 雲端抓取</span>
+                    </button>
+
+                    <!-- 抓取進度條 -->
+                    <div id="etf-progress-container" style="display: none; flex-direction: column; gap: 0.4rem; background: rgba(15, 23, 42, 0.6); padding: 0.75rem; border-radius: 0.5rem; border: 1px solid var(--card-border);">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-secondary);">
+                            <span id="etf-progress-status">正在連線 Goal Star...</span>
+                            <span id="etf-progress-percent">0%</span>
+                        </div>
+                        <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                            <div id="etf-progress-bar-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent-indigo), var(--accent-emerald)); transition: width 0.2s ease;"></div>
+                        </div>
+                    </div>
+
+                    <!-- 貼上文字 / HTML 區塊 -->
+                    <div style="border-top: 1px solid var(--card-border); padding-top: 0.75rem;">
+                        <label style="font-size: 0.82rem; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: block;">
+                            📝 或貼上 Goal Star 網頁文字 / HTML
+                        </label>
+                        <textarea id="etf-raw-input" placeholder="可直接複製 Goal Star 網頁內容或表格在此貼上..." rows="4" style="width: 100%; border-radius: 0.5rem; border: 1px solid var(--card-border); padding: 0.6rem; background-color: rgba(255,255,255,0.02); color: var(--text-primary); font-family: inherit; resize: vertical; font-size: 0.82rem; line-height: 1.4;"></textarea>
+                        <button class="btn" id="analyze-etf-text-btn" style="width: 100%; margin-top: 8px; font-size: 0.85rem; padding: 0.5rem 1rem;">
+                            <span>🤖</span> <span>AI 智慧解析貼上內容</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 右側：篩選指標、排序與資料表格 -->
+                <div class="reports-section" style="margin-top: 0;">
+                    <div class="section-header">
+                        <div>
+                            <h2>🎯 主動型 ETF 獨家重押篩選</h2>
+                            <p style="font-size:0.82rem; color:var(--text-secondary); margin-top:4px;">統計各檔股票被主動型 ETF 持有之檔數（由少到多），找出經理人獨門重押且籌碼集中的潛力股</p>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn" id="export-etf-json-btn">📤 導出 JSON</button>
+                            <button class="btn" id="export-etf-csv-btn">📄 導出 CSV</button>
+                        </div>
+                    </div>
+
+                    <!-- ETF 數據指標卡片 -->
+                    <div class="quant-stats-grid" style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:0.5rem;">
+                        <div class="quant-stat-card" style="flex:1; min-width:140px; background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:0.75rem; padding:0.85rem;">
+                            <div style="font-size:0.72rem; color:var(--text-secondary);">主動型 ETF 檔數</div>
+                            <div style="font-size:1.35rem; font-weight:700; color:var(--text-primary); margin-top:0.2rem;" id="etf-stat-funds">0 檔</div>
+                        </div>
+                        <div class="quant-stat-card" style="flex:1; min-width:140px; background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:0.75rem; padding:0.85rem;">
+                            <div style="font-size:0.72rem; color:var(--text-secondary);">總持股股票數</div>
+                            <div style="font-size:1.35rem; font-weight:700; color:var(--text-primary); margin-top:0.2rem;" id="etf-stat-stocks">0 檔</div>
+                        </div>
+                        <div class="quant-stat-card" style="flex:1; min-width:140px; background:rgba(15,23,42,0.6); border:1px solid rgba(16,185,129,0.3); border-radius:0.75rem; padding:0.85rem;">
+                            <div style="font-size:0.72rem; color:#34d399;">⭐ 1 檔獨家持有 (最少)</div>
+                            <div style="font-size:1.35rem; font-weight:700; color:var(--accent-emerald); margin-top:0.2rem;" id="etf-stat-single">0 檔</div>
+                        </div>
+                        <div class="quant-stat-card" style="flex:1; min-width:140px; background:rgba(15,23,42,0.6); border:1px solid rgba(99,102,241,0.3); border-radius:0.75rem; padding:0.85rem;">
+                            <div style="font-size:0.72rem; color:#a5b4fc;">2 檔共同持有</div>
+                            <div style="font-size:1.35rem; font-weight:700; color:#818cf8; margin-top:0.2rem;" id="etf-stat-double">0 檔</div>
+                        </div>
+                    </div>
+
+                    <!-- 篩選器與搜尋列 -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.25rem; margin-bottom:12px; flex-wrap:wrap; gap:0.75rem;">
+                        <!-- 快速篩選按鈕組 -->
+                        <div style="display:flex; gap:0.4rem; flex-wrap:wrap;" id="etf-filter-buttons">
+                            <button class="filter-chip active" data-filter="all">全部 (<span id="count-all">0</span>)</button>
+                            <button class="filter-chip" data-filter="1">⭐ 僅 1 檔獨家 (<span id="count-1">0</span>)</button>
+                            <button class="filter-chip" data-filter="2">僅 2 檔持有 (<span id="count-2">0</span>)</button>
+                            <button class="filter-chip" data-filter="3">3 檔以內 (<span id="count-3">0</span>)</button>
+                        </div>
+
+                        <!-- 排序與搜尋 -->
+                        <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+                            <select id="etf-sort-select" style="padding:0.4rem 0.6rem; font-size:0.82rem; background:rgba(15,23,42,0.8); color:var(--text-primary); border:1px solid var(--card-border); border-radius:0.5rem;">
+                                <option value="count_asc">🔹 持有檔數由少到多 (最少重複優先)</option>
+                                <option value="max_desc">🔥 單一最高持股權重高至低</option>
+                                <option value="total_desc">📊 合計持股權重高至低</option>
+                                <option value="symbol_asc">🔤 依股票代號排序</option>
+                            </select>
+                            <input type="text" id="etf-search-input" placeholder="🔍 搜尋代號、股名、產業或 ETF..." style="width:200px; padding:0.4rem 0.65rem; font-size:0.82rem;" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <!-- 主動型 ETF 持股表格 -->
+                    <div class="table-responsive">
+                        <table class="quant-table" id="active-etf-table">
+                            <thead>
+                                <tr>
+                                    <th style="width:60px; text-align:center;">排名</th>
+                                    <th style="width:130px; text-align:center;">個股代號 / 名稱</th>
+                                    <th style="width:110px; text-align:center;">產業類別</th>
+                                    <th style="width:105px; text-align:center;">持有 ETF 檔數</th>
+                                    <th style="text-align:left;">持有之主動型 ETF 明細與權重 (%)</th>
+                                    <th style="width:95px; text-align:center;">最高單一權重</th>
+                                    <th style="width:95px; text-align:center;">合計權重</th>
+                                </tr>
+                            </thead>
+                            <tbody id="active-etf-tbody">
+                                <tr>
+                                    <td colspan="7" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                                        <div style="font-size:1.5rem; margin-bottom:0.5rem;">🎯</div>
+                                        <div>尚未載入主動型 ETF 資料</div>
+                                        <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊左側「🚀 立即從 Goal Star 雲端抓取」按鈕，系統將自動分析 21 檔主動型 ETF 並排除 00984A。</div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -1738,6 +1920,17 @@
                         renderQuantResults(savedQuant.liveScores, savedQuant.liveMatches);
                     }
                 } catch (e) { console.error("Error parsing quant cache: ", e); }
+            }
+
+            if (localStorage.getItem('active_etf_cache')) {
+                try {
+                    const savedEtf = JSON.parse(localStorage.getItem('active_etf_cache'));
+                    if (savedEtf && savedEtf.stocks) {
+                        activeEtfStocksData = savedEtf.stocks;
+                        activeEtfFundsList = savedEtf.funds || [];
+                        renderActiveEtfView();
+                    }
+                } catch (e) { console.error("Error parsing ETF cache: ", e); }
             }
 
             // 4. 解鎖按鈕事件
@@ -2712,10 +2905,16 @@ JSON 欄位：
                 quantResultsView.style.display = (currentActiveTab === 'quant-results') ? 'flex' : 'none';
             }
 
-            // 4. Toggle persistent tables container and sections
+            // 4. Toggle standalone active ETF view
+            const activeEtfView = document.getElementById('active-etf-view');
+            if (activeEtfView) {
+                activeEtfView.style.display = (currentActiveTab === 'active-etf') ? 'flex' : 'none';
+            }
+
+            // 5. Toggle persistent tables container and sections
             const persistentContainer = document.getElementById('persistent-csv-tables');
             if (persistentContainer) {
-                persistentContainer.style.display = (currentActiveTab === 'main-reports' || currentActiveTab === 'quant-results') ? 'none' : 'flex';
+                persistentContainer.style.display = (currentActiveTab === 'main-reports' || currentActiveTab === 'quant-results' || currentActiveTab === 'active-etf') ? 'none' : 'flex';
                 const sections = persistentContainer.querySelectorAll('.persistent-table-section');
                 sections.forEach(sec => {
                     if (sec.getAttribute('data-sheet-name') === currentActiveTab) {
@@ -2751,8 +2950,8 @@ JSON 欄位：
 
             const tabsContainer = document.getElementById('nav-tabs-container');
             if (tabsContainer) {
-                // Keep only main-reports and quant-results tab buttons, remove dynamic ones
-                const dynamicTabs = tabsContainer.querySelectorAll('.tab-btn:not([data-tab="main-reports"]):not([data-tab="quant-results"])');
+                // Keep only main-reports, quant-results and active-etf tab buttons, remove dynamic ones
+                const dynamicTabs = tabsContainer.querySelectorAll('.tab-btn:not([data-tab="main-reports"]):not([data-tab="quant-results"]):not([data-tab="active-etf"])');
                 dynamicTabs.forEach(t => t.remove());
             }
 
@@ -3657,6 +3856,480 @@ JSON 欄位：
             });
         }
 
+        // ==========================================
+        // 🎯 主動型 ETF 篩選模組 (Active ETF Screener Module)
+        // ==========================================
+        let activeEtfStocksData = [];
+        let activeEtfFundsList = [];
+        let activeEtfFilter = 'all';
+
+        async function fetchGoalStarActiveFunds() {
+            const progressContainer = document.getElementById('etf-progress-container');
+            const progressStatus = document.getElementById('etf-progress-status');
+            const progressPercent = document.getElementById('etf-progress-percent');
+            const progressBarFill = document.getElementById('etf-progress-bar-fill');
+            const fetchBtn = document.getElementById('fetch-etf-api-btn');
+
+            if (progressContainer) progressContainer.style.display = 'flex';
+            if (fetchBtn) fetchBtn.disabled = true;
+
+            const updateEtfProgress = (pct, msg) => {
+                if (progressPercent) progressPercent.innerText = `${pct}%`;
+                if (progressBarFill) progressBarFill.style.width = `${pct}%`;
+                if (progressStatus) progressStatus.innerText = msg;
+            };
+
+            updateEtfProgress(5, "正在取得主動型 ETF 清單...");
+
+            try {
+                // 1. 抓取主動型 ETF 清單 (支援 CORS 代理備援)
+                let fundsData = null;
+                const endpoints = [
+                    'https://goal-star.com/api/funds',
+                    'https://corsproxy.io/?url=https://goal-star.com/api/funds',
+                    'https://api.allorigins.win/raw?url=https://goal-star.com/api/funds'
+                ];
+
+                for (const ep of endpoints) {
+                    try {
+                        const resp = await fetch(ep);
+                        if (resp.ok) {
+                            fundsData = await resp.json();
+                            if (fundsData && fundsData.active && fundsData.active.items) break;
+                        }
+                    } catch(e) {}
+                }
+
+                if (!fundsData || !fundsData.active || !fundsData.active.items) {
+                    throw new Error("無法連線至 Goal Star API，請確認網路或使用下方貼上文字解析。");
+                }
+
+                // 2. 嚴格排除 00984A
+                const activeFunds = fundsData.active.items.filter(f => f.symbol !== '00984A');
+                activeEtfFundsList = activeFunds;
+
+                updateEtfProgress(20, `取得 ${activeFunds.length} 檔主動型 ETF，開始抓取成分股 (已排除 00984A)...`);
+
+                const stockMap = {};
+                let completedFunds = 0;
+                const totalFunds = activeFunds.length;
+
+                // 3. 並行處理各 ETF 之持股成分
+                const CONCURRENCY = 5;
+                let fundIdx = 0;
+
+                const workers = Array.from({ length: Math.min(CONCURRENCY, totalFunds) }, async () => {
+                    while (fundIdx < totalFunds) {
+                        const i = fundIdx++;
+                        const fund = activeFunds[i];
+                        
+                        let sharesData = null;
+                        const sharesEndpoints = [
+                            `https://goal-star.com/api/funds/${fund.symbol}/shares`,
+                            `https://corsproxy.io/?url=https://goal-star.com/api/funds/${fund.symbol}/shares`,
+                            `https://api.allorigins.win/raw?url=https://goal-star.com/api/funds/${fund.symbol}/shares`
+                        ];
+
+                        for (const sep of sharesEndpoints) {
+                            try {
+                                const resp = await fetch(sep);
+                                if (resp.ok) {
+                                    sharesData = await resp.json();
+                                    if (sharesData && sharesData.items) break;
+                                }
+                            } catch(e) {}
+                        }
+
+                        if (sharesData && sharesData.items) {
+                            for (const item of sharesData.items) {
+                                const sid = item.stock_symbol;
+                                if (!stockMap[sid]) {
+                                    stockMap[sid] = {
+                                        symbol: sid,
+                                        name: item.stock_name || stockNameMap[sid] || '',
+                                        industry: item.industry || '一般產業',
+                                        funds: [],
+                                        totalRatio: 0,
+                                        maxRatio: 0
+                                    };
+                                }
+                                const ratio = parseFloat(item.ratio) || 0;
+                                stockMap[sid].funds.push({
+                                    fundSymbol: fund.symbol,
+                                    fundName: fund.name,
+                                    ratio: ratio
+                                });
+                                stockMap[sid].totalRatio += ratio;
+                                if (ratio > stockMap[sid].maxRatio) {
+                                    stockMap[sid].maxRatio = ratio;
+                                }
+                            }
+                        }
+
+                        completedFunds++;
+                        const pct = Math.round(20 + (completedFunds / totalFunds) * 75);
+                        updateEtfProgress(pct, `正在解析 (${completedFunds}/${totalFunds})：${fund.symbol} ${fund.name}...`);
+                    }
+                });
+
+                await Promise.all(workers);
+
+                // 4. 格式化並排序（最少 ETF 持有者排前面，次依最高權重排序）
+                activeEtfStocksData = Object.values(stockMap).map(stock => {
+                    stock.funds.sort((a, b) => b.ratio - a.ratio);
+                    stock.totalRatio = parseFloat(stock.totalRatio.toFixed(2));
+                    stock.maxRatio = parseFloat(stock.maxRatio.toFixed(2));
+                    return stock;
+                });
+
+                activeEtfStocksData.sort((a, b) => a.funds.length - b.funds.length || b.maxRatio - a.maxRatio);
+
+                // 儲存至本地快取
+                localStorage.setItem('active_etf_cache', JSON.stringify({
+                    funds: activeEtfFundsList,
+                    stocks: activeEtfStocksData,
+                    updateTime: new Date().toISOString()
+                }));
+
+                updateEtfProgress(100, "✅ 主動型 ETF 資料抓取與篩選完畢！");
+                setTimeout(() => {
+                    if (progressContainer) progressContainer.style.display = 'none';
+                }, 1000);
+
+                renderActiveEtfView();
+                showToast(`✅ 成功抓取 ${activeEtfFundsList.length} 檔主動型 ETF，共篩選出 ${activeEtfStocksData.length} 檔持股！`);
+
+            } catch(err) {
+                console.error("Error fetching active ETFs:", err);
+                showToast(`❌ 抓取失敗: ${err.message}`, true);
+                if (progressContainer) progressContainer.style.display = 'none';
+            } finally {
+                if (fetchBtn) fetchBtn.disabled = false;
+            }
+        }
+
+        async function parseEtfFromRawText() {
+            const rawInput = document.getElementById('etf-raw-input');
+            const text = rawInput ? rawInput.value.trim() : '';
+            if (!text) {
+                showToast("⚠️ 請先貼上 Goal Star 網頁文字或 HTML 代碼！", true);
+                return;
+            }
+
+            const apiKey = apiKeyInput.value.trim();
+            if (!apiKey) {
+                showToast("❌ 請先在左側欄位輸入 Google Gemini API Key！", true);
+                return;
+            }
+
+            const analyzeBtn = document.getElementById('analyze-etf-text-btn');
+            if (analyzeBtn) analyzeBtn.disabled = true;
+            showToast("🤖 AI 正在解析主動型 ETF 內容，請稍候...");
+
+            try {
+                const prompt = `請解析以下從 Goal Star 複製的主動型 ETF 持股文字或網頁內容。
+重點要求：
+1. 找出所有股票及其被哪些主動型 ETF 持有與持股比例(%)。
+2. 嚴格【撇除/排除 00984A】，不要包含 00984A！
+3. 回傳純 JSON 陣列，格式如下：
+[
+  {
+    "symbol": "股票代號",
+    "name": "公司名稱",
+    "industry": "產業類別",
+    "funds": [
+      { "fundSymbol": "ETF代號 (如 00999A)", "fundName": "ETF名稱", "ratio": 4.02 }
+    ]
+  }
+]
+只回傳標準 JSON 格式，不要包含任何 markdown 標記或解釋文字。
+
+內容如下：
+${text.slice(0, 30000)}`;
+
+                const selectedModel = modelSelect.value || "gemini-2.5-flash";
+                const response = await callGeminiWithFallback(apiKey, prompt, selectedModel);
+                const cleanedJson = response.replace(/```json/g, '').replace(/```/g, '').trim();
+                const parsedStocks = JSON.parse(cleanedJson);
+
+                if (Array.isArray(parsedStocks) && parsedStocks.length > 0) {
+                    activeEtfStocksData = parsedStocks.map(stock => {
+                        const validFunds = (stock.funds || []).filter(f => f.fundSymbol !== '00984A');
+                        let totalRatio = 0;
+                        let maxRatio = 0;
+                        validFunds.forEach(f => {
+                            const r = parseFloat(f.ratio) || 0;
+                            totalRatio += r;
+                            if (r > maxRatio) maxRatio = r;
+                        });
+                        return {
+                            symbol: stock.symbol,
+                            name: stock.name || stockNameMap[stock.symbol] || '',
+                            industry: stock.industry || '一般產業',
+                            funds: validFunds,
+                            totalRatio: parseFloat(totalRatio.toFixed(2)),
+                            maxRatio: parseFloat(maxRatio.toFixed(2))
+                        };
+                    }).filter(s => s.funds.length > 0);
+
+                    activeEtfStocksData.sort((a, b) => a.funds.length - b.funds.length || b.maxRatio - a.maxRatio);
+
+                    localStorage.setItem('active_etf_cache', JSON.stringify({
+                        funds: [],
+                        stocks: activeEtfStocksData,
+                        updateTime: new Date().toISOString()
+                    }));
+
+                    renderActiveEtfView();
+                    showToast(`✅ AI 成功解析出 ${activeEtfStocksData.length} 檔持股標的！`);
+                } else {
+                    throw new Error("AI 解析結果非有效清單");
+                }
+            } catch(e) {
+                console.error("AI parse ETF error:", e);
+                showToast(`❌ AI 解析失敗: ${e.message}`, true);
+            } finally {
+                if (analyzeBtn) analyzeBtn.disabled = false;
+            }
+        }
+
+        function renderActiveEtfView() {
+            const tbody = document.getElementById('active-etf-tbody');
+            const badgeEtf = document.getElementById('badge-etf');
+            const statFunds = document.getElementById('etf-stat-funds');
+            const statStocks = document.getElementById('etf-stat-stocks');
+            const statSingle = document.getElementById('etf-stat-single');
+            const statDouble = document.getElementById('etf-stat-double');
+
+            const countAll = document.getElementById('count-all');
+            const count1 = document.getElementById('count-1');
+            const count2 = document.getElementById('count-2');
+            const count3 = document.getElementById('count-3');
+
+            if (!activeEtfStocksData || activeEtfStocksData.length === 0) {
+                if (badgeEtf) badgeEtf.innerText = '0';
+                if (statFunds) statFunds.innerText = '0 檔';
+                if (statStocks) statStocks.innerText = '0 檔';
+                if (statSingle) statSingle.innerText = '0 檔';
+                if (statDouble) statDouble.innerText = '0 檔';
+                if (countAll) countAll.innerText = '0';
+                if (count1) count1.innerText = '0';
+                if (count2) count2.innerText = '0';
+                if (count3) count3.innerText = '0';
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                                <div style="font-size:1.5rem; margin-bottom:0.5rem;">🎯</div>
+                                <div>尚未載入主動型 ETF 資料</div>
+                                <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊左側「🚀 立即從 Goal Star 雲端抓取」按鈕，系統將自動分析 21 檔主動型 ETF 並排除 00984A。</div>
+                            </td>
+                        </tr>
+                    `;
+                }
+                return;
+            }
+
+            const singleCount = activeEtfStocksData.filter(s => s.funds.length === 1).length;
+            const doubleCount = activeEtfStocksData.filter(s => s.funds.length === 2).length;
+            const tripleCount = activeEtfStocksData.filter(s => s.funds.length <= 3).length;
+
+            if (badgeEtf) badgeEtf.innerText = String(singleCount);
+            if (statFunds) statFunds.innerText = `${activeEtfFundsList.length || 21} 檔`;
+            if (statStocks) statStocks.innerText = `${activeEtfStocksData.length} 檔`;
+            if (statSingle) statSingle.innerText = `${singleCount} 檔`;
+            if (statDouble) statDouble.innerText = `${doubleCount} 檔`;
+
+            if (countAll) countAll.innerText = String(activeEtfStocksData.length);
+            if (count1) count1.innerText = String(singleCount);
+            if (count2) count2.innerText = String(doubleCount);
+            if (count3) count3.innerText = String(tripleCount);
+
+            // Filter
+            let list = [...activeEtfStocksData];
+            if (activeEtfFilter === '1') {
+                list = list.filter(s => s.funds.length === 1);
+            } else if (activeEtfFilter === '2') {
+                list = list.filter(s => s.funds.length === 2);
+            } else if (activeEtfFilter === '3') {
+                list = list.filter(s => s.funds.length <= 3);
+            }
+
+            // Search query
+            const searchInput = document.getElementById('etf-search-input');
+            const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+            if (query) {
+                list = list.filter(s => 
+                    s.symbol.toLowerCase().includes(query) ||
+                    s.name.toLowerCase().includes(query) ||
+                    s.industry.toLowerCase().includes(query) ||
+                    s.funds.some(f => f.fundSymbol.toLowerCase().includes(query) || f.fundName.toLowerCase().includes(query))
+                );
+            }
+
+            // Sort
+            const sortSelect = document.getElementById('etf-sort-select');
+            const sortMode = sortSelect ? sortSelect.value : 'count_asc';
+            if (sortMode === 'count_asc') {
+                list.sort((a, b) => a.funds.length - b.funds.length || b.maxRatio - a.maxRatio);
+            } else if (sortMode === 'max_desc') {
+                list.sort((a, b) => b.maxRatio - a.maxRatio);
+            } else if (sortMode === 'total_desc') {
+                list.sort((a, b) => b.totalRatio - a.totalRatio);
+            } else if (sortMode === 'symbol_asc') {
+                list.sort((a, b) => a.symbol.localeCompare(b.symbol));
+            }
+
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            if (list.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align:center; color:var(--text-secondary); padding:2rem;">
+                            無符合條件的主動型 ETF 持股
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+            list.forEach((item, index) => {
+                const tr = document.createElement('tr');
+
+                let rankBadge = `<span style="color:var(--text-secondary); font-weight:600;">#${index + 1}</span>`;
+                if (index === 0) rankBadge = `<span style="font-size:1.15rem;">🥇 1</span>`;
+                else if (index === 1) rankBadge = `<span style="font-size:1.15rem;">🥈 2</span>`;
+                else if (index === 2) rankBadge = `<span style="font-size:1.15rem;">🥉 3</span>`;
+
+                // Holding Count Badge
+                let countBadgeStyle = item.funds.length === 1 
+                    ? 'background:rgba(16,185,129,0.2); color:#34d399; border:1px solid rgba(16,185,129,0.4); font-weight:700;'
+                    : (item.funds.length === 2 
+                        ? 'background:rgba(99,102,241,0.2); color:#a5b4fc; border:1px solid rgba(99,102,241,0.4);'
+                        : 'background:rgba(255,255,255,0.05); color:#94a3b8;');
+                
+                let countLabel = item.funds.length === 1 ? '⭐ 1 檔 (獨門)' : `${item.funds.length} 檔`;
+
+                // Fund Pills
+                let fundsPills = item.funds.map(f => `
+                    <span class="etf-weight-pill">
+                        <span class="fund-code">${f.fundSymbol}</span>
+                        <span style="color:#64748b; font-size:0.7rem;">${f.fundName ? f.fundName.replace('主動', '') : ''}</span>
+                        <span class="fund-ratio">${f.ratio.toFixed(2)}%</span>
+                    </span>
+                `).join('');
+
+                tr.innerHTML = `
+                    <td style="text-align:center; vertical-align:middle;">${rankBadge}</td>
+                    <td style="text-align:center; vertical-align:middle; font-weight:700; color:#60a5fa;">
+                        ${item.symbol} ${item.name}
+                    </td>
+                    <td style="text-align:center; vertical-align:middle; font-size:0.75rem; color:#cbd5e1;">
+                        ${item.industry}
+                    </td>
+                    <td style="text-align:center; vertical-align:middle;">
+                        <span class="cb-badge" style="${countBadgeStyle} padding:0.2rem 0.55rem; font-size:0.78rem;">
+                            ${countLabel}
+                        </span>
+                    </td>
+                    <td style="text-align:left; vertical-align:middle; line-height:1.4;">
+                        ${fundsPills}
+                    </td>
+                    <td style="text-align:center; vertical-align:middle; font-weight:700; color:#fbbf24; font-size:0.85rem;">
+                        ${item.maxRatio.toFixed(2)}%
+                    </td>
+                    <td style="text-align:center; vertical-align:middle; font-weight:600; color:#34d399; font-size:0.85rem;">
+                        ${item.totalRatio.toFixed(2)}%
+                    </td>
+                `;
+                fragment.appendChild(tr);
+            });
+            tbody.appendChild(fragment);
+        }
+
+        // Active ETF Event Listeners
+        const fetchEtfApiBtn = document.getElementById('fetch-etf-api-btn');
+        if (fetchEtfApiBtn) {
+            fetchEtfApiBtn.addEventListener('click', fetchGoalStarActiveFunds);
+        }
+
+        const analyzeEtfTextBtn = document.getElementById('analyze-etf-text-btn');
+        if (analyzeEtfTextBtn) {
+            analyzeEtfTextBtn.addEventListener('click', parseEtfFromRawText);
+        }
+
+        const etfFilterButtons = document.getElementById('etf-filter-buttons');
+        if (etfFilterButtons) {
+            etfFilterButtons.addEventListener('click', (e) => {
+                const btn = e.target.closest('.filter-chip');
+                if (!btn) return;
+                etfFilterButtons.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeEtfFilter = btn.getAttribute('data-filter') || 'all';
+                renderActiveEtfView();
+            });
+        }
+
+        const etfSortSelect = document.getElementById('etf-sort-select');
+        if (etfSortSelect) {
+            etfSortSelect.addEventListener('change', renderActiveEtfView);
+        }
+
+        const etfSearchInput = document.getElementById('etf-search-input');
+        if (etfSearchInput) {
+            etfSearchInput.addEventListener('input', renderActiveEtfView);
+        }
+
+        const exportEtfJsonBtn = document.getElementById('export-etf-json-btn');
+        if (exportEtfJsonBtn) {
+            exportEtfJsonBtn.addEventListener('click', () => {
+                if (!activeEtfStocksData || activeEtfStocksData.length === 0) {
+                    showToast("⚠️ 目前無主動型 ETF 資料可供導出！", true);
+                    return;
+                }
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(activeEtfStocksData, null, 2));
+                const downloadAnchor = document.createElement('a');
+                downloadAnchor.setAttribute("href", dataStr);
+                downloadAnchor.setAttribute("download", `active_etf_holdings_${new Date().toISOString().split('T')[0]}.json`);
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                downloadAnchor.remove();
+                showToast("✅ 主動型 ETF 持股清單已成功匯出成 JSON 檔案！");
+            });
+        }
+
+        const exportEtfCsvBtn = document.getElementById('export-etf-csv-btn');
+        if (exportEtfCsvBtn) {
+            exportEtfCsvBtn.addEventListener('click', () => {
+                if (!activeEtfStocksData || activeEtfStocksData.length === 0) {
+                    showToast("⚠️ 目前無主動型 ETF 資料可供導出！", true);
+                    return;
+                }
+                const headers = ['排名', '股票代號', '公司名稱', '產業類別', '持有ETF檔數', '持有之主動型ETF與權重', '最高單一權重(%)', '合計權重(%)'];
+                const rows = activeEtfStocksData.map((s, idx) => [
+                    idx + 1,
+                    s.symbol,
+                    `"${s.name}"`,
+                    `"${s.industry}"`,
+                    s.funds.length,
+                    `"${s.funds.map(f => `${f.fundSymbol}(${f.ratio}%)`).join('; ')}"`,
+                    s.maxRatio,
+                    s.totalRatio
+                ]);
+                const csvContent = "\uFEFF" + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.setAttribute('download', `active_etf_holdings_${new Date().toISOString().split('T')[0]}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                showToast("✅ 主動型 ETF 持股清單已成功匯出成 CSV 檔案！");
+            });
+        }
+
         // Sync data to Google Sheet via Google Apps Script
         async function syncToGoogleSheet(scriptUrl, data) {
             const resp = await fetch(scriptUrl, {
@@ -3722,13 +4395,17 @@ JSON 欄位：
             if (pwd === "0000") {
                 reportsData = [];
                 window.tablesData = {};
+                activeEtfStocksData = [];
+                activeEtfFundsList = [];
                 localStorage.removeItem('reports_history');
                 localStorage.removeItem('quant_results_cache');
                 localStorage.removeItem('cached_tables_data');
+                localStorage.removeItem('active_etf_cache');
                 renderReportsTable();
                 renderPersistentTables();
                 renderQuantResults({}, {});
-                showToast("✅ 歷史紀錄、CSV 資料與量化結果已全部清空！");
+                renderActiveEtfView();
+                showToast("✅ 歷史紀錄、CSV 資料、量化結果與 ETF 資料已全部清空！");
             } else if (pwd !== null) {
                 showToast("❌ 密碼錯誤，已取消清空操作！", true);
             }
