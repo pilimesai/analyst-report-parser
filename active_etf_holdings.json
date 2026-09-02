@@ -1,6 +1,6 @@
 {
-  "updateTime": "2026-09-03 00:14:38",
-  "totalFunds": 20,
+  "updateTime": "2026-09-03 00:24:44",
+  "totalFunds": 19,
   "funds": [
     {
       "symbol": "00400A",
@@ -70,13 +70,6 @@
       "name": "主動統一全球創新",
       "fund_type": "active",
       "manager": "陳意婷",
-      "has_foreign": true
-    },
-    {
-      "symbol": "00989A",
-      "name": "主動摩根美國科技",
-      "fund_type": "active",
-      "manager": "蓋欣聖",
       "has_foreign": true
     },
     {
@@ -159,20 +152,6 @@
       "maxRatio": 4.02
     },
     {
-      "symbol": "CRM",
-      "name": "SALESFORCE INC",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 3.45
-        }
-      ],
-      "totalRatio": 3.45,
-      "maxRatio": 3.45
-    },
-    {
       "symbol": "1815",
       "name": "富喬",
       "industry": "Electronic Components",
@@ -199,20 +178,6 @@
       ],
       "totalRatio": 3.16,
       "maxRatio": 3.16
-    },
-    {
-      "symbol": "TTWO",
-      "name": "Take-Two Interactive Software,",
-      "industry": "Electronic Gaming & Multimedia",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 3.14
-        }
-      ],
-      "totalRatio": 3.14,
-      "maxRatio": 3.14
     },
     {
       "symbol": "LLY",
@@ -255,34 +220,6 @@
       ],
       "totalRatio": 2.93,
       "maxRatio": 2.93
-    },
-    {
-      "symbol": "TSLA",
-      "name": "Tesla, Inc.",
-      "industry": "Auto Manufacturers",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 2.92
-        }
-      ],
-      "totalRatio": 2.92,
-      "maxRatio": 2.92
-    },
-    {
-      "symbol": "GOOG",
-      "name": "ALPHABET INC-CL C",
-      "industry": "Internet Content & Information",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 2.81
-        }
-      ],
-      "totalRatio": 2.81,
-      "maxRatio": 2.81
     },
     {
       "symbol": "CRCL",
@@ -397,32 +334,18 @@
       "maxRatio": 2.06
     },
     {
-      "symbol": "HUBS",
-      "name": "HUBSPOT INC",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 2.06
-        }
-      ],
-      "totalRatio": 2.06,
-      "maxRatio": 2.06
-    },
-    {
-      "symbol": "SHOP",
-      "name": "Shopify Inc.",
+      "symbol": "TEAM",
+      "name": "Atlassian Corporation",
       "industry": "Software - Application",
       "funds": [
         {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.99
+          "fundSymbol": "00990A",
+          "fundName": "主動元大AI新經濟",
+          "ratio": 2.05
         }
       ],
-      "totalRatio": 1.99,
-      "maxRatio": 1.99
+      "totalRatio": 2.05,
+      "maxRatio": 2.05
     },
     {
       "symbol": "2027",
@@ -432,20 +355,6 @@
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 1.97
-        }
-      ],
-      "totalRatio": 1.97,
-      "maxRatio": 1.97
-    },
-    {
-      "symbol": "ZM",
-      "name": "ZOOM COMMUNICATIONS INC",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
           "ratio": 1.97
         }
       ],
@@ -607,18 +516,18 @@
       "maxRatio": 1.59
     },
     {
-      "symbol": "GLW",
-      "name": "Corning Incorporated",
-      "industry": "Electronic Components",
+      "symbol": "OKTA",
+      "name": "Okta, Inc.",
+      "industry": "Software - Infrastructure",
       "funds": [
         {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.5
+          "fundSymbol": "00997A",
+          "fundName": "主動群益美國增長",
+          "ratio": 1.54
         }
       ],
-      "totalRatio": 1.5,
-      "maxRatio": 1.5
+      "totalRatio": 1.54,
+      "maxRatio": 1.54
     },
     {
       "symbol": "APH",
@@ -691,20 +600,6 @@
       "maxRatio": 1.39
     },
     {
-      "symbol": "ON",
-      "name": "ON SEMICONDUCTOR",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.38
-        }
-      ],
-      "totalRatio": 1.38,
-      "maxRatio": 1.38
-    },
-    {
       "symbol": "3308",
       "name": "ZJ INNOLIGHT",
       "industry": "Communication Equipment",
@@ -717,20 +612,6 @@
       ],
       "totalRatio": 1.37,
       "maxRatio": 1.37
-    },
-    {
-      "symbol": "RIVN",
-      "name": "RIVIAN AUTOMOTIVE INC-A",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.36
-        }
-      ],
-      "totalRatio": 1.36,
-      "maxRatio": 1.36
     },
     {
       "symbol": "IOT",
@@ -759,20 +640,6 @@
       ],
       "totalRatio": 1.29,
       "maxRatio": 1.29
-    },
-    {
-      "symbol": "DOCN",
-      "name": "DIGITALOCEAN HOLDINGS INC",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.27
-        }
-      ],
-      "totalRatio": 1.27,
-      "maxRatio": 1.27
     },
     {
       "symbol": "6214",
@@ -915,20 +782,6 @@
       "maxRatio": 1.1
     },
     {
-      "symbol": "ORCL",
-      "name": "Oracle Corporation",
-      "industry": "Software - Infrastructure",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.08
-        }
-      ],
-      "totalRatio": 1.08,
-      "maxRatio": 1.08
-    },
-    {
       "symbol": "FTNT",
       "name": "Fortinet, Inc.",
       "industry": "Software - Infrastructure",
@@ -941,20 +794,6 @@
       ],
       "totalRatio": 1.05,
       "maxRatio": 1.05
-    },
-    {
-      "symbol": "TEM",
-      "name": "Tempus AI, Inc.",
-      "industry": "Health Information Services",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.04
-        }
-      ],
-      "totalRatio": 1.04,
-      "maxRatio": 1.04
     },
     {
       "symbol": "2478",
@@ -985,34 +824,6 @@
       "maxRatio": 1.03
     },
     {
-      "symbol": "TSM",
-      "name": "Taiwan Semiconductor Manufactur",
-      "industry": "Semiconductors",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.02
-        }
-      ],
-      "totalRatio": 1.02,
-      "maxRatio": 1.02
-    },
-    {
-      "symbol": "ADI",
-      "name": "Analog Devices, Inc.",
-      "industry": "Semiconductors",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.02
-        }
-      ],
-      "totalRatio": 1.02,
-      "maxRatio": 1.02
-    },
-    {
       "symbol": "2451",
       "name": "創見",
       "industry": "Computer Hardware",
@@ -1039,20 +850,6 @@
       ],
       "totalRatio": 0.99,
       "maxRatio": 0.99
-    },
-    {
-      "symbol": "MTSI",
-      "name": "MACOM TECHNOLOGY SOLUTIONS H",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.97
-        }
-      ],
-      "totalRatio": 0.97,
-      "maxRatio": 0.97
     },
     {
       "symbol": "NBIS",
@@ -1097,6 +894,20 @@
       "maxRatio": 0.95
     },
     {
+      "symbol": "ASML",
+      "name": "ASML HOLDING NV-NY REG SHS",
+      "industry": "None",
+      "funds": [
+        {
+          "fundSymbol": "00986A",
+          "fundName": "主動台新龍頭成長",
+          "ratio": 0.95
+        }
+      ],
+      "totalRatio": 0.95,
+      "maxRatio": 0.95
+    },
+    {
       "symbol": "4746",
       "name": "台耀",
       "industry": "Drug Manufacturers - Specialty & Generic",
@@ -1123,20 +934,6 @@
       ],
       "totalRatio": 0.94,
       "maxRatio": 0.94
-    },
-    {
-      "symbol": "FIGR",
-      "name": "FIGURE TECHNOLOGY SOLUT-CL A",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.89
-        }
-      ],
-      "totalRatio": 0.89,
-      "maxRatio": 0.89
     },
     {
       "symbol": "FORM",
@@ -1181,20 +978,6 @@
       "maxRatio": 0.87
     },
     {
-      "symbol": "U",
-      "name": "UNITY SOFTWARE INC",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.87
-        }
-      ],
-      "totalRatio": 0.87,
-      "maxRatio": 0.87
-    },
-    {
       "symbol": "DIOD",
       "name": "Diodes Incorporated",
       "industry": "Semiconductors",
@@ -1216,20 +999,6 @@
         {
           "fundSymbol": "00982A",
           "fundName": "主動群益台灣強棒",
-          "ratio": 0.84
-        }
-      ],
-      "totalRatio": 0.84,
-      "maxRatio": 0.84
-    },
-    {
-      "symbol": "ROK",
-      "name": "ROCKWELL AUTOMATION INC",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
           "ratio": 0.84
         }
       ],
@@ -1265,41 +1034,13 @@
       "maxRatio": 0.83
     },
     {
-      "symbol": "INTU",
-      "name": "Intuit Inc.",
-      "industry": "Software - Application",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.82
-        }
-      ],
-      "totalRatio": 0.82,
-      "maxRatio": 0.82
-    },
-    {
-      "symbol": "LMND",
-      "name": "LEMONADE INC",
+      "symbol": "TWLO",
+      "name": "TWILIO INC - A",
       "industry": "None",
       "funds": [
         {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.82
-        }
-      ],
-      "totalRatio": 0.82,
-      "maxRatio": 0.82
-    },
-    {
-      "symbol": "XYZ",
-      "name": "Block, Inc.",
-      "industry": "Software - Infrastructure",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
+          "fundSymbol": "00988A",
+          "fundName": "主動統一全球創新",
           "ratio": 0.77
         }
       ],
@@ -1319,20 +1060,6 @@
       ],
       "totalRatio": 0.77,
       "maxRatio": 0.77
-    },
-    {
-      "symbol": "ESTC",
-      "name": "ELASTIC NV",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.76
-        }
-      ],
-      "totalRatio": 0.76,
-      "maxRatio": 0.76
     },
     {
       "symbol": "5801",
@@ -1356,20 +1083,6 @@
         {
           "fundSymbol": "00982A",
           "fundName": "主動群益台灣強棒",
-          "ratio": 0.72
-        }
-      ],
-      "totalRatio": 0.72,
-      "maxRatio": 0.72
-    },
-    {
-      "symbol": "CRWV",
-      "name": "CoreWeave, Inc.",
-      "industry": "Software - Infrastructure",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
           "ratio": 0.72
         }
       ],
@@ -1405,20 +1118,6 @@
       "maxRatio": 0.71
     },
     {
-      "symbol": "MDB",
-      "name": "MongoDB, Inc.",
-      "industry": "Software - Infrastructure",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.7
-        }
-      ],
-      "totalRatio": 0.7,
-      "maxRatio": 0.7
-    },
-    {
       "symbol": "DASH",
       "name": "DoorDash, Inc.",
       "industry": "Internet Retail",
@@ -1433,20 +1132,6 @@
       "maxRatio": 0.69
     },
     {
-      "symbol": "WRBY",
-      "name": "WARBY PARKER INC-CLASS A",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.68
-        }
-      ],
-      "totalRatio": 0.68,
-      "maxRatio": 0.68
-    },
-    {
       "symbol": "2727",
       "name": "王品",
       "industry": "Restaurants",
@@ -1459,20 +1144,6 @@
       ],
       "totalRatio": 0.66,
       "maxRatio": 0.66
-    },
-    {
-      "symbol": "NU",
-      "name": "NU HOLDINGS LTD/CAYMAN ISL-A",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.65
-        }
-      ],
-      "totalRatio": 0.65,
-      "maxRatio": 0.65
     },
     {
       "symbol": "KEYS",
@@ -1531,60 +1202,18 @@
       "maxRatio": 0.61
     },
     {
-      "symbol": "ENTG",
-      "name": "ENTEGRIS INC",
-      "industry": "None",
+      "symbol": "ADBE",
+      "name": "Adobe Inc.",
+      "industry": "Software - Application",
       "funds": [
         {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.6
+          "fundSymbol": "00997A",
+          "fundName": "主動群益美國增長",
+          "ratio": 0.59
         }
       ],
-      "totalRatio": 0.6,
-      "maxRatio": 0.6
-    },
-    {
-      "symbol": "VEEV",
-      "name": "VEEVA SYSTEMS INC-CLASS A",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.58
-        }
-      ],
-      "totalRatio": 0.58,
-      "maxRatio": 0.58
-    },
-    {
-      "symbol": "ALGM",
-      "name": "ALLEGRO MICROSYSTEMS INC",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.55
-        }
-      ],
-      "totalRatio": 0.55,
-      "maxRatio": 0.55
-    },
-    {
-      "symbol": "TTMI",
-      "name": "TTM TECHNOLOGIES",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.54
-        }
-      ],
-      "totalRatio": 0.54,
-      "maxRatio": 0.54
+      "totalRatio": 0.59,
+      "maxRatio": 0.59
     },
     {
       "symbol": "9958",
@@ -1643,20 +1272,6 @@
       "maxRatio": 0.5
     },
     {
-      "symbol": "VICR",
-      "name": "VICOR CORP",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.5
-        }
-      ],
-      "totalRatio": 0.5,
-      "maxRatio": 0.5
-    },
-    {
       "symbol": "3374",
       "name": "精材",
       "industry": "Semiconductors",
@@ -1683,20 +1298,6 @@
       ],
       "totalRatio": 0.48,
       "maxRatio": 0.48
-    },
-    {
-      "symbol": "SYM",
-      "name": "SYMBOTIC INC",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.47
-        }
-      ],
-      "totalRatio": 0.47,
-      "maxRatio": 0.47
     },
     {
       "symbol": "ALAB",
@@ -1727,18 +1328,18 @@
       "maxRatio": 0.45
     },
     {
-      "symbol": "TXG",
-      "name": "10x Genomics, Inc.",
-      "industry": "Health Information Services",
+      "symbol": "TWST",
+      "name": "Twist Bioscience Corporation",
+      "industry": "Diagnostics & Research",
       "funds": [
         {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.38
+          "fundSymbol": "00990A",
+          "fundName": "主動元大AI新經濟",
+          "ratio": 0.44
         }
       ],
-      "totalRatio": 0.38,
-      "maxRatio": 0.38
+      "totalRatio": 0.44,
+      "maxRatio": 0.44
     },
     {
       "symbol": "2347",
@@ -1839,18 +1440,32 @@
       "maxRatio": 0.31
     },
     {
-      "symbol": "ILMN",
-      "name": "Illumina, Inc.",
-      "industry": "Diagnostics & Research",
+      "symbol": "CDNS",
+      "name": "Cadence Design Systems, Inc.",
+      "industry": "Software - Application",
       "funds": [
         {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.29
+          "fundSymbol": "00997A",
+          "fundName": "主動群益美國增長",
+          "ratio": 0.31
         }
       ],
-      "totalRatio": 0.29,
-      "maxRatio": 0.29
+      "totalRatio": 0.31,
+      "maxRatio": 0.31
+    },
+    {
+      "symbol": "TXN",
+      "name": "TEXAS INSTRUMENTS INC",
+      "industry": "None",
+      "funds": [
+        {
+          "fundSymbol": "00997A",
+          "fundName": "主動群益美國增長",
+          "ratio": 0.31
+        }
+      ],
+      "totalRatio": 0.31,
+      "maxRatio": 0.31
     },
     {
       "symbol": "3617",
@@ -1893,6 +1508,20 @@
       ],
       "totalRatio": 0.27,
       "maxRatio": 0.27
+    },
+    {
+      "symbol": "APP",
+      "name": "APPLOVIN CORP-CLASS A",
+      "industry": "None",
+      "funds": [
+        {
+          "fundSymbol": "00997A",
+          "fundName": "主動群益美國增長",
+          "ratio": 0.25
+        }
+      ],
+      "totalRatio": 0.25,
+      "maxRatio": 0.25
     },
     {
       "symbol": "3034",
@@ -1963,20 +1592,6 @@
       ],
       "totalRatio": 0.18,
       "maxRatio": 0.18
-    },
-    {
-      "symbol": "CBRS",
-      "name": "CEREBRAS SYSTEMS INC - A",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.17
-        }
-      ],
-      "totalRatio": 0.17,
-      "maxRatio": 0.17
     },
     {
       "symbol": "1717",
@@ -2311,6 +1926,25 @@
       "maxRatio": 4.7
     },
     {
+      "symbol": "CRWD",
+      "name": "CrowdStrike Holdings, Inc.",
+      "industry": "Software - Infrastructure",
+      "funds": [
+        {
+          "fundSymbol": "00986A",
+          "fundName": "主動台新龍頭成長",
+          "ratio": 3.69
+        },
+        {
+          "fundSymbol": "00997A",
+          "fundName": "主動群益美國增長",
+          "ratio": 2.99
+        }
+      ],
+      "totalRatio": 6.68,
+      "maxRatio": 3.69
+    },
+    {
       "symbol": "MRVL",
       "name": "Marvell Technology, Inc.",
       "industry": "Semiconductors",
@@ -2347,6 +1981,25 @@
       ],
       "totalRatio": 3.43,
       "maxRatio": 3.43
+    },
+    {
+      "symbol": "BE",
+      "name": "BLOOM ENERGY CORP- A",
+      "industry": "None",
+      "funds": [
+        {
+          "fundSymbol": "00988A",
+          "fundName": "主動統一全球創新",
+          "ratio": 3.26
+        },
+        {
+          "fundSymbol": "00990A",
+          "fundName": "主動元大AI新經濟",
+          "ratio": 2.7
+        }
+      ],
+      "totalRatio": 5.96,
+      "maxRatio": 3.26
     },
     {
       "symbol": "6278",
@@ -2444,6 +2097,25 @@
       "maxRatio": 2.79
     },
     {
+      "symbol": "SPCX",
+      "name": "SPACE EXPLORATION TECHN-CL A",
+      "industry": "None",
+      "funds": [
+        {
+          "fundSymbol": "00988A",
+          "fundName": "主動統一全球創新",
+          "ratio": 2.6
+        },
+        {
+          "fundSymbol": "00990A",
+          "fundName": "主動元大AI新經濟",
+          "ratio": 1.67
+        }
+      ],
+      "totalRatio": 4.27,
+      "maxRatio": 2.6
+    },
+    {
       "symbol": "6831",
       "name": "邁科",
       "industry": "Specialty Industrial Machinery",
@@ -2482,6 +2154,25 @@
       "maxRatio": 2.51
     },
     {
+      "symbol": "LRCX",
+      "name": "Lam Research Corporation",
+      "industry": "Semiconductor Equipment & Materials",
+      "funds": [
+        {
+          "fundSymbol": "00986A",
+          "fundName": "主動台新龍頭成長",
+          "ratio": 2.49
+        },
+        {
+          "fundSymbol": "00997A",
+          "fundName": "主動群益美國增長",
+          "ratio": 1.96
+        }
+      ],
+      "totalRatio": 4.45,
+      "maxRatio": 2.49
+    },
+    {
       "symbol": "HWM",
       "name": "Howmet Aerospace Inc.",
       "industry": "Aerospace & Defense",
@@ -2499,25 +2190,6 @@
       ],
       "totalRatio": 4.23,
       "maxRatio": 2.48
-    },
-    {
-      "symbol": "TWLO",
-      "name": "TWILIO INC - A",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 2.33
-        },
-        {
-          "fundSymbol": "00988A",
-          "fundName": "主動統一全球創新",
-          "ratio": 0.77
-        }
-      ],
-      "totalRatio": 3.1,
-      "maxRatio": 2.33
     },
     {
       "symbol": "2472",
@@ -2539,25 +2211,6 @@
       "maxRatio": 2.22
     },
     {
-      "symbol": "TEAM",
-      "name": "Atlassian Corporation",
-      "industry": "Software - Application",
-      "funds": [
-        {
-          "fundSymbol": "00990A",
-          "fundName": "主動元大AI新經濟",
-          "ratio": 2.05
-        },
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.26
-        }
-      ],
-      "totalRatio": 3.31,
-      "maxRatio": 2.05
-    },
-    {
       "symbol": "9941",
       "name": "裕融",
       "industry": "Credit Services",
@@ -2577,6 +2230,25 @@
       "maxRatio": 1.97
     },
     {
+      "symbol": "NET",
+      "name": "Cloudflare, Inc.",
+      "industry": "Software - Infrastructure",
+      "funds": [
+        {
+          "fundSymbol": "00986A",
+          "fundName": "主動台新龍頭成長",
+          "ratio": 1.96
+        },
+        {
+          "fundSymbol": "00988A",
+          "fundName": "主動統一全球創新",
+          "ratio": 1.22
+        }
+      ],
+      "totalRatio": 3.18,
+      "maxRatio": 1.96
+    },
+    {
       "symbol": "WDC",
       "name": "Western Digital Corporation",
       "industry": "Computer Hardware",
@@ -2594,6 +2266,63 @@
       ],
       "totalRatio": 2.95,
       "maxRatio": 1.94
+    },
+    {
+      "symbol": "CIEN",
+      "name": "CIENA CORP",
+      "industry": "Communication Equipment",
+      "funds": [
+        {
+          "fundSymbol": "00997A",
+          "fundName": "主動群益美國增長",
+          "ratio": 1.84
+        },
+        {
+          "fundSymbol": "00990A",
+          "fundName": "主動元大AI新經濟",
+          "ratio": 0.95
+        }
+      ],
+      "totalRatio": 2.79,
+      "maxRatio": 1.84
+    },
+    {
+      "symbol": "META",
+      "name": "Meta Platforms, Inc.",
+      "industry": "Internet Content & Information",
+      "funds": [
+        {
+          "fundSymbol": "00990A",
+          "fundName": "主動元大AI新經濟",
+          "ratio": 1.81
+        },
+        {
+          "fundSymbol": "00997A",
+          "fundName": "主動群益美國增長",
+          "ratio": 0.76
+        }
+      ],
+      "totalRatio": 2.57,
+      "maxRatio": 1.81
+    },
+    {
+      "symbol": "AMAT",
+      "name": "Applied Materials, Inc.",
+      "industry": "Semiconductor Equipment & Materials",
+      "funds": [
+        {
+          "fundSymbol": "00986A",
+          "fundName": "主動台新龍頭成長",
+          "ratio": 1.77
+        },
+        {
+          "fundSymbol": "00997A",
+          "fundName": "主動群益美國增長",
+          "ratio": 0.97
+        }
+      ],
+      "totalRatio": 2.74,
+      "maxRatio": 1.77
     },
     {
       "symbol": "6446",
@@ -2653,25 +2382,6 @@
       "maxRatio": 1.69
     },
     {
-      "symbol": "ASML",
-      "name": "ASML HOLDING NV-NY REG SHS",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.63
-        },
-        {
-          "fundSymbol": "00986A",
-          "fundName": "主動台新龍頭成長",
-          "ratio": 0.95
-        }
-      ],
-      "totalRatio": 2.58,
-      "maxRatio": 1.63
-    },
-    {
       "symbol": "3042",
       "name": "晶技",
       "industry": "Electronic Components",
@@ -2689,25 +2399,6 @@
       ],
       "totalRatio": 1.95,
       "maxRatio": 1.61
-    },
-    {
-      "symbol": "OKTA",
-      "name": "Okta, Inc.",
-      "industry": "Software - Infrastructure",
-      "funds": [
-        {
-          "fundSymbol": "00997A",
-          "fundName": "主動群益美國增長",
-          "ratio": 1.54
-        },
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.4
-        }
-      ],
-      "totalRatio": 1.94,
-      "maxRatio": 1.54
     },
     {
       "symbol": "6285",
@@ -2729,23 +2420,23 @@
       "maxRatio": 1.52
     },
     {
-      "symbol": "ADBE",
-      "name": "Adobe Inc.",
-      "industry": "Software - Application",
+      "symbol": "INTC",
+      "name": "INTEL CORP",
+      "industry": "None",
       "funds": [
         {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.4
+          "fundSymbol": "00990A",
+          "fundName": "主動元大AI新經濟",
+          "ratio": 1.42
         },
         {
           "fundSymbol": "00997A",
           "fundName": "主動群益美國增長",
-          "ratio": 0.59
+          "ratio": 0.0
         }
       ],
-      "totalRatio": 1.99,
-      "maxRatio": 1.4
+      "totalRatio": 1.42,
+      "maxRatio": 1.42
     },
     {
       "symbol": "MPWR",
@@ -2764,25 +2455,6 @@
         }
       ],
       "totalRatio": 1.9,
-      "maxRatio": 1.35
-    },
-    {
-      "symbol": "TXN",
-      "name": "TEXAS INSTRUMENTS INC",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.35
-        },
-        {
-          "fundSymbol": "00997A",
-          "fundName": "主動群益美國增長",
-          "ratio": 0.31
-        }
-      ],
-      "totalRatio": 1.66,
       "maxRatio": 1.35
     },
     {
@@ -2862,25 +2534,6 @@
       "maxRatio": 0.91
     },
     {
-      "symbol": "CDNS",
-      "name": "Cadence Design Systems, Inc.",
-      "industry": "Software - Application",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.91
-        },
-        {
-          "fundSymbol": "00997A",
-          "fundName": "主動群益美國增長",
-          "ratio": 0.31
-        }
-      ],
-      "totalRatio": 1.22,
-      "maxRatio": 0.91
-    },
-    {
       "symbol": "6147",
       "name": "頎邦",
       "industry": "Semiconductor Equipment & Materials",
@@ -2938,25 +2591,6 @@
       "maxRatio": 0.75
     },
     {
-      "symbol": "APP",
-      "name": "APPLOVIN CORP-CLASS A",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.66
-        },
-        {
-          "fundSymbol": "00997A",
-          "fundName": "主動群益美國增長",
-          "ratio": 0.25
-        }
-      ],
-      "totalRatio": 0.91,
-      "maxRatio": 0.66
-    },
-    {
       "symbol": "6121",
       "name": "新普",
       "industry": "Electrical Equipment & Parts",
@@ -3012,25 +2646,6 @@
       ],
       "totalRatio": 0.74,
       "maxRatio": 0.49
-    },
-    {
-      "symbol": "TWST",
-      "name": "Twist Bioscience Corporation",
-      "industry": "Diagnostics & Research",
-      "funds": [
-        {
-          "fundSymbol": "00990A",
-          "fundName": "主動元大AI新經濟",
-          "ratio": 0.44
-        },
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.2
-        }
-      ],
-      "totalRatio": 0.64,
-      "maxRatio": 0.44
     },
     {
       "symbol": "3167",
@@ -3109,6 +2724,30 @@
       "maxRatio": 0.08
     },
     {
+      "symbol": "NVDA",
+      "name": "NVIDIA Corporation",
+      "industry": "Semiconductors",
+      "funds": [
+        {
+          "fundSymbol": "00986A",
+          "fundName": "主動台新龍頭成長",
+          "ratio": 6.23
+        },
+        {
+          "fundSymbol": "00990A",
+          "fundName": "主動元大AI新經濟",
+          "ratio": 4.73
+        },
+        {
+          "fundSymbol": "00997A",
+          "fundName": "主動群益美國增長",
+          "ratio": 2.78
+        }
+      ],
+      "totalRatio": 13.74,
+      "maxRatio": 6.23
+    },
+    {
       "symbol": "GOOGL",
       "name": "Alphabet Inc.",
       "industry": "Internet Content & Information",
@@ -3155,6 +2794,54 @@
       ],
       "totalRatio": 8.47,
       "maxRatio": 4.36
+    },
+    {
+      "symbol": "AMZN",
+      "name": "Amazon.com, Inc.",
+      "industry": "Internet Retail",
+      "funds": [
+        {
+          "fundSymbol": "00986A",
+          "fundName": "主動台新龍頭成長",
+          "ratio": 4.09
+        },
+        {
+          "fundSymbol": "00990A",
+          "fundName": "主動元大AI新經濟",
+          "ratio": 2.4
+        },
+        {
+          "fundSymbol": "00997A",
+          "fundName": "主動群益美國增長",
+          "ratio": 1.74
+        }
+      ],
+      "totalRatio": 8.23,
+      "maxRatio": 4.09
+    },
+    {
+      "symbol": "AVGO",
+      "name": "Broadcom Inc.",
+      "industry": "Semiconductors",
+      "funds": [
+        {
+          "fundSymbol": "00986A",
+          "fundName": "主動台新龍頭成長",
+          "ratio": 3.81
+        },
+        {
+          "fundSymbol": "00997A",
+          "fundName": "主動群益美國增長",
+          "ratio": 1.29
+        },
+        {
+          "fundSymbol": "00990A",
+          "fundName": "主動元大AI新經濟",
+          "ratio": 1.02
+        }
+      ],
+      "totalRatio": 6.12,
+      "maxRatio": 3.81
     },
     {
       "symbol": "6981",
@@ -3229,52 +2916,28 @@
       "maxRatio": 3.71
     },
     {
-      "symbol": "CRWD",
-      "name": "CrowdStrike Holdings, Inc.",
-      "industry": "Software - Infrastructure",
-      "funds": [
-        {
-          "fundSymbol": "00986A",
-          "fundName": "主動台新龍頭成長",
-          "ratio": 3.69
-        },
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 3.18
-        },
-        {
-          "fundSymbol": "00997A",
-          "fundName": "主動群益美國增長",
-          "ratio": 2.99
-        }
-      ],
-      "totalRatio": 9.86,
-      "maxRatio": 3.69
-    },
-    {
-      "symbol": "BE",
-      "name": "BLOOM ENERGY CORP- A",
-      "industry": "None",
+      "symbol": "PANW",
+      "name": "PALO ALTO NETWORKS INC",
+      "industry": "Software - Application",
       "funds": [
         {
           "fundSymbol": "00988A",
           "fundName": "主動統一全球創新",
-          "ratio": 3.26
+          "ratio": 3.31
+        },
+        {
+          "fundSymbol": "00997A",
+          "fundName": "主動群益美國增長",
+          "ratio": 2.33
         },
         {
           "fundSymbol": "00990A",
           "fundName": "主動元大AI新經濟",
-          "ratio": 2.7
-        },
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.05
+          "ratio": 2.07
         }
       ],
-      "totalRatio": 7.01,
-      "maxRatio": 3.26
+      "totalRatio": 7.71,
+      "maxRatio": 3.31
     },
     {
       "symbol": "IFX",
@@ -3301,28 +2964,28 @@
       "maxRatio": 2.95
     },
     {
-      "symbol": "NET",
-      "name": "Cloudflare, Inc.",
-      "industry": "Software - Infrastructure",
+      "symbol": "NOW",
+      "name": "ServiceNow, Inc.",
+      "industry": "Software - Application",
       "funds": [
         {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 2.67
-        },
-        {
-          "fundSymbol": "00986A",
-          "fundName": "主動台新龍頭成長",
-          "ratio": 1.96
+          "fundSymbol": "00990A",
+          "fundName": "主動元大AI新經濟",
+          "ratio": 2.76
         },
         {
           "fundSymbol": "00988A",
           "fundName": "主動統一全球創新",
-          "ratio": 1.22
+          "ratio": 2.0
+        },
+        {
+          "fundSymbol": "00997A",
+          "fundName": "主動群益美國增長",
+          "ratio": 1.98
         }
       ],
-      "totalRatio": 5.85,
-      "maxRatio": 2.67
+      "totalRatio": 6.74,
+      "maxRatio": 2.76
     },
     {
       "symbol": "TSEM",
@@ -3349,76 +3012,28 @@
       "maxRatio": 2.63
     },
     {
-      "symbol": "INTC",
-      "name": "INTEL CORP",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 2.62
-        },
-        {
-          "fundSymbol": "00990A",
-          "fundName": "主動元大AI新經濟",
-          "ratio": 1.42
-        },
-        {
-          "fundSymbol": "00997A",
-          "fundName": "主動群益美國增長",
-          "ratio": 0.0
-        }
-      ],
-      "totalRatio": 4.04,
-      "maxRatio": 2.62
-    },
-    {
-      "symbol": "SPCX",
-      "name": "SPACE EXPLORATION TECHN-CL A",
-      "industry": "None",
+      "symbol": "PLTR",
+      "name": "Palantir Technologies Inc.",
+      "industry": "Software - Infrastructure",
       "funds": [
         {
           "fundSymbol": "00988A",
           "fundName": "主動統一全球創新",
-          "ratio": 2.6
+          "ratio": 2.47
         },
         {
           "fundSymbol": "00990A",
           "fundName": "主動元大AI新經濟",
-          "ratio": 1.67
-        },
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.8
-        }
-      ],
-      "totalRatio": 5.07,
-      "maxRatio": 2.6
-    },
-    {
-      "symbol": "LRCX",
-      "name": "Lam Research Corporation",
-      "industry": "Semiconductor Equipment & Materials",
-      "funds": [
-        {
-          "fundSymbol": "00986A",
-          "fundName": "主動台新龍頭成長",
-          "ratio": 2.49
-        },
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.98
+          "ratio": 2.07
         },
         {
           "fundSymbol": "00997A",
           "fundName": "主動群益美國增長",
-          "ratio": 1.96
+          "ratio": 1.26
         }
       ],
-      "totalRatio": 6.43,
-      "maxRatio": 2.49
+      "totalRatio": 5.8,
+      "maxRatio": 2.47
     },
     {
       "symbol": "7750",
@@ -3491,78 +3106,6 @@
       ],
       "totalRatio": 3.0,
       "maxRatio": 1.87
-    },
-    {
-      "symbol": "CIEN",
-      "name": "CIENA CORP",
-      "industry": "Communication Equipment",
-      "funds": [
-        {
-          "fundSymbol": "00997A",
-          "fundName": "主動群益美國增長",
-          "ratio": 1.84
-        },
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.53
-        },
-        {
-          "fundSymbol": "00990A",
-          "fundName": "主動元大AI新經濟",
-          "ratio": 0.95
-        }
-      ],
-      "totalRatio": 4.32,
-      "maxRatio": 1.84
-    },
-    {
-      "symbol": "META",
-      "name": "Meta Platforms, Inc.",
-      "industry": "Internet Content & Information",
-      "funds": [
-        {
-          "fundSymbol": "00990A",
-          "fundName": "主動元大AI新經濟",
-          "ratio": 1.81
-        },
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.52
-        },
-        {
-          "fundSymbol": "00997A",
-          "fundName": "主動群益美國增長",
-          "ratio": 0.76
-        }
-      ],
-      "totalRatio": 4.09,
-      "maxRatio": 1.81
-    },
-    {
-      "symbol": "AMAT",
-      "name": "Applied Materials, Inc.",
-      "industry": "Semiconductor Equipment & Materials",
-      "funds": [
-        {
-          "fundSymbol": "00986A",
-          "fundName": "主動台新龍頭成長",
-          "ratio": 1.77
-        },
-        {
-          "fundSymbol": "00997A",
-          "fundName": "主動群益美國增長",
-          "ratio": 0.97
-        },
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.66
-        }
-      ],
-      "totalRatio": 3.4,
-      "maxRatio": 1.77
     },
     {
       "symbol": "2887",
@@ -3829,6 +3372,30 @@
       "maxRatio": 0.89
     },
     {
+      "symbol": "HOOD",
+      "name": "Robinhood Markets, Inc.",
+      "industry": "Capital Markets",
+      "funds": [
+        {
+          "fundSymbol": "00988A",
+          "fundName": "主動統一全球創新",
+          "ratio": 0.76
+        },
+        {
+          "fundSymbol": "00997A",
+          "fundName": "主動群益美國增長",
+          "ratio": 0.75
+        },
+        {
+          "fundSymbol": "00986A",
+          "fundName": "主動台新龍頭成長",
+          "ratio": 0.44
+        }
+      ],
+      "totalRatio": 1.95,
+      "maxRatio": 0.76
+    },
+    {
       "symbol": "5289",
       "name": "宜鼎",
       "industry": "Computer Hardware",
@@ -3949,33 +3516,33 @@
       "maxRatio": 0.29
     },
     {
-      "symbol": "NVDA",
-      "name": "NVIDIA Corporation",
-      "industry": "Semiconductors",
+      "symbol": "LITE",
+      "name": "Lumentum Holdings Inc.",
+      "industry": "Communication Equipment",
       "funds": [
-        {
-          "fundSymbol": "00986A",
-          "fundName": "主動台新龍頭成長",
-          "ratio": 6.23
-        },
         {
           "fundSymbol": "00990A",
           "fundName": "主動元大AI新經濟",
-          "ratio": 4.73
+          "ratio": 7.69
         },
         {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 3.85
+          "fundSymbol": "00988A",
+          "fundName": "主動統一全球創新",
+          "ratio": 6.2
+        },
+        {
+          "fundSymbol": "00986A",
+          "fundName": "主動台新龍頭成長",
+          "ratio": 3.88
         },
         {
           "fundSymbol": "00997A",
           "fundName": "主動群益美國增長",
-          "ratio": 2.78
+          "ratio": 3.21
         }
       ],
-      "totalRatio": 17.59,
-      "maxRatio": 6.23
+      "totalRatio": 20.98,
+      "maxRatio": 7.69
     },
     {
       "symbol": "6139",
@@ -4007,6 +3574,35 @@
       "maxRatio": 5.26
     },
     {
+      "symbol": "MU",
+      "name": "Micron Technology, Inc.",
+      "industry": "Semiconductors",
+      "funds": [
+        {
+          "fundSymbol": "00997A",
+          "fundName": "主動群益美國增長",
+          "ratio": 4.69
+        },
+        {
+          "fundSymbol": "00986A",
+          "fundName": "主動台新龍頭成長",
+          "ratio": 4.28
+        },
+        {
+          "fundSymbol": "00988A",
+          "fundName": "主動統一全球創新",
+          "ratio": 3.42
+        },
+        {
+          "fundSymbol": "00990A",
+          "fundName": "主動元大AI新經濟",
+          "ratio": 2.45
+        }
+      ],
+      "totalRatio": 14.84,
+      "maxRatio": 4.69
+    },
+    {
       "symbol": "2376",
       "name": "技嘉",
       "industry": "Computer Hardware",
@@ -4036,91 +3632,62 @@
       "maxRatio": 4.19
     },
     {
-      "symbol": "PANW",
-      "name": "PALO ALTO NETWORKS INC",
-      "industry": "Software - Application",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 4.1
-        },
-        {
-          "fundSymbol": "00988A",
-          "fundName": "主動統一全球創新",
-          "ratio": 3.31
-        },
-        {
-          "fundSymbol": "00997A",
-          "fundName": "主動群益美國增長",
-          "ratio": 2.33
-        },
-        {
-          "fundSymbol": "00990A",
-          "fundName": "主動元大AI新經濟",
-          "ratio": 2.07
-        }
-      ],
-      "totalRatio": 11.81,
-      "maxRatio": 4.1
-    },
-    {
-      "symbol": "AMZN",
-      "name": "Amazon.com, Inc.",
-      "industry": "Internet Retail",
-      "funds": [
-        {
-          "fundSymbol": "00986A",
-          "fundName": "主動台新龍頭成長",
-          "ratio": 4.09
-        },
-        {
-          "fundSymbol": "00990A",
-          "fundName": "主動元大AI新經濟",
-          "ratio": 2.4
-        },
-        {
-          "fundSymbol": "00997A",
-          "fundName": "主動群益美國增長",
-          "ratio": 1.74
-        },
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.05
-        }
-      ],
-      "totalRatio": 9.28,
-      "maxRatio": 4.09
-    },
-    {
-      "symbol": "AVGO",
-      "name": "Broadcom Inc.",
+      "symbol": "AMD",
+      "name": "Advanced Micro Devices, Inc.",
       "industry": "Semiconductors",
       "funds": [
         {
           "fundSymbol": "00986A",
           "fundName": "主動台新龍頭成長",
-          "ratio": 3.81
+          "ratio": 3.68
         },
         {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 3.69
+          "fundSymbol": "00988A",
+          "fundName": "主動統一全球創新",
+          "ratio": 3.64
         },
         {
           "fundSymbol": "00997A",
           "fundName": "主動群益美國增長",
-          "ratio": 1.29
+          "ratio": 2.5
         },
         {
           "fundSymbol": "00990A",
           "fundName": "主動元大AI新經濟",
-          "ratio": 1.02
+          "ratio": 2.41
         }
       ],
-      "totalRatio": 9.81,
-      "maxRatio": 3.81
+      "totalRatio": 12.23,
+      "maxRatio": 3.68
+    },
+    {
+      "symbol": "SNDK",
+      "name": "SANDISK CORP-W/I",
+      "industry": "None",
+      "funds": [
+        {
+          "fundSymbol": "00997A",
+          "fundName": "主動群益美國增長",
+          "ratio": 3.39
+        },
+        {
+          "fundSymbol": "00986A",
+          "fundName": "主動台新龍頭成長",
+          "ratio": 1.76
+        },
+        {
+          "fundSymbol": "00990A",
+          "fundName": "主動元大AI新經濟",
+          "ratio": 1.28
+        },
+        {
+          "fundSymbol": "00988A",
+          "fundName": "主動統一全球創新",
+          "ratio": 1.22
+        }
+      ],
+      "totalRatio": 7.65,
+      "maxRatio": 3.39
     },
     {
       "symbol": "6531",
@@ -4152,6 +3719,35 @@
       "maxRatio": 3.05
     },
     {
+      "symbol": "MSFT",
+      "name": "Microsoft Corporation",
+      "industry": "Software - Infrastructure",
+      "funds": [
+        {
+          "fundSymbol": "00986A",
+          "fundName": "主動台新龍頭成長",
+          "ratio": 2.87
+        },
+        {
+          "fundSymbol": "00990A",
+          "fundName": "主動元大AI新經濟",
+          "ratio": 2.12
+        },
+        {
+          "fundSymbol": "00988A",
+          "fundName": "主動統一全球創新",
+          "ratio": 2.02
+        },
+        {
+          "fundSymbol": "00997A",
+          "fundName": "主動群益美國增長",
+          "ratio": 0.99
+        }
+      ],
+      "totalRatio": 8.0,
+      "maxRatio": 2.87
+    },
+    {
       "symbol": "CRDO",
       "name": "Credo Technology Group Holding",
       "industry": "Semiconductors",
@@ -4181,62 +3777,33 @@
       "maxRatio": 2.84
     },
     {
-      "symbol": "NOW",
-      "name": "ServiceNow, Inc.",
+      "symbol": "SNOW",
+      "name": "Snowflake Inc.",
       "industry": "Software - Application",
       "funds": [
         {
-          "fundSymbol": "00990A",
-          "fundName": "主動元大AI新經濟",
-          "ratio": 2.76
-        },
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 2.34
-        },
-        {
           "fundSymbol": "00988A",
           "fundName": "主動統一全球創新",
-          "ratio": 2.0
+          "ratio": 2.54
         },
         {
           "fundSymbol": "00997A",
           "fundName": "主動群益美國增長",
-          "ratio": 1.98
-        }
-      ],
-      "totalRatio": 9.08,
-      "maxRatio": 2.76
-    },
-    {
-      "symbol": "PLTR",
-      "name": "Palantir Technologies Inc.",
-      "industry": "Software - Infrastructure",
-      "funds": [
-        {
-          "fundSymbol": "00988A",
-          "fundName": "主動統一全球創新",
-          "ratio": 2.47
+          "ratio": 2.24
         },
         {
           "fundSymbol": "00990A",
           "fundName": "主動元大AI新經濟",
-          "ratio": 2.07
+          "ratio": 2.04
         },
         {
-          "fundSymbol": "00997A",
-          "fundName": "主動群益美國增長",
-          "ratio": 1.26
-        },
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.07
+          "fundSymbol": "00986A",
+          "fundName": "主動台新龍頭成長",
+          "ratio": 2.01
         }
       ],
-      "totalRatio": 6.87,
-      "maxRatio": 2.47
+      "totalRatio": 8.83,
+      "maxRatio": 2.54
     },
     {
       "symbol": "2357",
@@ -4353,35 +3920,6 @@
       ],
       "totalRatio": 2.53,
       "maxRatio": 1.98
-    },
-    {
-      "symbol": "HOOD",
-      "name": "Robinhood Markets, Inc.",
-      "industry": "Capital Markets",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.9
-        },
-        {
-          "fundSymbol": "00988A",
-          "fundName": "主動統一全球創新",
-          "ratio": 0.76
-        },
-        {
-          "fundSymbol": "00997A",
-          "fundName": "主動群益美國增長",
-          "ratio": 0.75
-        },
-        {
-          "fundSymbol": "00986A",
-          "fundName": "主動台新龍頭成長",
-          "ratio": 0.44
-        }
-      ],
-      "totalRatio": 3.85,
-      "maxRatio": 1.9
     },
     {
       "symbol": "2884",
@@ -4587,142 +4125,6 @@
       "maxRatio": 1.01
     },
     {
-      "symbol": "LITE",
-      "name": "Lumentum Holdings Inc.",
-      "industry": "Communication Equipment",
-      "funds": [
-        {
-          "fundSymbol": "00990A",
-          "fundName": "主動元大AI新經濟",
-          "ratio": 7.69
-        },
-        {
-          "fundSymbol": "00988A",
-          "fundName": "主動統一全球創新",
-          "ratio": 6.2
-        },
-        {
-          "fundSymbol": "00986A",
-          "fundName": "主動台新龍頭成長",
-          "ratio": 3.88
-        },
-        {
-          "fundSymbol": "00997A",
-          "fundName": "主動群益美國增長",
-          "ratio": 3.21
-        },
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 1.65
-        }
-      ],
-      "totalRatio": 22.63,
-      "maxRatio": 7.69
-    },
-    {
-      "symbol": "MU",
-      "name": "Micron Technology, Inc.",
-      "industry": "Semiconductors",
-      "funds": [
-        {
-          "fundSymbol": "00997A",
-          "fundName": "主動群益美國增長",
-          "ratio": 4.69
-        },
-        {
-          "fundSymbol": "00986A",
-          "fundName": "主動台新龍頭成長",
-          "ratio": 4.28
-        },
-        {
-          "fundSymbol": "00988A",
-          "fundName": "主動統一全球創新",
-          "ratio": 3.42
-        },
-        {
-          "fundSymbol": "00990A",
-          "fundName": "主動元大AI新經濟",
-          "ratio": 2.45
-        },
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.85
-        }
-      ],
-      "totalRatio": 15.69,
-      "maxRatio": 4.69
-    },
-    {
-      "symbol": "AMD",
-      "name": "Advanced Micro Devices, Inc.",
-      "industry": "Semiconductors",
-      "funds": [
-        {
-          "fundSymbol": "00986A",
-          "fundName": "主動台新龍頭成長",
-          "ratio": 3.68
-        },
-        {
-          "fundSymbol": "00988A",
-          "fundName": "主動統一全球創新",
-          "ratio": 3.64
-        },
-        {
-          "fundSymbol": "00997A",
-          "fundName": "主動群益美國增長",
-          "ratio": 2.5
-        },
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 2.47
-        },
-        {
-          "fundSymbol": "00990A",
-          "fundName": "主動元大AI新經濟",
-          "ratio": 2.41
-        }
-      ],
-      "totalRatio": 14.7,
-      "maxRatio": 3.68
-    },
-    {
-      "symbol": "SNDK",
-      "name": "SANDISK CORP-W/I",
-      "industry": "None",
-      "funds": [
-        {
-          "fundSymbol": "00997A",
-          "fundName": "主動群益美國增長",
-          "ratio": 3.39
-        },
-        {
-          "fundSymbol": "00986A",
-          "fundName": "主動台新龍頭成長",
-          "ratio": 1.76
-        },
-        {
-          "fundSymbol": "00990A",
-          "fundName": "主動元大AI新經濟",
-          "ratio": 1.28
-        },
-        {
-          "fundSymbol": "00988A",
-          "fundName": "主動統一全球創新",
-          "ratio": 1.22
-        },
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 0.64
-        }
-      ],
-      "totalRatio": 8.29,
-      "maxRatio": 3.39
-    },
-    {
       "symbol": "3491",
       "name": "昇達科",
       "industry": "Communication Equipment",
@@ -4755,74 +4157,6 @@
       ],
       "totalRatio": 7.2,
       "maxRatio": 3.3
-    },
-    {
-      "symbol": "MSFT",
-      "name": "Microsoft Corporation",
-      "industry": "Software - Infrastructure",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 3.29
-        },
-        {
-          "fundSymbol": "00986A",
-          "fundName": "主動台新龍頭成長",
-          "ratio": 2.87
-        },
-        {
-          "fundSymbol": "00990A",
-          "fundName": "主動元大AI新經濟",
-          "ratio": 2.12
-        },
-        {
-          "fundSymbol": "00988A",
-          "fundName": "主動統一全球創新",
-          "ratio": 2.02
-        },
-        {
-          "fundSymbol": "00997A",
-          "fundName": "主動群益美國增長",
-          "ratio": 0.99
-        }
-      ],
-      "totalRatio": 11.29,
-      "maxRatio": 3.29
-    },
-    {
-      "symbol": "SNOW",
-      "name": "Snowflake Inc.",
-      "industry": "Software - Application",
-      "funds": [
-        {
-          "fundSymbol": "00989A",
-          "fundName": "主動摩根美國科技",
-          "ratio": 3.23
-        },
-        {
-          "fundSymbol": "00988A",
-          "fundName": "主動統一全球創新",
-          "ratio": 2.54
-        },
-        {
-          "fundSymbol": "00997A",
-          "fundName": "主動群益美國增長",
-          "ratio": 2.24
-        },
-        {
-          "fundSymbol": "00990A",
-          "fundName": "主動元大AI新經濟",
-          "ratio": 2.04
-        },
-        {
-          "fundSymbol": "00986A",
-          "fundName": "主動台新龍頭成長",
-          "ratio": 2.01
-        }
-      ],
-      "totalRatio": 12.06,
-      "maxRatio": 3.23
     },
     {
       "symbol": "3026",
