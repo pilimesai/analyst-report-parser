@@ -592,24 +592,24 @@
             word-break: break-word;
         }
 
-        /* 報告解析總覽表格專用樣式 - 緊湊適中、防文字重疊 */
+        /* 報告解析總覽表格專用樣式 - 緊湊適中、縮減欄寬以利手機閱讀 */
         .reports-table {
             width: 100%;
             table-layout: auto;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             border-collapse: collapse;
         }
 
         .reports-table th,
         .reports-table td {
-            padding: 0.45rem 0.55rem;
+            padding: 0.35rem 0.4rem;
             vertical-align: middle;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             border: 1px solid var(--card-border);
         }
 
         .reports-table th {
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             font-weight: 600;
             text-align: center;
             background-color: #1e293b;
@@ -620,9 +620,9 @@
         .rep-col-date {
             white-space: nowrap !important;
             text-align: center !important;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-family: monospace, Outfit, sans-serif;
-            width: 90px;
+            width: 75px;
         }
 
         .rep-col-stock {
@@ -630,20 +630,20 @@
             text-align: center !important;
             font-weight: 700;
             color: #60a5fa;
-            width: 110px;
+            width: 90px;
         }
 
         .rep-col-broker {
             white-space: nowrap !important;
             text-align: center !important;
             color: #e2e8f0;
-            width: 80px;
+            width: 60px;
         }
 
         .rep-col-rating {
             white-space: nowrap !important;
             text-align: center !important;
-            width: 85px;
+            width: 65px;
         }
 
         .rep-col-tp {
@@ -651,32 +651,32 @@
             text-align: center !important;
             font-weight: 700;
             color: #f59e0b;
-            width: 80px;
+            width: 60px;
         }
 
         .rep-col-eps {
             white-space: nowrap !important;
             text-align: center !important;
-            font-size: 0.8rem;
-            width: 110px;
+            font-size: 0.78rem;
+            width: 80px;
         }
 
         .rep-col-summary {
             text-align: left !important;
-            font-size: 0.8rem;
-            line-height: 1.45;
+            font-size: 0.78rem;
+            line-height: 1.38;
             color: #cbd5e1;
             word-break: break-word;
-            min-width: 220px;
+            min-width: 150px;
         }
 
         .rep-col-criteria {
             text-align: left !important;
-            font-size: 0.8rem;
-            line-height: 1.45;
+            font-size: 0.78rem;
+            line-height: 1.38;
             color: #38bdf8;
             word-break: break-word;
-            min-width: 200px;
+            min-width: 140px;
         }
 
         /* 2欄 / 3欄 事件表格 (大戶持股、營收、毛利、合約負債、法說會等) - 精簡適中欄寬，仿照發行CB風格 */
@@ -1052,6 +1052,73 @@
             /* 手機版隱藏 API Key 及網址設定區塊 */
             #group-api, #group-sheet, #group-script, #unlock-settings-btn {
                 display: none !important;
+            }
+
+            /* 手機版報告解析總覽表格專用緊湊欄寬優化 */
+            .reports-section {
+                padding: 0.85rem 0.6rem;
+            }
+
+            .reports-table {
+                font-size: 0.74rem;
+            }
+
+            .reports-table th,
+            .reports-table td {
+                padding: 0.3rem 0.25rem;
+                font-size: 0.73rem;
+            }
+
+            .reports-table th {
+                font-size: 0.72rem;
+                padding: 0.35rem 0.15rem;
+            }
+
+            .rep-col-date {
+                width: 65px;
+                font-size: 0.72rem;
+            }
+
+            .rep-col-stock {
+                width: 75px;
+                font-size: 0.75rem;
+            }
+
+            .rep-col-broker {
+                width: 48px;
+                font-size: 0.72rem;
+            }
+
+            .rep-col-rating {
+                width: 52px;
+                font-size: 0.7rem;
+            }
+
+            .rating-badge {
+                padding: 0.12rem 0.3rem;
+                font-size: 0.68rem;
+            }
+
+            .rep-col-tp {
+                width: 50px;
+                font-size: 0.74rem;
+            }
+
+            .rep-col-eps {
+                width: 62px;
+                font-size: 0.72rem;
+            }
+
+            .rep-col-summary {
+                min-width: 120px;
+                font-size: 0.72rem;
+                line-height: 1.3;
+            }
+
+            .rep-col-criteria {
+                min-width: 110px;
+                font-size: 0.72rem;
+                line-height: 1.3;
             }
         }
     </style>

@@ -2041,6 +2041,8 @@ if st.session_state.history:
                 .stTable td, .stTable th {
                     white-space: normal !important;
                     word-break: break-all;
+                    padding: 0.35rem 0.4rem !important;
+                    font-size: 0.8rem !important;
                 }
                 </style>
             """, unsafe_allow_html=True)
