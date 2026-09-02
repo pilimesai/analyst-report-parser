@@ -1322,6 +1322,17 @@
             </div>
         </div>
 
+        <!-- Progress Tracking (位於「執行即時量化運算」按鈕下方) -->
+        <div class="progress-container" id="progress-container">
+            <div class="progress-header">
+                <span id="progress-status">正在執行量化運算...</span>
+                <span id="progress-percent">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progress-bar-fill"></div>
+            </div>
+        </div>
+
         <!-- Navigation Tab Bar -->
         <div class="nav-tabs-wrapper">
             <div class="nav-tabs-container" id="nav-tabs-container">
@@ -1354,17 +1365,6 @@
                 <div style="text-align: right;">
                     <button class="btn btn-primary" id="analyze-text-btn"
                         style="padding: 0.75rem 2rem; font-size: 1rem;">🚀 開始分析文字</button>
-                </div>
-            </div>
-
-            <!-- Progress Tracking -->
-            <div class="progress-container" id="progress-container">
-                <div class="progress-header">
-                    <span id="progress-status">正在解析報告...</span>
-                    <span id="progress-percent">0%</span>
-                </div>
-                <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" id="progress-bar-fill"></div>
                 </div>
             </div>
 
