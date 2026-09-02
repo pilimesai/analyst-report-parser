@@ -3716,9 +3716,10 @@ JSON 欄位：
             showToast("✅ 資料已成功匯出成 JSON 檔案！");
         });
 
-        // Clear All local settings and tables
+        // Clear All local settings and tables (密碼保護)
         clearAllBtn.addEventListener('click', () => {
-            if (confirm("🔴 您確定要清空所有的報告紀錄嗎？這會清除瀏覽器的本地存儲。")) {
+            const pwd = prompt("🔴 請輸入密碼以確認清空所有歷史紀錄：");
+            if (pwd === "0000") {
                 reportsData = [];
                 window.tablesData = {};
                 localStorage.removeItem('reports_history');
@@ -3727,7 +3728,9 @@ JSON 欄位：
                 renderReportsTable();
                 renderPersistentTables();
                 renderQuantResults({}, {});
-                showToast("✅ 歷史紀錄、CSV 資料與量化結果已全部清除！");
+                showToast("✅ 歷史紀錄、CSV 資料與量化結果已全部清空！");
+            } else if (pwd !== null) {
+                showToast("❌ 密碼錯誤，已取消清空操作！", true);
             }
         });
     </script>
