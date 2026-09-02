@@ -26,9 +26,10 @@ def fetch_goal_star_data():
         funds_data = json.loads(resp.read().decode('utf-8'))
         
     active_funds = funds_data.get('active', {}).get('items', [])
-    # 嚴格排除 00984A
-    filtered_funds = [f for f in active_funds if f.get('symbol') != '00984A']
-    print(f"✅ 取得 {len(filtered_funds)} 檔主動型 ETF（已嚴格排除 00984A）")
+    # 嚴格排除 00984A, 00983A
+    EXCLUDED_ETFS = {'00984A', '00983A', '00984a', '00983a'}
+    filtered_funds = [f for f in active_funds if f.get('symbol', '').upper() not in {'00984A', '00983A'}]
+    print(f"✅ 取得 {len(filtered_funds)} 檔主動型 ETF（已嚴格排除 00984A、00983A）")
     
     stock_map = {}
     for idx, fund in enumerate(filtered_funds, 1):
