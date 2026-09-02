@@ -2192,23 +2192,61 @@
                 // Strip markdown fences if present
                 const cleaned = responseText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
                 console.log('[Gemini raw response]', cleaned.slice(0, 300));
+                
+                // 1. 優先嘗試標準 JSON 解析
                 try {
                     const parsed = JSON.parse(cleaned);
-                    // Return array always; wrap single object if needed
                     return Array.isArray(parsed) ? parsed : [parsed];
                 } catch (parseErr) {
-                    // Try to extract JSON array or object from response
-                    const arrMatch = cleaned.match(/(\[\s*\{[\s\S]*\}\s*\])/);
-                    const objMatch = cleaned.match(/(\{[\s\S]*\})/);
-                    if (arrMatch) {
-                        try { return JSON.parse(arrMatch[1]); } catch (_) {}
-                    }
-                    if (objMatch) {
-                        try { return [JSON.parse(objMatch[1])]; } catch (_) {}
-                    }
-                    console.error('JSON 解析失敗，原始回應：', cleaned);
-                    throw new Error(`AI 回應格式錯誤，無法解析 JSON。請再試一次，或換用其他模型。\n原始回應片段：${cleaned.slice(0, 150)}`);
+                    console.warn('標準 JSON 解析失敗，啟動智慧容錯修復模式...', parseErr);
                 }
+
+                // 2. 嘗試正規表達式提取標準陣列或物件
+                const arrMatch = cleaned.match(/(\[\s*\{[\s\S]*\}\s*\])/);
+                if (arrMatch) {
+                    try { return JSON.parse(arrMatch[1]); } catch (_) {}
+                }
+                const objMatch = cleaned.match(/(\{[\s\S]*\})/);
+                if (objMatch) {
+                    try { return [JSON.parse(objMatch[1])]; } catch (_) {}
+                }
+
+                // 3. 容錯修復：逐筆提取所有完整的個股物件
+                const extractedObjects = [];
+                const objPattern = /\{[^{}]*?"stock"\s*:[^{}]*?\}/g;
+                let m;
+                while ((m = objPattern.exec(cleaned)) !== null) {
+                    try {
+                        const parsedObj = JSON.parse(m[0]);
+                        if (parsedObj && (parsedObj.stock || parsedObj.date)) {
+                            extractedObjects.push(parsedObj);
+                        }
+                    } catch (_) {}
+                }
+                if (extractedObjects.length > 0) {
+                    return extractedObjects;
+                }
+
+                // 4. 容錯修復：自動補齊被截斷的結尾引號與括號
+                let repaired = cleaned.trim();
+                if (repaired.startsWith('[')) {
+                    if (!repaired.endsWith(']')) {
+                        if (!repaired.endsWith('"') && !repaired.endsWith('}')) {
+                            repaired += '"';
+                        }
+                        if (!repaired.endsWith('}')) {
+                            repaired += '}';
+                        }
+                        repaired += ']';
+                    }
+                    try {
+                        const parsed = JSON.parse(repaired);
+                        return Array.isArray(parsed) ? parsed : [parsed];
+                    } catch (_) {}
+                }
+
+                console.error('所有 JSON 解析方法均失敗，原始回應：', cleaned);
+                throw new Error(`AI 回應格式錯誤，無法解析 JSON。請再試一次，或換用其他模型。\n原始回應片段：${cleaned.slice(0, 150)}`);
             }
             // candidates 存在但沒有內容，可能是安全過濾
             if (data.candidates && data.candidates[0].finishReason) {
