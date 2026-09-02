@@ -3881,14 +3881,59 @@ JSON 欄位：
                 if (progressStatus) progressStatus.innerText = msg;
             };
 
-            updateEtfProgress(5, "正在取得主動型 ETF 清單...");
+            updateEtfProgress(10, "正在從雲端資料庫獲取最新主動型 ETF 資料...");
 
             try {
-                // 1. 抓取主動型 ETF 清單 (支援 CORS 代理備援)
+                // 1. 優先從 GitHub 資料庫抓取全量主動型 ETF 權重數據（速度最快且無 CORS 限制）
+                let loadedFromRepo = false;
+                try {
+                    const repoUrls = [
+                        `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/active_etf_holdings.json?v=${Date.now()}`,
+                        `./active_etf_holdings.json?v=${Date.now()}`
+                    ];
+                    for (const u of repoUrls) {
+                        try {
+                            const r = await fetch(u);
+                            if (r.ok) {
+                                const payload = await r.json();
+                                if (payload && Array.isArray(payload.stocks) && payload.stocks.length > 0) {
+                                    activeEtfStocksData = payload.stocks.filter(s => {
+                                        s.funds = (s.funds || []).filter(f => f.fundSymbol !== '00984A');
+                                        return s.funds.length > 0;
+                                    });
+                                    activeEtfFundsList = (payload.funds || []).filter(f => f.symbol !== '00984A');
+                                    activeEtfStocksData.sort((a, b) => a.funds.length - b.funds.length || b.maxRatio - a.maxRatio);
+                                    
+                                    localStorage.setItem('active_etf_cache', JSON.stringify({
+                                        funds: activeEtfFundsList,
+                                        stocks: activeEtfStocksData,
+                                        updateTime: payload.updateTime || new Date().toISOString()
+                                    }));
+                                    
+                                    updateEtfProgress(100, "✅ 成功獲取最新主動型 ETF 資料！");
+                                    setTimeout(() => {
+                                        if (progressContainer) progressContainer.style.display = 'none';
+                                    }, 800);
+                                    
+                                    renderActiveEtfView();
+                                    showToast(`✅ 成功載入 ${activeEtfFundsList.length || 21} 檔主動型 ETF，共篩選出 ${activeEtfStocksData.length} 檔持股標的！`);
+                                    loadedFromRepo = true;
+                                    break;
+                                }
+                            }
+                        } catch(e) {}
+                    }
+                } catch(e) {}
+
+                if (loadedFromRepo) return;
+
+                // 2. 若資料庫未就緒，即時透過多重 CORS 代理連線 Goal Star API
+                updateEtfProgress(20, "正在連線 Goal Star 伺服器...");
                 let fundsData = null;
                 const endpoints = [
                     'https://goal-star.com/api/funds',
                     'https://corsproxy.io/?url=https://goal-star.com/api/funds',
+                    'https://api.codetabs.com/v1/proxy?quest=https://goal-star.com/api/funds',
                     'https://api.allorigins.win/raw?url=https://goal-star.com/api/funds'
                 ];
 
@@ -3903,14 +3948,14 @@ JSON 欄位：
                 }
 
                 if (!fundsData || !fundsData.active || !fundsData.active.items) {
-                    throw new Error("無法連線至 Goal Star API，請確認網路或使用下方貼上文字解析。");
+                    throw new Error("無法連線至 Goal Star 伺服器，請稍後重試或使用下方貼上文字解析。");
                 }
 
-                // 2. 嚴格排除 00984A
+                // 3. 嚴格排除 00984A
                 const activeFunds = fundsData.active.items.filter(f => f.symbol !== '00984A');
                 activeEtfFundsList = activeFunds;
 
-                updateEtfProgress(20, `取得 ${activeFunds.length} 檔主動型 ETF，開始抓取成分股 (已排除 00984A)...`);
+                updateEtfProgress(30, `取得 ${activeFunds.length} 檔主動型 ETF，開始抓取成分股 (已排除 00984A)...`);
 
                 const stockMap = {};
                 let completedFunds = 0;
