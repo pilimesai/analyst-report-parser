@@ -3888,6 +3888,7 @@ JSON 欄位：
                 let loadedFromRepo = false;
                 try {
                     const repoUrls = [
+                        `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/active_etf_holdings.json?v=${Date.now()}`,
                         `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/active_etf_holdings.json?v=${Date.now()}`,
                         `./active_etf_holdings.json?v=${Date.now()}`
                     ];
