@@ -1770,6 +1770,83 @@
         let stockNameMap = {};
         window.tablesData = {};
 
+        // 產業英翻中權威對照表 (確保所有主動型 ETF 產業皆顯示標準繁體中文)
+        const ETF_INDUSTRY_MAP = {
+            'Airlines': '航空業',
+            'Apparel Manufacturing': '成衣製造',
+            'Auto Parts': '汽車零組件',
+            'Banks - Regional': '銀行業',
+            'Banks - Diversified': '綜合銀行',
+            'Building Materials': '建材營造',
+            'Chemicals': '化學工業',
+            'Communication Equipment': '通信網路',
+            'Computer Hardware': '電腦及週邊設備',
+            'Consumer Electronics': '消費性電子',
+            'Credit Services': '融資租賃服務',
+            'Department Stores': '百貨零售',
+            'Drug Manufacturers - Specialty & Generic': '製藥與生技',
+            'Electrical Equipment & Parts': '電機機械',
+            'Electronic Components': '電子零組件',
+            'Electronic Gaming & Multimedia': '遊戲與多媒體',
+            'Electronics & Computer Distribution': '電子通路',
+            'Engineering & Construction': '營造工程',
+            'Financial Conglomerates': '金融控股',
+            'Furnishings, Fixtures & Appliances': '居家生活',
+            'Grocery Stores': '食品量販 / 超市',
+            'Household & Personal Products': '家庭與個人用品',
+            'Information Technology Services': '資訊服務',
+            'Insurance - Life': '人壽保險',
+            'Insurance - Property & Casualty': '產物保險',
+            'Insurance - Diversified': '綜合保險',
+            'Marine Shipping': '航運業',
+            'Metal Fabrication': '金屬加工',
+            'Packaged Foods': '食品工業',
+            'Packaging & Containers': '包裝材料',
+            'Pollution & Treatment Controls': '綠能環保',
+            'Real Estate - Development': '建材營造',
+            'Real Estate - Services': '不動產服務',
+            'Restaurants': '觀光餐飲',
+            'Scientific & Technical Instruments': '精密儀器',
+            'Semiconductor Equipment & Materials': '半導體設備與材料',
+            'Semiconductors': '半導體業',
+            'Specialty Chemicals': '特用化學',
+            'Specialty Industrial Machinery': '特殊工業機械',
+            'Specialty Retail': '特種零售',
+            'Steel': '鋼鐵工業',
+            'Telecom Services': '電信服務',
+            'Textile Manufacturing': '紡織纖維',
+            'Tools & Accessories': '工具五金',
+            'Biotechnology': '生物科技',
+            'Medical Devices': '醫療器材',
+            'Medical Instruments & Supplies': '醫療用品',
+            'Healthcare Plans': '醫療保健',
+            'Software - Application': '應用軟體',
+            'Software - Infrastructure': '基礎架構軟體',
+            'Internet Content & Information': '網路資訊',
+            'Solar': '太陽能',
+            'Auto Manufacturers': '汽車製造',
+            'Aerospace & Defense': '航太國防',
+            'Asset Management': '資產管理',
+            'Capital Markets': '資本市場',
+            'Oil & Gas Integrated': '石油與天然氣',
+            'Oil & Gas Refining & Marketing': '油品煉製',
+            'Utilities - Regulated Electric': '公用事業',
+            'Utilities - Renewable': '再生能源'
+        };
+
+        function translateEtfIndustry(ind) {
+            if (!ind) return '一般產業';
+            const trimmed = String(ind).trim();
+            return ETF_INDUSTRY_MAP[trimmed] || trimmed;
+        }
+
+        function getEtfStockChineseName(symbol, defaultName) {
+            if (stockNameMap && stockNameMap[symbol]) {
+                return stockNameMap[symbol];
+            }
+            return defaultName || '';
+        }
+
         // PDF.js worker URL setup
         if (typeof pdfjsLib !== 'undefined' && pdfjsLib.GlobalWorkerOptions) {
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
@@ -1901,6 +1978,13 @@
                     const data = await response.json();
                     stockNameMap = data;
                     localStorage.setItem('stock_names_cache', JSON.stringify(data));
+                    if (activeEtfStocksData && activeEtfStocksData.length > 0) {
+                        activeEtfStocksData.forEach(s => {
+                            s.name = getEtfStockChineseName(s.symbol, s.name);
+                            s.industry = translateEtfIndustry(s.industry);
+                        });
+                        renderActiveEtfView();
+                    }
                 }
             } catch (e) {
                 console.warn("Could not load stock_names.json locally, will fall back to using symbol strings.");
@@ -1961,7 +2045,11 @@
                 try {
                     const savedEtf = JSON.parse(localStorage.getItem('active_etf_cache'));
                     if (savedEtf && savedEtf.stocks) {
-                        activeEtfStocksData = savedEtf.stocks;
+                        activeEtfStocksData = savedEtf.stocks.map(s => {
+                            s.name = getEtfStockChineseName(s.symbol, s.name);
+                            s.industry = translateEtfIndustry(s.industry);
+                            return s;
+                        });
                         activeEtfFundsList = savedEtf.funds || [];
                         renderActiveEtfView();
                     }
@@ -3934,6 +4022,8 @@ JSON 欄位：
                                 if (payload && Array.isArray(payload.stocks) && payload.stocks.length > 0) {
                                     activeEtfStocksData = payload.stocks.map(s => {
                                         s.funds = (s.funds || []).filter(f => !EXCLUDED_ETFS.includes(f.fundSymbol));
+                                        s.name = getEtfStockChineseName(s.symbol, s.name);
+                                        s.industry = translateEtfIndustry(s.industry);
                                         return s;
                                     }).filter(s => s.funds.length > 0);
                                     
@@ -4029,8 +4119,8 @@ JSON 欄位：
                                 if (!stockMap[sid]) {
                                     stockMap[sid] = {
                                         symbol: sid,
-                                        name: item.stock_name || stockNameMap[sid] || '',
-                                        industry: item.industry || '一般產業',
+                                        name: getEtfStockChineseName(sid, item.stock_name),
+                                        industry: translateEtfIndustry(item.industry || '一般產業'),
                                         funds: [],
                                         totalRatio: 0,
                                         maxRatio: 0
@@ -4148,8 +4238,8 @@ ${text.slice(0, 30000)}`;
                         });
                         return {
                             symbol: stock.symbol,
-                            name: stock.name || stockNameMap[stock.symbol] || '',
-                            industry: stock.industry || '一般產業',
+                            name: getEtfStockChineseName(stock.symbol, stock.name),
+                            industry: translateEtfIndustry(stock.industry || '一般產業'),
                             funds: validFunds,
                             totalRatio: parseFloat(totalRatio.toFixed(2)),
                             maxRatio: parseFloat(maxRatio.toFixed(2))
@@ -4243,12 +4333,16 @@ ${text.slice(0, 30000)}`;
             const searchInput = document.getElementById('etf-search-input');
             const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
             if (query) {
-                list = list.filter(s => 
-                    s.symbol.toLowerCase().includes(query) ||
-                    s.name.toLowerCase().includes(query) ||
-                    s.industry.toLowerCase().includes(query) ||
-                    s.funds.some(f => f.fundSymbol.toLowerCase().includes(query) || f.fundName.toLowerCase().includes(query))
-                );
+                list = list.filter(s => {
+                    const nameZh = getEtfStockChineseName(s.symbol, s.name);
+                    const indZh = translateEtfIndustry(s.industry);
+                    return s.symbol.toLowerCase().includes(query) ||
+                           nameZh.toLowerCase().includes(query) ||
+                           s.name.toLowerCase().includes(query) ||
+                           indZh.toLowerCase().includes(query) ||
+                           s.industry.toLowerCase().includes(query) ||
+                           s.funds.some(f => f.fundSymbol.toLowerCase().includes(query) || f.fundName.toLowerCase().includes(query));
+                });
             }
 
             // Sort
@@ -4305,13 +4399,16 @@ ${text.slice(0, 30000)}`;
                     </span>
                 `).join('');
 
+                const stockNameZh = getEtfStockChineseName(item.symbol, item.name);
+                const industryZh = translateEtfIndustry(item.industry);
+
                 tr.innerHTML = `
                     <td style="text-align:center; vertical-align:middle;">${rankBadge}</td>
                     <td style="text-align:center; vertical-align:middle; font-weight:700; color:#60a5fa;">
-                        ${item.symbol} ${item.name}
+                        ${item.symbol} ${stockNameZh}
                     </td>
                     <td style="text-align:center; vertical-align:middle; font-size:0.75rem; color:#cbd5e1;">
-                        ${item.industry}
+                        ${industryZh}
                     </td>
                     <td style="text-align:center; vertical-align:middle;">
                         <span class="cb-badge" style="${countBadgeStyle} padding:0.2rem 0.55rem; font-size:0.78rem;">
@@ -4373,7 +4470,12 @@ ${text.slice(0, 30000)}`;
                     showToast("⚠️ 目前無主動型 ETF 資料可供導出！", true);
                     return;
                 }
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(activeEtfStocksData, null, 2));
+                const exportData = activeEtfStocksData.map(s => ({
+                    ...s,
+                    name: getEtfStockChineseName(s.symbol, s.name),
+                    industry: translateEtfIndustry(s.industry)
+                }));
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
                 const downloadAnchor = document.createElement('a');
                 downloadAnchor.setAttribute("href", dataStr);
                 downloadAnchor.setAttribute("download", `active_etf_holdings_${new Date().toISOString().split('T')[0]}.json`);
@@ -4395,8 +4497,8 @@ ${text.slice(0, 30000)}`;
                 const rows = activeEtfStocksData.map((s, idx) => [
                     idx + 1,
                     s.symbol,
-                    `"${s.name}"`,
-                    `"${s.industry}"`,
+                    `"${getEtfStockChineseName(s.symbol, s.name)}"`,
+                    `"${translateEtfIndustry(s.industry)}"`,
                     s.funds.length,
                     `"${s.funds.map(f => `${f.fundSymbol}(${f.ratio}%)`).join('; ')}"`,
                     s.maxRatio,

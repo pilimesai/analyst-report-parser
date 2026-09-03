@@ -31,6 +31,80 @@ def fetch_goal_star_data():
     filtered_funds = [f for f in active_funds if f.get('symbol', '').upper() not in EXCLUDED_ETFS]
     print(f"✅ 取得 {len(filtered_funds)} 檔主動型 ETF（已嚴格排除 00984A、00983A、00989A、00988A、00990A、00997A、00986A）")
     
+    # 讀取台股中文名稱資料庫
+    stock_names_map = {}
+    sn_path = os.path.join(os.path.dirname(__file__), 'stock_names.json')
+    if os.path.exists(sn_path):
+        try:
+            with open(sn_path, 'r', encoding='utf-8') as sn_f:
+                stock_names_map = json.load(sn_f)
+        except Exception as e:
+            print(f"⚠️ 讀取 stock_names.json 失敗: {e}")
+
+    # 產業英翻中權威對照表
+    INDUSTRY_MAP = {
+        'Airlines': '航空業',
+        'Apparel Manufacturing': '成衣製造',
+        'Auto Parts': '汽車零組件',
+        'Banks - Regional': '銀行業',
+        'Banks - Diversified': '綜合銀行',
+        'Building Materials': '建材營造',
+        'Chemicals': '化學工業',
+        'Communication Equipment': '通信網路',
+        'Computer Hardware': '電腦及週邊設備',
+        'Consumer Electronics': '消費性電子',
+        'Credit Services': '融資租賃服務',
+        'Department Stores': '百貨零售',
+        'Drug Manufacturers - Specialty & Generic': '製藥與生技',
+        'Electrical Equipment & Parts': '電機機械',
+        'Electronic Components': '電子零組件',
+        'Electronic Gaming & Multimedia': '遊戲與多媒體',
+        'Electronics & Computer Distribution': '電子通路',
+        'Engineering & Construction': '營造工程',
+        'Financial Conglomerates': '金融控股',
+        'Furnishings, Fixtures & Appliances': '居家生活',
+        'Grocery Stores': '食品量販 / 超市',
+        'Household & Personal Products': '家庭與個人用品',
+        'Information Technology Services': '資訊服務',
+        'Insurance - Life': '人壽保險',
+        'Insurance - Property & Casualty': '產物保險',
+        'Insurance - Diversified': '綜合保險',
+        'Marine Shipping': '航運業',
+        'Metal Fabrication': '金屬加工',
+        'Packaged Foods': '食品工業',
+        'Packaging & Containers': '包裝材料',
+        'Pollution & Treatment Controls': '綠能環保',
+        'Real Estate - Development': '建材營造',
+        'Real Estate - Services': '不動產服務',
+        'Restaurants': '觀光餐飲',
+        'Scientific & Technical Instruments': '精密儀器',
+        'Semiconductor Equipment & Materials': '半導體設備與材料',
+        'Semiconductors': '半導體業',
+        'Specialty Chemicals': '特用化學',
+        'Specialty Industrial Machinery': '特殊工業機械',
+        'Specialty Retail': '特種零售',
+        'Steel': '鋼鐵工業',
+        'Telecom Services': '電信服務',
+        'Textile Manufacturing': '紡織纖維',
+        'Tools & Accessories': '工具五金',
+        'Biotechnology': '生物科技',
+        'Medical Devices': '醫療器材',
+        'Medical Instruments & Supplies': '醫療用品',
+        'Healthcare Plans': '醫療保健',
+        'Software - Application': '應用軟體',
+        'Software - Infrastructure': '基礎架構軟體',
+        'Internet Content & Information': '網路資訊',
+        'Solar': '太陽能',
+        'Auto Manufacturers': '汽車製造',
+        'Aerospace & Defense': '航太國防',
+        'Asset Management': '資產管理',
+        'Capital Markets': '資本市場',
+        'Oil & Gas Integrated': '石油與天然氣',
+        'Oil & Gas Refining & Marketing': '油品煉製',
+        'Utilities - Regulated Electric': '公用事業',
+        'Utilities - Renewable': '再生能源'
+    }
+
     stock_map = {}
     for idx, fund in enumerate(filtered_funds, 1):
         sym = fund.get('symbol')
@@ -45,7 +119,10 @@ def fetch_goal_star_data():
                 for item in items:
                     sid = str(item.get('stock_symbol', '')).strip()
                     sname = str(item.get('stock_name', '')).strip()
-                    industry = str(item.get('industry', '一般產業')).strip()
+                    # 優先採用中文標準公司名稱
+                    sname = stock_names_map.get(sid) or sname
+                    raw_ind = str(item.get('industry', '一般產業')).strip()
+                    industry = INDUSTRY_MAP.get(raw_ind, raw_ind)
                     ratio = float(item.get('ratio', 0) or 0)
                     
                     if not sid:
