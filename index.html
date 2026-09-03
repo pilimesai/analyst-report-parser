@@ -4,21 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>📈 券商報告自動分析器 (Serverless 版)</title>
-
-    <!-- Google Fonts -->
+    <!-- 效能優化：DNS 預解析與 CDN 連線預先握手 (Zero Latency Preconnect) -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+
+    <title>📈 券商報告自動分析器 (Serverless 版)</title>
+
+    <!-- Google Fonts 輕量英文排版字體 (搭配系統繁中原生字體，秒開無阻塞) -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
-    <!-- PDF.js & SheetJS CDNs -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- 大型函式庫延遲解析 (defer)，釋放關鍵渲染路徑，首屏秒開 -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
         :root {
@@ -41,7 +45,7 @@
         }
 
         body {
-            font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
             background-color: var(--bg-color);
             color: var(--text-primary);
             min-height: 100vh;
@@ -1941,39 +1945,6 @@
             });
         }
 
-        // Fetch settings from Cloud if GAS URL is available (SWR Background Sync)
-        async function fetchSettingsFromCloud() {
-            const url = scriptUrlInput.value.trim();
-            if (!url) return;
-            try {
-                const response = await fetch(url, { method: 'GET' });
-                const result = await response.json();
-                if (result.status === 'success') {
-                    // 🔑 從雲端讀取 API Key（無痕模式 / 新裝置時 localStorage 為空，靠此填入）
-                    if (result.geminiApiKey && !apiKeyInput.value.trim()) {
-                        apiKeyInput.value = result.geminiApiKey;
-                        localStorage.setItem('gemini_api_key', result.geminiApiKey);
-                        console.log("✅ 已從雲端自動填入 Gemini API Key");
-                    }
-
-                    if (result.sheetData) {
-                        window.tablesData = result.sheetData;
-                        localStorage.setItem('cached_tables_data', JSON.stringify(result.sheetData));
-                        console.log("已從雲端同步設定與 CSV 分頁資料", window.tablesData);
-
-                        // 檢查是否為舊版 Apps Script
-                        if (window.tablesData['可轉債CB'] && !window.tablesData['近期發行CB']) {
-                            alert("⚠️ 系統偵測到您的 Apps Script 還在舊版本！\n\n請務必到 Apps Script 編輯器：\n1. 貼上最新版 google_apps_script.js 程式碼\n2. 點擊右上角「部署」->「管理部署作業」\n3. 點擊鉛筆(編輯) -> 版本選擇「新版本」-> 儲存！\n\n這樣「近期發行CB」才會正常顯示喔！");
-                        }
-
-                        renderPersistentTables();
-                    }
-                }
-            } catch (err) {
-                console.log("雲端設定同步失敗 (可能是第一次執行或網路錯誤):", err);
-            }
-        }
-
         // 台股名稱資料庫非同步載入器 (帶本地快取與背景更新)
         async function loadStockNames() {
             if (localStorage.getItem('stock_names_cache')) {
@@ -2015,7 +1986,15 @@
                         const payload = await r.json();
                         if (payload && Array.isArray(payload.stocks) && payload.stocks.length > 0) {
                             activeEtfStocksData = payload.stocks.map(s => {
-                                s.funds = (s.funds || []).filter(f => !ACTIVE_ETF_EXCLUDED.includes(f.fundSymbol));
+                                s.funds = (s.funds || []).filter(f => !ACTIVE_ETF_EXCLUDED.includes(f.fundSymbol) && (f.ratio || 0) > 1.0);
+                                let maxR = 0, totR = 0;
+                                s.funds.forEach(f => {
+                                    const r = f.ratio || 0;
+                                    totR += r;
+                                    if (r > maxR) maxR = r;
+                                });
+                                s.maxRatio = parseFloat(maxR.toFixed(2));
+                                s.totalRatio = parseFloat(totR.toFixed(2));
                                 s.name = getEtfStockChineseName(s.symbol, s.name);
                                 s.industry = translateEtfIndustry(s.industry);
                                 return s;
@@ -2038,8 +2017,39 @@
             }
         }
 
-        // Initial setup on load (0毫秒 SWR 極速載入架構)
-        window.addEventListener('load', async () => {
+        // 雲端設定與分頁自動同步
+        async function fetchSettingsFromCloud() {
+            const scriptUrl = scriptUrlInput ? scriptUrlInput.value.trim() : '';
+            if (!scriptUrl) return;
+            try {
+                const resp = await fetch(scriptUrl);
+                if (resp.ok) {
+                    const resJson = await resp.json();
+                    if (resJson && resJson.status === 'success') {
+                        if (resJson.geminiApiKey && !apiKeyInput.value) {
+                            apiKeyInput.value = resJson.geminiApiKey;
+                            localStorage.setItem('gemini_api_key', resJson.geminiApiKey);
+                        }
+                        if (resJson.sheetData) {
+                            let updated = false;
+                            for (const sName in resJson.sheetData) {
+                                window.tablesData[sName] = resJson.sheetData[sName];
+                                updated = true;
+                            }
+                            if (updated) {
+                                localStorage.setItem('cached_tables_data', JSON.stringify(window.tablesData));
+                                renderPersistentTables();
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("無法從雲端同步設定:", e);
+            }
+        }
+
+        // 0毫秒極速初始化 (DOM 解析完成即刻還原本地快取，首屏極速呈現)
+        document.addEventListener('DOMContentLoaded', async () => {
             // 1. 立即同步 URL 參數
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('api_key')) localStorage.setItem('gemini_api_key', urlParams.get('api_key'));
@@ -2146,19 +2156,21 @@
                 }
             });
 
-            // 6. 背景非同步平行刷新 (SWR 不阻斷畫面)
-            Promise.allSettled([
-                loadStockNames(),
-                syncActiveEtfFromCloud(),
-                fetchSettingsFromCloud(),
-                activeSheetUrl ? loadGoogleSheet(activeSheetUrl).then(sheetRows => {
-                    if (sheetRows && sheetRows.length > 0) {
-                        reportsData = sheetRows;
-                        localStorage.setItem('reports_history', JSON.stringify(reportsData));
-                        renderReportsTable();
-                    }
-                }) : Promise.resolve()
-            ]);
+            // 6. 背景非同步平行刷新 (SWR 延遲 10ms 釋放主線程，首屏 0ms 秒開)
+            setTimeout(() => {
+                Promise.allSettled([
+                    loadStockNames(),
+                    syncActiveEtfFromCloud(),
+                    fetchSettingsFromCloud(),
+                    activeSheetUrl ? loadGoogleSheet(activeSheetUrl).then(sheetRows => {
+                        if (sheetRows && sheetRows.length > 0) {
+                            reportsData = sheetRows;
+                            localStorage.setItem('reports_history', JSON.stringify(reportsData));
+                            renderReportsTable();
+                        }
+                    }) : Promise.resolve()
+                ]);
+            }, 10);
         });
 
         // Event listeners for saving settings
@@ -3342,6 +3354,7 @@ JSON 欄位：
                         return;
                     }
 
+                    const frag = document.createDocumentFragment();
                     rowsToRender.forEach(row => {
                         const tr = document.createElement('tr');
                         row.forEach((col, cIdx) => {
@@ -3417,8 +3430,9 @@ JSON 欄位：
                             }
                             tr.appendChild(td);
                         });
-                        tbody.appendChild(tr);
+                        frag.appendChild(tr);
                     });
+                    tbody.appendChild(frag);
                 }
 
                 renderRows(visibleRows);
