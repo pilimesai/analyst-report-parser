@@ -1604,7 +1604,7 @@
                                 <span>🤖</span> <span>AI / 雲端抓取 ETF</span>
                             </h3>
                             <span style="font-size: 0.68rem; padding: 0.2rem 0.55rem; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 9999px; font-weight: 600; white-space: nowrap;">
-                                🛡️ 已排除 7 檔 ETF
+                                🛡️ 已排除 8 檔 ETF
                             </span>
                         </div>
                         <!-- 排除的 ETF 標籤清單 -->
@@ -1620,6 +1620,7 @@
                                 <span style="font-size: 0.68rem; padding: 2px 6px; background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-radius: 4px; font-family: monospace; font-weight: 600;">00990A</span>
                                 <span style="font-size: 0.68rem; padding: 2px 6px; background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-radius: 4px; font-family: monospace; font-weight: 600;">00997A</span>
                                 <span style="font-size: 0.68rem; padding: 2px 6px; background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-radius: 4px; font-family: monospace; font-weight: 600;">00986A</span>
+                                <span style="font-size: 0.68rem; padding: 2px 6px; background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-radius: 4px; font-family: monospace; font-weight: 600;">00999A</span>
                             </div>
                         </div>
                     </div>
@@ -1731,7 +1732,7 @@
                                     <td colspan="7" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
                                         <div style="font-size:1.5rem; margin-bottom:0.5rem;">🎯</div>
                                         <div>尚未載入主動型 ETF 資料</div>
-                                        <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊左側「🚀 立即從 Goal Star 雲端抓取」按鈕，系統將自動分析主動型 ETF 並排除 00984A、00983A、00989A、00988A、00990A、00997A、00986A。</div>
+                                        <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊左側「🚀 立即從 Goal Star 雲端抓取」按鈕，系統將自動分析主動型 ETF 並排除 00984A、00983A、00989A、00988A、00990A、00997A、00986A、00999A。</div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -4007,7 +4008,7 @@ JSON 欄位：
             try {
                 // 1. 優先從 GitHub 資料庫抓取全量主動型 ETF 權重數據（速度最快且無 CORS 限制）
                 let loadedFromRepo = false;
-                const EXCLUDED_ETFS = ['00984A', '00983A', '00989A', '00988A', '00990A', '00997A', '00986A', '00984a', '00983a', '00989a', '00988a', '00990a', '00997a', '00986a'];
+                const EXCLUDED_ETFS = ['00984A', '00983A', '00989A', '00988A', '00990A', '00997A', '00986A', '00999A', '00984a', '00983a', '00989a', '00988a', '00990a', '00997a', '00986a', '00999a'];
                 try {
                     const repoUrls = [
                         `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/active_etf_holdings.json?v=${Date.now()}`,
@@ -4042,7 +4043,7 @@ JSON 欄位：
                                     }, 800);
                                     
                                     renderActiveEtfView();
-                                    showToast(`✅ 成功載入 ${activeEtfFundsList.length || 15} 檔主動型 ETF，共篩選出 ${activeEtfStocksData.length} 檔持股標的！`);
+                                    showToast(`✅ 成功載入 ${activeEtfFundsList.length || 14} 檔主動型 ETF，共篩選出 ${activeEtfStocksData.length} 檔持股標的！`);
                                     loadedFromRepo = true;
                                     break;
                                 }
@@ -4077,11 +4078,11 @@ JSON 欄位：
                     throw new Error("無法連線至 Goal Star 伺服器，請稍後重試或使用下方貼上文字解析。");
                 }
 
-                // 3. 嚴格排除 00984A、00983A、00989A、00988A、00990A、00997A、00986A
+                // 3. 嚴格排除 00984A、00983A、00989A、00988A、00990A、00997A、00986A、00999A
                 const activeFunds = fundsData.active.items.filter(f => !EXCLUDED_ETFS.includes(f.symbol));
                 activeEtfFundsList = activeFunds;
 
-                updateEtfProgress(30, `取得 ${activeFunds.length} 檔主動型 ETF，開始抓取成分股 (已排除 00984A/983A/989A/988A/990A/997A/986A)...`);
+                updateEtfProgress(30, `取得 ${activeFunds.length} 檔主動型 ETF，開始抓取成分股 (已排除 00984A/983A/989A/988A/990A/997A/986A/999A)...`);
 
                 const stockMap = {};
                 let completedFunds = 0;
@@ -4203,7 +4204,7 @@ JSON 欄位：
                 const prompt = `請解析以下從 Goal Star 複製的主動型 ETF 持股文字或網頁內容。
 重點要求：
 1. 找出所有股票及其被哪些主動型 ETF 持有與持股比例(%)。
-2. 嚴格【撇除/排除 00984A、00983A、00989A、00988A、00990A、00997A、00986A】，不要包含上述 ETF！
+2. 嚴格【撇除/排除 00984A、00983A、00989A、00988A、00990A、00997A、00986A、00999A】，不要包含上述 ETF！
 3. 回傳純 JSON 陣列，格式如下：
 [
   {
@@ -4211,7 +4212,7 @@ JSON 欄位：
     "name": "公司名稱",
     "industry": "產業類別",
     "funds": [
-      { "fundSymbol": "ETF代號 (如 00999A)", "fundName": "ETF名稱", "ratio": 4.02 }
+      { "fundSymbol": "ETF代號 (如 00980A)", "fundName": "ETF名稱", "ratio": 4.02 }
     ]
   }
 ]
@@ -4226,7 +4227,7 @@ ${text.slice(0, 30000)}`;
                 const parsedStocks = JSON.parse(cleanedJson);
 
                 if (Array.isArray(parsedStocks) && parsedStocks.length > 0) {
-                    const EXCLUDED_ETFS = ['00984A', '00983A', '00989A', '00988A', '00990A', '00997A', '00986A', '00984a', '00983a', '00989a', '00988a', '00990a', '00997a', '00986a'];
+                    const EXCLUDED_ETFS = ['00984A', '00983A', '00989A', '00988A', '00990A', '00997A', '00986A', '00999A', '00984a', '00983a', '00989a', '00988a', '00990a', '00997a', '00986a', '00999a'];
                     activeEtfStocksData = parsedStocks.map(stock => {
                         const validFunds = (stock.funds || []).filter(f => !EXCLUDED_ETFS.includes(f.fundSymbol));
                         let totalRatio = 0;
@@ -4296,7 +4297,7 @@ ${text.slice(0, 30000)}`;
                             <td colspan="7" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
                                 <div style="font-size:1.5rem; margin-bottom:0.5rem;">🎯</div>
                                 <div>尚未載入主動型 ETF 資料</div>
-                                <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊左側「🚀 立即從 Goal Star 雲端抓取」按鈕，系統將自動分析主動型 ETF 並排除 00984A、00983A、00989A、00988A、00990A、00997A、00986A。</div>
+                                <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊左側「🚀 立即從 Goal Star 雲端抓取」按鈕，系統將自動分析主動型 ETF 並排除 00984A、00983A、00989A、00988A、00990A、00997A、00986A、00999A。</div>
                             </td>
                         </tr>
                     `;

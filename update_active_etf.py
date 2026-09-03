@@ -26,10 +26,10 @@ def fetch_goal_star_data():
         funds_data = json.loads(resp.read().decode('utf-8'))
         
     active_funds = funds_data.get('active', {}).get('items', [])
-    # 嚴格排除 00984A, 00983A, 00989A, 00988A, 00990A, 00997A, 00986A
-    EXCLUDED_ETFS = {'00984A', '00983A', '00989A', '00988A', '00990A', '00997A', '00986A'}
+    # 嚴格排除 00984A, 00983A, 00989A, 00988A, 00990A, 00997A, 00986A, 00999A
+    EXCLUDED_ETFS = {'00984A', '00983A', '00989A', '00988A', '00990A', '00997A', '00986A', '00999A'}
     filtered_funds = [f for f in active_funds if f.get('symbol', '').upper() not in EXCLUDED_ETFS]
-    print(f"✅ 取得 {len(filtered_funds)} 檔主動型 ETF（已嚴格排除 00984A、00983A、00989A、00988A、00990A、00997A、00986A）")
+    print(f"✅ 取得 {len(filtered_funds)} 檔主動型 ETF（已嚴格排除 00984A、00983A、00989A、00988A、00990A、00997A、00986A、00999A）")
     
     # 讀取台股中文名稱資料庫
     stock_names_map = {}
