@@ -127,6 +127,9 @@ def fetch_goal_star_data():
                     
                     if not sid:
                         continue
+                    # 權重要超過 1% 才留下 (排除 <= 1.0% 之零星碎股)
+                    if ratio <= 1.0:
+                        continue
                     if sid not in stock_map:
                         stock_map[sid] = {
                             'symbol': sid,

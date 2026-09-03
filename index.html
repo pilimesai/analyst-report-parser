@@ -1603,9 +1603,14 @@
                             <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.4rem; margin: 0; white-space: nowrap;">
                                 <span>🤖</span> <span>AI / 雲端抓取 ETF</span>
                             </h3>
-                            <span style="font-size: 0.68rem; padding: 0.2rem 0.55rem; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 9999px; font-weight: 600; white-space: nowrap;">
-                                🛡️ 已排除 8 檔 ETF
-                            </span>
+                            <div style="display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap;">
+                                <span style="font-size: 0.68rem; padding: 0.2rem 0.55rem; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 9999px; font-weight: 600; white-space: nowrap;">
+                                    🛡️ 已排除 8 檔 ETF
+                                </span>
+                                <span style="font-size: 0.68rem; padding: 0.2rem 0.55rem; background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 9999px; font-weight: 600; white-space: nowrap;">
+                                    ⚡ 權重門檻 > 1%
+                                </span>
+                            </div>
                         </div>
                         <!-- 排除的 ETF 標籤清單 -->
                         <div style="padding: 0.5rem 0.6rem; background: rgba(239, 68, 68, 0.05); border: 1px dashed rgba(239, 68, 68, 0.25); border-radius: 0.5rem;">
@@ -1627,7 +1632,7 @@
 
                     <div style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.45; background: rgba(15, 23, 42, 0.5); padding: 0.65rem 0.75rem; border-radius: 0.5rem; border: 1px solid var(--card-border);">
                         <div>資料來源：<a href="https://goal-star.com/summary/fund-weights" target="_blank" style="color: #60a5fa; text-decoration: underline;">Goal Star 持股權重熱力圖 🔗</a></div>
-                        <div style="margin-top: 3px; color: #94a3b8;">分析全台主動型 ETF 最新持股，篩選被<b>最少隻 ETF 重複持有</b>的獨門標的。</div>
+                        <div style="margin-top: 3px; color: #94a3b8;">分析全台主動型 ETF 最新持股，篩選被<b>最少隻 ETF 重複持有</b>且<b>單一權重超過 1%</b> 的重押標的（排除 $\le$ 1% 碎股）。</div>
                     </div>
 
                     <!-- 一鍵即時雲端抓取按鈕 -->
@@ -1848,6 +1853,9 @@
             return defaultName || '';
         }
 
+        // 全域嚴格排除之主動型 ETF 清單 (8 檔)
+        const ACTIVE_ETF_EXCLUDED = ['00984A', '00983A', '00989A', '00988A', '00990A', '00997A', '00986A', '00999A', '00984a', '00983a', '00989a', '00988a', '00990a', '00997a', '00986a', '00999a'];
+
         // PDF.js worker URL setup
         if (typeof pdfjsLib !== 'undefined' && pdfjsLib.GlobalWorkerOptions) {
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
@@ -1981,6 +1989,7 @@
                     localStorage.setItem('stock_names_cache', JSON.stringify(data));
                     if (activeEtfStocksData && activeEtfStocksData.length > 0) {
                         activeEtfStocksData.forEach(s => {
+                            s.funds = (s.funds || []).filter(f => !ACTIVE_ETF_EXCLUDED.includes(f.fundSymbol));
                             s.name = getEtfStockChineseName(s.symbol, s.name);
                             s.industry = translateEtfIndustry(s.industry);
                         });
@@ -1989,6 +1998,43 @@
                 }
             } catch (e) {
                 console.warn("Could not load stock_names.json locally, will fall back to using symbol strings.");
+            }
+        }
+
+        // 背景自動同步主動型 ETF 資料庫 (SWR 不阻斷畫面)
+        async function syncActiveEtfFromCloud() {
+            const repoUrls = [
+                `./active_etf_holdings.json?v=${Date.now()}`,
+                `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/active_etf_holdings.json?v=${Date.now()}`,
+                `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/active_etf_holdings.json?v=${Date.now()}`
+            ];
+            for (const u of repoUrls) {
+                try {
+                    const r = await fetch(u);
+                    if (r.ok) {
+                        const payload = await r.json();
+                        if (payload && Array.isArray(payload.stocks) && payload.stocks.length > 0) {
+                            activeEtfStocksData = payload.stocks.map(s => {
+                                s.funds = (s.funds || []).filter(f => !ACTIVE_ETF_EXCLUDED.includes(f.fundSymbol));
+                                s.name = getEtfStockChineseName(s.symbol, s.name);
+                                s.industry = translateEtfIndustry(s.industry);
+                                return s;
+                            }).filter(s => s.funds.length > 0);
+                            
+                            activeEtfFundsList = (payload.funds || []).filter(f => !ACTIVE_ETF_EXCLUDED.includes(f.symbol));
+                            activeEtfStocksData.sort((a, b) => a.funds.length - b.funds.length || b.maxRatio - a.maxRatio);
+                            
+                            localStorage.setItem('active_etf_cache', JSON.stringify({
+                                funds: activeEtfFundsList,
+                                stocks: activeEtfStocksData,
+                                updateTime: payload.updateTime || new Date().toISOString()
+                            }));
+                            
+                            renderActiveEtfView();
+                            break;
+                        }
+                    }
+                } catch(e) {}
             }
         }
 
@@ -2047,11 +2093,21 @@
                     const savedEtf = JSON.parse(localStorage.getItem('active_etf_cache'));
                     if (savedEtf && savedEtf.stocks) {
                         activeEtfStocksData = savedEtf.stocks.map(s => {
+                            s.funds = (s.funds || []).filter(f => !ACTIVE_ETF_EXCLUDED.includes(f.fundSymbol));
+                            let maxR = 0, totR = 0;
+                            s.funds.forEach(f => {
+                                const r = f.ratio || 0;
+                                totR += r;
+                                if (r > maxR) maxR = r;
+                            });
+                            s.maxRatio = parseFloat(maxR.toFixed(2));
+                            s.totalRatio = parseFloat(totR.toFixed(2));
                             s.name = getEtfStockChineseName(s.symbol, s.name);
                             s.industry = translateEtfIndustry(s.industry);
                             return s;
-                        });
-                        activeEtfFundsList = savedEtf.funds || [];
+                        }).filter(s => s.funds.length > 0);
+                        activeEtfFundsList = (savedEtf.funds || []).filter(f => !ACTIVE_ETF_EXCLUDED.includes(f.symbol));
+                        activeEtfStocksData.sort((a, b) => a.funds.length - b.funds.length || b.maxRatio - a.maxRatio);
                         renderActiveEtfView();
                     }
                 } catch (e) { console.error("Error parsing ETF cache: ", e); }
@@ -2093,6 +2149,7 @@
             // 6. 背景非同步平行刷新 (SWR 不阻斷畫面)
             Promise.allSettled([
                 loadStockNames(),
+                syncActiveEtfFromCloud(),
                 fetchSettingsFromCloud(),
                 activeSheetUrl ? loadGoogleSheet(activeSheetUrl).then(sheetRows => {
                     if (sheetRows && sheetRows.length > 0) {
@@ -4011,9 +4068,9 @@ JSON 欄位：
                 const EXCLUDED_ETFS = ['00984A', '00983A', '00989A', '00988A', '00990A', '00997A', '00986A', '00999A', '00984a', '00983a', '00989a', '00988a', '00990a', '00997a', '00986a', '00999a'];
                 try {
                     const repoUrls = [
-                        `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/active_etf_holdings.json?v=${Date.now()}`,
+                        `./active_etf_holdings.json?v=${Date.now()}`,
                         `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/active_etf_holdings.json?v=${Date.now()}`,
-                        `./active_etf_holdings.json?v=${Date.now()}`
+                        `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/active_etf_holdings.json?v=${Date.now()}`
                     ];
                     for (const u of repoUrls) {
                         try {
@@ -4022,7 +4079,15 @@ JSON 欄位：
                                 const payload = await r.json();
                                 if (payload && Array.isArray(payload.stocks) && payload.stocks.length > 0) {
                                     activeEtfStocksData = payload.stocks.map(s => {
-                                        s.funds = (s.funds || []).filter(f => !EXCLUDED_ETFS.includes(f.fundSymbol));
+                                        s.funds = (s.funds || []).filter(f => !EXCLUDED_ETFS.includes(f.fundSymbol) && (f.ratio || 0) > 1.0);
+                                        let maxR = 0, totR = 0;
+                                        s.funds.forEach(f => {
+                                            const r = f.ratio || 0;
+                                            totR += r;
+                                            if (r > maxR) maxR = r;
+                                        });
+                                        s.maxRatio = parseFloat(maxR.toFixed(2));
+                                        s.totalRatio = parseFloat(totR.toFixed(2));
                                         s.name = getEtfStockChineseName(s.symbol, s.name);
                                         s.industry = translateEtfIndustry(s.industry);
                                         return s;
@@ -4117,6 +4182,8 @@ JSON 欄位：
                         if (sharesData && sharesData.items) {
                             for (const item of sharesData.items) {
                                 const sid = item.stock_symbol;
+                                const ratio = parseFloat(item.ratio) || 0;
+                                if (!sid || ratio <= 1.0) continue; // 權重要超過 1% 才留下
                                 if (!stockMap[sid]) {
                                     stockMap[sid] = {
                                         symbol: sid,
@@ -4127,7 +4194,6 @@ JSON 欄位：
                                         maxRatio: 0
                                     };
                                 }
-                                const ratio = parseFloat(item.ratio) || 0;
                                 stockMap[sid].funds.push({
                                     fundSymbol: fund.symbol,
                                     fundName: fund.name,
@@ -4203,7 +4269,7 @@ JSON 欄位：
             try {
                 const prompt = `請解析以下從 Goal Star 複製的主動型 ETF 持股文字或網頁內容。
 重點要求：
-1. 找出所有股票及其被哪些主動型 ETF 持有與持股比例(%)。
+1. 找出所有股票及其被哪些主動型 ETF 持有與持股比例(%)，且【持股權重必須超過 1% (ratio > 1.0)】，小於等於 1% 的零星碎股請勿納入！
 2. 嚴格【撇除/排除 00984A、00983A、00989A、00988A、00990A、00997A、00986A、00999A】，不要包含上述 ETF！
 3. 回傳純 JSON 陣列，格式如下：
 [
@@ -4229,7 +4295,7 @@ ${text.slice(0, 30000)}`;
                 if (Array.isArray(parsedStocks) && parsedStocks.length > 0) {
                     const EXCLUDED_ETFS = ['00984A', '00983A', '00989A', '00988A', '00990A', '00997A', '00986A', '00999A', '00984a', '00983a', '00989a', '00988a', '00990a', '00997a', '00986a', '00999a'];
                     activeEtfStocksData = parsedStocks.map(stock => {
-                        const validFunds = (stock.funds || []).filter(f => !EXCLUDED_ETFS.includes(f.fundSymbol));
+                        const validFunds = (stock.funds || []).filter(f => !EXCLUDED_ETFS.includes(f.fundSymbol) && (parseFloat(f.ratio) || 0) > 1.0);
                         let totalRatio = 0;
                         let maxRatio = 0;
                         validFunds.forEach(f => {
