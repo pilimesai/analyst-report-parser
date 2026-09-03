@@ -1681,6 +1681,21 @@ if st.session_state.history:
             gm_list = st.session_state.get('gross_margin_stocks', [])
             if m_code and m_code.group() in gm_list:
                 all_c.add("毛利連續三季成長")
+
+            # 計算主動型 ETF 獨家持股加分 (權重 > 1% 且僅 1 檔 ETF 重押)
+            etf_exclusive_stocks = set()
+            etf_json_path = os.path.join(os.path.dirname(__file__), 'active_etf_holdings.json')
+            if os.path.exists(etf_json_path):
+                try:
+                    with open(etf_json_path, 'r', encoding='utf-8') as f:
+                        etf_d = json.load(f)
+                        for es in etf_d.get('stocks', []):
+                            if len([ef for ef in es.get('funds', []) if ef.get('ratio', 0) > 1.0]) == 1:
+                                etf_exclusive_stocks.add(str(es.get('symbol', '')).strip())
+                except Exception:
+                    pass
+            if m_code and m_code.group() in etf_exclusive_stocks:
+                all_c.add("主動型ETF獨家持股")
             
             score = len(all_c)
             if "大戶持股比例成長" in all_c:
@@ -2762,6 +2777,23 @@ if st.session_state.history:
                     combined_name = f"{c} {_global_names.get(c, '')}".strip()
                     if not any(c in str(vs) for vs in valid_stocks):
                         valid_stocks.append(combined_name)
+
+                # 同時將「主動型 ETF 獨家持股清單」的股票也納入（若尚未在名單中）
+                _etf_exclusive_stocks = set()
+                _etf_path = os.path.join(os.path.dirname(__file__), 'active_etf_holdings.json')
+                if os.path.exists(_etf_path):
+                    try:
+                        with open(_etf_path, 'r', encoding='utf-8') as f:
+                            _etf_d = json.load(f)
+                            for es in _etf_d.get('stocks', []):
+                                if len([ef for ef in es.get('funds', []) if ef.get('ratio', 0) > 1.0]) == 1:
+                                    _etf_exclusive_stocks.add(str(es.get('symbol', '')).strip())
+                    except Exception:
+                        pass
+                for c in _etf_exclusive_stocks:
+                    combined_name = f"{c} {_global_names.get(c, '')}".strip()
+                    if not any(c in str(vs) for vs in valid_stocks):
+                        valid_stocks.append(combined_name)
                 
                 # 載入畫面上已自動預解析的法說會日期
                 conference_stocks = {}
@@ -2852,6 +2884,13 @@ if st.session_state.history:
                                 matched.append("大戶持股比例成長")
                         except Exception as e:
                             print(f"大戶條件錯誤: {e}")
+
+                        # 條件 14: 主動型 ETF 獨家持股（持股比例 > 1% 且僅 1 檔 ETF 重押）
+                        try:
+                            if stock_id in _etf_exclusive_stocks:
+                                matched.append("入選主動型ETF獨家持股")
+                        except Exception as e:
+                            pass
                             
                         score = len(matched)
                         if "大戶持股比例成長" in matched or any("大戶持股增加" in m for m in matched):

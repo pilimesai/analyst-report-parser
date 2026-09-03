@@ -2191,7 +2191,8 @@
             'K': '表格裡面目前股價低於20PE',
             'L': '券商給的是正面評價,例如買進,調升TP',
             'M': '若已有發行的CB,且股價低於轉換價,並且轉換比例<10%',
-            'N': '入選毛利三季成長'
+            'N': '入選毛利三季成長',
+            'O': '入選主動型ETF獨家持股'
         };
 
         function expandCriteria(criteriaArr) {
@@ -3501,8 +3502,26 @@ JSON 欄位：
             const contractLiabilitiesStocks = extractCodesFromTableData('合約負債條件');
             contractLiabilitiesStocks.forEach(sid => { if (!validStocks.includes(sid)) validStocks.push(sid); });
 
+            // 加入主動型 ETF 獨家持股標的 (僅 1 檔 ETF 重押且權重 > 1%)
+            let exclusiveEtfStocks = [];
+            if (activeEtfStocksData && activeEtfStocksData.length > 0) {
+                exclusiveEtfStocks = activeEtfStocksData
+                    .filter(s => (s.funds || []).filter(f => !ACTIVE_ETF_EXCLUDED.includes(f.fundSymbol) && (f.ratio || 0) > 1.0).length === 1)
+                    .map(s => s.symbol);
+            } else if (localStorage.getItem('active_etf_cache')) {
+                try {
+                    const cache = JSON.parse(localStorage.getItem('active_etf_cache'));
+                    if (cache && cache.stocks) {
+                        exclusiveEtfStocks = cache.stocks
+                            .filter(s => (s.funds || []).filter(f => !ACTIVE_ETF_EXCLUDED.includes(f.fundSymbol) && (f.ratio || 0) > 1.0).length === 1)
+                            .map(s => s.symbol);
+                    }
+                } catch(e) {}
+            }
+            exclusiveEtfStocks.forEach(sid => { if (!validStocks.includes(sid)) validStocks.push(sid); });
+
             if (validStocks.length === 0) {
-                showToast("⚠️ 列表內無可供量化計算的股票代號，請先上傳報告或大戶等 CSV 檔案。", true);
+                showToast("⚠️ 列表內無可供量化計算的股票代號，請先上傳報告、大戶或主動型 ETF 資料。", true);
                 return;
             }
 
@@ -3552,12 +3571,13 @@ JSON 欄位：
                         if (revenueStocks.includes(stockId)) matched.push("入選營收條件");
                         if (earningsCallStocks.includes(stockId)) matched.push("入選2周內會有法說會");
                         if (contractLiabilitiesStocks.includes(stockId)) matched.push("入選合約負債");
+                        if (exclusiveEtfStocks.includes(stockId)) matched.push("入選主動型ETF獨家持股");
                         if (cbStocks.includes(stockId) && !matched.includes("入選要發行CB")) matched.push("入選要發行CB");
                         if (cbBelowStocks.includes(stockId) && !matched.includes("若已有發行的CB,且股價低於轉換價,並且轉換比例<10%")) {
                             matched.push("若已有發行的CB,且股價低於轉換價,並且轉換比例<10%");
                         }
 
-                        // 計算加權總分
+                        // 計算加權總分 (包含獨家持股 +1分)
                         let score = matched.length;
                         if (matched.some(m => m.includes("入選大戶持股"))) score += 1;
                         if (matched.some(m => m.includes("入選2周內會有法說會"))) score += 1;
@@ -3854,7 +3874,7 @@ JSON 欄位：
                             <td colspan="5" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
                                 <div style="font-size:1.5rem; margin-bottom:0.5rem;">🎯</div>
                                 <div>尚未執行量化運算</div>
-                                <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🚀 執行即時量化運算」按鈕，系統將自動分析日周KD、三大法人、營收、大戶、法說會與CB條件。</div>
+                                <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🚀 執行即時量化運算」按鈕，系統將自動分析日周KD、三大法人、營收、大戶、法說會、CB與主動型ETF獨家持股條件。</div>
                             </td>
                         </tr>
                     `;
