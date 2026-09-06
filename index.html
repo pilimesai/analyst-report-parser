@@ -1150,7 +1150,73 @@
             font-family: monospace, Outfit, sans-serif;
         }
 
-        /* 通用事件表格欄位樣式 (法說會、營收條件、毛利三季成長、合約負債) */
+        /* 法說會 表格專用樣式 (完全比照大戶持股與近期發行CB樣式) */
+        .cb-earnings-table {
+            width: 100% !important;
+            max-width: 480px !important;
+            table-layout: fixed !important;
+            margin: 0;
+        }
+
+        .cb-earn-col-idx {
+            width: 12%;
+            text-align: center !important;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            font-family: monospace, Outfit, sans-serif;
+            white-space: nowrap !important;
+        }
+        .cb-earn-col-stock {
+            width: 22%;
+            text-align: center !important;
+            font-weight: 700;
+            color: #60a5fa;
+            letter-spacing: 0.5px;
+            white-space: nowrap !important;
+        }
+        .cb-earn-col-name {
+            width: 32%;
+            font-weight: 600;
+            text-align: left !important;
+            white-space: nowrap !important;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #f8fafc;
+            padding-left: 0.5rem !important;
+        }
+        .cb-earn-col-date {
+            width: 34%;
+            text-align: center !important;
+            white-space: nowrap !important;
+            font-family: monospace, Outfit, sans-serif;
+        }
+
+        .cb-earn-3col-stock {
+            width: 24%;
+            text-align: center !important;
+            font-weight: 700;
+            color: #60a5fa;
+            letter-spacing: 0.5px;
+            white-space: nowrap !important;
+        }
+        .cb-earn-3col-name {
+            width: 38%;
+            font-weight: 600;
+            text-align: left !important;
+            white-space: nowrap !important;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #f8fafc;
+            padding-left: 0.5rem !important;
+        }
+        .cb-earn-3col-date {
+            width: 38%;
+            text-align: center !important;
+            white-space: nowrap !important;
+            font-family: monospace, Outfit, sans-serif;
+        }
+
+        /* 通用事件表格欄位樣式 (營收條件、毛利三季成長、合約負債) */
         .cb-event-2col-stock {
             width: 35%;
             text-align: center !important;
@@ -1235,7 +1301,8 @@
             .cb-table {
                 min-width: 760px;
             }
-            .cb-dahu-table {
+            .cb-dahu-table,
+            .cb-earnings-table {
                 min-width: 100% !important;
                 width: 100% !important;
             }
@@ -3538,7 +3605,7 @@ JSON 欄位：
                 const icon = getSheetIcon(sheetName);
 
                 const section = document.createElement('div');
-                section.className = 'reports-section persistent-table-section' + ((isCbSheet || isCbBelowSheet || isDahuSheet) ? ' cb-table-section' : '');
+                section.className = 'reports-section persistent-table-section' + ((isCbSheet || isCbBelowSheet || isDahuSheet || isEarningsSheet) ? ' cb-table-section' : '');
                 section.setAttribute('data-sheet-name', sheetName);
 
                 // Header with title, count badge, and quick search
@@ -3572,7 +3639,7 @@ JSON 欄位：
                 tableContainer.className = 'table-responsive persistent-table-container cb-table-container';
 
                 const table = document.createElement('table');
-                table.className = 'cb-table' + (isDahuSheet ? ' cb-dahu-table' : '');
+                table.className = 'cb-table' + (isDahuSheet ? ' cb-dahu-table' : (isEarningsSheet ? ' cb-earnings-table' : ''));
 
                 // Table Header
                 const thead = document.createElement('thead');
@@ -3597,8 +3664,13 @@ JSON 欄位：
                     }
                     colTypes = (data[0].length === 4) ? ['idx', 'stock', 'name', 'ratio'] : ['stock', 'name', 'ratio'];
                 } else if (isEarningsSheet) {
-                    colClasses = ['cb-event-3col-stock', 'cb-event-3col-name', 'cb-event-3col-date'];
-                    colTypes = ['stock', 'name', 'date'];
+                    if (data[0].length === 4) {
+                        colClasses = ['cb-earn-col-idx', 'cb-earn-col-stock', 'cb-earn-col-name', 'cb-earn-col-date'];
+                        colTypes = ['idx', 'stock', 'name', 'date'];
+                    } else {
+                        colClasses = ['cb-earn-3col-stock', 'cb-earn-3col-name', 'cb-earn-3col-date'];
+                        colTypes = ['stock', 'name', 'date'];
+                    }
                 } else {
                     if (data[0].length === 2) {
                         colClasses = ['cb-event-2col-stock', 'cb-event-2col-name'];
@@ -3625,6 +3697,12 @@ JSON 欄位：
                         else if (colStr.includes('代碼') || colStr.includes('代號') || colStr.includes('股號')) headerText = '代號';
                         else if (colStr.includes('商品') || colStr.includes('名稱') || colStr.includes('公司')) headerText = '簡稱';
                         else if (colStr.includes('比例') || colStr.includes('持股') || colStr.includes('%')) headerText = '持股比例';
+                    } else if (isEarningsSheet) {
+                        const colStr = String(col).trim();
+                        if (colStr.includes('序號') || colStr.includes('項次') || colStr === '#') headerText = '序號';
+                        else if (colStr.includes('代碼') || colStr.includes('代號') || colStr.includes('股號')) headerText = '代號';
+                        else if (colStr.includes('商品') || colStr.includes('名稱') || colStr.includes('公司')) headerText = '簡稱';
+                        else if (colStr.includes('日期') || colStr.includes('時間') || colStr.includes('法說')) headerText = '法說日期';
                     }
                     th.innerText = headerText;
                     if (colClasses[cIdx]) {
@@ -3808,6 +3886,44 @@ JSON 欄位：
                                         }
                                     }
                                     td.innerHTML = `<span class="cb-badge ${badgeClass}">${formatted || '—'}</span>`;
+                                } else {
+                                    td.innerText = strVal;
+                                }
+                            } else if (isEarningsSheet) {
+                                // 法說會表格：完全比照大戶持股與近期發行CB的顯示格式
+                                if (colClasses[cIdx]) td.className = colClasses[cIdx];
+                                const colH = String(data[0][cIdx] || '');
+                                const strVal = (displayVal !== undefined && displayVal !== null) ? String(displayVal).trim() : '';
+
+                                const isIdxCol = cIdx === 0 && (colH.includes('序號') || colH.includes('項次') || colH === '#');
+                                const isStockCol = colH.includes('代碼') || colH.includes('代號') || colH.includes('股號') || (!isIdxCol && cIdx === (data[0].length === 4 ? 1 : 0));
+                                const isNameCol = colH.includes('商品') || colH.includes('名稱') || colH.includes('公司') || cIdx === (data[0].length === 4 ? 2 : 1);
+                                const isDateCol = colH.includes('日') || colH.includes('期') || colH.includes('時間') || colH.includes('法說') || cIdx === earnDateIdx;
+
+                                if (isIdxCol) {
+                                    td.innerHTML = `<span style="color:var(--text-secondary); font-size:0.78rem; font-family:monospace, Outfit, sans-serif;">${strVal}</span>`;
+                                } else if (isStockCol) {
+                                    // 仿照 CB / 大戶持股表格：去除 .TW / .TWO 只保留 4 碼純數字，標誌性亮藍粗體
+                                    const cleanCode = strVal.replace(/\.(TW|TWO)$/i, '').trim();
+                                    td.innerHTML = `<strong>${cleanCode}</strong>`;
+                                } else if (isNameCol) {
+                                    td.innerHTML = `<span style="font-weight:600; color:#f8fafc;">${strVal}</span>`;
+                                } else if (isDateCol) {
+                                    const parsed = parseDateHelper(strVal);
+                                    if (parsed) {
+                                        const y = parsed.getFullYear();
+                                        const m = String(parsed.getMonth() + 1).padStart(2, '0');
+                                        const d = String(parsed.getDate()).padStart(2, '0');
+                                        const diffDays = Math.round((parsed - today) / (1000 * 60 * 60 * 24));
+                                        let badgeText = '';
+                                        if (diffDays === 0) badgeText = ` <span class="cb-badge cb-badge-effective" style="font-size:0.7rem; margin-left:0.3rem;">今日登場</span>`;
+                                        else if (diffDays <= 7) badgeText = ` <span class="cb-badge cb-badge-listed" style="font-size:0.7rem; margin-left:0.3rem;">${diffDays}天後</span>`;
+                                        else if (diffDays <= 14) badgeText = ` <span class="cb-badge cb-badge-neutral" style="font-size:0.7rem; margin-left:0.3rem;">${diffDays}天後</span>`;
+                                        else if (diffDays > 14) badgeText = ` <span class="cb-badge cb-badge-neutral" style="font-size:0.7rem; margin-left:0.3rem;">${diffDays}天後</span>`;
+                                        td.innerHTML = `<span style="font-weight:600; color:#38bdf8; font-family:monospace, Outfit, sans-serif;">${y}/${m}/${d}</span>${badgeText}`;
+                                    } else {
+                                        td.innerText = strVal;
+                                    }
                                 } else {
                                     td.innerText = strVal;
                                 }
