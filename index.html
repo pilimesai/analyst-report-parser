@@ -3190,6 +3190,41 @@ JSON 欄位：
             return false;
         }
 
+        // Helper: Check if a CB below conversion table row has balance < 70% (若餘額低於70%就不採納)
+        function isCbBelowRowLowBalance(row, headerRow) {
+            if (!row) return false;
+            let balanceColIdx = -1;
+            if (headerRow && Array.isArray(headerRow)) {
+                for (let c = 0; c < headerRow.length; c++) {
+                    const h = String(headerRow[c] || '');
+                    if (h.includes('餘額')) {
+                        balanceColIdx = c;
+                        break;
+                    }
+                }
+            }
+            if (balanceColIdx === -1) {
+                for (let j = 0; j < Math.min(row.length, 9); j++) {
+                    const str = String(row[j] || '').trim();
+                    if (str.endsWith('%') && !str.startsWith('-')) {
+                        const num = parseFloat(str.replace('%', ''));
+                        if (!isNaN(num) && num <= 100) {
+                            balanceColIdx = j;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (balanceColIdx >= 0 && row[balanceColIdx] !== undefined) {
+                const valStr = String(row[balanceColIdx]).replace('%', '').trim();
+                const balNum = parseFloat(valStr);
+                if (!isNaN(balNum) && balNum < 70.0) {
+                    return true; // 餘額低於 70%，排除不採納
+                }
+            }
+            return false;
+        }
+
         // Helper: Check if a 法說會 table row is expired (法說日期早於今天)
         function isEarningsCallRowExpired(row, dateIdx, today) {
             if (dateIdx >= 0 && row[dateIdx]) {
@@ -3250,8 +3285,8 @@ JSON 欄位：
                     if (isCbSheet && isCbRowExpired(row, statusIdx, dateIdx, expiryIdx, today)) {
                         continue; // 過濾掉發行日已過期的 CB
                     }
-                    if (isCbBelowSheet && isCbBelowRowExpired(row, expiryIdx, today)) {
-                        continue; // 過濾掉到期日已過期的 CB
+                    if (isCbBelowSheet && (isCbBelowRowExpired(row, expiryIdx, today) || isCbBelowRowLowBalance(row, data[0]))) {
+                        continue; // 過濾掉到期日已過期或餘額低於 70% 的 CB
                     }
                     if (isEarningsSheet && isEarningsCallRowExpired(row, earnDateIdx, today)) {
                         continue; // 過濾掉日期已過期的法說會
@@ -3305,6 +3340,12 @@ JSON 欄位：
                     if (expiryCol >= 0 && row[expiryCol]) {
                         const d = parseDateHelper(row[expiryCol]);
                         if (d && d < today) continue;
+                    }
+
+                    // 若餘額低於 70% 則不採納
+                    if (balanceCol >= 0 && row[balanceCol] !== undefined) {
+                        const balNum = parseFloat(String(row[balanceCol]).replace('%', '').trim());
+                        if (!isNaN(balNum) && balNum < 70.0) continue;
                     }
 
                     const code = getStockId(String(row[stockCol] || ''));
@@ -3624,8 +3665,8 @@ JSON 欄位：
                     if (isCbSheet && isCbRowExpired(row, statusIdx, dateIdx, expiryIdx, today)) {
                         continue;
                     }
-                    // 過濾掉到期日已過期的 CB (目前股價低於CB轉換價)
-                    if (isCbBelowSheet && isCbBelowRowExpired(row, expiryIdx, today)) {
+                    // 過濾掉到期日已過期或餘額低於 70% 的 CB (目前股價低於CB轉換價)
+                    if (isCbBelowSheet && (isCbBelowRowExpired(row, expiryIdx, today) || isCbBelowRowLowBalance(row, data[0]))) {
                         continue;
                     }
                     // 過濾掉日期已過期的法說會

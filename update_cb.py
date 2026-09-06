@@ -177,8 +177,17 @@ def scrape_issued_cb_below_conv():
 
         # 只要目前股價 < CB轉換價
         if stock_price > 0 and conv_price > 0 and stock_price < conv_price:
-            diff_pct = round(((stock_price - conv_price) / conv_price) * 100, 2)
             balance_ratio = str(item.get('balance_ratio', '')).strip()
+            try:
+                bal_num = float(balance_ratio.replace('%', '').strip())
+            except:
+                bal_num = 0.0
+
+            # 若餘額低於 70% 就不採納 (餘額需 >= 70%)
+            if bal_num < 70.0:
+                continue
+
+            diff_pct = round(((stock_price - conv_price) / conv_price) * 100, 2)
             circulation = str(item.get('circulation', '')).strip()
 
             results.append({
