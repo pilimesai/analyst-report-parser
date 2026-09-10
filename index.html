@@ -770,12 +770,15 @@
         }
 
         .rep-col-eps {
-            white-space: nowrap !important;
+            white-space: normal !important;
+            word-break: break-word;
+            line-height: 1.32;
             text-align: center !important;
-            font-size: 0.78rem;
-            width: 76px !important;
-            min-width: 76px !important;
-            max-width: 76px !important;
+            font-size: 0.76rem;
+            width: 98px !important;
+            min-width: 98px !important;
+            max-width: 98px !important;
+            padding: 0.35rem 0.2rem !important;
         }
 
         .rep-col-summary {
@@ -1463,7 +1466,7 @@
 
             .reports-table {
                 width: 100% !important;
-                min-width: 530px !important;
+                min-width: 560px !important;
                 table-layout: fixed !important;
                 font-size: 0.72rem;
             }
@@ -1524,10 +1527,14 @@
             }
 
             .rep-col-eps {
-                width: 52px !important;
-                min-width: 52px !important;
-                max-width: 52px !important;
+                width: 78px !important;
+                min-width: 78px !important;
+                max-width: 78px !important;
                 font-size: 0.68rem;
+                line-height: 1.25;
+                white-space: normal !important;
+                word-break: break-word;
+                padding: 0.25rem 0.1rem !important;
             }
 
             .rep-col-summary {
@@ -3166,13 +3173,18 @@ JSON 欄位：
                     ratingClass = 'rating-sell';
                 }
 
+                // EPS display: replace slash/semicolon with line break for clean multi-year display
+                const epsDisplay = (row.eps && row.eps !== 'N/A')
+                    ? String(row.eps).trim().replace(/\s*([\/／;；])\s*/g, '<br>')
+                    : (row.eps || 'N/A');
+
                 tr.innerHTML = `
                     <td class="rep-col-date">${row.date || 'N/A'}</td>
                     <td class="rep-col-stock"><strong>${row.stock || 'N/A'}</strong></td>
                     <td class="rep-col-broker">${row.brokerage || 'N/A'}</td>
                     <td class="rep-col-rating"><span class="rating-badge ${ratingClass}">${(row.rating || 'N/A').toString().trim()}</span></td>
                     <td class="rep-col-tp">${row.target_price || 'N/A'}</td>
-                    <td class="rep-col-eps">${row.eps || 'N/A'}</td>
+                    <td class="rep-col-eps">${epsDisplay}</td>
                     <td class="rep-col-summary">${row.summary || 'N/A'}</td>
                     <td class="rep-col-criteria" id="criteria-${index}">${(row.matched_criteria && row.matched_criteria.length > 0) ? row.matched_criteria.join(' / ') : '進行量化運算以比對...'}</td>
                 `;
