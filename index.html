@@ -1779,6 +1779,14 @@
                         style="width: 48%; background: #059669;">🤖 AI自動獲取</button>
                 </div>
             </div>
+
+            <div class="input-group">
+                <label>今日成交值 TOP 30</label>
+                <div class="upload-actions">
+                    <button class="btn btn-primary" onclick="fetchTopTurnoverFromGithub()"
+                        style="width: 100%; background: linear-gradient(135deg, #dc2626, #9333ea);">🔥 自動獲取今日成交值排行</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1822,6 +1830,11 @@
                     <span class="tab-icon">🎯</span>
                     <span class="tab-text">主動型ETF篩選</span>
                     <span class="tab-badge" id="badge-etf">0</span>
+                </button>
+                <button class="tab-btn" data-tab="top-turnover" onclick="switchActiveTab('top-turnover')">
+                    <span class="tab-icon">🔥</span>
+                    <span class="tab-text">今日成交值TOP30</span>
+                    <span class="tab-badge" id="badge-turnover">0</span>
                 </button>
             </div>
         </div>
@@ -1968,6 +1981,80 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Turnover Stocks View (今日成交值TOP30) -->
+        <div id="top-turnover-view" style="display:none; flex-direction:column; gap:20px; padding-bottom: 40px;">
+            <div class="reports-section">
+                <div class="section-header" style="flex-wrap:wrap; gap:0.75rem;">
+                    <div>
+                        <h2>🔥 今日成交值 TOP 30（上市 + 上櫃）</h2>
+                        <p style="font-size:0.82rem; color:var(--text-secondary); margin-top:4px; line-height:1.4;">每日盤後自動更新，抓取台灣上市（TWSE）與上櫃（TPEx）成交金額最高的各前30名個股。資料來源：TWSE OpenAPI + TPEx 官方資料。</p>
+                    </div>
+                    <div class="action-buttons" style="flex-shrink:0;">
+                        <button class="btn btn-primary" onclick="fetchTopTurnoverFromGithub()" id="fetch-turnover-btn"
+                            style="background: linear-gradient(135deg, #dc2626, #9333ea);">🔄 重新載入</button>
+                    </div>
+                </div>
+
+                <!-- 統計卡片 -->
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:0.75rem; margin-top:0.5rem;">
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(220,38,38,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#fca5a5;">📅 資料日期</div>
+                        <div style="font-size:1.1rem; font-weight:700; color:#f8fafc; margin-top:0.2rem;" id="turnover-trade-date">—</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(99,102,241,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#a5b4fc;">📈 上市 #1 成交值</div>
+                        <div style="font-size:1.0rem; font-weight:700; color:#818cf8; margin-top:0.2rem;" id="turnover-twse-top1">—</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(16,185,129,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#34d399;">📊 上櫃 #1 成交值</div>
+                        <div style="font-size:1.0rem; font-weight:700; color:#10b981; margin-top:0.2rem;" id="turnover-tpex-top1">—</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:var(--text-secondary);">🕒 更新時間</div>
+                        <div style="font-size:0.85rem; font-weight:600; color:#94a3b8; margin-top:0.2rem;" id="turnover-update-time">—</div>
+                    </div>
+                </div>
+
+                <!-- 搜尋 -->
+                <div style="margin-top:0.75rem;">
+                    <input type="text" id="turnover-search-input" placeholder="🔍 搜尋股票代號或名稱..." autocomplete="off"
+                        style="width:100%; max-width:320px; padding:0.4rem 0.75rem; font-size:0.85rem; border-radius:0.5rem; background:rgba(255,255,255,0.04); border:1px solid var(--card-border); color:#fff;">
+                </div>
+
+                <!-- 市場切換 -->
+                <div style="display:flex; gap:0.5rem; margin-top:0.75rem;" id="turnover-market-filter">
+                    <button class="filter-chip active" data-market="all">全部</button>
+                    <button class="filter-chip" data-market="twse">📈 上市 (TWSE)</button>
+                    <button class="filter-chip" data-market="tpex">📊 上櫃 (TPEx)</button>
+                </div>
+
+                <!-- 表格 -->
+                <div class="table-responsive persistent-table-container cb-table-container" style="margin-top:0.75rem;">
+                    <table class="cb-table" id="turnover-table">
+                        <thead>
+                            <tr>
+                                <th style="width:36px; text-align:center;">排名</th>
+                                <th style="width:32px; text-align:center;">市場</th>
+                                <th style="width:55px; text-align:center;">代號</th>
+                                <th style="min-width:70px;">名稱</th>
+                                <th style="min-width:80px; text-align:right;">成交金額</th>
+                                <th style="width:60px; text-align:right;">收盤</th>
+                                <th style="width:55px; text-align:right;">漲跌</th>
+                                <th style="width:60px; text-align:right;">成交筆數</th>
+                            </tr>
+                        </thead>
+                        <tbody id="turnover-tbody">
+                            <tr><td colspan="8" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                                <div style="font-size:1.5rem; margin-bottom:0.5rem;">🔥</div>
+                                <div>尚未載入今日成交值排行</div>
+                                <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊上方「🔥 自動獲取今日成交值排行」按鈕</div>
+                            </td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -3669,10 +3756,17 @@ JSON 欄位：
                 activeEtfView.style.display = (currentActiveTab === 'active-etf') ? 'flex' : 'none';
             }
 
+            // 4b. Toggle top turnover view
+            const topTurnoverView = document.getElementById('top-turnover-view');
+            if (topTurnoverView) {
+                topTurnoverView.style.display = (currentActiveTab === 'top-turnover') ? 'flex' : 'none';
+            }
+
             // 5. Toggle persistent tables container and sections
             const persistentContainer = document.getElementById('persistent-csv-tables');
+            const builtinTabs = ['main-reports', 'quant-results', 'active-etf', 'top-turnover'];
             if (persistentContainer) {
-                persistentContainer.style.display = (currentActiveTab === 'main-reports' || currentActiveTab === 'quant-results' || currentActiveTab === 'active-etf') ? 'none' : 'flex';
+                persistentContainer.style.display = builtinTabs.includes(currentActiveTab) ? 'none' : 'flex';
                 const sections = persistentContainer.querySelectorAll('.persistent-table-section');
                 sections.forEach(sec => {
                     if (sec.getAttribute('data-sheet-name') === currentActiveTab) {
@@ -3754,8 +3848,8 @@ JSON 欄位：
 
             const tabsContainer = document.getElementById('nav-tabs-container');
             if (tabsContainer) {
-                // Keep only main-reports, quant-results and active-etf tab buttons, remove dynamic ones
-                const dynamicTabs = tabsContainer.querySelectorAll('.tab-btn:not([data-tab="main-reports"]):not([data-tab="quant-results"]):not([data-tab="active-etf"])');
+                // Keep only main-reports, quant-results, active-etf, top-turnover tab buttons, remove dynamic ones
+                const dynamicTabs = tabsContainer.querySelectorAll('.tab-btn:not([data-tab="main-reports"]):not([data-tab="quant-results"]):not([data-tab="active-etf"]):not([data-tab="top-turnover"])');
                 dynamicTabs.forEach(t => t.remove());
             }
 
@@ -5408,19 +5502,199 @@ ${text.slice(0, 30000)}`;
                 window.tablesData = {};
                 activeEtfStocksData = [];
                 activeEtfFundsList = [];
+                topTurnoverData = null;
                 localStorage.removeItem('reports_history');
                 localStorage.removeItem('quant_results_cache');
                 localStorage.removeItem('cached_tables_data');
                 localStorage.removeItem('active_etf_cache');
+                localStorage.removeItem('top_turnover_cache');
                 renderReportsTable();
                 renderPersistentTables();
                 renderQuantResults({}, {});
                 renderActiveEtfView();
-                showToast("✅ 歷史紀錄、CSV 資料、量化結果與 ETF 資料已全部清空！");
+                renderTopTurnoverView();
+                showToast("✅ 歷史紀錄、CSV 資料、量化結果、ETF 資料與成交值排行已全部清空！");
             } else if (pwd !== null) {
                 showToast("❌ 密碼錯誤，已取消清空操作！", true);
             }
         });
+
+        // ==========================================
+        // 🔥 今日成交值 TOP 30 模組 (Top Turnover Module)
+        // ==========================================
+        let topTurnoverData = null;
+        let topTurnoverMarketFilter = 'all';
+
+        function formatTradeValue(v) {
+            if (!v || isNaN(v)) return '—';
+            const n = Number(v);
+            if (n >= 1e9) return (n / 1e9).toFixed(2) + ' 億';
+            if (n >= 1e8) return (n / 1e8).toFixed(2) + ' 億';
+            if (n >= 1e6) return (n / 1e6).toFixed(2) + ' 百萬';
+            return n.toLocaleString();
+        }
+
+        async function fetchTopTurnoverFromGithub() {
+            const fetchBtn = document.getElementById('fetch-turnover-btn');
+            if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
+            showToast('🔥 正在從 GitHub 抓取最新成交值排行...');
+            try {
+                const urls = [
+                    `./top_turnover.json?v=${Date.now()}`,
+                    `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/top_turnover.json?v=${Date.now()}`,
+                    `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/top_turnover.json?v=${Date.now()}`
+                ];
+                let payload = null;
+                for (const u of urls) {
+                    try {
+                        const r = await fetch(u);
+                        if (r.ok) {
+                            const j = await r.json();
+                            if (j && (j.twse || j.tpex)) { payload = j; break; }
+                        }
+                    } catch(e) {}
+                }
+                if (!payload) throw new Error('無法從 GitHub 取得資料');
+                topTurnoverData = payload;
+                localStorage.setItem('top_turnover_cache', JSON.stringify({ data: payload, savedAt: new Date().toISOString() }));
+                renderTopTurnoverView();
+                const total = (payload.twse || []).length + (payload.tpex || []).length;
+                showToast(`✅ 成功載入成交值排行！上市+上櫃共 ${total} 筆（${payload.tradeDate}）`);
+            } catch(e) {
+                showToast(`❌ 載入失敗: ${e.message}`, true);
+            } finally {
+                if (fetchBtn) { fetchBtn.disabled = false; fetchBtn.textContent = '🔄 重新載入'; }
+            }
+        }
+
+        function renderTopTurnoverView() {
+            const tbody = document.getElementById('turnover-tbody');
+            const badgeTurnover = document.getElementById('badge-turnover');
+            const tradeDate = document.getElementById('turnover-trade-date');
+            const twseTop1 = document.getElementById('turnover-twse-top1');
+            const tpexTop1 = document.getElementById('turnover-tpex-top1');
+            const updateTime = document.getElementById('turnover-update-time');
+
+            if (!topTurnoverData) {
+                if (badgeTurnover) badgeTurnover.innerText = '0';
+                if (tbody) tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                    <div style="font-size:1.5rem; margin-bottom:0.5rem;">🔥</div>
+                    <div>尚未載入今日成交值排行</div>
+                    <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🔥 自動獲取今日成交值排行」按鈕，系統將自動從資料庫抓取最新成交值排行。</div>
+                </td></tr>`;
+                return;
+            }
+
+            const twse = topTurnoverData.twse || [];
+            const tpex = topTurnoverData.tpex || [];
+
+            if (tradeDate) tradeDate.innerText = topTurnoverData.tradeDate || '—';
+            if (updateTime) updateTime.innerText = (topTurnoverData.updateTime || '').slice(0, 16);
+            if (twseTop1 && twse[0]) twseTop1.innerText = `${twse[0].code} ${twse[0].name} ${formatTradeValue(twse[0].trade_value)}`;
+            if (tpexTop1 && tpex[0]) tpexTop1.innerText = `${tpex[0].code} ${tpex[0].name} ${formatTradeValue(tpex[0].trade_value)}`;
+
+            // Combine and filter by market
+            let combined = [];
+            if (topTurnoverMarketFilter === 'twse') {
+                combined = twse.map((r, i) => ({ ...r, globalRank: i + 1 }));
+            } else if (topTurnoverMarketFilter === 'tpex') {
+                combined = tpex.map((r, i) => ({ ...r, globalRank: i + 1 }));
+            } else {
+                // All: interleave by value
+                const all = [...twse, ...tpex].sort((a, b) => b.trade_value - a.trade_value);
+                combined = all.map((r, i) => ({ ...r, globalRank: i + 1 }));
+            }
+
+            // Search filter
+            const searchInput = document.getElementById('turnover-search-input');
+            const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
+            if (q) {
+                combined = combined.filter(r =>
+                    String(r.code).toLowerCase().includes(q) ||
+                    String(r.name).toLowerCase().includes(q)
+                );
+            }
+
+            if (badgeTurnover) badgeTurnover.innerText = String(twse.filter(r => r.rank <= 30).length + tpex.filter(r => r.rank <= 30).length);
+
+            if (!tbody) return;
+            if (combined.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-secondary); padding:1.5rem;">無符合搜尋條件的資料</td></tr>`;
+                return;
+            }
+
+            const frag = document.createDocumentFragment();
+            combined.forEach(item => {
+                const tr = document.createElement('tr');
+                const isTwse = item.market === 'twse';
+                const marketBadge = isTwse
+                    ? `<span style="font-size:0.68rem; padding:2px 5px; background:rgba(99,102,241,0.2); color:#a5b4fc; border:1px solid rgba(99,102,241,0.3); border-radius:4px; font-weight:600;">上市</span>`
+                    : `<span style="font-size:0.68rem; padding:2px 5px; background:rgba(16,185,129,0.2); color:#34d399; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-weight:600;">上櫃</span>`;
+
+                const change = String(item.change || '').replace('--', '—').trim();
+                const changeNum = parseFloat(change);
+                let changeHtml = `<span style="color:var(--text-secondary);">${change}</span>`;
+                if (!isNaN(changeNum)) {
+                    if (changeNum > 0) changeHtml = `<span style="color:#ef4444; font-weight:600;">▲${Math.abs(changeNum).toFixed(2)}</span>`;
+                    else if (changeNum < 0) changeHtml = `<span style="color:#22c55e; font-weight:600;">▼${Math.abs(changeNum).toFixed(2)}</span>`;
+                    else changeHtml = `<span style="color:var(--text-secondary);">—</span>`;
+                }
+
+                let rankBadge = `<span style="color:var(--text-secondary); font-size:0.82rem;">${item.globalRank}</span>`;
+                if (item.globalRank === 1) rankBadge = `<span style="font-size:1.1rem;">🥇</span>`;
+                else if (item.globalRank === 2) rankBadge = `<span style="font-size:1.1rem;">🥈</span>`;
+                else if (item.globalRank === 3) rankBadge = `<span style="font-size:1.1rem;">🥉</span>`;
+
+                tr.innerHTML = `
+                    <td style="text-align:center; vertical-align:middle;">${rankBadge}</td>
+                    <td style="text-align:center; vertical-align:middle;">${marketBadge}</td>
+                    <td style="text-align:center; vertical-align:middle;"><strong style="color:#60a5fa; font-size:0.9rem;">${item.code}</strong></td>
+                    <td style="vertical-align:middle; font-weight:600; color:#f8fafc; font-size:0.88rem;">${item.name || item.code}</td>
+                    <td style="text-align:right; vertical-align:middle; font-weight:700; color:#fbbf24; font-size:0.88rem;">${formatTradeValue(item.trade_value)}</td>
+                    <td style="text-align:right; vertical-align:middle; font-family:monospace; font-size:0.85rem;">${item.close_price || '—'}</td>
+                    <td style="text-align:right; vertical-align:middle; font-size:0.82rem;">${changeHtml}</td>
+                    <td style="text-align:right; vertical-align:middle; font-size:0.78rem; color:var(--text-secondary);">${Number(item.transaction || 0).toLocaleString()}</td>
+                `;
+                frag.appendChild(tr);
+            });
+            tbody.innerHTML = '';
+            tbody.appendChild(frag);
+        }
+
+        // Top Turnover event listeners
+        const turnoverMarketFilter = document.getElementById('turnover-market-filter');
+        if (turnoverMarketFilter) {
+            turnoverMarketFilter.addEventListener('click', e => {
+                const btn = e.target.closest('.filter-chip');
+                if (!btn) return;
+                turnoverMarketFilter.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                topTurnoverMarketFilter = btn.getAttribute('data-market') || 'all';
+                renderTopTurnoverView();
+            });
+        }
+
+        const turnoverSearchInput = document.getElementById('turnover-search-input');
+        if (turnoverSearchInput) {
+            turnoverSearchInput.addEventListener('input', () => renderTopTurnoverView());
+        }
+
+        // Auto-load from localStorage cache on startup
+        (() => {
+            try {
+                const cached = localStorage.getItem('top_turnover_cache');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (parsed && parsed.data) {
+                        topTurnoverData = parsed.data;
+                        const turnoverBadge = document.getElementById('badge-turnover');
+                        const twse = parsed.data.twse || [];
+                        const tpex = parsed.data.tpex || [];
+                        if (turnoverBadge) turnoverBadge.innerText = String(twse.length + tpex.length);
+                    }
+                }
+            } catch(e) {}
+        })();
     </script>
 </body>
 
