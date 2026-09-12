@@ -834,21 +834,33 @@ def parse_report_with_gemini(text, api_key, source_name="未知來源", _rate_pl
     if len(text) > _MAX_TEXT_LEN:
         text = text[:_MAX_TEXT_LEN] + "\n...[內容過長已截斷]"
 
-    prompt = f"""從以下券商報告中提取下列欄位，以 JSON 回傳。
+    curr_year = datetime.datetime.now().year
+    today_str = datetime.datetime.now().strftime('%Y-%m-%d')
+
+    prompt = f"""從以下券商報告中提取所有提到的股票資料，以 JSON 陣列回傳（每檔個股為一個獨立物件）。
 
 欄位說明（請嚴格遵守）：
-- date: 報告日期，格式 YYYY-MM-DD。優先從來源名稱「{source_name}」中找數字序列（如 20240325→2024-03-25）；其次從內文找；找不到填"未知"。
-- stock: 股票代號+名稱（如"2330 台積電"）
-- brokerage: 券商名稱
+- date: 報告發布日期，格式 YYYY-MM-DD。
+  * 若內文如「9/11」僅有月/日或無年份，請自動補上今年年份 {curr_year} 轉為完整格式（例如 {curr_year}-09-11）。
+  * 若整篇報告/文字開頭有共用日期（如 9/11），提取出的所有個股請一併帶入此日期。
+  * 優先從來源名稱「{source_name}」中找數字序列（如 20240325→2024-03-25）；其次從內文找；若全篇皆無日期才填"未知"。
+- stock: 股票代號+名稱（例如"1503 士電"、"3014 聯陽"、"2330 台積電"）
+- brokerage: 券商名稱（如"中信銀證"、"宏遠"、"第一金"、"花旗"等，若無填"未知"）
 - rating: 評等（買進/中立/賣出或英文原文）
 - target_price: 目標價（純數字，如"150"）；無則填"N/A"
-- eps: 券商預估EPS（純數字）；無則填"N/A"
+- eps: 券商預估EPS（如"9.01"或"今年18.02/明年22.7"）；無則填"N/A"
 - summary: 繁體中文，30字內說明核心看法（看多/看空理由）。若無實質分析填""
 - daily_stock_selection: 若有明確標示為每日選股填"✅ 是"；否則填"N/A"
 - matched_criteria: 陣列，只填以下出現的項目："投信第一天買, 且過去三個月沒有買過"、"三大法人同買"、"日KD黃金交叉"、"周KD黃金交叉"、"成交量>十週平均量且>3倍十日均量"、"入選合約負債"、"入選2周內會有法說會"、"入選要發行CB"、"入選營收條件"、"入選大戶持股"、"表格裡面目前股價低於20PE"、"券商給的是正面評價,例如買進,調升TP"、"若已有發行的CB,且股價低於轉換價,並且轉換比例<10%"、"入選毛利三季成長"；無則填[]
 
-回傳格式(JSON only)：
-{{"date":"","stock":"","brokerage":"","rating":"","target_price":"","eps":"","summary":"","daily_stock_selection":"","matched_criteria":[]}}
+規則：
+1. 若內容包含多檔個股（如以分隔線、換行、段落分開），必須將「每一檔個股」分別提取為獨立物件，回傳標準 JSON 陣列：[ {{...}}, {{...}} ]。
+2. 即使只有一檔個股，也請包在陣列中回傳：[ {{...}} ]。
+
+回傳格式(JSON Array only)：
+[
+  {{"date":"{today_str}","stock":"1503 士電","brokerage":"中信銀證","rating":"買進","target_price":"N/A","eps":"9.01","summary":"受惠電網及儲能成長，產能持續開出","daily_stock_selection":"N/A","matched_criteria":[]}}
+]
 
 報告內容：
 """
@@ -879,7 +891,12 @@ def parse_report_with_gemini(text, api_key, source_name="未知來源", _rate_pl
                     ),
                 )
                 try:
-                    return json.loads(response.text)
+                    raw_text = response.text.strip()
+                    if raw_text.startswith("```"):
+                        raw_text = re.sub(r"^```(?:json)?\s*", "", raw_text, flags=re.IGNORECASE)
+                        raw_text = re.sub(r"\s*```$", "", raw_text)
+                    parsed_res = json.loads(raw_text)
+                    return parsed_res if isinstance(parsed_res, list) else [parsed_res]
                 except json.JSONDecodeError:
                     st.error("JSON 解析失敗，模型回傳的值可能不符預期。")
                     with st.expander("檢視原始回傳內容"):
@@ -1327,38 +1344,49 @@ if analyze_btn:
 
                 s_name = str(item.get('stock', '')).strip()
 
-                n_b = re.sub(r'[ \(\)\-]', '', b_name).upper()
+                n_b = re.sub(r'[ \(\)\-\[\]（）—_]', '', b_name).upper()
 
-                for eng in ['KGI', 'SINOPAC', 'YUANTA', 'FUBON', 'CATHAY', 'CTBC', 'CAPITAL', 'MASTERLINK']:
+                if '花旗' in n_b or 'CITI' in n_b: n_b = '花旗'
+                elif '高盛' in n_b or 'GOLDMAN' in n_b: n_b = '高盛'
+                elif '大摩' in n_b or '摩根士丹利' in n_b: n_b = '摩根士丹利'
+                elif '小摩' in n_b or '摩根大通' in n_b: n_b = '摩根大通'
+                elif '美銀' in n_b or '美林' in n_b: n_b = '美銀美林'
+                elif '中信' in n_b or '中國信託' in n_b: n_b = '中信'
+                elif '元大' in n_b: n_b = '元大'
+                elif '富邦' in n_b: n_b = '富邦'
+                elif '永豐' in n_b: n_b = '永豐'
+                elif '第一' in n_b: n_b = '第一金'
+                elif '國泰' in n_b: n_b = '國泰'
+                elif '凱基' in n_b: n_b = '凱基'
+                elif '群益' in n_b: n_b = '群益'
+                elif '宏遠' in n_b: n_b = '宏遠'
+                elif '兆豐' in n_b: n_b = '兆豐'
+                elif '統一' in n_b: n_b = '統一'
+                else:
+                    for eng in ['KGI', 'SINOPAC', 'YUANTA', 'FUBON', 'CATHAY', 'CTBC', 'CAPITAL', 'MASTERLINK']:
+                        n_b = n_b.replace(eng, '')
+                    for suffix in ["證券", "投顧", "控股", "金控", "金融", "SECURITIES", "股份有限公司", "公司", "期貨", "亞洲", "銀證", "證", "金"]:
+                        n_b = n_b.replace(suffix, "")
+                    n_b = n_b.strip()
 
-                    n_b = n_b.replace(eng, '')
-
-                for suffix in ["證券", "投顧", "控股", "金控", "金融", "金", "SECURITIES", "證", "公司", "股份有限公司", "期貨", "亞洲"]:
-
-                    n_b = n_b.replace(suffix, "")
-
-                n_b = n_b.strip()
-
-                
-
-                n_s = re.sub(r'[0-9\W_]', '', s_name).upper()
+                m_code = re.search(r'\d{4}', s_name)
+                n_s = m_code.group() if m_code else re.sub(r'[0-9\W_]', '', s_name).upper()
 
                 key = (n_s, n_b)
 
-                
-
                 if key not in best_items:
-
                     best_items[key] = item
-
                 else:
+                    old_date_raw = str(best_items[key].get('date', ''))
+                    new_date_raw = str(item.get('date', ''))
+                    try:
+                        old_dt = pd.to_datetime(old_date_raw, errors='coerce')
+                        new_dt = pd.to_datetime(new_date_raw, errors='coerce')
+                        is_newer = (new_dt >= old_dt) if (pd.notna(new_dt) and pd.notna(old_dt)) else (new_date_raw >= old_date_raw)
+                    except:
+                        is_newer = (new_date_raw >= old_date_raw)
 
-                    old_date = str(best_items[key].get('date', ''))
-
-                    new_date = str(item.get('date', ''))
-
-                    if new_date >= old_date:
-
+                    if is_newer:
                         old_summary = str(best_items[key].get('summary', '')).strip()
 
                         new_summary = str(item.get('summary', '')).strip()

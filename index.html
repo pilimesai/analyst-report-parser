@@ -721,14 +721,16 @@
         .rep-col-date {
             white-space: nowrap !important;
             text-align: center !important;
-            font-size: 0.76rem;
+            font-size: 0.78rem;
             font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace, sans-serif;
             font-variant-numeric: tabular-nums;
             letter-spacing: -0.2px;
-            width: 92px !important;
-            min-width: 92px !important;
-            max-width: 92px !important;
+            width: 104px !important;
+            min-width: 104px !important;
+            max-width: 115px !important;
             padding: 0.35rem 0.2rem !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
         }
 
         .rep-col-stock {
@@ -736,27 +738,33 @@
             text-align: center !important;
             font-weight: 700;
             color: #60a5fa;
-            width: 92px !important;
-            min-width: 92px !important;
-            max-width: 92px !important;
+            width: 98px !important;
+            min-width: 98px !important;
+            max-width: 110px !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
         }
 
         .rep-col-broker {
             white-space: nowrap !important;
             text-align: center !important;
             color: #e2e8f0;
-            width: 58px !important;
-            min-width: 58px !important;
-            max-width: 58px !important;
+            width: 80px !important;
+            min-width: 80px !important;
+            max-width: 95px !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
         }
 
         .rep-col-rating {
             white-space: nowrap !important;
             text-align: center !important;
-            width: 82px !important;
-            min-width: 82px !important;
-            max-width: 82px !important;
+            width: 78px !important;
+            min-width: 78px !important;
+            max-width: 85px !important;
             padding: 0.35rem 0.15rem !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
         }
 
         .rep-col-tp {
@@ -764,9 +772,11 @@
             text-align: center !important;
             font-weight: 700;
             color: #f59e0b;
-            width: 62px !important;
-            min-width: 62px !important;
-            max-width: 62px !important;
+            width: 66px !important;
+            min-width: 66px !important;
+            max-width: 75px !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
         }
 
         .rep-col-eps {
@@ -1466,16 +1476,15 @@
 
             .reports-table {
                 width: 100% !important;
-                min-width: 560px !important;
+                min-width: 720px !important;
                 table-layout: fixed !important;
                 font-size: 0.72rem;
             }
 
             .reports-table th,
             .reports-table td {
-                padding: 0.25rem 0.15rem !important;
+                padding: 0.28rem 0.18rem !important;
                 font-size: 0.71rem;
-                overflow: hidden;
             }
 
             .reports-table th {
@@ -1484,34 +1493,42 @@
             }
 
             .rep-col-date {
-                width: 76px !important;
-                min-width: 76px !important;
-                max-width: 76px !important;
-                font-size: 0.68rem;
-                letter-spacing: -0.4px;
+                width: 95px !important;
+                min-width: 95px !important;
+                max-width: 105px !important;
+                font-size: 0.7rem;
+                letter-spacing: -0.3px;
                 padding: 0.25rem 0.1rem !important;
+                overflow: visible !important;
+                text-overflow: clip !important;
             }
 
             .rep-col-stock {
-                width: 68px !important;
-                min-width: 68px !important;
-                max-width: 68px !important;
+                width: 82px !important;
+                min-width: 82px !important;
+                max-width: 95px !important;
                 font-size: 0.72rem;
+                overflow: visible !important;
+                text-overflow: clip !important;
             }
 
             .rep-col-broker {
-                width: 38px !important;
-                min-width: 38px !important;
-                max-width: 38px !important;
-                font-size: 0.68rem;
+                width: 65px !important;
+                min-width: 65px !important;
+                max-width: 80px !important;
+                font-size: 0.7rem;
+                overflow: visible !important;
+                text-overflow: clip !important;
             }
 
             .rep-col-rating {
                 width: 66px !important;
                 min-width: 66px !important;
-                max-width: 66px !important;
+                max-width: 72px !important;
                 font-size: 0.68rem;
                 padding: 0.25rem 0.1rem !important;
+                overflow: visible !important;
+                text-overflow: clip !important;
             }
 
             .rating-badge {
@@ -1520,10 +1537,12 @@
             }
 
             .rep-col-tp {
-                width: 46px !important;
-                min-width: 46px !important;
-                max-width: 46px !important;
+                width: 52px !important;
+                min-width: 52px !important;
+                max-width: 60px !important;
                 font-size: 0.7rem;
+                overflow: visible !important;
+                text-overflow: clip !important;
             }
 
             .rep-col-eps {
@@ -2432,6 +2451,8 @@
             if (localStorage.getItem('reports_history')) {
                 try {
                     reportsData = JSON.parse(localStorage.getItem('reports_history'));
+                    reportsData = deduplicateReports(reportsData);
+                    localStorage.setItem('reports_history', JSON.stringify(reportsData));
                     renderReportsTable();
                 } catch (e) { console.error("Error parsing history: ", e); }
             }
@@ -2518,7 +2539,7 @@
                     fetchSettingsFromCloud(),
                     activeSheetUrl ? loadGoogleSheet(activeSheetUrl).then(sheetRows => {
                         if (sheetRows && sheetRows.length > 0) {
-                            reportsData = sheetRows;
+                            reportsData = deduplicateReports(sheetRows);
                             localStorage.setItem('reports_history', JSON.stringify(reportsData));
                             renderReportsTable();
                         }
@@ -2601,8 +2622,8 @@
                 }));
 
                 if (parsedList.length > 0) {
-                    // Append all parsed stocks
-                    parsedList.forEach(item => reportsData.push(item));
+                    // Append all parsed stocks and deduplicate by latest date
+                    reportsData = deduplicateReports([...reportsData, ...parsedList]);
                     localStorage.setItem('reports_history', JSON.stringify(reportsData));
 
                     // Auto-sync if script URL is configured
@@ -2931,8 +2952,9 @@
                     const parsedObj = await analyzeReportWithGemini(apiKey, text, modelName);
 
                     if (parsedObj) {
-                        // Append and save locally
-                        reportsData.push(parsedObj);
+                        // Append and save locally with deduplication
+                        const newObjs = Array.isArray(parsedObj) ? parsedObj : [parsedObj];
+                        reportsData = deduplicateReports([...reportsData, ...newObjs]);
                         localStorage.setItem('reports_history', JSON.stringify(reportsData));
 
                         // Auto-sync if script URL is configured
@@ -2993,19 +3015,23 @@
         // Call Gemini HTTP endpoint with Auto-Fallback across candidate models
         async function analyzeReportWithGemini(apiKey, text, modelName) {
             // 系統提示（透過 system_instruction 傳送，不佔 user turn token）
+            const currentYear = new Date().getFullYear();
             const systemInstruction = `你是專業券商報告結構化解析器。從提供的文字中提取所有提到的股票資料，回傳乾淨的 JSON 陣列，每檔股票為一個物件。
 JSON 欄位：
-- date: 發布日期 (YYYY-MM-DD，如報告中無年份則帶入今年)
-- stock: 股票代號與名稱 (如 "2330 台積電", "9904 寶成")
-- brokerage: 券商名稱 (如 "永豐", "富邦" 等，若無請填 "未知")
+- date: 發布日期 (格式 YYYY-MM-DD。若內文如「9/11」僅有月/日或無年份，請自動補上今年年份 ${currentYear} 轉為 ${currentYear}-09-11；若整篇報告開頭有共用日期，所有提取出的個股請一併填入此日期)
+- stock: 股票代號與名稱 (如 "1503 士電", "3014 聯陽", "2330 台積電")
+- brokerage: 券商名稱 (如 "中信銀證", "宏遠", "第一金", "花旗", "永豐" 等，若無請填 "未知")
 - rating: 評等 (如 "買進", "中立", "未評等")
 - target_price: 目標價數字或 "N/A"
-- eps: 預估EPS (如 "今年4.15/明年5.2")
+- eps: 預估EPS (純數字或文字如 "9.01" 或 "今年18.02/明年22.7")
 - summary: 重點摘要 (60字以內)
 - daily_stock_selection: "無"
 - matched_criteria: []
 
-規則：若報告含多股，每股一筆；必須直接回傳標準 JSON 陣列，禁止 markdown 語法。`;
+規則：
+1. 若內容包含多檔不同個股（如以分隔線、換行或段落分開），必須將「每一檔個股」分別提取為獨立物件，回傳標準 JSON 陣列：[ {...}, {...} ]。
+2. 即使只有一檔個股，也請包在陣列中回傳：[ {...} ]。
+3. 必須直接回傳標準 JSON 陣列，禁止 markdown 語法或額外贅字。`;
 
             // 截斷過長文字（超過 4000 字只保留前段，節省 token）
             const MAX_CHARS = 4000;
@@ -3122,77 +3148,6 @@ JSON 欄位：
             throw new Error(`AI 解析失敗: ${lastError ? lastError.message : '所有模型均未能正常產出資料'}`);
         }
 
-        // Render reports database inside Table
-        function renderReportsTable() {
-            reportsTbody.innerHTML = '';
-
-            const repBadge = document.getElementById('badge-reports');
-            if (repBadge) {
-                repBadge.innerText = reportsData ? reportsData.length : 0;
-            }
-
-            const searchInput = document.getElementById('report-search-input');
-            const searchKeyword = searchInput ? searchInput.value.toLowerCase().trim() : '';
-
-            let filteredData = reportsData;
-            if (searchKeyword) {
-                filteredData = reportsData.filter(row => {
-                    const stockStr = String(row.stock || '').toLowerCase();
-                    return stockStr.includes(searchKeyword);
-                });
-            }
-
-            if (filteredData.length === 0) {
-                const emptyCell = emptyRow.querySelector('td');
-                if (searchKeyword) {
-                    emptyCell.innerText = '找不到符合「' + searchKeyword + '」的股票資料。';
-                } else {
-                    emptyCell.innerText = '尚無報告資料，請先上傳報告進行解析。';
-                }
-                reportsTbody.appendChild(emptyRow);
-                return;
-            }
-
-            // 確保每次渲染前，資料都依照日期由新到舊排序
-            filteredData.sort((a, b) => {
-                const dateA = new Date(a.date || '1900-01-01');
-                const dateB = new Date(b.date || '1900-01-01');
-                return dateB - dateA;
-            });
-
-            const fragment = document.createDocumentFragment();
-            filteredData.forEach((row, index) => {
-                const tr = document.createElement('tr');
-
-                // Rating styling
-                let ratingClass = 'rating-neutral';
-                const rat = String(row.rating).toLowerCase();
-                if (rat.includes('買') || rat.includes('buy') || rat.includes('overweight') || rat.includes('加碼')) {
-                    ratingClass = 'rating-buy';
-                } else if (rat.includes('賣') || rat.includes('sell') || rat.includes('underperform') || rat.includes('減碼')) {
-                    ratingClass = 'rating-sell';
-                }
-
-                // EPS display: replace slash/semicolon with line break for clean multi-year display
-                const epsDisplay = (row.eps && row.eps !== 'N/A')
-                    ? String(row.eps).trim().replace(/\s*([\/／;；])\s*/g, '<br>')
-                    : (row.eps || 'N/A');
-
-                tr.innerHTML = `
-                    <td class="rep-col-date">${row.date || 'N/A'}</td>
-                    <td class="rep-col-stock"><strong>${row.stock || 'N/A'}</strong></td>
-                    <td class="rep-col-broker">${row.brokerage || 'N/A'}</td>
-                    <td class="rep-col-rating"><span class="rating-badge ${ratingClass}">${(row.rating || 'N/A').toString().trim()}</span></td>
-                    <td class="rep-col-tp">${row.target_price || 'N/A'}</td>
-                    <td class="rep-col-eps">${epsDisplay}</td>
-                    <td class="rep-col-summary">${row.summary || 'N/A'}</td>
-                    <td class="rep-col-criteria" id="criteria-${index}">${(row.matched_criteria && row.matched_criteria.length > 0) ? row.matched_criteria.join(' / ') : '進行量化運算以比對...'}</td>
-                `;
-                fragment.appendChild(tr);
-            });
-            reportsTbody.appendChild(fragment);
-        }
-
         // Helper: Format stock id to 4-digit TW/TWO tickers
         function getStockId(stockStr) {
             const match = String(stockStr).match(/\d{4}/);
@@ -3240,6 +3195,212 @@ JSON 欄位：
                 return new Date(d.getFullYear(), d.getMonth(), d.getDate());
             }
             return null;
+        }
+
+        // Helper: 取得股票統一代號或鍵值
+        function getStockKey(stockStr) {
+            if (!stockStr) return '';
+            const id = getStockId(stockStr);
+            if (id) return id;
+            return String(stockStr).replace(/[0-9\W_]/g, '').trim().toUpperCase();
+        }
+
+        // Helper: 正規化券商名稱（支援國內外券商全稱、簡稱與中英文）
+        function normalizeBrokerage(brokerageStr) {
+            if (!brokerageStr) return '未知';
+            let nb = String(brokerageStr).trim().toUpperCase();
+            
+            // 移除括號、底線、破折號與空白
+            nb = nb.replace(/[\s\(\)\-\[\]（）—_]/g, '');
+
+            // 外資代稱對照
+            if (nb.includes('花旗') || nb.includes('CITI')) return '花旗';
+            if (nb.includes('高盛') || nb.includes('GOLDMAN')) return '高盛';
+            if (nb.includes('大摩') || nb.includes('摩根士丹利') || nb.includes('MORGANSTANLEY')) return '摩根士丹利';
+            if (nb.includes('小摩') || nb.includes('摩根大通') || nb.includes('JPMORGAN')) return '摩根大通';
+            if (nb.includes('美銀') || nb.includes('美林') || nb.includes('BOFA')) return '美銀美林';
+            if (nb.includes('麥格理') || nb.includes('MACQUARIE')) return '麥格理';
+            if (nb.includes('瑞銀') || nb.includes('UBS')) return '瑞銀';
+            if (nb.includes('野村') || nb.includes('NOMURA')) return '野村';
+            if (nb.includes('大和') || nb.includes('DAIWA')) return '大和';
+            if (nb.includes('匯豐') || nb.includes('HSBC')) return '匯豐';
+            if (nb.includes('里昂') || nb.includes('CLSA')) return '里昂';
+
+            // 國內券商名稱正規化
+            if (nb.includes('中信') || nb.includes('中國信託') || nb.includes('CTBC')) return '中信';
+            if (nb.includes('元大') || nb.includes('YUANTA')) return '元大';
+            if (nb.includes('富邦') || nb.includes('FUBON')) return '富邦';
+            if (nb.includes('永豐') || nb.includes('SINOPAC')) return '永豐';
+            if (nb.includes('第一') || nb.includes('FIRST')) return '第一金';
+            if (nb.includes('國泰') || nb.includes('CATHAY')) return '國泰';
+            if (nb.includes('凱基') || nb.includes('KGI')) return '凱基';
+            if (nb.includes('群益') || nb.includes('CAPITAL')) return '群益';
+            if (nb.includes('宏遠') || nb.includes('HONGFAR')) return '宏遠';
+            if (nb.includes('兆豐') || nb.includes('MEGA')) return '兆豐';
+            if (nb.includes('統一') || nb.includes('PRESIDENT')) return '統一';
+            if (nb.includes('玉山') || nb.includes('ESUN')) return '玉山';
+            if (nb.includes('台新') || nb.includes('TAISHIN')) return '台新';
+            if (nb.includes('康和')) return '康和';
+            if (nb.includes('元富') || nb.includes('MASTERLINK')) return '元富';
+            if (nb.includes('華南') || nb.includes('HUANAN')) return '華南';
+
+            // 其他常見後綴移除
+            const suffixes = ["證券", "投顧", "控股", "金控", "金融", "SECURITIES", "股份有限公司", "有限責任", "有限公司", "公司", "期貨", "亞洲", "環球", "銀證", "證", "金"];
+            suffixes.forEach(s => {
+                nb = nb.replace(new RegExp(s, 'g'), '');
+            });
+
+            return nb.trim() || String(brokerageStr).trim();
+        }
+
+        // Helper: 自動去重複覆蓋舊報告（同一檔股票 + 同一家券商，只保留最新日期的報告）
+        function deduplicateReports(reports) {
+            if (!Array.isArray(reports) || reports.length <= 1) return reports || [];
+
+            const map = new Map();
+
+            reports.forEach(item => {
+                if (!item) return;
+                const stockKey = getStockKey(item.stock);
+                const brokerKey = normalizeBrokerage(item.brokerage);
+
+                // 若股票不明或券商未知，保留原樣不強制合併
+                if (!stockKey || brokerKey === '未知') {
+                    map.set(Symbol(), { ...item });
+                    return;
+                }
+
+                const key = `${stockKey}__${brokerKey}`;
+                if (!map.has(key)) {
+                    map.set(key, { ...item });
+                } else {
+                    const existing = map.get(key);
+                    const dateExisting = parseDateHelper(existing.date);
+                    const dateNew = parseDateHelper(item.date);
+
+                    let keepItem = existing;
+                    let discardItem = item;
+
+                    // 比較日期大小，保留最新日期的那一筆
+                    if (dateNew && dateExisting) {
+                        if (dateNew.getTime() >= dateExisting.getTime()) {
+                            keepItem = { ...item };
+                            discardItem = existing;
+                        }
+                    } else if (dateNew && !dateExisting) {
+                        keepItem = { ...item };
+                        discardItem = existing;
+                    }
+
+                    // 合併補齊空白或 N/A 欄位
+                    const nullVals = ['', 'N/A', '無', 'UNKNOWN', '未知', 'NONE', 'NAN'];
+                    if (nullVals.includes(String(keepItem.summary || '').trim().toUpperCase()) && 
+                        !nullVals.includes(String(discardItem.summary || '').trim().toUpperCase())) {
+                        keepItem.summary = discardItem.summary;
+                    }
+                    if (nullVals.includes(String(keepItem.rating || '').trim().toUpperCase()) && 
+                        !nullVals.includes(String(discardItem.rating || '').trim().toUpperCase())) {
+                        keepItem.rating = discardItem.rating;
+                    }
+                    if (nullVals.includes(String(keepItem.target_price || '').trim().toUpperCase()) && 
+                        !nullVals.includes(String(discardItem.target_price || '').trim().toUpperCase())) {
+                        keepItem.target_price = discardItem.target_price;
+                    }
+                    if (nullVals.includes(String(keepItem.eps || '').trim().toUpperCase()) && 
+                        !nullVals.includes(String(discardItem.eps || '').trim().toUpperCase())) {
+                        keepItem.eps = discardItem.eps;
+                    }
+
+                    // 聯集量化條件 matched_criteria
+                    const mcKeep = Array.isArray(keepItem.matched_criteria) ? keepItem.matched_criteria : [];
+                    const mcDiscard = Array.isArray(discardItem.matched_criteria) ? discardItem.matched_criteria : [];
+                    keepItem.matched_criteria = Array.from(new Set([...mcKeep, ...mcDiscard]));
+
+                    map.set(key, keepItem);
+                }
+            });
+
+            return Array.from(map.values());
+        }
+
+        // Render reports database inside Table
+        function renderReportsTable() {
+            reportsTbody.innerHTML = '';
+
+            // 自動依照「同個股 + 同券商」去重複，只保留最新日期的報告
+            if (Array.isArray(reportsData) && reportsData.length > 1) {
+                const deduped = deduplicateReports(reportsData);
+                if (deduped.length !== reportsData.length) {
+                    reportsData = deduped;
+                    localStorage.setItem('reports_history', JSON.stringify(reportsData));
+                }
+            }
+
+            const repBadge = document.getElementById('badge-reports');
+            if (repBadge) {
+                repBadge.innerText = reportsData ? reportsData.length : 0;
+            }
+
+            const searchInput = document.getElementById('report-search-input');
+            const searchKeyword = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+            let filteredData = reportsData;
+            if (searchKeyword) {
+                filteredData = reportsData.filter(row => {
+                    const stockStr = String(row.stock || '').toLowerCase();
+                    return stockStr.includes(searchKeyword);
+                });
+            }
+
+            if (filteredData.length === 0) {
+                const emptyCell = emptyRow.querySelector('td');
+                if (searchKeyword) {
+                    emptyCell.innerText = '找不到符合「' + searchKeyword + '」的股票資料。';
+                } else {
+                    emptyCell.innerText = '尚無報告資料，請先上傳報告進行解析。';
+                }
+                reportsTbody.appendChild(emptyRow);
+                return;
+            }
+
+            // 確保每次渲染前，資料都依照日期由新到舊排序
+            filteredData.sort((a, b) => {
+                const dateA = parseDateHelper(a.date) || new Date('1900-01-01');
+                const dateB = parseDateHelper(b.date) || new Date('1900-01-01');
+                return dateB.getTime() - dateA.getTime();
+            });
+
+            const fragment = document.createDocumentFragment();
+            filteredData.forEach((row, index) => {
+                const tr = document.createElement('tr');
+
+                // Rating styling
+                let ratingClass = 'rating-neutral';
+                const rat = String(row.rating).toLowerCase();
+                if (rat.includes('買') || rat.includes('buy') || rat.includes('overweight') || rat.includes('加碼')) {
+                    ratingClass = 'rating-buy';
+                } else if (rat.includes('賣') || rat.includes('sell') || rat.includes('underperform') || rat.includes('減碼')) {
+                    ratingClass = 'rating-sell';
+                }
+
+                // EPS display: replace slash/semicolon with line break for clean multi-year display
+                const epsDisplay = (row.eps && row.eps !== 'N/A')
+                    ? String(row.eps).trim().replace(/\s*([\/／;；])\s*/g, '<br>')
+                    : (row.eps || 'N/A');
+
+                tr.innerHTML = `
+                    <td class="rep-col-date">${row.date || 'N/A'}</td>
+                    <td class="rep-col-stock"><strong>${row.stock || 'N/A'}</strong></td>
+                    <td class="rep-col-broker">${row.brokerage || 'N/A'}</td>
+                    <td class="rep-col-rating"><span class="rating-badge ${ratingClass}">${(row.rating || 'N/A').toString().trim()}</span></td>
+                    <td class="rep-col-tp">${row.target_price || 'N/A'}</td>
+                    <td class="rep-col-eps">${epsDisplay}</td>
+                    <td class="rep-col-summary">${row.summary || 'N/A'}</td>
+                    <td class="rep-col-criteria" id="criteria-${index}">${(row.matched_criteria && row.matched_criteria.length > 0) ? row.matched_criteria.join(' / ') : '進行量化運算以比對...'}</td>
+                `;
+                fragment.appendChild(tr);
+            });
+            reportsTbody.appendChild(fragment);
         }
 
         // Helper: Check if a CB table row is expired (到期或發行日/掛牌日已過)
