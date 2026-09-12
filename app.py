@@ -1673,6 +1673,20 @@ if st.session_state.history:
         group_criteria = {}
         history_stock_set = set() # 記錄所有已有報告的股號
 
+        # 預先載入今日成交值前30名標的 (上市櫃 TOP30)
+        top_turnover_stocks = set()
+        turnover_json_path = os.path.join(os.path.dirname(__file__), 'top_turnover.json')
+        if os.path.exists(turnover_json_path):
+            try:
+                with open(turnover_json_path, 'r', encoding='utf-8') as f:
+                    tt_d = json.load(f)
+                    for item in tt_d.get('twse', []) + tt_d.get('tpex', []):
+                        code = str(item.get('code', '')).strip()
+                        if code:
+                            top_turnover_stocks.add(code)
+            except Exception:
+                pass
+
         for stock, group in df_raw.groupby('stock', dropna=False):
             stock_clean = str(stock).strip()
             if not stock_clean:
@@ -1724,6 +1738,10 @@ if st.session_state.history:
                     pass
             if m_code and m_code.group() in etf_exclusive_stocks:
                 all_c.add("主動型ETF獨家持股")
+
+            # 計算今日成交值前30名加分 (上市櫃 TOP30)
+            if m_code and m_code.group() in top_turnover_stocks:
+                all_c.add("入選今日成交值TOP30")
             
             score = len(all_c)
             if "大戶持股比例成長" in all_c:
@@ -1784,6 +1802,15 @@ if st.session_state.history:
         # 7. 併入「毛利連續三季成長尚無報告」的個股
         gm_list = st.session_state.get('gross_margin_stocks', [])
         for code in gm_list:
+            if str(code).strip() not in history_stock_set:
+                full_name = _get_standard_stock_name(code)
+                if full_name and full_name not in group_scores:
+                    sorted_stocks.append(full_name)
+                    group_scores[full_name] = -1
+                    group_criteria[full_name] = set()
+
+        # 8. 併入「今日成交值TOP30尚無報告」的個股
+        for code in top_turnover_stocks:
             if str(code).strip() not in history_stock_set:
                 full_name = _get_standard_stock_name(code)
                 if full_name and full_name not in group_scores:
@@ -2822,6 +2849,24 @@ if st.session_state.history:
                     combined_name = f"{c} {_global_names.get(c, '')}".strip()
                     if not any(c in str(vs) for vs in valid_stocks):
                         valid_stocks.append(combined_name)
+
+                # 同時將「今日成交值TOP30清單」的股票也納入（若尚未在名單中）
+                _top_turnover_stocks = set()
+                _turnover_path = os.path.join(os.path.dirname(__file__), 'top_turnover.json')
+                if os.path.exists(_turnover_path):
+                    try:
+                        with open(_turnover_path, 'r', encoding='utf-8') as f:
+                            _tt_d = json.load(f)
+                            for item in _tt_d.get('twse', []) + _tt_d.get('tpex', []):
+                                code = str(item.get('code', '')).strip()
+                                if code:
+                                    _top_turnover_stocks.add(code)
+                    except Exception:
+                        pass
+                for c in _top_turnover_stocks:
+                    combined_name = f"{c} {_global_names.get(c, '')}".strip()
+                    if not any(c in str(vs) for vs in valid_stocks):
+                        valid_stocks.append(combined_name)
                 
                 # 載入畫面上已自動預解析的法說會日期
                 conference_stocks = {}
@@ -2917,6 +2962,13 @@ if st.session_state.history:
                         try:
                             if stock_id in _etf_exclusive_stocks:
                                 matched.append("入選主動型ETF獨家持股")
+                        except Exception as e:
+                            pass
+
+                        # 條件 15: 今日成交值TOP30（上市或上櫃前30名）
+                        try:
+                            if stock_id in _top_turnover_stocks:
+                                matched.append("入選今日成交值TOP30")
                         except Exception as e:
                             pass
                             

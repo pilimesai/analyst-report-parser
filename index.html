@@ -2626,6 +2626,7 @@
                 Promise.allSettled([
                     loadStockNames(),
                     syncActiveEtfFromCloud(),
+                    fetchTopTurnoverFromGithub(true),
                     fetchSettingsFromCloud(),
                     activeSheetUrl ? loadGoogleSheet(activeSheetUrl).then(sheetRows => {
                         if (sheetRows && sheetRows.length > 0) {
@@ -2669,7 +2670,8 @@
             'L': '券商給的是正面評價,例如買進,調升TP',
             'M': '若已有發行的CB,且股價低於轉換價,並且轉換比例<10%',
             'N': '入選毛利三季成長',
-            'O': '入選主動型ETF獨家持股'
+            'O': '入選主動型ETF獨家持股',
+            'P': '入選今日成交值TOP30'
         };
 
         function expandCriteria(criteriaArr) {
@@ -4352,6 +4354,21 @@ JSON 欄位：
             }
             exclusiveEtfStocks.forEach(sid => { if (!validStocks.includes(sid)) validStocks.push(sid); });
 
+            // 加入當日成交值前30名標的 (上市櫃 TOP30)
+            let topTurnoverStocks = [];
+            const ttPayload = topTurnoverData || (() => {
+                try {
+                    const c = localStorage.getItem('top_turnover_cache');
+                    return c ? (JSON.parse(c).data || JSON.parse(c)) : null;
+                } catch(e) { return null; }
+            })();
+            if (ttPayload) {
+                const twseCodes = (ttPayload.twse || []).map(r => String(r.code).trim());
+                const tpexCodes = (ttPayload.tpex || []).map(r => String(r.code).trim());
+                topTurnoverStocks = [...twseCodes, ...tpexCodes].filter(Boolean);
+            }
+            topTurnoverStocks.forEach(sid => { if (!validStocks.includes(sid)) validStocks.push(sid); });
+
             if (validStocks.length === 0) {
                 showToast("⚠️ 列表內無可供量化計算的股票代號，請先上傳報告、大戶或主動型 ETF 資料。", true);
                 return;
@@ -4404,12 +4421,13 @@ JSON 欄位：
                         if (earningsCallStocks.includes(stockId)) matched.push("入選2周內會有法說會");
                         if (contractLiabilitiesStocks.includes(stockId)) matched.push("入選合約負債");
                         if (exclusiveEtfStocks.includes(stockId)) matched.push("入選主動型ETF獨家持股");
+                        if (topTurnoverStocks.includes(stockId)) matched.push("入選今日成交值TOP30");
                         if (cbStocks.includes(stockId) && !matched.includes("入選要發行CB")) matched.push("入選要發行CB");
                         if (cbBelowStocks.includes(stockId) && !matched.includes("若已有發行的CB,且股價低於轉換價,並且轉換比例<10%")) {
                             matched.push("若已有發行的CB,且股價低於轉換價,並且轉換比例<10%");
                         }
 
-                        // 計算加權總分 (包含獨家持股 +1分)
+                        // 計算加權總分 (包含獨家持股 +1分, 今日成交值TOP30 +1分)
                         let score = matched.length;
                         if (matched.some(m => m.includes("入選大戶持股"))) score += 1;
                         if (matched.some(m => m.includes("入選2周內會有法說會"))) score += 1;
@@ -4706,7 +4724,7 @@ JSON 欄位：
                             <td colspan="5" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
                                 <div style="font-size:1.5rem; margin-bottom:0.5rem;">🎯</div>
                                 <div>尚未執行量化運算</div>
-                                <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🚀 執行即時量化運算」按鈕，系統將自動分析日周KD、三大法人、營收、大戶、法說會、CB與主動型ETF獨家持股條件。</div>
+                                <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🚀 執行即時量化運算」按鈕，系統將自動分析日周KD、三大法人、營收、大戶、法說會、CB、主動型ETF獨家持股與今日成交值TOP30條件。</div>
                             </td>
                         </tr>
                     `;
@@ -5534,10 +5552,10 @@ ${text.slice(0, 30000)}`;
             return n.toLocaleString();
         }
 
-        async function fetchTopTurnoverFromGithub() {
+        async function fetchTopTurnoverFromGithub(silent = false) {
             const fetchBtn = document.getElementById('fetch-turnover-btn');
             if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
-            showToast('🔥 正在從 GitHub 抓取最新成交值排行...');
+            if (!silent) showToast('🔥 正在從 GitHub 抓取最新成交值排行...');
             try {
                 const urls = [
                     `./top_turnover.json?v=${Date.now()}`,
@@ -5559,9 +5577,9 @@ ${text.slice(0, 30000)}`;
                 localStorage.setItem('top_turnover_cache', JSON.stringify({ data: payload, savedAt: new Date().toISOString() }));
                 renderTopTurnoverView();
                 const total = (payload.twse || []).length + (payload.tpex || []).length;
-                showToast(`✅ 成功載入成交值排行！上市+上櫃共 ${total} 筆（${payload.tradeDate}）`);
+                if (!silent) showToast(`✅ 成功載入成交值排行！上市+上櫃共 ${total} 筆（${payload.tradeDate}）`);
             } catch(e) {
-                showToast(`❌ 載入失敗: ${e.message}`, true);
+                if (!silent) showToast(`❌ 載入失敗: ${e.message}`, true);
             } finally {
                 if (fetchBtn) { fetchBtn.disabled = false; fetchBtn.textContent = '🔄 重新載入'; }
             }
