@@ -63,7 +63,7 @@ def evaluate_stock_quant(stock_id, tdcc_df=None, tdcc_prev_df=None, conference_s
                 vol_10w_avg_daily = vol_10w_avg / 5
                 
                 cond_1 = today_vol_lots > 2000          # 成交量 > 2000 張
-                cond_2 = turnover > 5e8                  # 成交金額 > 0.5 億
+                cond_2 = turnover > 5e7                  # 成交金額 > 0.5 億 (50,000,000 元)
                 cond_3 = today_vol > vol_10w_avg_daily   # 量 > 近10週平均
                 cond_4 = today_vol > (3 * vol_10d_avg)   # 量 > 10日均量3倍
                 cond_5 = today_close > today_open         # 收盤 > 開盤(紅K)

@@ -1395,6 +1395,118 @@
             padding-right: 0.45rem !important;
         }
 
+        /* 今日成交量異常名單表格專用樣式 (完全比照 CB 表格欄寬與版型比例) */
+        #volume-spike-table {
+            width: 100% !important;
+            max-width: 980px !important;
+            table-layout: fixed !important;
+        }
+
+        .vol-col-rank {
+            width: 5%;
+            text-align: center !important;
+            white-space: nowrap !important;
+            font-size: 0.8rem;
+        }
+        .vol-col-market {
+            width: 6%;
+            text-align: center !important;
+            white-space: nowrap !important;
+        }
+        .vol-col-code {
+            width: 8%;
+            text-align: center !important;
+            font-weight: 700;
+            color: #60a5fa;
+            white-space: nowrap !important;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+        }
+        .vol-col-name {
+            width: 12%;
+            font-weight: 600;
+            text-align: left !important;
+            white-space: nowrap !important;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #f8fafc;
+            padding-left: 0.4rem !important;
+            font-size: 0.84rem;
+        }
+        .vol-col-multiple {
+            width: 11%;
+            text-align: right !important;
+            font-weight: 700;
+            color: #f59e0b;
+            white-space: nowrap !important;
+            padding-right: 0.45rem !important;
+            font-size: 0.84rem;
+        }
+        .vol-col-today-vol {
+            width: 11%;
+            text-align: right !important;
+            font-weight: 600;
+            color: #38bdf8;
+            white-space: nowrap !important;
+            padding-right: 0.45rem !important;
+            font-size: 0.82rem;
+        }
+        .vol-col-ma10 {
+            width: 10%;
+            text-align: right !important;
+            color: var(--text-secondary);
+            white-space: nowrap !important;
+            padding-right: 0.45rem !important;
+            font-size: 0.80rem;
+        }
+        .vol-col-ma10w {
+            width: 10%;
+            text-align: right !important;
+            color: var(--text-secondary);
+            white-space: nowrap !important;
+            padding-right: 0.45rem !important;
+            font-size: 0.80rem;
+        }
+        .vol-col-val {
+            width: 10%;
+            text-align: right !important;
+            font-weight: 600;
+            color: #fbbf24;
+            white-space: nowrap !important;
+            padding-right: 0.45rem !important;
+            font-size: 0.82rem;
+        }
+        .vol-col-price {
+            width: 10%;
+            text-align: right !important;
+            font-family: monospace, 'Outfit', sans-serif;
+            font-size: 0.80rem;
+            white-space: nowrap !important;
+            padding-right: 0.45rem !important;
+        }
+        .vol-col-chg {
+            width: 7%;
+            text-align: right !important;
+            white-space: nowrap !important;
+            font-size: 0.82rem;
+            padding-right: 0.45rem !important;
+        }
+
+        th.vol-col-name {
+            text-align: left !important;
+            padding-left: 0.4rem !important;
+        }
+        th.vol-col-multiple,
+        th.vol-col-today-vol,
+        th.vol-col-ma10,
+        th.vol-col-ma10w,
+        th.vol-col-val,
+        th.vol-col-price,
+        th.vol-col-chg {
+            text-align: right !important;
+            padding-right: 0.45rem !important;
+        }
+
         @media (max-width: 900px) {
             .cb-table-container {
                 overflow-x: auto;
@@ -1404,6 +1516,10 @@
             }
             #turnover-table {
                 min-width: 600px !important;
+                max-width: 100% !important;
+            }
+            #volume-spike-table {
+                min-width: 780px !important;
                 max-width: 100% !important;
             }
             .cb-dahu-table,
@@ -1874,6 +1990,14 @@
                         style="width: 100%; background: linear-gradient(135deg, #dc2626, #9333ea);">🔥 自動獲取今日成交值排行</button>
                 </div>
             </div>
+
+            <div class="input-group">
+                <label>今日成交量異常變大</label>
+                <div class="upload-actions">
+                    <button class="btn btn-primary" onclick="fetchVolumeSpikeFromGithub()"
+                        style="width: 100%; background: linear-gradient(135deg, #ea580c, #d97706);">⚡ 自動獲取成交量異常名單</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1922,6 +2046,11 @@
                     <span class="tab-icon">🔥</span>
                     <span class="tab-text">今日成交值TOP30</span>
                     <span class="tab-badge" id="badge-turnover">0</span>
+                </button>
+                <button class="tab-btn" data-tab="volume-spike" onclick="switchActiveTab('volume-spike')">
+                    <span class="tab-icon">⚡</span>
+                    <span class="tab-text">成交量異常</span>
+                    <span class="tab-badge" id="badge-volume-spike">0</span>
                 </button>
             </div>
         </div>
@@ -2139,6 +2268,91 @@
                                 <div style="font-size:1.5rem; margin-bottom:0.5rem;">🔥</div>
                                 <div>尚未載入今日成交值排行</div>
                                 <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊上方「🔥 自動獲取今日成交值排行」按鈕</div>
+                            </td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Volume Spike Stocks View (今日成交量異常變大個股) -->
+        <div id="volume-spike-view" style="display:none; flex-direction:column; gap:20px; padding-bottom: 40px;">
+            <div class="reports-section">
+                <div class="section-header" style="flex-wrap:wrap; gap:0.75rem;">
+                    <div>
+                        <h2>⚡ 今日成交量異常變大個股</h2>
+                        <p style="font-size:0.82rem; color:var(--text-secondary); margin-top:4px; line-height:1.4;">每日盤後自動篩選符合5大爆量突破條件個股（上市 + 上櫃）。量化條件精準匹配，快速捕捉主力異動題材股。</p>
+                        <!-- 篩選條件標籤列 -->
+                        <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.45rem;">
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(234,88,12,0.15); border:1px solid rgba(234,88,12,0.3); border-radius:4px; color:#fdba74;">✓ 日量 &gt; 2000張</span>
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(234,88,12,0.15); border:1px solid rgba(234,88,12,0.3); border-radius:4px; color:#fdba74;">✓ 日金額 &gt; 0.5億</span>
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(234,88,12,0.15); border:1px solid rgba(234,88,12,0.3); border-radius:4px; color:#fdba74;">✓ 週量 &gt; 近10週平均</span>
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(234,88,12,0.15); border:1px solid rgba(234,88,12,0.3); border-radius:4px; color:#fdba74;">✓ 日量 &gt; 10日均量 3倍</span>
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); border-radius:4px; color:#fca5a5;">✓ 收盤 &gt; 開盤 (紅K)</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons" style="flex-shrink:0;">
+                        <button class="btn btn-primary" onclick="fetchVolumeSpikeFromGithub()" id="fetch-volspike-btn"
+                            style="background: linear-gradient(135deg, #ea580c, #d97706);">🔄 重新載入</button>
+                    </div>
+                </div>
+
+                <!-- 統計卡片 -->
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:0.75rem; margin-top:0.5rem;">
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(234,88,12,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#fdba74;">📅 資料日期</div>
+                        <div style="font-size:1.1rem; font-weight:700; color:#f8fafc; margin-top:0.2rem;" id="volspike-trade-date">—</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(245,158,11,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#fcd34d;">🎯 符合爆量條件檔數</div>
+                        <div style="font-size:1.1rem; font-weight:700; color:#f59e0b; margin-top:0.2rem;" id="volspike-total-count">—</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(56,189,248,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#7dd3fc;">💥 均量倍數之冠</div>
+                        <div style="font-size:1.0rem; font-weight:700; color:#38bdf8; margin-top:0.2rem;" id="volspike-top1">—</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:var(--text-secondary);">🕒 更新時間</div>
+                        <div style="font-size:0.85rem; font-weight:600; color:#94a3b8; margin-top:0.2rem;" id="volspike-update-time">—</div>
+                    </div>
+                </div>
+
+                <!-- 搜尋與市場篩選 -->
+                <div style="display:flex; flex-wrap:wrap; gap:0.75rem; align-items:center; justify-content:space-between; margin-top:0.75rem;">
+                    <div>
+                        <input type="text" id="volspike-search-input" placeholder="🔍 搜尋股票代號或名稱..." autocomplete="off"
+                            style="width:100%; max-width:320px; padding:0.4rem 0.75rem; font-size:0.85rem; border-radius:0.5rem; background:rgba(255,255,255,0.04); border:1px solid var(--card-border); color:#fff;">
+                    </div>
+                    <div style="display:flex; gap:0.5rem;" id="volspike-market-filter">
+                        <button class="filter-chip active" data-market="all">全部</button>
+                        <button class="filter-chip" data-market="twse">📈 上市 (TWSE)</button>
+                        <button class="filter-chip" data-market="tpex">📊 上櫃 (TPEx)</button>
+                    </div>
+                </div>
+
+                <!-- 表格 (比照 CB 表格寬度與樣式，字體不折行切斷) -->
+                <div class="table-responsive persistent-table-container cb-table-container" style="margin-top:0.75rem;">
+                    <table class="cb-table" id="volume-spike-table">
+                        <thead>
+                            <tr>
+                                <th class="vol-col-rank">排名</th>
+                                <th class="vol-col-market">市場</th>
+                                <th class="vol-col-code">代號</th>
+                                <th class="vol-col-name">名稱</th>
+                                <th class="vol-col-multiple">10日均量倍數</th>
+                                <th class="vol-col-today-vol">今日成交量</th>
+                                <th class="vol-col-ma10">10日均量</th>
+                                <th class="vol-col-ma10w">10週均量</th>
+                                <th class="vol-col-val">成交金額</th>
+                                <th class="vol-col-price">開盤 / 收盤</th>
+                                <th class="vol-col-chg">漲跌</th>
+                            </tr>
+                        </thead>
+                        <tbody id="volspike-tbody">
+                            <tr><td colspan="11" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                                <div style="font-size:1.5rem; margin-bottom:0.5rem;">⚡</div>
+                                <div>尚未載入今日成交量異常名單</div>
+                                <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「⚡ 自動獲取成交量異常名單」按鈕</div>
                             </td></tr>
                         </tbody>
                     </table>
@@ -2714,6 +2928,7 @@
                     loadStockNames(),
                     syncActiveEtfFromCloud(),
                     fetchTopTurnoverFromGithub(true),
+                    fetchVolumeSpikeFromGithub(true),
                     fetchSettingsFromCloud(),
                     activeSheetUrl ? loadGoogleSheet(activeSheetUrl).then(sheetRows => {
                         if (sheetRows && sheetRows.length > 0) {
@@ -3851,9 +4066,15 @@ JSON 欄位：
                 topTurnoverView.style.display = (currentActiveTab === 'top-turnover') ? 'flex' : 'none';
             }
 
+            // 4c. Toggle volume spike view
+            const volumeSpikeView = document.getElementById('volume-spike-view');
+            if (volumeSpikeView) {
+                volumeSpikeView.style.display = (currentActiveTab === 'volume-spike') ? 'flex' : 'none';
+            }
+
             // 5. Toggle persistent tables container and sections
             const persistentContainer = document.getElementById('persistent-csv-tables');
-            const builtinTabs = ['main-reports', 'quant-results', 'active-etf', 'top-turnover'];
+            const builtinTabs = ['main-reports', 'quant-results', 'active-etf', 'top-turnover', 'volume-spike'];
             if (persistentContainer) {
                 persistentContainer.style.display = builtinTabs.includes(currentActiveTab) ? 'none' : 'flex';
                 const sections = persistentContainer.querySelectorAll('.persistent-table-section');
@@ -3937,8 +4158,8 @@ JSON 欄位：
 
             const tabsContainer = document.getElementById('nav-tabs-container');
             if (tabsContainer) {
-                // Keep only main-reports, quant-results, active-etf, top-turnover tab buttons, remove dynamic ones
-                const dynamicTabs = tabsContainer.querySelectorAll('.tab-btn:not([data-tab="main-reports"]):not([data-tab="quant-results"]):not([data-tab="active-etf"]):not([data-tab="top-turnover"])');
+                // Keep only main-reports, quant-results, active-etf, top-turnover, volume-spike tab buttons, remove dynamic ones
+                const dynamicTabs = tabsContainer.querySelectorAll('.tab-btn:not([data-tab="main-reports"]):not([data-tab="quant-results"]):not([data-tab="active-etf"]):not([data-tab="top-turnover"]):not([data-tab="volume-spike"])');
                 dynamicTabs.forEach(t => t.remove());
             }
 
@@ -5608,17 +5829,20 @@ ${text.slice(0, 30000)}`;
                 activeEtfStocksData = [];
                 activeEtfFundsList = [];
                 topTurnoverData = null;
+                volumeSpikeData = null;
                 localStorage.removeItem('reports_history');
                 localStorage.removeItem('quant_results_cache');
                 localStorage.removeItem('cached_tables_data');
                 localStorage.removeItem('active_etf_cache');
                 localStorage.removeItem('top_turnover_cache');
+                localStorage.removeItem('volume_spike_cache');
                 renderReportsTable();
                 renderPersistentTables();
                 renderQuantResults({}, {});
                 renderActiveEtfView();
                 renderTopTurnoverView();
-                showToast("✅ 歷史紀錄、CSV 資料、量化結果、ETF 資料與成交值排行已全部清空！");
+                renderVolumeSpikeView();
+                showToast("✅ 歷史紀錄、CSV 資料、量化結果、ETF 資料、成交值排行與爆量名單已全部清空！");
             } else if (pwd !== null) {
                 showToast("❌ 密碼錯誤，已取消清空操作！", true);
             }
@@ -5799,6 +6023,198 @@ ${text.slice(0, 30000)}`;
                     }
                 }
             } catch(e) {}
+        })();
+
+        // ==========================================
+        // ⚡ 今日成交量異常變大模組 (Volume Spike Module)
+        // ==========================================
+        const INITIAL_VOLUME_SPIKE_DATA = {"updateTime": "2026-09-14T00:11:37.273918", "tradeDate": "2026-09-11", "totalCount": 17, "conditions": ["[日] 成交量大於 2000 張 (>= 2000 張)", "[日] 成交金額大於 0.5 億 (>= 5000 萬元)", "[週] 成交量大於近 10 週平均 (單日基準)", "[日] 成交量大於 10 日均量的 3 倍 (>= 3x)", "[日] 收盤價大於開盤價 (實體紅K棒)"], "twse": [{"market": "twse", "code": "2338", "name": "光罩", "volume_shares": 67315117, "volume_lots": 67315, "trade_value": 3181008276, "trade_value_yi": 31.81, "open_price": 44.75, "close_price": 47.75, "change": 2.1, "transaction": 40312, "date": "2026-09-11", "today_vol_lots": 66726, "ma10_vol_lots": 2793, "ma10w_vol_lots": 2042, "vol_multiple": 23.88, "vol_week_multiple": 32.67, "rank": 1}, {"market": "twse", "code": "2468", "name": "華經", "volume_shares": 4234479, "volume_lots": 4234, "trade_value": 149415883, "trade_value_yi": 1.49, "open_price": 33.0, "close_price": 35.8, "change": 3.25, "transaction": 3782, "date": "2026-09-11", "today_vol_lots": 4212, "ma10_vol_lots": 180, "ma10w_vol_lots": 537, "vol_multiple": 23.37, "vol_week_multiple": 7.83, "rank": 2}, {"market": "twse", "code": "3029", "name": "零壹", "volume_shares": 6837674, "volume_lots": 6837, "trade_value": 792070270, "trade_value_yi": 7.92, "open_price": 114.5, "close_price": 116.5, "change": 3.5, "transaction": 5704, "date": "2026-09-11", "today_vol_lots": 6764, "ma10_vol_lots": 976, "ma10w_vol_lots": 1151, "vol_multiple": 6.92, "vol_week_multiple": 5.88, "rank": 5}, {"market": "twse", "code": "6861", "name": "睿生光電", "volume_shares": 3995263, "volume_lots": 3995, "trade_value": 809404106, "trade_value_yi": 8.09, "open_price": 205.0, "close_price": 214.5, "change": 10.5, "transaction": 4287, "date": "2026-09-11", "today_vol_lots": 3947, "ma10_vol_lots": 601, "ma10w_vol_lots": 422, "vol_multiple": 6.56, "vol_week_multiple": 9.34, "rank": 6}, {"market": "twse", "code": "1528", "name": "恩德", "volume_shares": 9585675, "volume_lots": 9585, "trade_value": 202211577, "trade_value_yi": 2.02, "open_price": 19.9, "close_price": 21.2, "change": 1.9, "transaction": 6948, "date": "2026-09-11", "today_vol_lots": 9529, "ma10_vol_lots": 1645, "ma10w_vol_lots": 1032, "vol_multiple": 5.79, "vol_week_multiple": 9.23, "rank": 7}, {"market": "twse", "code": "2305", "name": "全友", "volume_shares": 57982441, "volume_lots": 57982, "trade_value": 2280982059, "trade_value_yi": 22.81, "open_price": 38.65, "close_price": 41.05, "change": 2.55, "transaction": 29964, "date": "2026-09-11", "today_vol_lots": 57866, "ma10_vol_lots": 10339, "ma10w_vol_lots": 5637, "vol_multiple": 5.6, "vol_week_multiple": 10.26, "rank": 8}, {"market": "twse", "code": "6706", "name": "惠特", "volume_shares": 6196518, "volume_lots": 6196, "trade_value": 839432477, "trade_value_yi": 8.39, "open_price": 123.5, "close_price": 137.5, "change": 12.5, "transaction": 4436, "date": "2026-09-11", "today_vol_lots": 6103, "ma10_vol_lots": 1651, "ma10w_vol_lots": 1691, "vol_multiple": 3.7, "vol_week_multiple": 3.61, "rank": 10}, {"market": "twse", "code": "1560", "name": "中砂", "volume_shares": 4096116, "volume_lots": 4096, "trade_value": 3186648071, "trade_value_yi": 31.87, "open_price": 747.0, "close_price": 790.0, "change": 57.0, "transaction": 8536, "date": "2026-09-11", "today_vol_lots": 3878, "ma10_vol_lots": 1073, "ma10w_vol_lots": 1304, "vol_multiple": 3.61, "vol_week_multiple": 2.97, "rank": 12}, {"market": "twse", "code": "3016", "name": "嘉晶", "volume_shares": 19649188, "volume_lots": 19649, "trade_value": 2064218617, "trade_value_yi": 20.64, "open_price": 106.5, "close_price": 109.5, "change": -0.5, "transaction": 12815, "date": "2026-09-11", "today_vol_lots": 19543, "ma10_vol_lots": 5643, "ma10w_vol_lots": 8392, "vol_multiple": 3.46, "vol_week_multiple": 2.33, "rank": 13}, {"market": "twse", "code": "6416", "name": "瑞祺電通", "volume_shares": 2758405, "volume_lots": 2758, "trade_value": 315408420, "trade_value_yi": 3.15, "open_price": 111.5, "close_price": 115.5, "change": 5.0, "transaction": 2271, "date": "2026-09-11", "today_vol_lots": 2725, "ma10_vol_lots": 847, "ma10w_vol_lots": 839, "vol_multiple": 3.22, "vol_week_multiple": 3.25, "rank": 14}, {"market": "twse", "code": "6834", "name": "天二科技", "volume_shares": 15065804, "volume_lots": 15065, "trade_value": 1647690895, "trade_value_yi": 16.48, "open_price": 102.5, "close_price": 108.0, "change": 2.5, "transaction": 11990, "date": "2026-09-11", "today_vol_lots": 14933, "ma10_vol_lots": 4708, "ma10w_vol_lots": 3599, "vol_multiple": 3.17, "vol_week_multiple": 4.15, "rank": 15}, {"market": "twse", "code": "3229", "name": "晟鈦", "volume_shares": 7223482, "volume_lots": 7223, "trade_value": 471392283, "trade_value_yi": 4.71, "open_price": 61.3, "close_price": 67.5, "change": 6.1, "transaction": 5542, "date": "2026-09-11", "today_vol_lots": 7182, "ma10_vol_lots": 2319, "ma10w_vol_lots": 1093, "vol_multiple": 3.1, "vol_week_multiple": 6.57, "rank": 16}, {"market": "twse", "code": "2069", "name": "運錩", "volume_shares": 3483002, "volume_lots": 3483, "trade_value": 85435990, "trade_value_yi": 0.85, "open_price": 23.3, "close_price": 24.65, "change": 1.65, "transaction": 2619, "date": "2026-09-11", "today_vol_lots": 3466, "ma10_vol_lots": 1128, "ma10w_vol_lots": 401, "vol_multiple": 3.07, "vol_week_multiple": 8.64, "rank": 17}], "tpex": [{"market": "tpex", "code": "4556", "name": "旭然", "volume_shares": 2985000, "volume_lots": 2985, "trade_value": 272923200, "trade_value_yi": 2.73, "open_price": 85.5, "close_price": 94.6, "change": 8.6, "transaction": 2072, "date": "2026-09-11", "today_vol_lots": 2987, "ma10_vol_lots": 415, "ma10w_vol_lots": 409, "vol_multiple": 7.19, "vol_week_multiple": 7.29, "rank": 3}, {"market": "tpex", "code": "6227", "name": "茂綸", "volume_shares": 4135000, "volume_lots": 4135, "trade_value": 521680000, "trade_value_yi": 5.22, "open_price": 123.5, "close_price": 127.5, "change": 11.5, "transaction": 2280, "date": "2026-09-11", "today_vol_lots": 4137, "ma10_vol_lots": 595, "ma10w_vol_lots": 480, "vol_multiple": 6.95, "vol_week_multiple": 8.61, "rank": 4}, {"market": "tpex", "code": "3624", "name": "光頡", "volume_shares": 64539000, "volume_lots": 64539, "trade_value": 7650659500, "trade_value_yi": 76.51, "open_price": 108.0, "close_price": 124.5, "change": 11.0, "transaction": 36856, "date": "2026-09-11", "today_vol_lots": 64587, "ma10_vol_lots": 12459, "ma10w_vol_lots": 4260, "vol_multiple": 5.18, "vol_week_multiple": 15.16, "rank": 9}, {"market": "tpex", "code": "1569", "name": "濱川", "volume_shares": 2860000, "volume_lots": 2860, "trade_value": 147621250, "trade_value_yi": 1.48, "open_price": 48.5, "close_price": 50.6, "change": 1.75, "transaction": 1495, "date": "2026-09-11", "today_vol_lots": 2865, "ma10_vol_lots": 774, "ma10w_vol_lots": 452, "vol_multiple": 3.7, "vol_week_multiple": 6.34, "rank": 11}], "stocks": [{"market": "twse", "code": "2338", "name": "光罩", "volume_shares": 67315117, "volume_lots": 67315, "trade_value": 3181008276, "trade_value_yi": 31.81, "open_price": 44.75, "close_price": 47.75, "change": 2.1, "transaction": 40312, "date": "2026-09-11", "today_vol_lots": 66726, "ma10_vol_lots": 2793, "ma10w_vol_lots": 2042, "vol_multiple": 23.88, "vol_week_multiple": 32.67, "rank": 1}, {"market": "twse", "code": "2468", "name": "華經", "volume_shares": 4234479, "volume_lots": 4234, "trade_value": 149415883, "trade_value_yi": 1.49, "open_price": 33.0, "close_price": 35.8, "change": 3.25, "transaction": 3782, "date": "2026-09-11", "today_vol_lots": 4212, "ma10_vol_lots": 180, "ma10w_vol_lots": 537, "vol_multiple": 23.37, "vol_week_multiple": 7.83, "rank": 2}, {"market": "tpex", "code": "4556", "name": "旭然", "volume_shares": 2985000, "volume_lots": 2985, "trade_value": 272923200, "trade_value_yi": 2.73, "open_price": 85.5, "close_price": 94.6, "change": 8.6, "transaction": 2072, "date": "2026-09-11", "today_vol_lots": 2987, "ma10_vol_lots": 415, "ma10w_vol_lots": 409, "vol_multiple": 7.19, "vol_week_multiple": 7.29, "rank": 3}, {"market": "tpex", "code": "6227", "name": "茂綸", "volume_shares": 4135000, "volume_lots": 4135, "trade_value": 521680000, "trade_value_yi": 5.22, "open_price": 123.5, "close_price": 127.5, "change": 11.5, "transaction": 2280, "date": "2026-09-11", "today_vol_lots": 4137, "ma10_vol_lots": 595, "ma10w_vol_lots": 480, "vol_multiple": 6.95, "vol_week_multiple": 8.61, "rank": 4}, {"market": "twse", "code": "3029", "name": "零壹", "volume_shares": 6837674, "volume_lots": 6837, "trade_value": 792070270, "trade_value_yi": 7.92, "open_price": 114.5, "close_price": 116.5, "change": 3.5, "transaction": 5704, "date": "2026-09-11", "today_vol_lots": 6764, "ma10_vol_lots": 976, "ma10w_vol_lots": 1151, "vol_multiple": 6.92, "vol_week_multiple": 5.88, "rank": 5}, {"market": "twse", "code": "6861", "name": "睿生光電", "volume_shares": 3995263, "volume_lots": 3995, "trade_value": 809404106, "trade_value_yi": 8.09, "open_price": 205.0, "close_price": 214.5, "change": 10.5, "transaction": 4287, "date": "2026-09-11", "today_vol_lots": 3947, "ma10_vol_lots": 601, "ma10w_vol_lots": 422, "vol_multiple": 6.56, "vol_week_multiple": 9.34, "rank": 6}, {"market": "twse", "code": "1528", "name": "恩德", "volume_shares": 9585675, "volume_lots": 9585, "trade_value": 202211577, "trade_value_yi": 2.02, "open_price": 19.9, "close_price": 21.2, "change": 1.9, "transaction": 6948, "date": "2026-09-11", "today_vol_lots": 9529, "ma10_vol_lots": 1645, "ma10w_vol_lots": 1032, "vol_multiple": 5.79, "vol_week_multiple": 9.23, "rank": 7}, {"market": "twse", "code": "2305", "name": "全友", "volume_shares": 57982441, "volume_lots": 57982, "trade_value": 2280982059, "trade_value_yi": 22.81, "open_price": 38.65, "close_price": 41.05, "change": 2.55, "transaction": 29964, "date": "2026-09-11", "today_vol_lots": 57866, "ma10_vol_lots": 10339, "ma10w_vol_lots": 5637, "vol_multiple": 5.6, "vol_week_multiple": 10.26, "rank": 8}, {"market": "tpex", "code": "3624", "name": "光頡", "volume_shares": 64539000, "volume_lots": 64539, "trade_value": 7650659500, "trade_value_yi": 76.51, "open_price": 108.0, "close_price": 124.5, "change": 11.0, "transaction": 36856, "date": "2026-09-11", "today_vol_lots": 64587, "ma10_vol_lots": 12459, "ma10w_vol_lots": 4260, "vol_multiple": 5.18, "vol_week_multiple": 15.16, "rank": 9}, {"market": "twse", "code": "6706", "name": "惠特", "volume_shares": 6196518, "volume_lots": 6196, "trade_value": 839432477, "trade_value_yi": 8.39, "open_price": 123.5, "close_price": 137.5, "change": 12.5, "transaction": 4436, "date": "2026-09-11", "today_vol_lots": 6103, "ma10_vol_lots": 1651, "ma10w_vol_lots": 1691, "vol_multiple": 3.7, "vol_week_multiple": 3.61, "rank": 10}, {"market": "tpex", "code": "1569", "name": "濱川", "volume_shares": 2860000, "volume_lots": 2860, "trade_value": 147621250, "trade_value_yi": 1.48, "open_price": 48.5, "close_price": 50.6, "change": 1.75, "transaction": 1495, "date": "2026-09-11", "today_vol_lots": 2865, "ma10_vol_lots": 774, "ma10w_vol_lots": 452, "vol_multiple": 3.7, "vol_week_multiple": 6.34, "rank": 11}, {"market": "twse", "code": "1560", "name": "中砂", "volume_shares": 4096116, "volume_lots": 4096, "trade_value": 3186648071, "trade_value_yi": 31.87, "open_price": 747.0, "close_price": 790.0, "change": 57.0, "transaction": 8536, "date": "2026-09-11", "today_vol_lots": 3878, "ma10_vol_lots": 1073, "ma10w_vol_lots": 1304, "vol_multiple": 3.61, "vol_week_multiple": 2.97, "rank": 12}, {"market": "twse", "code": "3016", "name": "嘉晶", "volume_shares": 19649188, "volume_lots": 19649, "trade_value": 2064218617, "trade_value_yi": 20.64, "open_price": 106.5, "close_price": 109.5, "change": -0.5, "transaction": 12815, "date": "2026-09-11", "today_vol_lots": 19543, "ma10_vol_lots": 5643, "ma10w_vol_lots": 8392, "vol_multiple": 3.46, "vol_week_multiple": 2.33, "rank": 13}, {"market": "twse", "code": "6416", "name": "瑞祺電通", "volume_shares": 2758405, "volume_lots": 2758, "trade_value": 315408420, "trade_value_yi": 3.15, "open_price": 111.5, "close_price": 115.5, "change": 5.0, "transaction": 2271, "date": "2026-09-11", "today_vol_lots": 2725, "ma10_vol_lots": 847, "ma10w_vol_lots": 839, "vol_multiple": 3.22, "vol_week_multiple": 3.25, "rank": 14}, {"market": "twse", "code": "6834", "name": "天二科技", "volume_shares": 15065804, "volume_lots": 15065, "trade_value": 1647690895, "trade_value_yi": 16.48, "open_price": 102.5, "close_price": 108.0, "change": 2.5, "transaction": 11990, "date": "2026-09-11", "today_vol_lots": 14933, "ma10_vol_lots": 4708, "ma10w_vol_lots": 3599, "vol_multiple": 3.17, "vol_week_multiple": 4.15, "rank": 15}, {"market": "twse", "code": "3229", "name": "晟鈦", "volume_shares": 7223482, "volume_lots": 7223, "trade_value": 471392283, "trade_value_yi": 4.71, "open_price": 61.3, "close_price": 67.5, "change": 6.1, "transaction": 5542, "date": "2026-09-11", "today_vol_lots": 7182, "ma10_vol_lots": 2319, "ma10w_vol_lots": 1093, "vol_multiple": 3.1, "vol_week_multiple": 6.57, "rank": 16}, {"market": "twse", "code": "2069", "name": "運錩", "volume_shares": 3483002, "volume_lots": 3483, "trade_value": 85435990, "trade_value_yi": 0.85, "open_price": 23.3, "close_price": 24.65, "change": 1.65, "transaction": 2619, "date": "2026-09-11", "today_vol_lots": 3466, "ma10_vol_lots": 1128, "ma10w_vol_lots": 401, "vol_multiple": 3.07, "vol_week_multiple": 8.64, "rank": 17}]};
+        let volumeSpikeData = INITIAL_VOLUME_SPIKE_DATA;
+        let volumeSpikeMarketFilter = 'all';
+
+        async function fetchVolumeSpikeFromGithub(silent = false) {
+            const fetchBtn = document.getElementById('fetch-volspike-btn');
+            if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
+            if (!silent) showToast('⚡ 正在從 GitHub 抓取最新成交量異常名單...');
+            try {
+                const urls = [
+                    `./volume_spike.json?v=${Date.now()}`,
+                    `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/volume_spike.json?v=${Date.now()}`,
+                    `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/volume_spike.json?v=${Date.now()}`
+                ];
+                let payload = null;
+                for (const u of urls) {
+                    try {
+                        const r = await fetch(u);
+                        if (r.ok) {
+                            const j = await r.json();
+                            if (j && (j.stocks || j.twse || j.tpex)) { payload = j; break; }
+                        }
+                    } catch(e) {}
+                }
+                if (!payload) {
+                    if (typeof INITIAL_VOLUME_SPIKE_DATA !== 'undefined' && INITIAL_VOLUME_SPIKE_DATA) {
+                        payload = INITIAL_VOLUME_SPIKE_DATA;
+                    } else {
+                        throw new Error('無法從 GitHub 取得資料');
+                    }
+                }
+                volumeSpikeData = payload;
+                localStorage.setItem('volume_spike_cache', JSON.stringify({ data: payload, savedAt: new Date().toISOString() }));
+                renderVolumeSpikeView();
+                const total = (payload.stocks || []).length;
+                if (!silent) showToast(`✅ 成功載入成交量異常名單！共篩選出 ${total} 檔爆量股（${payload.tradeDate}）`);
+            } catch(e) {
+                if (!silent) showToast(`❌ 載入失敗: ${e.message}`, true);
+            } finally {
+                if (fetchBtn) { fetchBtn.disabled = false; fetchBtn.textContent = '🔄 重新載入'; }
+            }
+        }
+
+        function renderVolumeSpikeView() {
+            const tbody = document.getElementById('volspike-tbody');
+            const badgeVolSpike = document.getElementById('badge-volume-spike');
+            const tradeDate = document.getElementById('volspike-trade-date');
+            const totalCount = document.getElementById('volspike-total-count');
+            const top1 = document.getElementById('volspike-top1');
+            const updateTime = document.getElementById('volspike-update-time');
+
+            if (!volumeSpikeData) {
+                if (badgeVolSpike) badgeVolSpike.innerText = '0';
+                if (tbody) tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                    <div style="font-size:1.5rem; margin-bottom:0.5rem;">⚡</div>
+                    <div>尚未載入今日成交量異常名單</div>
+                    <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「⚡ 自動獲取成交量異常名單」按鈕，系統將自動抓取最新名單。</div>
+                </td></tr>`;
+                return;
+            }
+
+            const allStocks = volumeSpikeData.stocks || [...(volumeSpikeData.twse || []), ...(volumeSpikeData.tpex || [])];
+            allStocks.sort((a, b) => (b.vol_multiple || 0) - (a.vol_multiple || 0));
+
+            if (tradeDate) tradeDate.innerText = volumeSpikeData.tradeDate || '—';
+            if (totalCount) totalCount.innerText = `${allStocks.length} 檔`;
+            if (updateTime) updateTime.innerText = (volumeSpikeData.updateTime || '').slice(0, 16);
+            if (top1 && allStocks[0]) {
+                top1.innerText = `${allStocks[0].code} ${allStocks[0].name} (${allStocks[0].vol_multiple}倍)`;
+            }
+
+            // Market filter
+            let filtered = allStocks;
+            if (volumeSpikeMarketFilter === 'twse') {
+                filtered = filtered.filter(s => s.market === 'twse');
+            } else if (volumeSpikeMarketFilter === 'tpex') {
+                filtered = filtered.filter(s => s.market === 'tpex');
+            }
+
+            // Search filter
+            const searchInput = document.getElementById('volspike-search-input');
+            const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
+            if (q) {
+                filtered = filtered.filter(s =>
+                    String(s.code).toLowerCase().includes(q) ||
+                    String(s.name).toLowerCase().includes(q)
+                );
+            }
+
+            if (badgeVolSpike) badgeVolSpike.innerText = String(allStocks.length);
+
+            if (!tbody) return;
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--text-secondary); padding:1.5rem;">無符合篩選或搜尋條件的資料</td></tr>`;
+                return;
+            }
+
+            const frag = document.createDocumentFragment();
+            filtered.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                const isTwse = item.market === 'twse';
+                const marketBadge = isTwse
+                    ? `<span style="font-size:0.68rem; padding:2px 5px; background:rgba(99,102,241,0.2); color:#a5b4fc; border:1px solid rgba(99,102,241,0.3); border-radius:4px; font-weight:600;">上市</span>`
+                    : `<span style="font-size:0.68rem; padding:2px 5px; background:rgba(16,185,129,0.2); color:#34d399; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-weight:600;">上櫃</span>`;
+
+                const change = String(item.change || '').replace('--', '—').trim();
+                const changeNum = parseFloat(change);
+                let changeHtml = `<span style="color:var(--text-secondary);">${change}</span>`;
+                if (!isNaN(changeNum)) {
+                    if (changeNum > 0) changeHtml = `<span style="color:#ef4444; font-weight:600;">▲${Math.abs(changeNum).toFixed(2)}</span>`;
+                    else if (changeNum < 0) changeHtml = `<span style="color:#22c55e; font-weight:600;">▼${Math.abs(changeNum).toFixed(2)}</span>`;
+                    else changeHtml = `<span style="color:var(--text-secondary);">—</span>`;
+                }
+
+                let rankBadge = `<span style="color:var(--text-secondary); font-size:0.82rem;">${index + 1}</span>`;
+                if (index === 0) rankBadge = `<span style="font-size:1.1rem;">🥇</span>`;
+                else if (index === 1) rankBadge = `<span style="font-size:1.1rem;">🥈</span>`;
+                else if (index === 2) rankBadge = `<span style="font-size:1.1rem;">🥉</span>`;
+
+                const volMult = item.vol_multiple ? `${item.vol_multiple.toFixed(2)}倍` : '—';
+                const volMultHtml = `<span style="color:#f59e0b; font-weight:700;">${volMult}</span>`;
+
+                const todayVol = item.today_vol_lots ? Number(item.today_vol_lots).toLocaleString() + ' 張' : (item.volume_lots ? Number(item.volume_lots).toLocaleString() + ' 張' : '—');
+                const ma10Vol = item.ma10_vol_lots ? Number(item.ma10_vol_lots).toLocaleString() + ' 張' : '—';
+                const ma10wVol = item.ma10w_vol_lots ? Number(item.ma10w_vol_lots).toLocaleString() + ' 張' : '—';
+                const tradeVal = item.trade_value_yi ? `${item.trade_value_yi.toFixed(2)} 億` : (item.trade_value ? formatTradeValue(item.trade_value) : '—');
+                const pricePair = (item.open_price !== undefined && item.close_price !== undefined)
+                    ? `<span style="color:#94a3b8;">${item.open_price}</span> / <span style="color:#f8fafc; font-weight:600;">${item.close_price}</span>`
+                    : (item.close_price || '—');
+
+                tr.innerHTML = `
+                    <td class="vol-col-rank">${rankBadge}</td>
+                    <td class="vol-col-market">${marketBadge}</td>
+                    <td class="vol-col-code">${item.code}</td>
+                    <td class="vol-col-name" title="${item.name || ''}">${item.name || item.code}</td>
+                    <td class="vol-col-multiple">${volMultHtml}</td>
+                    <td class="vol-col-today-vol">${todayVol}</td>
+                    <td class="vol-col-ma10">${ma10Vol}</td>
+                    <td class="vol-col-ma10w">${ma10wVol}</td>
+                    <td class="vol-col-val">${tradeVal}</td>
+                    <td class="vol-col-price">${pricePair}</td>
+                    <td class="vol-col-chg">${changeHtml}</td>
+                `;
+                frag.appendChild(tr);
+            });
+            tbody.innerHTML = '';
+            tbody.appendChild(frag);
+        }
+
+        // Volume Spike event listeners
+        const volspikeMarketFilter = document.getElementById('volspike-market-filter');
+        if (volspikeMarketFilter) {
+            volspikeMarketFilter.addEventListener('click', e => {
+                const btn = e.target.closest('.filter-chip');
+                if (!btn) return;
+                volspikeMarketFilter.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                volumeSpikeMarketFilter = btn.getAttribute('data-market') || 'all';
+                renderVolumeSpikeView();
+            });
+        }
+
+        const volspikeSearchInput = document.getElementById('volspike-search-input');
+        if (volspikeSearchInput) {
+            volspikeSearchInput.addEventListener('input', () => renderVolumeSpikeView());
+        }
+
+        // Auto-load Volume Spike from localStorage cache or initial dataset on startup
+        (() => {
+            try {
+                const cached = localStorage.getItem('volume_spike_cache');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (parsed && parsed.data) {
+                        volumeSpikeData = parsed.data;
+                    }
+                }
+            } catch(e) {}
+            if (!volumeSpikeData && typeof INITIAL_VOLUME_SPIKE_DATA !== 'undefined') {
+                volumeSpikeData = INITIAL_VOLUME_SPIKE_DATA;
+            }
+            if (volumeSpikeData) {
+                const volspikeBadge = document.getElementById('badge-volume-spike');
+                const stocks = volumeSpikeData.stocks || [...(volumeSpikeData.twse || []), ...(volumeSpikeData.tpex || [])];
+                if (volspikeBadge) volspikeBadge.innerText = String(stocks.length);
+                renderVolumeSpikeView();
+            }
         })();
     </script>
 </body>
