@@ -1396,25 +1396,30 @@
         }
 
         /* 今日成交量異常名單表格專用樣式 (完全比照 CB 表格欄寬與版型比例) */
+        #volume-spike-view .cb-table-container {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+        }
+
         #volume-spike-table {
             width: 100% !important;
-            max-width: 980px !important;
+            min-width: 960px !important;
             table-layout: fixed !important;
         }
 
         .vol-col-rank {
-            width: 5%;
+            width: 4.5%;
             text-align: center !important;
             white-space: nowrap !important;
             font-size: 0.8rem;
         }
         .vol-col-market {
-            width: 6%;
+            width: 5.5%;
             text-align: center !important;
             white-space: nowrap !important;
         }
         .vol-col-code {
-            width: 8%;
+            width: 7.5%;
             text-align: center !important;
             font-weight: 700;
             color: #60a5fa;
@@ -1423,7 +1428,7 @@
             letter-spacing: 0.3px;
         }
         .vol-col-name {
-            width: 12%;
+            width: 11%;
             font-weight: 600;
             text-align: left !important;
             white-space: nowrap !important;
@@ -1434,7 +1439,7 @@
             font-size: 0.84rem;
         }
         .vol-col-multiple {
-            width: 11%;
+            width: 10.5%;
             text-align: right !important;
             font-weight: 700;
             color: #f59e0b;
@@ -1452,7 +1457,7 @@
             font-size: 0.82rem;
         }
         .vol-col-ma10 {
-            width: 10%;
+            width: 9.5%;
             text-align: right !important;
             color: var(--text-secondary);
             white-space: nowrap !important;
@@ -1460,7 +1465,7 @@
             font-size: 0.80rem;
         }
         .vol-col-ma10w {
-            width: 10%;
+            width: 9.5%;
             text-align: right !important;
             color: var(--text-secondary);
             white-space: nowrap !important;
@@ -1477,19 +1482,19 @@
             font-size: 0.82rem;
         }
         .vol-col-price {
-            width: 10%;
+            width: 11%;
             text-align: right !important;
-            font-family: monospace, 'Outfit', sans-serif;
-            font-size: 0.80rem;
             white-space: nowrap !important;
-            padding-right: 0.45rem !important;
+            padding-right: 0.5rem !important;
+            overflow: hidden;
         }
         .vol-col-chg {
-            width: 7%;
+            width: 10%;
             text-align: right !important;
             white-space: nowrap !important;
-            font-size: 0.82rem;
-            padding-right: 0.45rem !important;
+            font-size: 0.84rem;
+            padding-right: 0.55rem !important;
+            overflow: hidden;
         }
 
         th.vol-col-name {
@@ -1504,7 +1509,7 @@
         th.vol-col-price,
         th.vol-col-chg {
             text-align: right !important;
-            padding-right: 0.45rem !important;
+            padding-right: 0.5rem !important;
         }
 
         @media (max-width: 900px) {
@@ -1519,7 +1524,7 @@
                 max-width: 100% !important;
             }
             #volume-spike-table {
-                min-width: 780px !important;
+                min-width: 960px !important;
                 max-width: 100% !important;
             }
             .cb-dahu-table,
@@ -2331,7 +2336,7 @@
                 </div>
 
                 <!-- 表格 (比照 CB 表格寬度與樣式，字體不折行切斷) -->
-                <div class="table-responsive persistent-table-container cb-table-container" style="margin-top:0.75rem;">
+                <div class="table-responsive persistent-table-container cb-table-container" style="margin-top:0.75rem; overflow-x: auto !important;">
                     <table class="cb-table" id="volume-spike-table">
                         <thead>
                             <tr>
@@ -2344,7 +2349,7 @@
                                 <th class="vol-col-ma10">10日均量</th>
                                 <th class="vol-col-ma10w">10週均量</th>
                                 <th class="vol-col-val">成交金額</th>
-                                <th class="vol-col-price">開盤 / 收盤</th>
+                                <th class="vol-col-price">收盤 / 開盤</th>
                                 <th class="vol-col-chg">漲跌</th>
                             </tr>
                         </thead>
@@ -6155,8 +6160,11 @@ ${text.slice(0, 30000)}`;
                 const ma10wVol = item.ma10w_vol_lots ? Number(item.ma10w_vol_lots).toLocaleString() + ' 張' : '—';
                 const tradeVal = item.trade_value_yi ? `${item.trade_value_yi.toFixed(2)} 億` : (item.trade_value ? formatTradeValue(item.trade_value) : '—');
                 const pricePair = (item.open_price !== undefined && item.close_price !== undefined)
-                    ? `<span style="color:#94a3b8;">${item.open_price}</span> / <span style="color:#f8fafc; font-weight:600;">${item.close_price}</span>`
-                    : (item.close_price || '—');
+                    ? `<div style="display:inline-flex; flex-direction:column; align-items:flex-end; justify-content:center; line-height:1.25;">
+                         <span style="color:#f8fafc; font-weight:700; font-size:0.84rem;">${item.close_price}</span>
+                         <span style="color:#94a3b8; font-size:0.72rem; letter-spacing:-0.2px;">開 ${item.open_price}</span>
+                       </div>`
+                    : `<span style="color:#f8fafc; font-weight:700;">${item.close_price || '—'}</span>`;
 
                 tr.innerHTML = `
                     <td class="vol-col-rank">${rankBadge}</td>
