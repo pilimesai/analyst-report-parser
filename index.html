@@ -1312,12 +1312,99 @@
             font-weight: 500;
         }
 
+        /* 今日成交值 TOP30 表格專用樣式 (完全比照 CB 表格欄寬與版型比例) */
+        #turnover-table {
+            width: 100% !important;
+            max-width: 860px !important;
+            table-layout: fixed !important;
+        }
+
+        .turnover-col-rank {
+            width: 6.5%;
+            text-align: center !important;
+            white-space: nowrap !important;
+            font-size: 0.8rem;
+        }
+        .turnover-col-market {
+            width: 7.5%;
+            text-align: center !important;
+            white-space: nowrap !important;
+        }
+        .turnover-col-code {
+            width: 9%;
+            text-align: center !important;
+            font-weight: 700;
+            color: #60a5fa;
+            white-space: nowrap !important;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+        }
+        .turnover-col-name {
+            width: 17%;
+            font-weight: 600;
+            text-align: left !important;
+            white-space: nowrap !important;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #f8fafc;
+            padding-left: 0.4rem !important;
+            font-size: 0.84rem;
+        }
+        .turnover-col-value {
+            width: 17%;
+            text-align: right !important;
+            font-weight: 700;
+            color: #fbbf24;
+            white-space: nowrap !important;
+            padding-right: 0.45rem !important;
+            font-size: 0.84rem;
+        }
+        .turnover-col-price {
+            width: 14%;
+            text-align: right !important;
+            font-family: monospace, 'Outfit', sans-serif;
+            font-size: 0.82rem;
+            white-space: nowrap !important;
+            padding-right: 0.45rem !important;
+        }
+        .turnover-col-change {
+            width: 14%;
+            text-align: right !important;
+            white-space: nowrap !important;
+            font-size: 0.82rem;
+            padding-right: 0.45rem !important;
+        }
+        .turnover-col-trans {
+            width: 15%;
+            text-align: right !important;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            white-space: nowrap !important;
+            padding-right: 0.45rem !important;
+        }
+
+        th.turnover-col-name {
+            text-align: left !important;
+            padding-left: 0.4rem !important;
+        }
+        th.turnover-col-value,
+        th.turnover-col-price,
+        th.turnover-col-change,
+        th.turnover-col-trans {
+            text-align: right !important;
+            padding-right: 0.45rem !important;
+        }
+
         @media (max-width: 900px) {
             .cb-table-container {
                 overflow-x: auto;
             }
             .cb-table {
                 min-width: 760px;
+            }
+            #turnover-table {
+                min-width: 600px !important;
+                max-width: 100% !important;
             }
             .cb-dahu-table,
             .cb-earnings-table {
@@ -2037,14 +2124,14 @@
                     <table class="cb-table" id="turnover-table">
                         <thead>
                             <tr>
-                                <th style="width:36px; text-align:center;">排名</th>
-                                <th style="width:32px; text-align:center;">市場</th>
-                                <th style="width:55px; text-align:center;">代號</th>
-                                <th style="min-width:70px;">名稱</th>
-                                <th style="min-width:80px; text-align:right;">成交金額</th>
-                                <th style="width:60px; text-align:right;">收盤</th>
-                                <th style="width:55px; text-align:right;">漲跌</th>
-                                <th style="width:60px; text-align:right;">成交筆數</th>
+                                <th class="turnover-col-rank">排名</th>
+                                <th class="turnover-col-market">市場</th>
+                                <th class="turnover-col-code">代號</th>
+                                <th class="turnover-col-name">名稱</th>
+                                <th class="turnover-col-value">成交金額</th>
+                                <th class="turnover-col-price">收盤</th>
+                                <th class="turnover-col-change">漲跌</th>
+                                <th class="turnover-col-trans">成交筆數</th>
                             </tr>
                         </thead>
                         <tbody id="turnover-tbody">
@@ -5664,14 +5751,14 @@ ${text.slice(0, 30000)}`;
                 else if (item.globalRank === 3) rankBadge = `<span style="font-size:1.1rem;">🥉</span>`;
 
                 tr.innerHTML = `
-                    <td style="text-align:center; vertical-align:middle;">${rankBadge}</td>
-                    <td style="text-align:center; vertical-align:middle;">${marketBadge}</td>
-                    <td style="text-align:center; vertical-align:middle;"><strong style="color:#60a5fa; font-size:0.9rem;">${item.code}</strong></td>
-                    <td style="vertical-align:middle; font-weight:600; color:#f8fafc; font-size:0.88rem;">${item.name || item.code}</td>
-                    <td style="text-align:right; vertical-align:middle; font-weight:700; color:#fbbf24; font-size:0.88rem;">${formatTradeValue(item.trade_value)}</td>
-                    <td style="text-align:right; vertical-align:middle; font-family:monospace; font-size:0.85rem;">${item.close_price || '—'}</td>
-                    <td style="text-align:right; vertical-align:middle; font-size:0.82rem;">${changeHtml}</td>
-                    <td style="text-align:right; vertical-align:middle; font-size:0.78rem; color:var(--text-secondary);">${Number(item.transaction || 0).toLocaleString()}</td>
+                    <td class="turnover-col-rank">${rankBadge}</td>
+                    <td class="turnover-col-market">${marketBadge}</td>
+                    <td class="turnover-col-code">${item.code}</td>
+                    <td class="turnover-col-name" title="${item.name || ''}">${item.name || item.code}</td>
+                    <td class="turnover-col-value">${formatTradeValue(item.trade_value)}</td>
+                    <td class="turnover-col-price">${item.close_price || '—'}</td>
+                    <td class="turnover-col-change">${changeHtml}</td>
+                    <td class="turnover-col-trans">${Number(item.transaction || 0).toLocaleString()}</td>
                 `;
                 frag.appendChild(tr);
             });
