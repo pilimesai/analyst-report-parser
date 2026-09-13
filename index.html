@@ -4514,9 +4514,9 @@ JSON 欄位：
                             matched.push("若已有發行的CB,且股價低於轉換價,並且轉換比例<10%");
                         }
 
-                        // 計算加權總分 (包含獨家持股 +1分, 今日成交值TOP30 +1分)
+                        // 計算加權總分 (包含大戶持股 3分, 獨家持股 +1分, 今日成交值TOP30 +1分)
                         let score = matched.length;
-                        if (matched.some(m => m.includes("入選大戶持股"))) score += 1;
+                        if (matched.some(m => m.includes("入選大戶持股"))) score += 2;
                         if (matched.some(m => m.includes("入選2周內會有法說會"))) score += 1;
                         if (matched.some(m => m.includes("低於轉換價"))) score += 1;
 

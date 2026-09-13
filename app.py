@@ -1745,7 +1745,7 @@ if st.session_state.history:
             
             score = len(all_c)
             if "大戶持股比例成長" in all_c:
-                score += 1  # 大戶選股符合，積分加二 (額外加 1 分)
+                score += 2  # 大戶選股符合，積分改為 3 分 (額外加 2 分)
             if "兩周內有法說會" in all_c:
                 score += 1  # 法說會符合，積分加二 (額外加 1 分)
             if any("低於轉換價" in str(c) for c in all_c):
@@ -2974,7 +2974,7 @@ if st.session_state.history:
                             
                         score = len(matched)
                         if "大戶持股比例成長" in matched or any("大戶持股增加" in m for m in matched):
-                            score += 1  # 大戶選股符合，積分加二 (額外加 1 分)
+                            score += 2  # 大戶選股符合，積分改為 3 分 (額外加 2 分)
                         if any("兩周內有法說會" in m for m in matched):
                             score += 1  # 法說會符合，積分加二 (額外加 1 分)
                             
