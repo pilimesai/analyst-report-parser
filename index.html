@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <!-- 效能優化：DNS 預解析與 CDN 連線預先握手 (Zero Latency Preconnect) -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
@@ -1395,7 +1398,7 @@
             padding-right: 0.45rem !important;
         }
 
-        /* 今日成交量異常名單表格專用樣式 (完全比照 CB 表格欄寬與版型比例) */
+        /* 今日成交量異常名單表格專用樣式 (完美適配比例，確保不溢出、不重疊、字不被遮擋) */
         #volume-spike-view .cb-table-container {
             overflow-x: auto !important;
             -webkit-overflow-scrolling: touch;
@@ -1403,7 +1406,7 @@
 
         #volume-spike-table {
             width: 100% !important;
-            min-width: 960px !important;
+            min-width: 650px !important;
             table-layout: fixed !important;
         }
 
@@ -1419,16 +1422,16 @@
             white-space: nowrap !important;
         }
         .vol-col-code {
-            width: 7.5%;
+            width: 7.0%;
             text-align: center !important;
             font-weight: 700;
             color: #60a5fa;
             white-space: nowrap !important;
-            font-size: 0.85rem;
-            letter-spacing: 0.3px;
+            font-size: 0.84rem;
+            letter-spacing: 0.2px;
         }
         .vol-col-name {
-            width: 11%;
+            width: 9.0%;
             font-weight: 600;
             text-align: left !important;
             white-space: nowrap !important;
@@ -1444,16 +1447,16 @@
             font-weight: 700;
             color: #f59e0b;
             white-space: nowrap !important;
-            padding-right: 0.45rem !important;
+            padding-right: 0.4rem !important;
             font-size: 0.84rem;
         }
         .vol-col-today-vol {
-            width: 11%;
+            width: 11.0%;
             text-align: right !important;
             font-weight: 600;
             color: #38bdf8;
             white-space: nowrap !important;
-            padding-right: 0.45rem !important;
+            padding-right: 0.4rem !important;
             font-size: 0.82rem;
         }
         .vol-col-ma10 {
@@ -1461,7 +1464,7 @@
             text-align: right !important;
             color: var(--text-secondary);
             white-space: nowrap !important;
-            padding-right: 0.45rem !important;
+            padding-right: 0.4rem !important;
             font-size: 0.80rem;
         }
         .vol-col-ma10w {
@@ -1469,32 +1472,30 @@
             text-align: right !important;
             color: var(--text-secondary);
             white-space: nowrap !important;
-            padding-right: 0.45rem !important;
+            padding-right: 0.4rem !important;
             font-size: 0.80rem;
         }
         .vol-col-val {
-            width: 10%;
+            width: 10.5%;
             text-align: right !important;
             font-weight: 600;
             color: #fbbf24;
             white-space: nowrap !important;
-            padding-right: 0.45rem !important;
+            padding-right: 0.4rem !important;
             font-size: 0.82rem;
         }
         .vol-col-price {
-            width: 11%;
+            width: 11.5%;
             text-align: right !important;
             white-space: nowrap !important;
             padding-right: 0.5rem !important;
-            overflow: hidden;
         }
         .vol-col-chg {
-            width: 10%;
+            width: 11.5%;
             text-align: right !important;
             white-space: nowrap !important;
             font-size: 0.84rem;
-            padding-right: 0.55rem !important;
-            overflow: hidden;
+            padding-right: 0.5rem !important;
         }
 
         th.vol-col-name {
@@ -1524,7 +1525,7 @@
                 max-width: 100% !important;
             }
             #volume-spike-table {
-                min-width: 960px !important;
+                min-width: 650px !important;
                 max-width: 100% !important;
             }
             .cb-dahu-table,
