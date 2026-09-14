@@ -1,4 +1,4 @@
-﻿"""
+"""
 update_top_turnover.py
 每日自動抓取台灣上市（TWSE）與上櫃（TPEx）成交值前30名股票
 資料來源：
@@ -32,15 +32,73 @@ def parse_trade_value(v):
     if v is None:
         return 0
     s = str(v).replace(',', '').replace(' ', '').strip()
-    if s == '' or s == '-':
+    if s == '' or s == '-' or s == '--':
         return 0
     try:
         return int(float(s))
     except ValueError:
         return 0
 
+def parse_float(v):
+    if v is None:
+        return 0.0
+    s = str(v).replace(',', '').replace(' ', '').strip()
+    if s == '' or s == '-' or s == '--':
+        return 0.0
+    try:
+        return float(s)
+    except ValueError:
+        return 0.0
+
 def fetch_twse_top30(stock_names):
-    print('Fetching TWSE STOCK_DAY_ALL...')
+    print('Fetching TWSE quotes...')
+    today = datetime.date.today()
+    # 優先從 TWSE 官網 MI_INDEX 抓取最新行情（即時盤後，無 OpenAPI 跨日延遲問題）
+    for delta in range(5):
+        d = today - datetime.timedelta(days=delta)
+        d_str = d.strftime('%Y%m%d')
+        url = f'https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date={d_str}&type=ALLBUT0999&response=json'
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', 'Accept': 'application/json, */*'}
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                jd = json.loads(resp.read().decode('utf-8', errors='ignore'))
+            if jd.get('stat') == 'OK':
+                tables = [tbl for tbl in jd.get('tables', []) if len(tbl.get('data', [])) > 500]
+                if tables:
+                    rows = tables[0].get('data', [])
+                    valid = []
+                    for r in rows:
+                        if len(r) > 10:
+                            code = str(r[0]).strip()
+                            name = stock_names.get(code) or str(r[1]).strip()
+                            val = parse_trade_value(r[4])
+                            if val > 0:
+                                chg_sign = -1 if '-' in str(r[9]) else (1 if '+' in str(r[9]) else 0)
+                                chg_val = parse_float(r[10]) * (chg_sign if chg_sign != 0 else 1)
+                                valid.append({
+                                    'market': 'twse',
+                                    'code': code,
+                                    'name': name,
+                                    'trade_value': val,
+                                    'trade_volume': parse_trade_value(r[2]),
+                                    'transaction': parse_trade_value(r[3]),
+                                    'close_price': str(r[8]).replace(',', '').strip(),
+                                    'change': f"{chg_val:+.2f}" if chg_val != 0 else "0.00",
+                                    'date': d.strftime('%Y-%m-%d')
+                                })
+                    if valid:
+                        valid.sort(key=lambda x: x['trade_value'], reverse=True)
+                        top30 = valid[:30]
+                        for rank, item in enumerate(top30, 1):
+                            item['rank'] = rank
+                        print(f'TWSE Top30 done via MI_INDEX ({d.strftime("%Y-%m-%d")}): {top30[0]["code"]} {top30[0]["name"]} value={top30[0]["trade_value"]:,}')
+                        return top30
+        except Exception as ex:
+            print(f'TWSE MI_INDEX {d_str} error: {ex}')
+
+    # 若 MI_INDEX 未能取得，Fallback 回 OpenAPI
+    print('Fallback to TWSE STOCK_DAY_ALL...')
     url = 'https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL'
     headers = {'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json'}
     req = urllib.request.Request(url, headers=headers)
@@ -64,7 +122,7 @@ def fetch_twse_top30(stock_names):
             'close_price': str(item.get('ClosingPrice', '')).strip(),
             'change': str(item.get('Change', '')).strip(),
             'date': date_str})
-    print(f'TWSE Top30 done: {result[0]["code"]} {result[0]["name"]} value={result[0]["trade_value"]:,}')
+    print(f'TWSE Top30 done via OpenAPI: {result[0]["code"]} {result[0]["name"]} value={result[0]["trade_value"]:,}')
     return result
 
 def fetch_tpex_top30(stock_names):

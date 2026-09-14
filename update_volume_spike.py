@@ -61,8 +61,62 @@ def fetch_twse_candidates(stock_names):
     """
     抓取 TWSE 全市場當日行情並初篩：
     四碼普通股、量 >= 2000張、金額 >= 0.5億、收盤 > 開盤
+    優先由 TWSE 官網 MI_INDEX 抓取當日即時盤後行情（解決 OpenAPI 跨日同步延遲）
     """
-    print('Fetching TWSE STOCK_DAY_ALL...')
+    print('Fetching TWSE quotes for candidates...')
+    today = datetime.date.today()
+    for delta in range(5):
+        d = today - datetime.timedelta(days=delta)
+        d_str = d.strftime('%Y%m%d')
+        url = f'https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date={d_str}&type=ALLBUT0999&response=json'
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', 'Accept': 'application/json, */*'}
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                jd = json.loads(resp.read().decode('utf-8', errors='ignore'))
+            if jd.get('stat') == 'OK':
+                tables = [tbl for tbl in jd.get('tables', []) if len(tbl.get('data', [])) > 500]
+                if tables:
+                    rows = tables[0].get('data', [])
+                    trade_date = d.strftime('%Y-%m-%d')
+                    candidates = {}
+                    for r in rows:
+                        if len(r) > 10:
+                            code = str(r[0]).strip()
+                            if not (len(code) == 4 and code.isdigit()):
+                                continue
+                            vol = parse_int(r[2])
+                            val = parse_int(r[4])
+                            op = parse_float(r[5])
+                            cp = parse_float(r[8])
+                            trans = parse_int(r[3])
+                            chg_sign = -1 if '-' in str(r[9]) else (1 if '+' in str(r[9]) else 0)
+                            chg = parse_float(r[10]) * (chg_sign if chg_sign != 0 else 1)
+                            # 條件 1: 量 >= 2000 張 (2,000,000 股)
+                            # 條件 2: 金額 >= 0.5 億 (50,000,000 元)
+                            # 條件 5: 收盤 > 開盤 (實體紅K)
+                            if vol >= 2000000 and val >= 50000000 and cp > op:
+                                candidates[f"{code}.TW"] = {
+                                    'market': 'twse',
+                                    'code': code,
+                                    'name': stock_names.get(code, str(r[1]).strip()),
+                                    'volume_shares': vol,
+                                    'volume_lots': vol // 1000,
+                                    'trade_value': val,
+                                    'trade_value_yi': round(val / 1e8, 2),
+                                    'open_price': op,
+                                    'close_price': cp,
+                                    'change': chg,
+                                    'transaction': trans,
+                                    'date': trade_date
+                                }
+                    print(f'TWSE initial pre-filter candidates via MI_INDEX: {len(candidates)} (trade_date: {trade_date})')
+                    return candidates, trade_date
+        except Exception as ex:
+            print(f'TWSE MI_INDEX {d_str} error: {ex}')
+
+    # Fallback 回 OpenAPI
+    print('Fallback to TWSE STOCK_DAY_ALL...')
     url = 'https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL'
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', 'Accept': 'application/json'}
     req = urllib.request.Request(url, headers=headers)
@@ -107,7 +161,7 @@ def fetch_twse_candidates(stock_names):
                 'date': trade_date
             }
 
-    print(f'TWSE initial pre-filter candidates: {len(candidates)} (trade_date: {trade_date})')
+    print(f'TWSE initial pre-filter candidates via OpenAPI: {len(candidates)} (trade_date: {trade_date})')
     return candidates, trade_date
 
 def fetch_tpex_candidates(stock_names):
