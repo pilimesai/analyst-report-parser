@@ -16,9 +16,12 @@ import sys
 import os
 import json
 import datetime
+from zoneinfo import ZoneInfo
 import urllib.request
 import subprocess
 import time
+
+TZ_TW = ZoneInfo('Asia/Taipei')
 
 if sys.stdout and hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
@@ -64,7 +67,7 @@ def fetch_twse_candidates(stock_names):
     優先由 TWSE 官網 MI_INDEX 抓取當日即時盤後行情（解決 OpenAPI 跨日同步延遲）
     """
     print('Fetching TWSE quotes for candidates...')
-    today = datetime.date.today()
+    today = datetime.datetime.now(TZ_TW).date()
     for delta in range(5):
         d = today - datetime.timedelta(days=delta)
         d_str = d.strftime('%Y%m%d')
@@ -170,7 +173,7 @@ def fetch_tpex_candidates(stock_names):
     四碼普通股、量 >= 2000張、金額 >= 0.5億、收盤 > 開盤
     """
     print('Fetching TPEx OTC quotes...')
-    today = datetime.date.today()
+    today = datetime.datetime.now(TZ_TW).date()
     candidates = {}
     trade_date = ''
 
@@ -323,7 +326,7 @@ def main():
     tpex_cands, tpex_date = fetch_tpex_candidates(stock_names)
 
     all_candidates = {**twse_cands, **tpex_cands}
-    trade_date = twse_date or tpex_date or datetime.date.today().strftime('%Y-%m-%d')
+    trade_date = twse_date or tpex_date or datetime.datetime.now(TZ_TW).strftime('%Y-%m-%d')
 
     matched_stocks = evaluate_volume_spikes(all_candidates)
 

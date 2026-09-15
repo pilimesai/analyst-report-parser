@@ -8,7 +8,10 @@ import json
 import os
 import sys
 import datetime
+from zoneinfo import ZoneInfo
 import subprocess
+
+TZ_TW = ZoneInfo('Asia/Taipei')
 
 if sys.stdout and hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
@@ -162,7 +165,7 @@ def fetch_goal_star_data():
     stocks_list.sort(key=lambda s: (len(s['funds']), -s['maxRatio']))
     
     output_payload = {
-        'updateTime': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'updateTime': datetime.datetime.now(TZ_TW).strftime('%Y-%m-%d %H:%M:%S'),
         'totalFunds': len(filtered_funds),
         'funds': filtered_funds,
         'stocks': stocks_list

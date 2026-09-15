@@ -10,8 +10,11 @@ import sys
 import os
 import json
 import datetime
+from zoneinfo import ZoneInfo
 import urllib.request
 import subprocess
+
+TZ_TW = ZoneInfo('Asia/Taipei')
 
 if sys.stdout and hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
@@ -52,7 +55,7 @@ def parse_float(v):
 
 def fetch_twse_top30(stock_names):
     print('Fetching TWSE quotes...')
-    today = datetime.date.today()
+    today = datetime.datetime.now(TZ_TW).date()
     # 優先從 TWSE 官網 MI_INDEX 抓取最新行情（即時盤後，無 OpenAPI 跨日延遲問題）
     for delta in range(5):
         d = today - datetime.timedelta(days=delta)
@@ -127,7 +130,7 @@ def fetch_twse_top30(stock_names):
 
 def fetch_tpex_top30(stock_names):
     print('Fetching TPEx OTC quotes...')
-    today = datetime.date.today()
+    today = datetime.datetime.now(TZ_TW).date()
     data = None
     for delta in range(5):
         d = today - datetime.timedelta(days=delta)
