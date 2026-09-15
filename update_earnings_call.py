@@ -178,7 +178,7 @@ def main():
     try:
         subprocess.check_call(["git", "add", "近期法說會.csv"], cwd=repo_dir)
         status = subprocess.check_output(
-            ["git", "status", "--porcelain"], cwd=repo_dir
+            ["git", "-c", "core.quotepath=false", "status", "--porcelain"], cwd=repo_dir
         ).decode("utf-8")
         if "近期法說會.csv" in status:
             subprocess.check_call(
