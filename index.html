@@ -3084,6 +3084,7 @@
             statusEl.style.display = 'block';
 
             const steps = [
+                { label: '🎯 主動型ETF篩選', fn: fetchGoalStarActiveFunds },
                 { label: '📅 法說會', fn: fetchEarningsCallFromGithub },
                 { label: '🔵 近期發行CB', fn: fetchCBFromGithub },
                 { label: '📉 股價低於CB轉換價', fn: fetchCbBelowConvFromGithub },
