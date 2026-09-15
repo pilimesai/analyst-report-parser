@@ -3071,8 +3071,6 @@
         document.getElementById('revenue-upload').addEventListener('change', (e) => handleCsvUpload(e, '營收條件'));
         document.getElementById('earnings-call-upload').addEventListener('change', (e) => handleCsvUpload(e, '法說會'));
         document.getElementById('contract-liabilities-upload').addEventListener('change', (e) => handleCsvUpload(e, '合約負債條件'));
-        document.getElementById('recent-cb-upload').addEventListener('change', (e) => handleCsvUpload(e, '近期發行CB'));
-        document.getElementById('cb-below-conv-upload').addEventListener('change', (e) => handleCsvUpload(e, '目前股價低於CB轉換價'));
 
         async function fetchAllData() {
             const btn = document.getElementById('fetch-all-data-btn');
