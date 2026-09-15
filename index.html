@@ -1920,6 +1920,17 @@
 
         <div class="sidebar-section">
             <h3>📊 籌碼與事件清單</h3>
+
+            <!-- 一鍵抓取所有資料 -->
+            <div style="margin-bottom: 1rem;">
+                <button id="fetch-all-data-btn" class="btn btn-primary" onclick="fetchAllData()"
+                    style="width: 100%; padding: 0.75rem 1rem; font-size: 0.95rem; font-weight: 700; background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899); border: none; border-radius: 0.6rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 4px 15px rgba(99,102,241,0.4); letter-spacing: 0.03em; transition: opacity 0.2s, transform 0.1s;">
+                    <span style="font-size: 1.1rem;">⚡</span>
+                    <span>一鍵抓取所有資料</span>
+                </button>
+                <div id="fetch-all-status" style="display: none; margin-top: 0.5rem; padding: 0.5rem 0.65rem; background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.3); border-radius: 0.45rem; font-size: 0.78rem; color: #a5b4fc; line-height: 1.4;"></div>
+            </div>
+
             <div class="input-group">
                 <label>大戶持股</label>
                 <input type="file" id="big-score-upload" accept=".csv" style="display:none;">
@@ -1952,9 +1963,7 @@
                 <input type="file" id="earnings-call-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
                     <button class="btn" onclick="document.getElementById('earnings-call-upload').click()"
-                        style="width: 48%;">📥 上傳 CSV</button>
-                    <button class="btn btn-primary" onclick="fetchEarningsCallFromGithub()"
-                        style="width: 48%; background: #7c3aed;">🤖 AI自動獲取</button>
+                        style="width: 100%;">📥 上傳 CSV</button>
                 </div>
             </div>
 
@@ -1972,9 +1981,7 @@
                 <input type="file" id="recent-cb-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
                     <button class="btn" onclick="document.getElementById('recent-cb-upload').click()"
-                        style="width: 48%;">📥 上傳 CSV</button>
-                    <button class="btn btn-primary" onclick="fetchCBFromGithub()"
-                        style="width: 48%; background: #4a6fa5;">🤖 AI自動獲取</button>
+                        style="width: 100%;">📥 上傳 CSV</button>
                 </div>
             </div>
 
@@ -1983,26 +1990,18 @@
                 <input type="file" id="cb-below-conv-upload" accept=".csv" style="display:none;">
                 <div class="upload-actions">
                     <button class="btn" onclick="document.getElementById('cb-below-conv-upload').click()"
-                        style="width: 48%;">📥 上傳 CSV</button>
-                    <button class="btn btn-primary" onclick="fetchCbBelowConvFromGithub()"
-                        style="width: 48%; background: #059669;">🤖 AI自動獲取</button>
+                        style="width: 100%;">📥 上傳 CSV</button>
                 </div>
             </div>
 
             <div class="input-group">
                 <label>今日成交值 TOP 30</label>
-                <div class="upload-actions">
-                    <button class="btn btn-primary" onclick="fetchTopTurnoverFromGithub()"
-                        style="width: 100%; background: linear-gradient(135deg, #dc2626, #9333ea);">🔥 自動獲取今日成交值排行</button>
-                </div>
+                <div style="font-size: 0.74rem; color: var(--text-secondary); margin-top: 2px;">由「一鍵抓取所有資料」自動更新</div>
             </div>
 
             <div class="input-group">
                 <label>今日成交量異常變大</label>
-                <div class="upload-actions">
-                    <button class="btn btn-primary" onclick="fetchVolumeSpikeFromGithub()"
-                        style="width: 100%; background: linear-gradient(135deg, #ea580c, #d97706);">⚡ 自動獲取成交量異常名單</button>
-                </div>
+                <div style="font-size: 0.74rem; color: var(--text-secondary); margin-top: 2px;">由「一鍵抓取所有資料」自動更新</div>
             </div>
         </div>
     </div>
@@ -3081,6 +3080,43 @@
         document.getElementById('contract-liabilities-upload').addEventListener('change', (e) => handleCsvUpload(e, '合約負債條件'));
         document.getElementById('recent-cb-upload').addEventListener('change', (e) => handleCsvUpload(e, '近期發行CB'));
         document.getElementById('cb-below-conv-upload').addEventListener('change', (e) => handleCsvUpload(e, '目前股價低於CB轉換價'));
+
+        async function fetchAllData() {
+            const btn = document.getElementById('fetch-all-data-btn');
+            const statusEl = document.getElementById('fetch-all-status');
+            if (btn.disabled) return;
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+            btn.innerHTML = '<span style="font-size:1.1rem;">⏳</span><span>正在抓取中...</span>';
+            statusEl.style.display = 'block';
+
+            const steps = [
+                { label: '📅 法說會', fn: fetchEarningsCallFromGithub },
+                { label: '🔵 近期發行CB', fn: fetchCBFromGithub },
+                { label: '📉 股價低於CB轉換價', fn: fetchCbBelowConvFromGithub },
+                { label: '🔥 今日成交值排行', fn: () => fetchTopTurnoverFromGithub(true) },
+                { label: '⚡ 成交量異常名單', fn: () => fetchVolumeSpikeFromGithub(true) },
+            ];
+
+            for (let i = 0; i < steps.length; i++) {
+                const step = steps[i];
+                statusEl.innerHTML = `(${i + 1}/${steps.length}) 正在抓取 ${step.label}...`;
+                try {
+                    await step.fn();
+                } catch (e) {
+                    statusEl.innerHTML += ` ❌ 失敗: ${e.message}`;
+                }
+                // 短暫間隔避免請求過快
+                if (i < steps.length - 1) await new Promise(r => setTimeout(r, 300));
+            }
+
+            statusEl.innerHTML = '✅ 所有資料已更新完畢！';
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.innerHTML = '<span style="font-size:1.1rem;">⚡</span><span>一鍵抓取所有資料</span>';
+            showToast('✅ 所有資料一鍵抓取完成！');
+            setTimeout(() => { statusEl.style.display = 'none'; }, 5000);
+        }
 
         async function fetchCBFromGithub() {
             try {
