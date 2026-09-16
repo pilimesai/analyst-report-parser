@@ -5003,12 +5003,10 @@ JSON 欄位：
                 }
                 const is50M = tradeValue >= 50000000; // 0.5 億 = 50,000,000 元
 
-                if (is2MonthHigh) matched.push("月營收創2月新高");
-                if (isYoY10) {
-                    const pct = yoyPct.toFixed(1);
-                    matched.push(`月營收年增率${pct}%>10%`);
+                // 方案 A：三項條件全符合才算 1 分，標記為「入選營收條件」
+                if (is2MonthHigh && isYoY10 && is50M) {
+                    matched.push("入選營收條件");
                 }
-                if (is50M) matched.push(`成交金額${(tradeValue/1e8).toFixed(2)}億>0.5億`);
             }
 
             // 4. 季毛利條件：季營業毛利率>15% + 連續 3 季成長 + 股本<20億
@@ -5055,9 +5053,7 @@ JSON 欄位：
                     }
                     const isLt20Yi = capital > 0 && capital < 2000000000;
 
-                    if (isGM15) matched.push(`季毛利率${latestGM.toFixed(1)}%>15%`);
-                    if (is3QGrowth) matched.push(`連續3季毛利率成長(${prev2GM.toFixed(1)}%→${prevGM.toFixed(1)}%→${latestGM.toFixed(1)}%)`);
-                    if (isLt20Yi) matched.push(`股本${(capital/1e8).toFixed(2)}億<20億`);
+                    // 方案 A：三項條件全符合才算 1 分，標記為「入選毛利三季成長」
                     if (isGM15 && is3QGrowth && isLt20Yi) {
                         matched.push("入選毛利三季成長");
                     }
