@@ -1431,12 +1431,10 @@
             letter-spacing: 0.2px;
         }
         .vol-col-name {
-            width: 9.0%;
+            width: 13.0%;
             font-weight: 600;
             text-align: left !important;
             white-space: nowrap !important;
-            overflow: hidden;
-            text-overflow: ellipsis;
             color: #f8fafc;
             padding-left: 0.4rem !important;
             font-size: 0.84rem;
@@ -1451,7 +1449,7 @@
             font-size: 0.84rem;
         }
         .vol-col-today-vol {
-            width: 11.0%;
+            width: 9.0%;
             text-align: right !important;
             font-weight: 600;
             color: #38bdf8;
@@ -1491,7 +1489,7 @@
             padding-right: 0.5rem !important;
         }
         .vol-col-chg {
-            width: 11.5%;
+            width: 9.5%;
             text-align: right !important;
             white-space: nowrap !important;
             font-size: 0.84rem;
@@ -4834,10 +4832,16 @@ JSON 欄位：
             trust90Start.setDate(trust90Start.getDate() - 90);
             const chipStartStr = trust90Start.toISOString().split('T')[0];
 
-            // 1. 並行非同步抓取歷史股價與90天法人籌碼資料
-            const [priceData, chipsData] = await Promise.all([
+            // 月營收需要 13 個月資料（才能計算當月 YoY）
+            const rev14MonthsAgo = new Date();
+            rev14MonthsAgo.setMonth(rev14MonthsAgo.getMonth() - 14);
+            const revStartStr = rev14MonthsAgo.toISOString().split('T')[0];
+
+            // 1. 並行非同步抓取歷史股價、90天法人籌碼資料、月營收
+            const [priceData, chipsData, revenueData] = await Promise.all([
                 fetchFinMindData('TaiwanStockPrice', stockId, priceStartStr),
-                fetchFinMindData('TaiwanStockInstitutionalInvestorsBuySell', stockId, chipStartStr)
+                fetchFinMindData('TaiwanStockInstitutionalInvestorsBuySell', stockId, chipStartStr),
+                fetchFinMindData('TaiwanStockMonthRevenue', stockId, revStartStr)
             ]);
 
             // 技術指標計算 (KD 與 爆量)
@@ -4943,7 +4947,59 @@ JSON 欄位：
                 }
             }
 
-            // 3. CB 轉換價比對
+            // 3. 月營收條件：月營收創2月新高 + 年增率>10% + 成交金額>0.5億
+            if (revenueData && revenueData.length >= 3) {
+                const revSorted = [...revenueData].sort((a, b) => a.date.localeCompare(b.date));
+                const rev0 = revSorted[revSorted.length - 1]; // 最新月
+                const rev1 = revSorted[revSorted.length - 2]; // 前一月
+                const rev2 = revSorted[revSorted.length - 3]; // 前兩月
+
+                const latestRevenue = parseFloat(rev0.revenue) || 0;
+                const prevRevenue   = parseFloat(rev1.revenue) || 0;
+                const prev2Revenue  = parseFloat(rev2.revenue) || 0;
+
+                // 條件 A：月營收創 2 月新高（最新 > 前一月 > 前前一月）
+                const is2MonthHigh = latestRevenue > prevRevenue && prevRevenue > prev2Revenue;
+
+                // 條件 B：年增率 > 10%（手動找同年同月去年資料）
+                const latestYear  = parseInt(rev0.revenue_year);
+                const latestMonth = parseInt(rev0.revenue_month);
+                const lastYearRec = revSorted.find(r =>
+                    parseInt(r.revenue_year) === latestYear - 1 &&
+                    parseInt(r.revenue_month) === latestMonth
+                );
+                const lastYearRevenue = lastYearRec ? (parseFloat(lastYearRec.revenue) || 0) : 0;
+                const yoyPct = lastYearRevenue > 0
+                    ? ((latestRevenue - lastYearRevenue) / lastYearRevenue) * 100
+                    : null;
+                const isYoY10 = yoyPct !== null && yoyPct > 10;
+
+                // 條件 C：當日成交金額 > 0.5 億元
+                // 優先從 top_turnover 快取查（最準確），fallback 用 close × volume
+                let tradeValue = 0;
+                const ttCache = topTurnoverData || (() => {
+                    try { const c = localStorage.getItem('top_turnover_cache'); return c ? (JSON.parse(c).data || JSON.parse(c)) : null; } catch(e) { return null; }
+                })();
+                if (ttCache) {
+                    const allTt = [...(ttCache.twse || []), ...(ttCache.tpex || [])];
+                    const ttRow = allTt.find(r => String(r.code).trim() === stockId);
+                    if (ttRow) tradeValue = parseFloat(ttRow.trade_value) || 0;
+                }
+                if (tradeValue === 0 && priceData && priceData.length > 0) {
+                    const lastPriceRow = priceData[priceData.length - 1];
+                    tradeValue = (lastPriceRow.close || 0) * (lastPriceRow.Trading_Volume || 0);
+                }
+                const is50M = tradeValue >= 50000000; // 0.5 億 = 50,000,000 元
+
+                if (is2MonthHigh) matched.push("月營收創2月新高");
+                if (isYoY10) {
+                    const pct = yoyPct.toFixed(1);
+                    matched.push(`月營收年增率${pct}%>10%`);
+                }
+                if (is50M) matched.push(`成交金額${(tradeValue/1e8).toFixed(2)}億>0.5億`);
+            }
+
+            // 4. CB 轉換價比對
             if (config.cbStocks && config.cbStocks.includes(stockId)) {
                 matched.push("入選要發行CB");
             }
