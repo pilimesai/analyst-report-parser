@@ -1947,23 +1947,7 @@
                 </div>
             </div>
 
-            <div class="input-group">
-                <label>營收條件</label>
-                <input type="file" id="revenue-upload" accept=".csv" style="display:none;">
-                <div class="upload-actions">
-                    <button class="btn" onclick="document.getElementById('revenue-upload').click()"
-                        style="width: 100%;">📥 上傳 CSV</button>
-                </div>
-            </div>
 
-            <div class="input-group">
-                <label>法說會</label>
-                <input type="file" id="earnings-call-upload" accept=".csv" style="display:none;">
-                <div class="upload-actions">
-                    <button class="btn" onclick="document.getElementById('earnings-call-upload').click()"
-                        style="width: 100%;">📥 上傳 CSV</button>
-                </div>
-            </div>
 
             <div class="input-group">
                 <label>合約負債條件</label>
@@ -3066,8 +3050,7 @@
 
         document.getElementById('big-score-upload').addEventListener('change', (e) => handleCsvUpload(e, '大戶持股'));
         document.getElementById('gross-margin-upload').addEventListener('change', (e) => handleCsvUpload(e, '毛利三季成長'));
-        document.getElementById('revenue-upload').addEventListener('change', (e) => handleCsvUpload(e, '營收條件'));
-        document.getElementById('earnings-call-upload').addEventListener('change', (e) => handleCsvUpload(e, '法說會'));
+
         document.getElementById('contract-liabilities-upload').addEventListener('change', (e) => handleCsvUpload(e, '合約負債條件'));
 
         async function fetchAllData() {
