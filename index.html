@@ -1938,14 +1938,8 @@
                 </div>
             </div>
 
-            <div class="input-group">
-                <label>毛利三季成長</label>
-                <input type="file" id="gross-margin-upload" accept=".csv" style="display:none;">
-                <div class="upload-actions">
-                    <button class="btn" onclick="document.getElementById('gross-margin-upload').click()"
-                        style="width: 100%;">📥 上傳 CSV</button>
-                </div>
-            </div>
+
+
 
 
 
@@ -2716,6 +2710,34 @@
             }
         }
 
+        // 台股股本資料庫非同步載入器 (帶本地快取與背景更新)
+        let stockCapitalMap = {};
+        async function loadStockCapitals() {
+            if (localStorage.getItem('stock_capitals_cache')) {
+                try {
+                    stockCapitalMap = JSON.parse(localStorage.getItem('stock_capitals_cache'));
+                } catch (e) { }
+            }
+            const urls = [
+                `./stock_capital.json?v=${Date.now()}`,
+                `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/stock_capital.json?v=${Date.now()}`,
+                `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/stock_capital.json?v=${Date.now()}`
+            ];
+            for (const u of urls) {
+                try {
+                    const r = await fetch(u);
+                    if (r.ok) {
+                        const data = await r.json();
+                        if (data && Object.keys(data).length > 0) {
+                            stockCapitalMap = data;
+                            localStorage.setItem('stock_capitals_cache', JSON.stringify(data));
+                            break;
+                        }
+                    }
+                } catch(e) {}
+            }
+        }
+
         // 背景自動同步主動型 ETF 資料庫 (SWR 不阻斷畫面)
         async function syncActiveEtfFromCloud() {
             const repoUrls = [
@@ -2906,6 +2928,7 @@
             setTimeout(() => {
                 Promise.allSettled([
                     loadStockNames(),
+                    loadStockCapitals(),
                     syncActiveEtfFromCloud(),
                     fetchTopTurnoverFromGithub(true),
                     fetchVolumeSpikeFromGithub(true),
@@ -3049,7 +3072,7 @@
         });
 
         document.getElementById('big-score-upload').addEventListener('change', (e) => handleCsvUpload(e, '大戶持股'));
-        document.getElementById('gross-margin-upload').addEventListener('change', (e) => handleCsvUpload(e, '毛利三季成長'));
+
 
         document.getElementById('contract-liabilities-upload').addEventListener('change', (e) => handleCsvUpload(e, '合約負債條件'));
 
@@ -4739,8 +4762,8 @@ JSON 欄位：
 
                         // 結合清單條件 (記憶體中瞬時比對)
                         if (bigPlayerStocks.includes(stockId)) matched.push("入選大戶持股");
-                        if (grossMarginStocks.includes(stockId)) matched.push("入選毛利三季成長");
-                        if (revenueStocks.includes(stockId)) matched.push("入選營收條件");
+                        if (grossMarginStocks.includes(stockId) && !matched.includes("入選毛利三季成長")) matched.push("入選毛利三季成長");
+                        if (revenueStocks.includes(stockId) && !matched.includes("入選營收條件")) matched.push("入選營收條件");
                         if (earningsCallStocks.includes(stockId)) matched.push("入選2周內會有法說會");
                         if (contractLiabilitiesStocks.includes(stockId)) matched.push("入選合約負債");
                         if (exclusiveEtfStocks.includes(stockId)) matched.push("入選主動型ETF獨家持股");
@@ -4820,11 +4843,17 @@ JSON 欄位：
             rev14MonthsAgo.setMonth(rev14MonthsAgo.getMonth() - 14);
             const revStartStr = rev14MonthsAgo.toISOString().split('T')[0];
 
-            // 1. 並行非同步抓取歷史股價、90天法人籌碼資料、月營收
-            const [priceData, chipsData, revenueData] = await Promise.all([
+            // 季財報需要 2 年資料（取最近 5 季）
+            const grossStart = new Date();
+            grossStart.setFullYear(grossStart.getFullYear() - 2);
+            const grossStartStr = grossStart.toISOString().split('T')[0];
+
+            // 1. 並行非同步抓取歷史股價、90天法人籌碼資料、月營收、季財報
+            const [priceData, chipsData, revenueData, grossData] = await Promise.all([
                 fetchFinMindData('TaiwanStockPrice', stockId, priceStartStr),
                 fetchFinMindData('TaiwanStockInstitutionalInvestorsBuySell', stockId, chipStartStr),
-                fetchFinMindData('TaiwanStockMonthRevenue', stockId, revStartStr)
+                fetchFinMindData('TaiwanStockMonthRevenue', stockId, revStartStr),
+                fetchFinMindData('TaiwanStockFinancialStatements', stockId, grossStartStr)
             ]);
 
             // 技術指標計算 (KD 與 爆量)
@@ -4982,7 +5011,60 @@ JSON 欄位：
                 if (is50M) matched.push(`成交金額${(tradeValue/1e8).toFixed(2)}億>0.5億`);
             }
 
-            // 4. CB 轉換價比對
+            // 4. 季毛利條件：季營業毛利率>15% + 連續 3 季成長 + 股本<20億
+            if (grossData && grossData.length > 0) {
+                // 分別取出 GrossProfit 和 Revenue 記錄，依日期分組計算各季毛利率
+                const gpMap = {};  // date -> GrossProfit
+                const revMap = {}; // date -> Revenue (OperatingRevenue)
+                grossData.forEach(r => {
+                    const t = r.type || '';
+                    const v = parseFloat(r.value) || 0;
+                    if (t === 'GrossProfit') gpMap[r.date] = v;
+                    if (t === 'Revenue' || t === 'OperatingRevenue') revMap[r.date] = v;
+                });
+                // 找共同有資料的季度日期，由老到新排序
+                const quarters = Object.keys(gpMap)
+                    .filter(d => revMap[d] && revMap[d] > 0)
+                    .sort();
+                if (quarters.length >= 3) {
+                    // 計算毛利率序列
+                    const gmRates = quarters.map(d => gpMap[d] / revMap[d] * 100);
+                    const latestGM = gmRates[gmRates.length - 1];
+                    const prevGM   = gmRates[gmRates.length - 2];
+                    const prev2GM  = gmRates[gmRates.length - 3];
+
+                    // 條件 A：最新季毛利率 > 15%
+                    const isGM15 = latestGM > 15;
+
+                    // 條件 B：連續 3 季毛利率成長
+                    const is3QGrowth = latestGM > prevGM && prevGM > prev2GM;
+
+                    // 條件 C：股本 < 20 億元
+                    let capital = (typeof stockCapitalMap !== 'undefined' && stockCapitalMap) ? (stockCapitalMap[stockId] || 0) : 0;
+                    if (!capital) {
+                        try {
+                            const bsData = await fetchFinMindData('TaiwanStockBalanceSheet', stockId, grossStartStr);
+                            if (bsData && bsData.length > 0) {
+                                const capRows = bsData.filter(r => r.type === 'CapitalStock' || r.type === 'OrdinaryShare');
+                                if (capRows.length > 0) {
+                                    capital = parseFloat(capRows[capRows.length - 1].value) || 0;
+                                    if (capital > 0 && typeof stockCapitalMap !== 'undefined') stockCapitalMap[stockId] = capital;
+                                }
+                            }
+                        } catch(e) {}
+                    }
+                    const isLt20Yi = capital > 0 && capital < 2000000000;
+
+                    if (isGM15) matched.push(`季毛利率${latestGM.toFixed(1)}%>15%`);
+                    if (is3QGrowth) matched.push(`連續3季毛利率成長(${prev2GM.toFixed(1)}%→${prevGM.toFixed(1)}%→${latestGM.toFixed(1)}%)`);
+                    if (isLt20Yi) matched.push(`股本${(capital/1e8).toFixed(2)}億<20億`);
+                    if (isGM15 && is3QGrowth && isLt20Yi) {
+                        matched.push("入選毛利三季成長");
+                    }
+                }
+            }
+
+            // 5. CB 轉換價比對
             if (config.cbStocks && config.cbStocks.includes(stockId)) {
                 matched.push("入選要發行CB");
             }
