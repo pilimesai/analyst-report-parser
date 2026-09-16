@@ -1,9 +1,9 @@
-﻿name: Update Top Turnover Stocks Daily
+name: Update Top Turnover Stocks Daily
 
 on:
   schedule:
-    # 每天台灣時間 18:00 (UTC 10:00) 自動執行 (盤後)
-    - cron: '0 10 * * 1-5'
+    # 每天台灣時間 20:00 (UTC 12:00) 自動執行 (盤後 + 緩衝)
+    - cron: '0 12 * * 1-5'
   workflow_dispatch:
 
 jobs:

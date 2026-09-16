@@ -2,8 +2,9 @@ name: Update Volume Spike Stocks Daily
 
 on:
   schedule:
-    # 每個交易日台灣時間 18:05 (UTC 10:05) 自動執行
-    - cron: '5 10 * * 1-5'
+    # 每個交易日台灣時間 20:05 (UTC 12:05) 自動執行
+    # 改為 20:05 確保 yfinance 台股歷史量資料已完全更新（盤後 14:30 + 緩衝 5.5hr）
+    - cron: '5 12 * * 1-5'
   workflow_dispatch:
 
 jobs:
