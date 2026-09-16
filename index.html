@@ -2932,6 +2932,9 @@
                     syncActiveEtfFromCloud(),
                     fetchTopTurnoverFromGithub(true),
                     fetchVolumeSpikeFromGithub(true),
+                    fetchCBFromGithub(true),
+                    fetchCbBelowConvFromGithub(true),
+                    fetchEarningsCallFromGithub(true),
                     fetchSettingsFromCloud(),
                     activeSheetUrl ? loadGoogleSheet(activeSheetUrl).then(sheetRows => {
                         if (sheetRows && sheetRows.length > 0) {
@@ -3114,29 +3117,51 @@
             setTimeout(() => { statusEl.style.display = 'none'; }, 5000);
         }
 
-        async function fetchCBFromGithub() {
+        async function fetchCBFromGithub(silent = false) {
             try {
-                showToast("正在透過 AI 從資料庫獲取最新預計發行 CB 名單...");
-                const res = await fetch("https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/%E8%BF%91%E6%9C%9F%E7%99%BC%E8%A1%8CCB.csv?v=" + new Date().getTime());
-                if (!res.ok) throw new Error("無法獲取資料");
-                const text = await res.text();
+                if (!silent) showToast("正在透過 AI 從資料庫獲取最新預計發行 CB 名單...");
+                const urls = [
+                    `./近期發行CB.csv?v=${new Date().getTime()}`,
+                    `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/%E8%BF%91%E6%9C%9F%E7%99%BC%E8%A1%8CCB.csv?v=${new Date().getTime()}`,
+                    `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/%E8%BF%91%E6%9C%9F%E7%99%BC%E8%A1%8CCB.csv?v=${new Date().getTime()}`
+                ];
+                let text = null;
+                for (const u of urls) {
+                    try {
+                        const res = await fetch(u);
+                        if (res.ok) { text = await res.text(); if (text && text.length > 50) break; }
+                    } catch(e) {}
+                }
+                if (!text) throw new Error("無法獲取資料");
 
-                parseAndSyncCsv(text, "AI自動獲取", "近期發行CB", false);
+                parseAndSyncCsv(text, "AI自動獲取", "近期發行CB", false, !silent);
+                if (!silent) showToast("✅ 近期發行CB名單已更新！");
             } catch (e) {
-                showToast("獲取失敗: " + e.message, true);
+                if (!silent) showToast("獲取失敗: " + e.message, true);
             }
         }
 
-        async function fetchCbBelowConvFromGithub() {
+        async function fetchCbBelowConvFromGithub(silent = false) {
             try {
-                showToast("正在透過 AI 從資料庫獲取全市場「股價低於CB轉換價」最新名單...");
-                const res = await fetch("https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/%E7%9B%AE%E5%89%8D%E8%82%A1%E5%83%B9%E4%BD%8E%E6%96%BCCB%E8%BD%89%E6%8F%9B%E5%83%B9.csv?v=" + new Date().getTime());
-                if (!res.ok) throw new Error("無法獲取資料");
-                const text = await res.text();
+                if (!silent) showToast("正在透過 AI 從資料庫獲取全市場「股價低於CB轉換價」最新名單...");
+                const urls = [
+                    `./目前股價低於CB轉換價.csv?v=${new Date().getTime()}`,
+                    `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/%E7%9B%AE%E5%89%8D%E8%82%A1%E5%83%B9%E4%BD%8E%E6%96%BCCB%E8%BD%89%E6%8F%9B%E5%83%B9.csv?v=${new Date().getTime()}`,
+                    `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/%E7%9B%AE%E5%89%8D%E8%82%A1%E5%83%B9%E4%BD%8E%E6%96%BCCB%E8%BD%89%E6%8F%9B%E5%83%B9.csv?v=${new Date().getTime()}`
+                ];
+                let text = null;
+                for (const u of urls) {
+                    try {
+                        const res = await fetch(u);
+                        if (res.ok) { text = await res.text(); if (text && text.length > 50) break; }
+                    } catch(e) {}
+                }
+                if (!text) throw new Error("無法獲取資料");
 
-                parseAndSyncCsv(text, "AI自動獲取", "目前股價低於CB轉換價", false);
+                parseAndSyncCsv(text, "AI自動獲取", "目前股價低於CB轉換價", false, !silent);
+                if (!silent) showToast("✅ 已成功載入「目前股價低於CB轉換價」名單！");
             } catch (e) {
-                showToast("獲取失敗: " + e.message, true);
+                if (!silent) showToast("獲取失敗: " + e.message, true);
             }
         }
 
@@ -3145,16 +3170,26 @@
             await fetchCbBelowConvFromGithub();
         }
 
-        async function fetchEarningsCallFromGithub() {
+        async function fetchEarningsCallFromGithub(silent = false) {
             try {
-                showToast("正在透過 AI 從資料庫獲取兩週內法說會名單...");
-                const res = await fetch("https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/%E8%BF%91%E6%9C%9F%E6%B3%95%E8%AA%AA%E6%9C%83.csv?v=" + new Date().getTime());
-                if (!res.ok) throw new Error("無法獲取資料（狀態碼 " + res.status + "）");
-                const text = await res.text();
-                parseAndSyncCsv(text, "AI自動獲取", "法說會", false);
-                showToast("✅ 法說會名單已更新！");
+                if (!silent) showToast("正在透過 AI 從資料庫獲取兩週內法說會名單...");
+                const urls = [
+                    `./近期法說會.csv?v=${new Date().getTime()}`,
+                    `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/%E8%BF%91%E6%9C%9F%E6%B3%95%E8%AA%AA%E6%9C%83.csv?v=${new Date().getTime()}`,
+                    `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/%E8%BF%91%E6%9C%9F%E6%B3%95%E8%AA%AA%E6%9C%83.csv?v=${new Date().getTime()}`
+                ];
+                let text = null;
+                for (const u of urls) {
+                    try {
+                        const res = await fetch(u);
+                        if (res.ok) { text = await res.text(); if (text && text.length > 50) break; }
+                    } catch(e) {}
+                }
+                if (!text) throw new Error("無法獲取資料");
+                parseAndSyncCsv(text, "AI自動獲取", "法說會", false, !silent);
+                if (!silent) showToast("✅ 法說會名單已更新！");
             } catch (e) {
-                showToast("獲取失敗: " + e.message, true);
+                if (!silent) showToast("獲取失敗: " + e.message, true);
             }
         }
 
@@ -3183,7 +3218,7 @@
             e.target.value = ''; // reset
         }
 
-        function parseAndSyncCsv(text, filename, sheetName, isFallback) {
+        function parseAndSyncCsv(text, filename, sheetName, isFallback, switchTab = true) {
             try {
                 const lines = text.split(/\r?\n/);
                 if (lines.length < 2) throw new Error("CSV structure too simple");
@@ -3290,7 +3325,10 @@
 
                 // Update local tablesData
                 window.tablesData[sheetName] = csvRows;
-                currentActiveTab = sheetName;
+                localStorage.setItem('cached_tables_data', JSON.stringify(window.tablesData));
+                if (switchTab) {
+                    currentActiveTab = sheetName;
+                }
 
                 const scriptUrl = scriptUrlInput.value.trim();
                 if (scriptUrl) {
@@ -3858,14 +3896,18 @@ JSON 欄位：
         function isCbBelowRowExpired(row, expiryIdx, today) {
             if (expiryIdx >= 0 && row[expiryIdx]) {
                 const expDate = parseDateHelper(row[expiryIdx]);
-                if (expDate && expDate < today) return true;
+                if (expDate) {
+                    return expDate < today;
+                }
             }
-            // 容錯檢查：若指定欄位沒讀出日期，掃描前 8 欄位找日期字串
-            for (let j = 0; j < Math.min(row.length, 8); j++) {
-                const val = String(row[j] || '').trim();
-                if (val.match(/^\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2}/) || val.match(/^\d{2,3}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2}/) || val.includes('T')) {
-                    const d = parseDateHelper(val);
-                    if (d && d < today) return true;
+            // 容錯檢查：只有在找不到指定欄位時，才掃描前 8 欄位找日期字串
+            if (expiryIdx === -1) {
+                for (let j = 0; j < Math.min(row.length, 8); j++) {
+                    const val = String(row[j] || '').trim();
+                    if (val.match(/^\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2}/) || val.match(/^\d{2,3}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2}/)) {
+                        const d = parseDateHelper(val);
+                        if (d && d < today) return true;
+                    }
                 }
             }
             return false;
@@ -3898,7 +3940,11 @@ JSON 欄位：
             }
             if (balanceColIdx >= 0 && row[balanceColIdx] !== undefined) {
                 const valStr = String(row[balanceColIdx]).replace('%', '').trim();
-                const balNum = parseFloat(valStr);
+                let balNum = parseFloat(valStr);
+                // 關鍵修復：若來自 Google Sheets，百分比可能是 0~1 的小數 (例如 0.9559 代表 95.59%)
+                if (!isNaN(balNum) && balNum <= 1.0 && balNum > 0) {
+                    balNum = balNum * 100;
+                }
                 if (!isNaN(balNum) && balNum < 70.0) {
                     return true; // 餘額低於 70%，排除不採納
                 }
@@ -4025,7 +4071,10 @@ JSON 欄位：
 
                     // 若餘額低於 70% 則不採納
                     if (balanceCol >= 0 && row[balanceCol] !== undefined) {
-                        const balNum = parseFloat(String(row[balanceCol]).replace('%', '').trim());
+                        let balNum = parseFloat(String(row[balanceCol]).replace('%', '').trim());
+                        if (!isNaN(balNum) && balNum <= 1.0 && balNum > 0) {
+                            balNum = balNum * 100;
+                        }
                         if (!isNaN(balNum) && balNum < 70.0) continue;
                     }
 
@@ -4476,7 +4525,14 @@ JSON 欄位：
                                 } else if (colH.includes('折價') || colH.includes('幅度') || colH.includes('價內外') || colH.includes('溢價')) {
                                     td.innerHTML = `<span class="cb-badge" style="background:rgba(239,68,68,0.18); color:#f87171; font-weight:700; border:1px solid rgba(239,68,68,0.3);">${displayVal || '—'}</span>`;
                                 } else if (colH.includes('餘額')) {
-                                    td.innerHTML = `<span style="color:#a7f3d0; font-weight:600;">${displayVal || '—'}</span>`;
+                                    let disp = displayVal;
+                                    const num = parseFloat(String(disp).replace('%', ''));
+                                    if (!isNaN(num) && num <= 1.0 && num > 0) {
+                                        disp = `${(num * 100).toFixed(1)}%`;
+                                    } else if (!isNaN(num) && !String(disp).includes('%')) {
+                                        disp = `${num}%`;
+                                    }
+                                    td.innerHTML = `<span style="color:#a7f3d0; font-weight:600;">${disp || '—'}</span>`;
                                 } else {
                                     td.innerText = displayVal !== undefined && displayVal !== null ? displayVal : '';
                                 }
