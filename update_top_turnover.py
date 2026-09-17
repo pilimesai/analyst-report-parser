@@ -194,17 +194,19 @@ def main():
     with open(out_path, 'w', encoding='utf-8') as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
     print(f'Saved to {out_path}: TWSE={len(twse)}, TPEx={len(tpex)}')
-    try:
-        subprocess.check_call(['git', 'add', 'top_turnover.json'], cwd=REPO_DIR)
-        status = subprocess.check_output(['git', 'status', '--porcelain'], cwd=REPO_DIR).decode('utf-8')
-        if 'top_turnover.json' in status:
-            subprocess.check_call(['git', 'commit', '-m', f'auto: update top turnover stocks ({trade_date})'], cwd=REPO_DIR)
-            subprocess.check_call(['git', 'push'], cwd=REPO_DIR)
-            print('Pushed to GitHub')
-        else:
-            print('No changes to push')
-    except Exception as e:
-        print(f'Git push error: {e}')
+    # 若在 GitHub Actions (CI) 環境中，由 workflow step 統一執行 commit & push，避免權限或身分設定衝突
+    if not os.environ.get('GITHUB_ACTIONS'):
+        try:
+            subprocess.check_call(['git', 'add', 'top_turnover.json'], cwd=REPO_DIR)
+            status = subprocess.check_output(['git', 'status', '--porcelain'], cwd=REPO_DIR).decode('utf-8')
+            if 'top_turnover.json' in status:
+                subprocess.check_call(['git', 'commit', '-m', f'auto: update top turnover stocks ({trade_date})'], cwd=REPO_DIR)
+                subprocess.check_call(['git', 'push'], cwd=REPO_DIR)
+                print('Pushed to GitHub')
+            else:
+                print('No changes to push')
+        except Exception as e:
+            print(f'Git push error: {e}')
 
 if __name__ == '__main__':
     main()
