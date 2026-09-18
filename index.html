@@ -6619,11 +6619,15 @@ ${text.slice(0, 30000)}`;
                     ? '<span style="background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid rgba(245,158,11,0.35);padding:1px 6px;border-radius:4px;font-size:0.68rem;font-weight:700;">🔥 題材</span>'
                     : '<span style="background:rgba(99,102,241,0.15);color:#a5b4fc;border:1px solid rgba(99,102,241,0.35);padding:1px 6px;border-radius:4px;font-size:0.68rem;font-weight:600;">🏛️ 官方</span>';
 
-                // 取前 8 個站上月線的股票作為預覽
-                const aboveStocks = (sector.stocks || []).filter(s => s.above_ma20 === true).slice(0, 8);
-                const stockChips = aboveStocks.map(s =>
-                    `<span style="font-size:0.7rem;padding:1px 5px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:3px;color:#6ee7b7;white-space:nowrap;">${s.code} ${s.name}</span>`
-                ).join(' ');
+                // 取站上月線的個股
+                const allAbove = (sector.stocks || []).filter(s => s.above_ma20 === true);
+                const allBelow = (sector.stocks || []).filter(s => s.above_ma20 === false);
+                const aboveStocks = allAbove.slice(0, 10);
+                const stockChips = aboveStocks.map(s => {
+                    const diffPct = (s.close && s.ma20) ? (((s.close - s.ma20) / s.ma20) * 100).toFixed(1) : null;
+                    const diffText = diffPct ? ` (+${diffPct}%)` : '';
+                    return `<span style="font-size:0.7rem;padding:1px 6px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);border-radius:4px;color:#6ee7b7;white-space:nowrap;" title="收盤: ${s.close} / 月線: ${s.ma20}${diffText}"><b>${s.code}</b> ${s.name}</span>`;
+                }).join(' ');
 
                 const card = document.createElement('div');
                 card.style.cssText = `background:rgba(15,23,42,0.5);border:1px solid ${borderColor};border-radius:0.75rem;padding:0.85rem 1rem;transition:border-color 0.2s;cursor:default;`;
@@ -6640,11 +6644,15 @@ ${text.slice(0, 30000)}`;
                                     <div style="width:${ratio != null ? ratio : 0}%;height:100%;background:${barColor};border-radius:3px;transition:width 0.4s ease;"></div>
                                 </div>
                                 <span style="font-size:0.82rem;font-weight:700;color:${barColor};min-width:38px;text-align:right;">${ratio != null ? ratio + '%' : 'N/A'}</span>
-                                <span style="font-size:0.75rem;color:var(--text-secondary);white-space:nowrap;">(${sector.above_count}/${sector.valid_count}支)</span>
+                                <span style="font-size:0.75rem;color:var(--text-secondary);white-space:nowrap;">(${sector.above_count}/${sector.valid_count}支站上)</span>
                             </div>
                         </div>
                     </div>
-                    ${aboveStocks.length > 0 ? `<div style="margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:0.25rem;">${stockChips}${(sector.stocks||[]).filter(s=>s.above_ma20).length > 8 ? '<span style="font-size:0.7rem;color:#64748b;">...等</span>' : ''}</div>` : ''}
+                    <div style="margin-top:0.55rem;display:flex;flex-wrap:wrap;align-items:center;gap:0.35rem;font-size:0.72rem;">
+                        <span style="color:#6ee7b7;font-weight:600;display:inline-flex;align-items:center;gap:2px;">📈 站上月線 (${allAbove.length}檔)：</span>
+                        ${aboveStocks.length > 0 ? stockChips : '<span style="color:#64748b;">(無個股站上月線)</span>'}
+                        ${allAbove.length > 10 ? `<span style="font-size:0.7rem;color:#64748b;">...等共 ${allAbove.length} 檔</span>` : ''}
+                    </div>
                 `;
                 frag.appendChild(card);
             });
