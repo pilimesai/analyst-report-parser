@@ -2387,14 +2387,24 @@
                     </div>
                 </div>
 
-                <!-- 搜尋與排序 -->
+                <!-- 搜尋與篩選 -->
                 <div style="display:flex; flex-wrap:wrap; gap:0.75rem; align-items:center; justify-content:space-between; margin-top:0.75rem;">
-                    <input type="text" id="sector-search-input" placeholder="🔍 搜尋族群名稱..." autocomplete="off"
+                    <input type="text" id="sector-search-input" placeholder="🔍 搜尋族群名稱（如 CCL、封測、散熱）..." autocomplete="off"
                         style="width:100%; max-width:280px; padding:0.4rem 0.75rem; font-size:0.85rem; border-radius:0.5rem; background:rgba(255,255,255,0.04); border:1px solid var(--card-border); color:#fff;">
-                    <div style="display:flex; gap:0.5rem;" id="sector-signal-filter">
-                        <button class="filter-chip active" data-signal="all">全部</button>
-                        <button class="filter-chip" data-signal="bullish" style="color:#10b981; border-color:rgba(16,185,129,0.4);">🟢 多方</button>
-                        <button class="filter-chip" data-signal="bearish" style="color:#ef4444; border-color:rgba(239,68,68,0.4);">🔴 空方</button>
+                    <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
+                        <!-- 類別篩選 -->
+                        <div style="display:flex; gap:0.35rem;" id="sector-category-filter">
+                            <button class="filter-chip active" data-category="all">全部類型</button>
+                            <button class="filter-chip" data-category="theme" style="color:#fbbf24; border-color:rgba(245,158,11,0.4);">🔥 題材次族群</button>
+                            <button class="filter-chip" data-category="official" style="color:#a5b4fc; border-color:rgba(99,102,241,0.4);">🏛️ 官方產業</button>
+                        </div>
+                        <div style="width:1px; height:20px; background:rgba(255,255,255,0.1); margin:0 0.15rem;"></div>
+                        <!-- 多空篩選 -->
+                        <div style="display:flex; gap:0.35rem;" id="sector-signal-filter">
+                            <button class="filter-chip active" data-signal="all">全部信號</button>
+                            <button class="filter-chip" data-signal="bullish" style="color:#10b981; border-color:rgba(16,185,129,0.4);">🟢 多方</button>
+                            <button class="filter-chip" data-signal="bearish" style="color:#ef4444; border-color:rgba(239,68,68,0.4);">🔴 空方</button>
+                        </div>
                     </div>
                 </div>
 
@@ -6513,6 +6523,7 @@ ${text.slice(0, 30000)}`;
         // 族群強弱指標 (Sector Strength)
         // ─────────────────────────────────────────────────────────────────
         let sectorStrengthData = null;
+        let sectorCategoryFilter = 'all';
         let sectorSignalFilter = 'all';
 
         async function fetchSectorStrengthFromGithub(silent = false) {
@@ -6571,11 +6582,18 @@ ${text.slice(0, 30000)}`;
             // 套用篩選
             const searchQ = (document.getElementById('sector-search-input') || {}).value || '';
             let sectors = d.sectors || [];
+            if (sectorCategoryFilter === 'theme') sectors = sectors.filter(s => s.category === 'theme');
+            else if (sectorCategoryFilter === 'official') sectors = sectors.filter(s => s.category === 'official');
+
             if (sectorSignalFilter === 'bullish') sectors = sectors.filter(s => s.signal === '多方');
             else if (sectorSignalFilter === 'bearish') sectors = sectors.filter(s => s.signal === '空方');
+
             if (searchQ.trim()) {
                 const q = searchQ.trim().toLowerCase();
-                sectors = sectors.filter(s => s.industry.toLowerCase().includes(q));
+                sectors = sectors.filter(s => {
+                    if (s.industry.toLowerCase().includes(q)) return true;
+                    return (s.stocks || []).some(st => st.code.includes(q) || (st.name && st.name.toLowerCase().includes(q)));
+                });
             }
 
             const grid = document.getElementById('sector-grid');
@@ -6597,6 +6615,10 @@ ${text.slice(0, 30000)}`;
                     : (isBear ? '<span style="background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.4);padding:2px 8px;border-radius:12px;font-size:0.72rem;font-weight:700;">🔴 空方</span>'
                     : '<span style="background:rgba(100,116,139,0.15);color:#94a3b8;border:1px solid rgba(100,116,139,0.3);padding:2px 8px;border-radius:12px;font-size:0.72rem;">⚪ 不足</span>');
 
+                const catBadge = sector.category === 'theme'
+                    ? '<span style="background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid rgba(245,158,11,0.35);padding:1px 6px;border-radius:4px;font-size:0.68rem;font-weight:700;">🔥 題材</span>'
+                    : '<span style="background:rgba(99,102,241,0.15);color:#a5b4fc;border:1px solid rgba(99,102,241,0.35);padding:1px 6px;border-radius:4px;font-size:0.68rem;font-weight:600;">🏛️ 官方</span>';
+
                 // 取前 8 個站上月線的股票作為預覽
                 const aboveStocks = (sector.stocks || []).filter(s => s.above_ma20 === true).slice(0, 8);
                 const stockChips = aboveStocks.map(s =>
@@ -6606,8 +6628,11 @@ ${text.slice(0, 30000)}`;
                 const card = document.createElement('div');
                 card.style.cssText = `background:rgba(15,23,42,0.5);border:1px solid ${borderColor};border-radius:0.75rem;padding:0.85rem 1rem;transition:border-color 0.2s;cursor:default;`;
                 card.innerHTML = `
-                    <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
-                        <div style="font-size:1rem;font-weight:700;color:#f8fafc;min-width:120px;">${sector.industry}</div>
+                    <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;">
+                        <div style="font-size:1rem;font-weight:700;color:#f8fafc;min-width:130px;display:flex;align-items:center;gap:0.4rem;">
+                            ${catBadge}
+                            <span>${sector.industry}</span>
+                        </div>
                         ${signalBadge}
                         <div style="flex:1;min-width:160px;">
                             <div style="display:flex;align-items:center;gap:0.5rem;">
@@ -6627,7 +6652,20 @@ ${text.slice(0, 30000)}`;
             grid.appendChild(frag);
         }
 
-        // 族群強弱 - 篩選按鈕
+        // 族群強弱 - 類別篩選按鈕
+        const sectorCatFilterEl = document.getElementById('sector-category-filter');
+        if (sectorCatFilterEl) {
+            sectorCatFilterEl.addEventListener('click', e => {
+                const btn = e.target.closest('.filter-chip');
+                if (!btn) return;
+                sectorCatFilterEl.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                sectorCategoryFilter = btn.getAttribute('data-category') || 'all';
+                renderSectorStrengthView();
+            });
+        }
+
+        // 族群強弱 - 信號篩選按鈕
         const sectorFilterEl = document.getElementById('sector-signal-filter');
         if (sectorFilterEl) {
             sectorFilterEl.addEventListener('click', e => {

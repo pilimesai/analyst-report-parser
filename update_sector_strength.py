@@ -27,8 +27,7 @@ REPO_DIR = os.path.dirname(os.path.abspath(__file__))
 BULLISH_THRESHOLD = 0.5  # 多方門檻：>= 50% 個股站上月線
 MIN_SECTOR_STOCKS = 3    # 最小有效樣本：< 3 支則標記為 insufficient
 
-# TWSE 官方產業別代碼 → 中文名稱對照表
-# 來源：TWSE 產業別編碼（t187ap03_L 的 產業別 欄位為數字代碼）
+# TWSE 官方產業別代碼 → 中文名稱對照表（經台灣證券交易所官方編碼核對）
 TWSE_INDUSTRY_CODE_MAP = {
     "01": "水泥工業",
     "02": "食品工業",
@@ -36,43 +35,59 @@ TWSE_INDUSTRY_CODE_MAP = {
     "04": "紡織纖維",
     "05": "電機機械",
     "06": "電器電纜",
-    "07": "化學工業",
-    "08": "生技醫療",
-    "09": "玻璃陶瓷",
-    "10": "造紙工業",
-    "11": "鋼鐵工業",
-    "12": "橡膠工業",
-    "13": "汽車工業",
-    "14": "半導體業",
-    "15": "電腦及週邊設備業",
-    "16": "光電業",
-    "17": "通信網路業",
-    "18": "電子零組件業",
-    "19": "電子通路業",
-    "20": "資訊服務業",
-    "21": "其他電子業",
-    "22": "建材營造業",
-    "23": "航運業",
-    "24": "觀光餐旅業",
-    "25": "金融保險業",
-    "26": "貿易百貨業",
-    "27": "油電燃氣業",
-    "28": "綠能環保",
-    "29": "油電燃氣業",
-    "30": "其他業",
-    "31": "文化創意業",
-    "32": "農業科技業",
-    "33": "電子商務業",
-    "34": "觀光及百貨業",
-    "35": "運動休閒業",
-    "36": "居家生活業",
-    "37": "數位雲端業",
-    "38": "航運業",
-    "39": "其他業",
-    # TPEx 常見代碼
-    "91": "其他業（上櫃）",
-    "92": "電子業（上櫃）",
-    "93": "化工業（上櫃）",
+    "08": "玻璃陶瓷",
+    "09": "造紙工業",
+    "10": "鋼鐵工業",
+    "11": "橡膠工業",
+    "12": "汽車工業",
+    "14": "建材營造業",
+    "15": "航運業",
+    "16": "觀光餐旅業",
+    "17": "金融保險業",
+    "18": "貿易百貨業",
+    "20": "其他業",
+    "21": "化學工業",
+    "22": "生技醫療業",
+    "23": "油電燃氣業",
+    "24": "半導體業",
+    "25": "電腦及週邊設備業",
+    "26": "光電業",
+    "27": "通信網路業",
+    "28": "電子零組件業",
+    "29": "電子通路業",
+    "30": "資訊服務業",
+    "31": "其他電子業",
+    "32": "文化創意業",
+    "33": "農業科技業",
+    "35": "綠能環保",
+    "36": "數位雲端業",
+    "37": "運動休閒業",
+    "38": "居家生活業",
+    "91": "存託憑證",
+}
+
+# 市場熱門題材 / 細分子族群（如 CCL、封測、散熱、PCB、被動元件、CPO矽光子等）
+THEME_SECTORS = {
+    "CCL（銅箔基板）": ["2383", "6274", "6213", "6672", "8358"],
+    "IC 封測": ["3711", "2449", "6239", "3264", "6257", "8150", "3265", "8110", "2441", "3374", "6525", "8131", "6147", "2369"],
+    "散熱模組": ["3017", "3324", "3653", "3483", "6230", "2421", "3338", "6591", "8996"],
+    "PCB（印刷電路板）": ["2368", "3037", "3189", "8046", "2313", "3044", "5469", "6191", "6153", "2367", "4958", "2355", "5475", "8155", "3715", "6141"],
+    "被動元件": ["2327", "2492", "3026", "2478", "6173", "8043", "6224", "2428", "2472", "3090", "2457", "3236", "3357", "6155", "8042"],
+    "CPO / 矽光子": ["6442", "3450", "3363", "4979", "3163", "4977", "3081", "6451", "3234", "4908", "6530"],
+    "IC 設計": ["2454", "2379", "3034", "3035", "3661", "3443", "3529", "6415", "6531", "6533", "4966", "5274", "3227", "3014", "2458", "4919", "6462", "8016", "5269", "8299", "5351"],
+    "CoWoS / 設備檢測": ["3131", "3583", "3680", "6187", "6640", "5443", "2467", "6830", "3587", "6937", "3413", "6788", "6223", "6515", "6510"],
+    "伺服器 / AI ODM": ["2382", "2317", "3231", "6669", "2356", "2376", "2357", "3706", "2377", "4938", "2324"],
+    "軸承 / 折疊機": ["6805", "3548", "3376"],
+    "連接器 / 線材": ["3023", "3533", "6715", "6197", "3665", "2392", "3605", "3003", "3526", "3217", "5457"],
+    "記憶體 / 模組": ["2408", "2344", "2337", "3260", "4967", "2451", "8271", "3006", "6485"],
+    "重電 / 綠能儲能": ["1519", "1513", "1503", "1514", "1609", "1605", "6869", "6873", "3708", "9958", "6806"],
+    "工具機 / 機器人概念": ["2049", "4583", "4576", "2359", "4526", "1504", "4563", "8374", "2464", "6215", "6125"],
+    "光學鏡頭": ["3008", "3406", "3019", "3362", "3504", "3441", "6517", "4976"],
+    "車用零組件": ["1319", "2201", "2207", "2231", "1522", "1524", "1536", "6279", "3552", "2497"],
+    "航運（貨櫃/散裝/航空）": ["2603", "2609", "2615", "2606", "2605", "2637", "2618", "2610", "2612"],
+    "晶圓代工 / 第三代半導體": ["2330", "2303", "5347", "6770", "3707", "3016", "6488", "5483"],
+    "生技醫療核心": ["6472", "6446", "1795", "6491", "6782", "3218", "6919", "4174", "4743", "4128"],
+    "AI 機殼 / 電源供應器": ["2308", "2301", "6282", "3078", "6412", "8210", "3013", "6117", "3693"],
 }
 
 def normalize_industry(code_or_name: str) -> str:
@@ -258,21 +273,13 @@ def compute_ma20_signals(industry_map):
     return signals, detected_trade_date
 
 
-def aggregate_sectors(industry_map, signals):
-    """依族群聚合，計算多空比例"""
-    sector_stocks = {}
-    for code, info in industry_map.items():
-        industry = info["industry"]
-        if industry not in sector_stocks:
-            sector_stocks[industry] = []
-        sector_stocks[industry].append({
-            "code": code,
-            "name": info["name"],
-            "market": info["market"]
-        })
-
-    sectors = []
-    for industry, stocks in sector_stocks.items():
+def aggregate_sectors(industry_map, signals, stock_names):
+    """
+    聚合族群多空比例：
+    1. 熱門題材次族群（category="theme"），如 CCL、封測、散熱、PCB、被動元件等
+    2. 官方產業大類（category="official"），如 半導體業、電子零組件業 等
+    """
+    def evaluate_group(name, stocks, category="official"):
         above_list = []
         below_list = []
         no_data_list = []
@@ -282,8 +289,8 @@ def aggregate_sectors(industry_map, signals):
             sig = signals.get(code)
             entry = {
                 "code": code,
-                "name": s["name"],
-                "market": s["market"],
+                "name": s.get("name", stock_names.get(code, code)),
+                "market": s.get("market", "twse"),
             }
             if sig is None:
                 entry["above_ma20"] = None
@@ -310,31 +317,59 @@ def aggregate_sectors(industry_map, signals):
             ratio = round(above_count / valid_count, 4)
             signal = "多方" if ratio >= BULLISH_THRESHOLD else "空方"
 
-        # 族群內排序：站上月線 -> 未站上 -> 無資料；各組依收盤降序
         all_stocks = (
             sorted(above_list, key=lambda x: x["close"] or 0, reverse=True) +
             sorted(below_list, key=lambda x: x["close"] or 0, reverse=True) +
             no_data_list
         )
 
-        sectors.append({
-            "industry": industry,
+        return {
+            "industry": name,
+            "category": category,
             "signal": signal,
             "ratio": ratio,
             "above_count": above_count,
             "valid_count": valid_count,
             "total": total_count,
             "stocks": all_stocks
+        }
+
+    sectors = []
+
+    # 1. 計算題材次族群 (Theme Sub-sectors)
+    for theme_name, codes in THEME_SECTORS.items():
+        theme_stocks = []
+        for c in codes:
+            info = industry_map.get(c, {})
+            theme_stocks.append({
+                "code": c,
+                "name": info.get("name", stock_names.get(c, c)),
+                "market": info.get("market", "twse")
+            })
+        item = evaluate_group(theme_name, theme_stocks, category="theme")
+        sectors.append(item)
+
+    # 2. 計算官方產業大類 (Official Sectors)
+    sector_stocks = {}
+    for code, info in industry_map.items():
+        industry = info["industry"]
+        if industry not in sector_stocks:
+            sector_stocks[industry] = []
+        sector_stocks[industry].append({
+            "code": code,
+            "name": info["name"],
+            "market": info["market"]
         })
 
-    # 排序：多方（ratio 降序）-> 空方（ratio 降序）-> insufficient
+    for industry, stocks in sector_stocks.items():
+        item = evaluate_group(industry, stocks, category="official")
+        sectors.append(item)
+
+    # 排序：優先題材族群（多方在前，按 ratio 降序），接續官方大類（多方在前，按 ratio 降序）
     def sort_key(s):
-        if s["signal"] == "多方":
-            return (0, -(s["ratio"] or 0))
-        elif s["signal"] == "空方":
-            return (1, -(s["ratio"] or 0))
-        else:
-            return (2, 0)
+        cat_order = 0 if s.get("category") == "theme" else 1
+        sig_order = 0 if s["signal"] == "多方" else (1 if s["signal"] == "空方" else 2)
+        return (cat_order, sig_order, -(s["ratio"] or 0))
 
     sectors.sort(key=sort_key)
     return sectors
@@ -372,8 +407,8 @@ def main():
         print("ERROR: No MA20 signals computed, aborting.")
         sys.exit(1)
 
-    # Step 3: 按族群聚合
-    sectors = aggregate_sectors(industry_map, signals)
+    # Step 3: 按族群聚合 (題材次族群 + 官方產業大類)
+    sectors = aggregate_sectors(industry_map, signals, stock_names)
 
     # Step 4: 統計
     bullish = [s for s in sectors if s["signal"] == "多方"]
