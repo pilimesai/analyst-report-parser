@@ -1,5 +1,5 @@
 {
-  "updateTime": "2026-09-19T00:41:36.762982+08:00",
+  "updateTime": "2026-09-19T00:46:16.236034+08:00",
   "tradeDate": "2026-09-18",
   "threshold": 0.5,
   "minSectorStocks": 3,
@@ -11,14 +11,121 @@
   "totalStocksAboveMA20": 953,
   "sectors": [
     {
+      "industry": "晶圓代工 / 第三代半導體",
+      "category": "theme",
+      "signal": "多方",
+      "ratio": 0.8889,
+      "above_count": 8,
+      "valid_count": 9,
+      "total": 9,
+      "stocks": [
+        {
+          "code": "2330",
+          "name": "台積電",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 2460.0,
+          "ma20": 2410.72
+        },
+        {
+          "code": "3105",
+          "name": "穩懋",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 500.0,
+          "ma20": 446.25
+        },
+        {
+          "code": "5483",
+          "name": "中美晶",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 187.5,
+          "ma20": 180.75
+        },
+        {
+          "code": "5347",
+          "name": "世界",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 172.0,
+          "ma20": 155.05
+        },
+        {
+          "code": "2303",
+          "name": "聯電",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 156.0,
+          "ma20": 134.7
+        },
+        {
+          "code": "3016",
+          "name": "嘉晶",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 116.5,
+          "ma20": 104.78
+        },
+        {
+          "code": "6770",
+          "name": "力積電",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 74.0,
+          "ma20": 70.7
+        },
+        {
+          "code": "3707",
+          "name": "漢磊",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 62.9,
+          "ma20": 61.73
+        },
+        {
+          "code": "6488",
+          "name": "環球晶",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 944.0,
+          "ma20": 947.85
+        }
+      ]
+    },
+    {
       "industry": "IC 封測",
       "category": "theme",
       "signal": "多方",
-      "ratio": 0.875,
-      "above_count": 14,
-      "valid_count": 16,
-      "total": 16,
+      "ratio": 0.8095,
+      "above_count": 17,
+      "valid_count": 21,
+      "total": 21,
       "stocks": [
+        {
+          "code": "6223",
+          "name": "旺矽",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 5800.0,
+          "ma20": 5421.5
+        },
+        {
+          "code": "6510",
+          "name": "精測",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 3520.0,
+          "ma20": 3195.25
+        },
+        {
+          "code": "6683",
+          "name": "雍智科技",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 1670.0,
+          "ma20": 1346.75
+        },
         {
           "code": "3711",
           "name": "日月光投控",
@@ -140,6 +247,22 @@
           "ma20": 6642.0
         },
         {
+          "code": "3587",
+          "name": "閎康",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 241.5,
+          "ma20": 246.78
+        },
+        {
+          "code": "3289",
+          "name": "宜特",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 136.5,
+          "ma20": 137.22
+        },
+        {
           "code": "8131",
           "name": "福懋科",
           "market": "twse",
@@ -150,77 +273,229 @@
       ]
     },
     {
-      "industry": "晶圓代工 / 第三代半導體",
+      "industry": "CoWoS / 設備檢測",
       "category": "theme",
       "signal": "多方",
-      "ratio": 0.875,
-      "above_count": 7,
-      "valid_count": 8,
-      "total": 8,
+      "ratio": 0.7407,
+      "above_count": 20,
+      "valid_count": 27,
+      "total": 27,
       "stocks": [
         {
-          "code": "2330",
-          "name": "台積電",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 2460.0,
-          "ma20": 2410.72
-        },
-        {
-          "code": "5483",
-          "name": "中美晶",
+          "code": "6223",
+          "name": "旺矽",
           "market": "tpex",
           "above_ma20": true,
-          "close": 187.5,
-          "ma20": 180.75
+          "close": 5800.0,
+          "ma20": 5421.5
         },
         {
-          "code": "5347",
-          "name": "世界",
+          "code": "6510",
+          "name": "精測",
           "market": "tpex",
           "above_ma20": true,
-          "close": 172.0,
-          "ma20": 155.05
+          "close": 3520.0,
+          "ma20": 3195.25
         },
         {
-          "code": "2303",
-          "name": "聯電",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 156.0,
-          "ma20": 134.7
-        },
-        {
-          "code": "3016",
-          "name": "嘉晶",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 116.5,
-          "ma20": 104.78
-        },
-        {
-          "code": "6770",
-          "name": "力積電",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 74.0,
-          "ma20": 70.7
-        },
-        {
-          "code": "3707",
-          "name": "漢磊",
+          "code": "3131",
+          "name": "弘塑",
           "market": "tpex",
           "above_ma20": true,
-          "close": 62.9,
-          "ma20": 61.73
+          "close": 2445.0,
+          "ma20": 2421.25
         },
         {
-          "code": "6488",
-          "name": "環球晶",
+          "code": "6683",
+          "name": "雍智科技",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 1670.0,
+          "ma20": 1346.75
+        },
+        {
+          "code": "6640",
+          "name": "均華",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 1180.0,
+          "ma20": 1136.65
+        },
+        {
+          "code": "2404",
+          "name": "漢唐",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 1125.0,
+          "ma20": 1058.0
+        },
+        {
+          "code": "1560",
+          "name": "中砂",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 896.0,
+          "ma20": 730.05
+        },
+        {
+          "code": "5536",
+          "name": "聖暉*",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 888.0,
+          "ma20": 852.85
+        },
+        {
+          "code": "3167",
+          "name": "大量",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 834.0,
+          "ma20": 797.75
+        },
+        {
+          "code": "6830",
+          "name": "汎銓",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 563.0,
+          "ma20": 547.27
+        },
+        {
+          "code": "6196",
+          "name": "帆宣",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 540.0,
+          "ma20": 508.6
+        },
+        {
+          "code": "3680",
+          "name": "家登",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 533.0,
+          "ma20": 510.82
+        },
+        {
+          "code": "3374",
+          "name": "精材",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 444.5,
+          "ma20": 414.38
+        },
+        {
+          "code": "6937",
+          "name": "天虹",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 303.5,
+          "ma20": 284.52
+        },
+        {
+          "code": "3413",
+          "name": "京鼎",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 285.0,
+          "ma20": 282.3
+        },
+        {
+          "code": "6667",
+          "name": "信紘科",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 262.0,
+          "ma20": 233.96
+        },
+        {
+          "code": "8028",
+          "name": "昇陽半導體",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 257.0,
+          "ma20": 240.22
+        },
+        {
+          "code": "6271",
+          "name": "同欣電",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 229.5,
+          "ma20": 219.82
+        },
+        {
+          "code": "6217",
+          "name": "中探針",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 178.5,
+          "ma20": 172.88
+        },
+        {
+          "code": "5443",
+          "name": "均豪",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 109.0,
+          "ma20": 108.65
+        },
+        {
+          "code": "6515",
+          "name": "穎崴",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 6435.0,
+          "ma20": 6642.0
+        },
+        {
+          "code": "6187",
+          "name": "萬潤",
           "market": "tpex",
           "above_ma20": false,
-          "close": 944.0,
-          "ma20": 947.85
+          "close": 1250.0,
+          "ma20": 1298.5
+        },
+        {
+          "code": "3583",
+          "name": "辛耘",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 702.0,
+          "ma20": 717.75
+        },
+        {
+          "code": "2467",
+          "name": "志聖",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 528.0,
+          "ma20": 571.65
+        },
+        {
+          "code": "6788",
+          "name": "華景電",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 341.5,
+          "ma20": 348.32
+        },
+        {
+          "code": "3587",
+          "name": "閎康",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 241.5,
+          "ma20": 246.78
+        },
+        {
+          "code": "3289",
+          "name": "宜特",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 136.5,
+          "ma20": 137.22
         }
       ]
     },
@@ -228,10 +503,10 @@
       "industry": "航運（貨櫃/散裝/航空）",
       "category": "theme",
       "signal": "多方",
-      "ratio": 0.7778,
+      "ratio": 0.7,
       "above_count": 7,
-      "valid_count": 9,
-      "total": 9,
+      "valid_count": 10,
+      "total": 10,
       "stocks": [
         {
           "code": "2603",
@@ -304,6 +579,14 @@
           "above_ma20": false,
           "close": 20.15,
           "ma20": 20.38
+        },
+        {
+          "code": "5608",
+          "name": "四維航",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 16.9,
+          "ma20": 17.02
         }
       ]
     },
@@ -311,10 +594,10 @@
       "industry": "IC 設計",
       "category": "theme",
       "signal": "多方",
-      "ratio": 0.7143,
-      "above_count": 15,
-      "valid_count": 21,
-      "total": 21,
+      "ratio": 0.6923,
+      "above_count": 18,
+      "valid_count": 26,
+      "total": 26,
       "stocks": [
         {
           "code": "5274",
@@ -421,6 +704,14 @@
           "ma20": 177.32
         },
         {
+          "code": "6732",
+          "name": "昇佳電子",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 150.0,
+          "ma20": 149.25
+        },
+        {
           "code": "3014",
           "name": "聯陽",
           "market": "twse",
@@ -437,6 +728,22 @@
           "ma20": 118.4
         },
         {
+          "code": "4968",
+          "name": "立積",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 92.0,
+          "ma20": 90.69
+        },
+        {
+          "code": "3545",
+          "name": "敦泰",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 51.6,
+          "ma20": 50.1
+        },
+        {
           "code": "3661",
           "name": "世芯-KY",
           "market": "twse",
@@ -451,6 +758,14 @@
           "above_ma20": false,
           "close": 281.0,
           "ma20": 287.02
+        },
+        {
+          "code": "6138",
+          "name": "茂達",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 276.0,
+          "ma20": 280.25
         },
         {
           "code": "3227",
@@ -483,391 +798,14 @@
           "above_ma20": false,
           "close": 97.1,
           "ma20": 99.21
-        }
-      ]
-    },
-    {
-      "industry": "CoWoS / 設備檢測",
-      "category": "theme",
-      "signal": "多方",
-      "ratio": 0.6818,
-      "above_count": 15,
-      "valid_count": 22,
-      "total": 22,
-      "stocks": [
-        {
-          "code": "6223",
-          "name": "旺矽",
-          "market": "tpex",
-          "above_ma20": true,
-          "close": 5800.0,
-          "ma20": 5421.5
         },
         {
-          "code": "6510",
-          "name": "精測",
-          "market": "tpex",
-          "above_ma20": true,
-          "close": 3520.0,
-          "ma20": 3195.25
-        },
-        {
-          "code": "3131",
-          "name": "弘塑",
-          "market": "tpex",
-          "above_ma20": true,
-          "close": 2445.0,
-          "ma20": 2421.25
-        },
-        {
-          "code": "6640",
-          "name": "均華",
-          "market": "tpex",
-          "above_ma20": true,
-          "close": 1180.0,
-          "ma20": 1136.65
-        },
-        {
-          "code": "2404",
-          "name": "漢唐",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 1125.0,
-          "ma20": 1058.0
-        },
-        {
-          "code": "5536",
-          "name": "聖暉*",
-          "market": "tpex",
-          "above_ma20": true,
-          "close": 888.0,
-          "ma20": 852.85
-        },
-        {
-          "code": "6830",
-          "name": "汎銓",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 563.0,
-          "ma20": 547.27
-        },
-        {
-          "code": "6196",
-          "name": "帆宣",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 540.0,
-          "ma20": 508.6
-        },
-        {
-          "code": "3680",
-          "name": "家登",
-          "market": "tpex",
-          "above_ma20": true,
-          "close": 533.0,
-          "ma20": 510.82
-        },
-        {
-          "code": "6937",
-          "name": "天虹",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 303.5,
-          "ma20": 284.52
-        },
-        {
-          "code": "3413",
-          "name": "京鼎",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 285.0,
-          "ma20": 282.3
-        },
-        {
-          "code": "6667",
-          "name": "信紘科",
-          "market": "tpex",
-          "above_ma20": true,
-          "close": 262.0,
-          "ma20": 233.96
-        },
-        {
-          "code": "8028",
-          "name": "昇陽半導體",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 257.0,
-          "ma20": 240.22
-        },
-        {
-          "code": "6271",
-          "name": "同欣電",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 229.5,
-          "ma20": 219.82
-        },
-        {
-          "code": "5443",
-          "name": "均豪",
-          "market": "tpex",
-          "above_ma20": true,
-          "close": 109.0,
-          "ma20": 108.65
-        },
-        {
-          "code": "6515",
-          "name": "穎崴",
+          "code": "6243",
+          "name": "迅杰",
           "market": "twse",
           "above_ma20": false,
-          "close": 6435.0,
-          "ma20": 6642.0
-        },
-        {
-          "code": "6187",
-          "name": "萬潤",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 1250.0,
-          "ma20": 1298.5
-        },
-        {
-          "code": "3583",
-          "name": "辛耘",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 702.0,
-          "ma20": 717.75
-        },
-        {
-          "code": "2467",
-          "name": "志聖",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 528.0,
-          "ma20": 571.65
-        },
-        {
-          "code": "6788",
-          "name": "華景電",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 341.5,
-          "ma20": 348.32
-        },
-        {
-          "code": "3587",
-          "name": "閎康",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 241.5,
-          "ma20": 246.78
-        },
-        {
-          "code": "3289",
-          "name": "宜特",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 136.5,
-          "ma20": 137.22
-        }
-      ]
-    },
-    {
-      "industry": "散熱模組",
-      "category": "theme",
-      "signal": "多方",
-      "ratio": 0.6154,
-      "above_count": 8,
-      "valid_count": 13,
-      "total": 13,
-      "stocks": [
-        {
-          "code": "3017",
-          "name": "奇鋐",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 3430.0,
-          "ma20": 3290.25
-        },
-        {
-          "code": "3324",
-          "name": "雙鴻",
-          "market": "tpex",
-          "above_ma20": true,
-          "close": 1480.0,
-          "ma20": 1300.25
-        },
-        {
-          "code": "8996",
-          "name": "高力",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 1430.0,
-          "ma20": 1257.75
-        },
-        {
-          "code": "2421",
-          "name": "建準",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 167.0,
-          "ma20": 163.8
-        },
-        {
-          "code": "6230",
-          "name": "尼得科超眾",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 113.0,
-          "ma20": 109.45
-        },
-        {
-          "code": "3338",
-          "name": "泰碩",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 68.0,
-          "ma20": 65.13
-        },
-        {
-          "code": "6591",
-          "name": "動力-KY",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 43.9,
-          "ma20": 42.48
-        },
-        {
-          "code": "6124",
-          "name": "業強",
-          "market": "tpex",
-          "above_ma20": true,
-          "close": 27.1,
-          "ma20": 26.91
-        },
-        {
-          "code": "3653",
-          "name": "健策",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 5525.0,
-          "ma20": 5621.0
-        },
-        {
-          "code": "6831",
-          "name": "邁科",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 535.0,
-          "ma20": 569.35
-        },
-        {
-          "code": "3483",
-          "name": "力致",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 75.2,
-          "ma20": 75.78
-        },
-        {
-          "code": "6275",
-          "name": "元山",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 45.1,
-          "ma20": 45.53
-        },
-        {
-          "code": "3071",
-          "name": "協禧",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 23.4,
-          "ma20": 24.09
-        }
-      ]
-    },
-    {
-      "industry": "記憶體 / 模組",
-      "category": "theme",
-      "signal": "多方",
-      "ratio": 0.5556,
-      "above_count": 5,
-      "valid_count": 9,
-      "total": 9,
-      "stocks": [
-        {
-          "code": "2408",
-          "name": "南亞科",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 525.0,
-          "ma20": 509.23
-        },
-        {
-          "code": "3006",
-          "name": "晶豪科",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 291.0,
-          "ma20": 283.32
-        },
-        {
-          "code": "4967",
-          "name": "十銓",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 277.0,
-          "ma20": 275.48
-        },
-        {
-          "code": "2344",
-          "name": "華邦電",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 179.5,
-          "ma20": 176.28
-        },
-        {
-          "code": "6485",
-          "name": "點序",
-          "market": "tpex",
-          "above_ma20": true,
-          "close": 65.3,
-          "ma20": 60.96
-        },
-        {
-          "code": "3260",
-          "name": "威剛",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 396.5,
-          "ma20": 408.07
-        },
-        {
-          "code": "2451",
-          "name": "創見",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 283.0,
-          "ma20": 288.8
-        },
-        {
-          "code": "8271",
-          "name": "宇瞻",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 205.5,
-          "ma20": 218.65
-        },
-        {
-          "code": "2337",
-          "name": "旺宏",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 121.0,
-          "ma20": 122.05
+          "close": 38.1,
+          "ma20": 39.07
         }
       ]
     },
@@ -875,10 +813,10 @@
       "industry": "被動元件",
       "category": "theme",
       "signal": "多方",
-      "ratio": 0.5517,
-      "above_count": 16,
-      "valid_count": 29,
-      "total": 29,
+      "ratio": 0.5625,
+      "above_count": 18,
+      "valid_count": 32,
+      "total": 32,
       "stocks": [
         {
           "code": "3026",
@@ -911,6 +849,14 @@
           "above_ma20": true,
           "close": 260.0,
           "ma20": 252.69
+        },
+        {
+          "code": "3042",
+          "name": "晶技",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 184.5,
+          "ma20": 181.03
         },
         {
           "code": "3624",
@@ -983,6 +929,14 @@
           "above_ma20": true,
           "close": 44.95,
           "ma20": 43.85
+        },
+        {
+          "code": "8182",
+          "name": "加高",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 39.5,
+          "ma20": 39.32
         },
         {
           "code": "3207",
@@ -1097,6 +1051,14 @@
           "ma20": 58.49
         },
         {
+          "code": "3221",
+          "name": "台嘉碩",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 47.5,
+          "ma20": 48.39
+        },
+        {
           "code": "3236",
           "name": "千如",
           "market": "tpex",
@@ -1111,6 +1073,236 @@
           "above_ma20": false,
           "close": 22.05,
           "ma20": 22.51
+        }
+      ]
+    },
+    {
+      "industry": "記憶體 / 模組",
+      "category": "theme",
+      "signal": "多方",
+      "ratio": 0.5455,
+      "above_count": 6,
+      "valid_count": 11,
+      "total": 11,
+      "stocks": [
+        {
+          "code": "8299",
+          "name": "群聯",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 2140.0,
+          "ma20": 2064.5
+        },
+        {
+          "code": "2408",
+          "name": "南亞科",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 525.0,
+          "ma20": 509.23
+        },
+        {
+          "code": "3006",
+          "name": "晶豪科",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 291.0,
+          "ma20": 283.32
+        },
+        {
+          "code": "4967",
+          "name": "十銓",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 277.0,
+          "ma20": 275.48
+        },
+        {
+          "code": "2344",
+          "name": "華邦電",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 179.5,
+          "ma20": 176.28
+        },
+        {
+          "code": "6485",
+          "name": "點序",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 65.3,
+          "ma20": 60.96
+        },
+        {
+          "code": "3260",
+          "name": "威剛",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 396.5,
+          "ma20": 408.07
+        },
+        {
+          "code": "2451",
+          "name": "創見",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 283.0,
+          "ma20": 288.8
+        },
+        {
+          "code": "8271",
+          "name": "宇瞻",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 205.5,
+          "ma20": 218.65
+        },
+        {
+          "code": "2337",
+          "name": "旺宏",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 121.0,
+          "ma20": 122.05
+        },
+        {
+          "code": "5351",
+          "name": "鈺創",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 113.5,
+          "ma20": 113.55
+        }
+      ]
+    },
+    {
+      "industry": "散熱模組",
+      "category": "theme",
+      "signal": "多方",
+      "ratio": 0.5333,
+      "above_count": 8,
+      "valid_count": 15,
+      "total": 15,
+      "stocks": [
+        {
+          "code": "3017",
+          "name": "奇鋐",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 3430.0,
+          "ma20": 3290.25
+        },
+        {
+          "code": "3324",
+          "name": "雙鴻",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 1480.0,
+          "ma20": 1300.25
+        },
+        {
+          "code": "8996",
+          "name": "高力",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 1430.0,
+          "ma20": 1257.75
+        },
+        {
+          "code": "2421",
+          "name": "建準",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 167.0,
+          "ma20": 163.8
+        },
+        {
+          "code": "6230",
+          "name": "尼得科超眾",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 113.0,
+          "ma20": 109.45
+        },
+        {
+          "code": "3338",
+          "name": "泰碩",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 68.0,
+          "ma20": 65.13
+        },
+        {
+          "code": "6591",
+          "name": "動力-KY",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 43.9,
+          "ma20": 42.48
+        },
+        {
+          "code": "6124",
+          "name": "業強",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 27.1,
+          "ma20": 26.91
+        },
+        {
+          "code": "3653",
+          "name": "健策",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 5525.0,
+          "ma20": 5621.0
+        },
+        {
+          "code": "6831",
+          "name": "邁科",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 535.0,
+          "ma20": 569.35
+        },
+        {
+          "code": "2486",
+          "name": "一詮",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 237.5,
+          "ma20": 250.97
+        },
+        {
+          "code": "3013",
+          "name": "晟銘電",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 82.8,
+          "ma20": 84.8
+        },
+        {
+          "code": "3483",
+          "name": "力致",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 75.2,
+          "ma20": 75.78
+        },
+        {
+          "code": "6275",
+          "name": "元山",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 45.1,
+          "ma20": 45.53
+        },
+        {
+          "code": "3071",
+          "name": "協禧",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 23.4,
+          "ma20": 24.09
         }
       ]
     },
@@ -1174,136 +1366,13 @@
       ]
     },
     {
-      "industry": "CPO / 矽光子",
+      "industry": "重電 / 綠能儲能",
       "category": "theme",
       "signal": "多方",
       "ratio": 0.5,
       "above_count": 7,
       "valid_count": 14,
-      "total": 14,
-      "stocks": [
-        {
-          "code": "3491",
-          "name": "昇達科",
-          "market": "tpex",
-          "above_ma20": true,
-          "close": 1565.0,
-          "ma20": 1425.75
-        },
-        {
-          "code": "4979",
-          "name": "華星光",
-          "market": "tpex",
-          "above_ma20": true,
-          "close": 611.0,
-          "ma20": 584.2
-        },
-        {
-          "code": "2455",
-          "name": "全新",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 556.0,
-          "ma20": 497.35
-        },
-        {
-          "code": "6451",
-          "name": "訊芯-KY",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 443.5,
-          "ma20": 436.65
-        },
-        {
-          "code": "4908",
-          "name": "前鼎",
-          "market": "tpex",
-          "above_ma20": true,
-          "close": 243.5,
-          "ma20": 215.45
-        },
-        {
-          "code": "4977",
-          "name": "眾達-KY",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 175.0,
-          "ma20": 169.75
-        },
-        {
-          "code": "6530",
-          "name": "創威",
-          "market": "tpex",
-          "above_ma20": true,
-          "close": 100.5,
-          "ma20": 92.99
-        },
-        {
-          "code": "3081",
-          "name": "聯亞",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 2880.0,
-          "ma20": 3027.25
-        },
-        {
-          "code": "6442",
-          "name": "光聖",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 1575.0,
-          "ma20": 1639.75
-        },
-        {
-          "code": "3363",
-          "name": "上詮",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 683.0,
-          "ma20": 697.45
-        },
-        {
-          "code": "3163",
-          "name": "波若威",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 665.0,
-          "ma20": 720.85
-        },
-        {
-          "code": "3450",
-          "name": "聯鈞",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 538.0,
-          "ma20": 555.33
-        },
-        {
-          "code": "3234",
-          "name": "光環",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 180.0,
-          "ma20": 186.23
-        },
-        {
-          "code": "8086",
-          "name": "宏捷科",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 111.0,
-          "ma20": 112.1
-        }
-      ]
-    },
-    {
-      "industry": "重電 / 綠能儲能",
-      "category": "theme",
-      "signal": "空方",
-      "ratio": 0.4615,
-      "above_count": 6,
-      "valid_count": 13,
-      "total": 14,
+      "total": 15,
       "stocks": [
         {
           "code": "1513",
@@ -1352,6 +1421,14 @@
           "above_ma20": true,
           "close": 25.5,
           "ma20": 24.84
+        },
+        {
+          "code": "3576",
+          "name": "聯合再生",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 17.1,
+          "ma20": 16.97
         },
         {
           "code": "1519",
@@ -1420,13 +1497,283 @@
       ]
     },
     {
+      "industry": "CPO / 矽光子",
+      "category": "theme",
+      "signal": "空方",
+      "ratio": 0.4706,
+      "above_count": 8,
+      "valid_count": 17,
+      "total": 17,
+      "stocks": [
+        {
+          "code": "3491",
+          "name": "昇達科",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 1565.0,
+          "ma20": 1425.75
+        },
+        {
+          "code": "3167",
+          "name": "大量",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 834.0,
+          "ma20": 797.75
+        },
+        {
+          "code": "4979",
+          "name": "華星光",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 611.0,
+          "ma20": 584.2
+        },
+        {
+          "code": "2455",
+          "name": "全新",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 556.0,
+          "ma20": 497.35
+        },
+        {
+          "code": "6451",
+          "name": "訊芯-KY",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 443.5,
+          "ma20": 436.65
+        },
+        {
+          "code": "4908",
+          "name": "前鼎",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 243.5,
+          "ma20": 215.45
+        },
+        {
+          "code": "4977",
+          "name": "眾達-KY",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 175.0,
+          "ma20": 169.75
+        },
+        {
+          "code": "6530",
+          "name": "創威",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 100.5,
+          "ma20": 92.99
+        },
+        {
+          "code": "3081",
+          "name": "聯亞",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 2880.0,
+          "ma20": 3027.25
+        },
+        {
+          "code": "2345",
+          "name": "智邦",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 1855.0,
+          "ma20": 2003.5
+        },
+        {
+          "code": "6442",
+          "name": "光聖",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 1575.0,
+          "ma20": 1639.75
+        },
+        {
+          "code": "3363",
+          "name": "上詮",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 683.0,
+          "ma20": 697.45
+        },
+        {
+          "code": "3163",
+          "name": "波若威",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 665.0,
+          "ma20": 720.85
+        },
+        {
+          "code": "3450",
+          "name": "聯鈞",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 538.0,
+          "ma20": 555.33
+        },
+        {
+          "code": "6285",
+          "name": "啟碁",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 227.5,
+          "ma20": 234.45
+        },
+        {
+          "code": "3234",
+          "name": "光環",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 180.0,
+          "ma20": 186.23
+        },
+        {
+          "code": "8086",
+          "name": "宏捷科",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 111.0,
+          "ma20": 112.1
+        }
+      ]
+    },
+    {
+      "industry": "工具機 / 機器人概念",
+      "category": "theme",
+      "signal": "空方",
+      "ratio": 0.4286,
+      "above_count": 6,
+      "valid_count": 14,
+      "total": 14,
+      "stocks": [
+        {
+          "code": "4576",
+          "name": "大銀微系統",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 240.0,
+          "ma20": 227.85
+        },
+        {
+          "code": "2464",
+          "name": "盟立",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 197.0,
+          "ma20": 192.88
+        },
+        {
+          "code": "6215",
+          "name": "和椿",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 98.7,
+          "ma20": 97.84
+        },
+        {
+          "code": "4540",
+          "name": "全球傳動",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 59.3,
+          "ma20": 58.69
+        },
+        {
+          "code": "4563",
+          "name": "百德",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 47.0,
+          "ma20": 43.54
+        },
+        {
+          "code": "4526",
+          "name": "東台",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 31.25,
+          "ma20": 30.85
+        },
+        {
+          "code": "4583",
+          "name": "台灣精銳",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 431.5,
+          "ma20": 452.38
+        },
+        {
+          "code": "2049",
+          "name": "上銀",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 334.5,
+          "ma20": 349.27
+        },
+        {
+          "code": "1597",
+          "name": "直得",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 138.5,
+          "ma20": 142.72
+        },
+        {
+          "code": "2359",
+          "name": "所羅門",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 130.0,
+          "ma20": 137.82
+        },
+        {
+          "code": "8374",
+          "name": "羅昇",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 77.0,
+          "ma20": 79.94
+        },
+        {
+          "code": "1504",
+          "name": "東元",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 69.5,
+          "ma20": 71.22
+        },
+        {
+          "code": "4566",
+          "name": "時碩工業",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 64.5,
+          "ma20": 64.53
+        },
+        {
+          "code": "6125",
+          "name": "廣運",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 50.2,
+          "ma20": 50.28
+        }
+      ]
+    },
+    {
       "industry": "伺服器 / AI ODM",
       "category": "theme",
       "signal": "空方",
-      "ratio": 0.4545,
+      "ratio": 0.4167,
       "above_count": 5,
-      "valid_count": 11,
-      "total": 11,
+      "valid_count": 12,
+      "total": 12,
       "stocks": [
         {
           "code": "2376",
@@ -1485,6 +1832,14 @@
           "ma20": 966.75
         },
         {
+          "code": "3515",
+          "name": "華擎",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 212.0,
+          "ma20": 218.3
+        },
+        {
           "code": "4938",
           "name": "和碩",
           "market": "twse",
@@ -1519,211 +1874,13 @@
       ]
     },
     {
-      "industry": "連接器 / 線材",
-      "category": "theme",
-      "signal": "空方",
-      "ratio": 0.4545,
-      "above_count": 5,
-      "valid_count": 11,
-      "total": 11,
-      "stocks": [
-        {
-          "code": "3665",
-          "name": "貿聯-KY",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 2210.0,
-          "ma20": 2064.0
-        },
-        {
-          "code": "6715",
-          "name": "嘉基",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 433.0,
-          "ma20": 352.9
-        },
-        {
-          "code": "3023",
-          "name": "信邦",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 327.5,
-          "ma20": 323.15
-        },
-        {
-          "code": "6197",
-          "name": "佳必琪",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 320.5,
-          "ma20": 304.07
-        },
-        {
-          "code": "3605",
-          "name": "宏致",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 154.0,
-          "ma20": 126.55
-        },
-        {
-          "code": "3533",
-          "name": "嘉澤",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 1585.0,
-          "ma20": 1627.5
-        },
-        {
-          "code": "3526",
-          "name": "凡甲",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 271.0,
-          "ma20": 276.43
-        },
-        {
-          "code": "3217",
-          "name": "優群",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 130.5,
-          "ma20": 132.75
-        },
-        {
-          "code": "3003",
-          "name": "健和興",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 58.9,
-          "ma20": 62.65
-        },
-        {
-          "code": "2392",
-          "name": "正崴",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 41.95,
-          "ma20": 43.86
-        },
-        {
-          "code": "5457",
-          "name": "宣德",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 23.3,
-          "ma20": 26.53
-        }
-      ]
-    },
-    {
-      "industry": "工具機 / 機器人概念",
-      "category": "theme",
-      "signal": "空方",
-      "ratio": 0.4545,
-      "above_count": 5,
-      "valid_count": 11,
-      "total": 11,
-      "stocks": [
-        {
-          "code": "4576",
-          "name": "大銀微系統",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 240.0,
-          "ma20": 227.85
-        },
-        {
-          "code": "2464",
-          "name": "盟立",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 197.0,
-          "ma20": 192.88
-        },
-        {
-          "code": "6215",
-          "name": "和椿",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 98.7,
-          "ma20": 97.84
-        },
-        {
-          "code": "4563",
-          "name": "百德",
-          "market": "tpex",
-          "above_ma20": true,
-          "close": 47.0,
-          "ma20": 43.54
-        },
-        {
-          "code": "4526",
-          "name": "東台",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 31.25,
-          "ma20": 30.85
-        },
-        {
-          "code": "4583",
-          "name": "台灣精銳",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 431.5,
-          "ma20": 452.38
-        },
-        {
-          "code": "2049",
-          "name": "上銀",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 334.5,
-          "ma20": 349.27
-        },
-        {
-          "code": "2359",
-          "name": "所羅門",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 130.0,
-          "ma20": 137.82
-        },
-        {
-          "code": "8374",
-          "name": "羅昇",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 77.0,
-          "ma20": 79.94
-        },
-        {
-          "code": "1504",
-          "name": "東元",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 69.5,
-          "ma20": 71.22
-        },
-        {
-          "code": "6125",
-          "name": "廣運",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 50.2,
-          "ma20": 50.28
-        }
-      ]
-    },
-    {
       "industry": "生技醫療核心",
       "category": "theme",
       "signal": "空方",
-      "ratio": 0.4,
-      "above_count": 4,
-      "valid_count": 10,
-      "total": 10,
+      "ratio": 0.4167,
+      "above_count": 5,
+      "valid_count": 12,
+      "total": 12,
       "stocks": [
         {
           "code": "6472",
@@ -1748,6 +1905,14 @@
           "above_ma20": true,
           "close": 240.0,
           "ma20": 235.22
+        },
+        {
+          "code": "6589",
+          "name": "台康生技",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 52.7,
+          "ma20": 48.85
         },
         {
           "code": "4174",
@@ -1790,6 +1955,14 @@
           "ma20": 89.67
         },
         {
+          "code": "1760",
+          "name": "寶齡富錦",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 53.6,
+          "ma20": 56.21
+        },
+        {
           "code": "4743",
           "name": "合一",
           "market": "tpex",
@@ -1808,13 +1981,267 @@
       ]
     },
     {
+      "industry": "連接器 / 線材",
+      "category": "theme",
+      "signal": "空方",
+      "ratio": 0.4,
+      "above_count": 8,
+      "valid_count": 20,
+      "total": 20,
+      "stocks": [
+        {
+          "code": "3665",
+          "name": "貿聯-KY",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 2210.0,
+          "ma20": 2064.0
+        },
+        {
+          "code": "6715",
+          "name": "嘉基",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 433.0,
+          "ma20": 352.9
+        },
+        {
+          "code": "3023",
+          "name": "信邦",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 327.5,
+          "ma20": 323.15
+        },
+        {
+          "code": "6197",
+          "name": "佳必琪",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 320.5,
+          "ma20": 304.07
+        },
+        {
+          "code": "6290",
+          "name": "良維",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 282.5,
+          "ma20": 258.02
+        },
+        {
+          "code": "6217",
+          "name": "中探針",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 178.5,
+          "ma20": 172.88
+        },
+        {
+          "code": "3605",
+          "name": "宏致",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 154.0,
+          "ma20": 126.55
+        },
+        {
+          "code": "8103",
+          "name": "瀚荃",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 129.5,
+          "ma20": 116.76
+        },
+        {
+          "code": "3533",
+          "name": "嘉澤",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 1585.0,
+          "ma20": 1627.5
+        },
+        {
+          "code": "3526",
+          "name": "凡甲",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 271.0,
+          "ma20": 276.43
+        },
+        {
+          "code": "3217",
+          "name": "優群",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 130.5,
+          "ma20": 132.75
+        },
+        {
+          "code": "3305",
+          "name": "昇貿",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 102.5,
+          "ma20": 106.5
+        },
+        {
+          "code": "6205",
+          "name": "詮欣",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 63.7,
+          "ma20": 64.28
+        },
+        {
+          "code": "3003",
+          "name": "健和興",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 58.9,
+          "ma20": 62.65
+        },
+        {
+          "code": "2392",
+          "name": "正崴",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 41.95,
+          "ma20": 43.86
+        },
+        {
+          "code": "3501",
+          "name": "維熹",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 38.4,
+          "ma20": 39.3
+        },
+        {
+          "code": "6220",
+          "name": "岳豐",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 25.05,
+          "ma20": 25.64
+        },
+        {
+          "code": "5457",
+          "name": "宣德",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 23.3,
+          "ma20": 26.53
+        },
+        {
+          "code": "3092",
+          "name": "鴻碩",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 23.15,
+          "ma20": 23.56
+        },
+        {
+          "code": "2462",
+          "name": "良得電",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 19.45,
+          "ma20": 19.7
+        }
+      ]
+    },
+    {
+      "industry": "光學鏡頭",
+      "category": "theme",
+      "signal": "空方",
+      "ratio": 0.3333,
+      "above_count": 3,
+      "valid_count": 9,
+      "total": 9,
+      "stocks": [
+        {
+          "code": "3406",
+          "name": "玉晶光",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 972.0,
+          "ma20": 950.55
+        },
+        {
+          "code": "3441",
+          "name": "聯一光電",
+          "market": "tpex",
+          "above_ma20": true,
+          "close": 185.5,
+          "ma20": 145.9
+        },
+        {
+          "code": "6209",
+          "name": "今國光",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 80.4,
+          "ma20": 78.01
+        },
+        {
+          "code": "3008",
+          "name": "大立光",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 6430.0,
+          "ma20": 6655.0
+        },
+        {
+          "code": "3362",
+          "name": "先進光",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 178.5,
+          "ma20": 190.28
+        },
+        {
+          "code": "3019",
+          "name": "亞光",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 137.0,
+          "ma20": 139.32
+        },
+        {
+          "code": "3504",
+          "name": "揚明光",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 80.5,
+          "ma20": 84.51
+        },
+        {
+          "code": "6517",
+          "name": "保勝光學",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 65.0,
+          "ma20": 66.72
+        },
+        {
+          "code": "4976",
+          "name": "佳凌",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 36.6,
+          "ma20": 37.55
+        }
+      ]
+    },
+    {
       "industry": "PCB（印刷電路板）",
       "category": "theme",
       "signal": "空方",
-      "ratio": 0.2632,
-      "above_count": 5,
-      "valid_count": 19,
-      "total": 19,
+      "ratio": 0.3043,
+      "above_count": 7,
+      "valid_count": 23,
+      "total": 23,
       "stocks": [
         {
           "code": "3189",
@@ -1831,6 +2258,14 @@
           "above_ma20": true,
           "close": 518.0,
           "ma20": 493.2
+        },
+        {
+          "code": "6278",
+          "name": "台表科",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 196.0,
+          "ma20": 192.1
         },
         {
           "code": "6191",
@@ -1855,6 +2290,14 @@
           "above_ma20": true,
           "close": 44.25,
           "ma20": 41.08
+        },
+        {
+          "code": "8213",
+          "name": "志超",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 33.0,
+          "ma20": 32.8
         },
         {
           "code": "8046",
@@ -1921,6 +2364,14 @@
           "ma20": 184.8
         },
         {
+          "code": "2316",
+          "name": "楠梓電",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 156.5,
+          "ma20": 158.5
+        },
+        {
           "code": "3715",
           "name": "定穎投控",
           "market": "twse",
@@ -1935,6 +2386,14 @@
           "above_ma20": false,
           "close": 64.1,
           "ma20": 67.45
+        },
+        {
+          "code": "2402",
+          "name": "毅嘉",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 54.1,
+          "ma20": 55.97
         },
         {
           "code": "6141",
@@ -1971,131 +2430,13 @@
       ]
     },
     {
-      "industry": "軸承 / 折疊機",
-      "category": "theme",
-      "signal": "空方",
-      "ratio": 0.25,
-      "above_count": 1,
-      "valid_count": 4,
-      "total": 4,
-      "stocks": [
-        {
-          "code": "6805",
-          "name": "富世達",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 2295.0,
-          "ma20": 2141.0
-        },
-        {
-          "code": "3376",
-          "name": "新日興",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 179.0,
-          "ma20": 196.0
-        },
-        {
-          "code": "3013",
-          "name": "晟銘電",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 82.8,
-          "ma20": 84.8
-        },
-        {
-          "code": "3548",
-          "name": "兆利",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 80.6,
-          "ma20": 81.88
-        }
-      ]
-    },
-    {
-      "industry": "光學鏡頭",
-      "category": "theme",
-      "signal": "空方",
-      "ratio": 0.25,
-      "above_count": 2,
-      "valid_count": 8,
-      "total": 8,
-      "stocks": [
-        {
-          "code": "3406",
-          "name": "玉晶光",
-          "market": "twse",
-          "above_ma20": true,
-          "close": 972.0,
-          "ma20": 950.55
-        },
-        {
-          "code": "3441",
-          "name": "聯一光電",
-          "market": "tpex",
-          "above_ma20": true,
-          "close": 185.5,
-          "ma20": 145.9
-        },
-        {
-          "code": "3008",
-          "name": "大立光",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 6430.0,
-          "ma20": 6655.0
-        },
-        {
-          "code": "3362",
-          "name": "先進光",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 178.5,
-          "ma20": 190.28
-        },
-        {
-          "code": "3019",
-          "name": "亞光",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 137.0,
-          "ma20": 139.32
-        },
-        {
-          "code": "3504",
-          "name": "揚明光",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 80.5,
-          "ma20": 84.51
-        },
-        {
-          "code": "6517",
-          "name": "保勝光學",
-          "market": "tpex",
-          "above_ma20": false,
-          "close": 65.0,
-          "ma20": 66.72
-        },
-        {
-          "code": "4976",
-          "name": "佳凌",
-          "market": "twse",
-          "above_ma20": false,
-          "close": 36.6,
-          "ma20": 37.55
-        }
-      ]
-    },
-    {
       "industry": "車用零組件",
       "category": "theme",
       "signal": "空方",
-      "ratio": 0.2,
-      "above_count": 2,
-      "valid_count": 10,
-      "total": 10,
+      "ratio": 0.2308,
+      "above_count": 3,
+      "valid_count": 13,
+      "total": 13,
       "stocks": [
         {
           "code": "2207",
@@ -2106,12 +2447,28 @@
           "ma20": 526.9
         },
         {
+          "code": "6605",
+          "name": "帝寶",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 139.0,
+          "ma20": 137.72
+        },
+        {
           "code": "2231",
           "name": "為升",
           "market": "twse",
           "above_ma20": true,
           "close": 91.2,
           "ma20": 90.87
+        },
+        {
+          "code": "4551",
+          "name": "智伸科",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 159.5,
+          "ma20": 161.18
         },
         {
           "code": "6279",
@@ -2154,6 +2511,14 @@
           "ma20": 42.77
         },
         {
+          "code": "1533",
+          "name": "車王電",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 30.55,
+          "ma20": 31.05
+        },
+        {
           "code": "2201",
           "name": "裕隆",
           "market": "twse",
@@ -2180,13 +2545,80 @@
       ]
     },
     {
+      "industry": "軸承 / 折疊機",
+      "category": "theme",
+      "signal": "空方",
+      "ratio": 0.1429,
+      "above_count": 1,
+      "valid_count": 7,
+      "total": 7,
+      "stocks": [
+        {
+          "code": "6805",
+          "name": "富世達",
+          "market": "twse",
+          "above_ma20": true,
+          "close": 2295.0,
+          "ma20": 2141.0
+        },
+        {
+          "code": "3376",
+          "name": "新日興",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 179.0,
+          "ma20": 196.0
+        },
+        {
+          "code": "3013",
+          "name": "晟銘電",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 82.8,
+          "ma20": 84.8
+        },
+        {
+          "code": "3548",
+          "name": "兆利",
+          "market": "tpex",
+          "above_ma20": false,
+          "close": 80.6,
+          "ma20": 81.88
+        },
+        {
+          "code": "1582",
+          "name": "信錦",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 70.9,
+          "ma20": 72.85
+        },
+        {
+          "code": "5215",
+          "name": "科嘉-KY",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 37.95,
+          "ma20": 38.71
+        },
+        {
+          "code": "4976",
+          "name": "佳凌",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 36.6,
+          "ma20": 37.55
+        }
+      ]
+    },
+    {
       "industry": "AI 機殼 / 電源供應器",
       "category": "theme",
       "signal": "空方",
-      "ratio": 0.1111,
+      "ratio": 0.0833,
       "above_count": 1,
-      "valid_count": 9,
-      "total": 9,
+      "valid_count": 12,
+      "total": 12,
       "stocks": [
         {
           "code": "3693",
@@ -2221,12 +2653,28 @@
           "ma20": 293.75
         },
         {
+          "code": "2465",
+          "name": "麗臺",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 91.6,
+          "ma20": 94.09
+        },
+        {
           "code": "3013",
           "name": "晟銘電",
           "market": "twse",
           "above_ma20": false,
           "close": 82.8,
           "ma20": 84.8
+        },
+        {
+          "code": "3706",
+          "name": "神達",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 80.5,
+          "ma20": 80.61
         },
         {
           "code": "6412",
@@ -2259,6 +2707,14 @@
           "above_ma20": false,
           "close": 42.85,
           "ma20": 43.76
+        },
+        {
+          "code": "2457",
+          "name": "飛宏",
+          "market": "twse",
+          "above_ma20": false,
+          "close": 22.05,
+          "ma20": 22.51
         }
       ]
     },
