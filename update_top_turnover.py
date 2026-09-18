@@ -188,8 +188,8 @@ def main():
     except Exception as e:
         print(f'TPEx error: {e}')
         errors.append(f'TPEx: {e}')
-    trade_date = (twse[0]['date'] if twse else tpex[0]['date'] if tpex else datetime.date.today().strftime('%Y-%m-%d'))
-    output = {'updateTime': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'tradeDate': trade_date, 'twse': twse, 'tpex': tpex, 'errors': errors}
+    trade_date = (twse[0]['date'] if twse else tpex[0]['date'] if tpex else datetime.datetime.now(TZ_TW).strftime('%Y-%m-%d'))
+    output = {'updateTime': datetime.datetime.now(TZ_TW).strftime('%Y-%m-%d %H:%M:%S'), 'tradeDate': trade_date, 'twse': twse, 'tpex': tpex, 'errors': errors}
     out_path = os.path.join(REPO_DIR, 'top_turnover.json')
     with open(out_path, 'w', encoding='utf-8') as f:
         json.dump(output, f, ensure_ascii=False, indent=2)

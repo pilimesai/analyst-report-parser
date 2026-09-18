@@ -330,7 +330,7 @@ def main():
 
     matched_stocks = evaluate_volume_spikes(all_candidates)
 
-    now_iso = datetime.datetime.now().isoformat()
+    now_iso = datetime.datetime.now(TZ_TW).isoformat()
     out_data = {
         'updateTime': now_iso,
         'tradeDate': trade_date,

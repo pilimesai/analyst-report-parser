@@ -9,7 +9,10 @@ import os
 import sys
 import re
 import datetime
+from zoneinfo import ZoneInfo
 import subprocess
+
+TZ_TW = ZoneInfo('Asia/Taipei')
 
 def install_requirements():
     pkgs = []
@@ -56,7 +59,7 @@ def fetch_earnings_calls(window_days=14):
     用 Playwright 打開 MOPS t100sb02_1 頁面，
     查詢未來 14 天內的法說會（涵蓋跨月、上市 sii 與上櫃 otc）。
     """
-    today = datetime.date.today()
+    today = datetime.datetime.now(TZ_TW).date()
     end_date = today + datetime.timedelta(days=window_days)
     
     # 計算需要查詢的民國年月清單（如跨月則查詢當月與次月）
