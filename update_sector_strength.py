@@ -15,6 +15,7 @@ import re
 import datetime
 from zoneinfo import ZoneInfo
 import urllib.request
+import subprocess
 import time
 
 TZ_TW = ZoneInfo("Asia/Taipei")
@@ -199,9 +200,76 @@ def build_industry_map(stock_names):
     return filtered
 
 
-def compute_ma20_signals(industry_map):
+def fetch_official_today_closes():
     """
-    批次下載所有股票 2 個月歷史，計算 MA20
+    從 TWSE MI_INDEX 與 TPEx stk_wn1430 抓取全市場最新官方收盤價。
+    直接解決 yfinance 當日盤後資料延遲（日K棒 Close 呈現 NaN）導致抓到昨日價格的問題。
+    """
+    today = datetime.datetime.now(TZ_TW).date()
+    closes = {}
+    twse_date = None
+    tpex_date = None
+
+    print("Fetching TWSE official closing quotes (MI_INDEX)...")
+    for delta in range(5):
+        d = today - datetime.timedelta(days=delta)
+        d_str = d.strftime("%Y%m%d")
+        url = f"https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date={d_str}&type=ALLBUT0999&response=json"
+        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "Accept": "application/json"}
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=12) as resp:
+                jd = json.loads(resp.read().decode("utf-8", errors="ignore"))
+            if jd.get("stat") == "OK":
+                tables = [tbl for tbl in jd.get("tables", []) if len(tbl.get("data", [])) > 500]
+                if tables:
+                    for r in tables[0].get("data", []):
+                        code = str(r[0]).strip()
+                        if len(code) == 4 and code.isdigit():
+                            cp_str = str(r[8]).replace(",", "").strip()
+                            try:
+                                closes[code] = float(cp_str)
+                            except ValueError:
+                                pass
+                    twse_date = d.strftime("%Y-%m-%d")
+                    print(f"TWSE official closes: {len(closes)} stocks ({twse_date})")
+                    break
+        except Exception:
+            pass
+
+    print("Fetching TPEx official closing quotes (stk_wn1430)...")
+    for delta in range(5):
+        d = today - datetime.timedelta(days=delta)
+        roc = f"{d.year - 1911}/{d.month:02d}/{d.day:02d}"
+        url = f"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={roc.replace('/', '%2F')}&se=AL&_=1"
+        try:
+            res = subprocess.run(["curl.exe", "-s", "--http1.1", url, "-H", "User-Agent: Mozilla/5.0"], capture_output=True, timeout=15)
+            jd = json.loads(res.stdout.decode("utf-8", errors="ignore"))
+            tables = jd.get("tables", [])
+            if tables and tables[0].get("data"):
+                cnt = 0
+                for r in tables[0]["data"]:
+                    code = str(r[0]).strip()
+                    if len(code) == 4 and code.isdigit():
+                        cp_str = str(r[2]).replace(",", "").strip()
+                        try:
+                            closes[code] = float(cp_str)
+                            cnt += 1
+                        except ValueError:
+                            pass
+                tpex_date = d.strftime("%Y-%m-%d")
+                print(f"TPEx official closes: {cnt} stocks ({tpex_date})")
+                break
+        except Exception:
+            pass
+
+    official_trade_date = twse_date or tpex_date
+    return closes, official_trade_date
+
+
+def compute_ma20_signals(industry_map, official_closes=None, official_trade_date=None):
+    """
+    批次下載所有股票 2 個月歷史，並結合官方最新收盤價計算 MA20
     回傳 (signals, detected_trade_date)
     """
     import yfinance as yf
@@ -234,8 +302,8 @@ def compute_ma20_signals(industry_map):
         return {}, None
     print(f"Download completed in {time.time() - t0:.1f}s")
 
-    detected_trade_date = None
-    if df is not None and not df.empty:
+    detected_trade_date = official_trade_date
+    if not detected_trade_date and df is not None and not df.empty:
         try:
             detected_trade_date = df.index[-1].strftime("%Y-%m-%d")
         except Exception:
@@ -255,6 +323,20 @@ def compute_ma20_signals(industry_map):
                 continue
 
             close = sub["Close"].dropna()
+
+            # 結合官方最新收盤價（解決 yfinance 當日歷史日K尚未寫入或為 NaN 的問題）
+            if official_trade_date and official_closes and code in official_closes:
+                today_close = official_closes[code]
+                if len(close) > 0:
+                    last_date_str = str(close.index[-1])[:10]
+                    if last_date_str < official_trade_date:
+                        # yfinance 尚未包含當日數據，補上今日官方收盤價
+                        close = pd.concat([close, pd.Series([today_close], index=[pd.Timestamp(official_trade_date)])])
+                    elif last_date_str == official_trade_date:
+                        close.iloc[-1] = today_close
+                else:
+                    close = pd.Series([today_close], index=[pd.Timestamp(official_trade_date)])
+
             if len(close) < 20:
                 continue
 
@@ -401,8 +483,11 @@ def main():
         print("ERROR: No industry map data, aborting.")
         sys.exit(1)
 
-    # Step 2: 批次計算 MA20 信號
-    signals, detected_trade_date = compute_ma20_signals(industry_map)
+    # Step 2: 抓取 TWSE/TPEx 當日官方最終收盤價，確保最新交易日不落後
+    official_closes, official_trade_date = fetch_official_today_closes()
+
+    # Step 3: 批次計算 MA20 信號
+    signals, detected_trade_date = compute_ma20_signals(industry_map, official_closes, official_trade_date)
     if not signals:
         print("ERROR: No MA20 signals computed, aborting.")
         sys.exit(1)
