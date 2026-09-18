@@ -1,0 +1,41 @@
+﻿name: Update Sector Strength Daily
+
+on:
+  schedule:
+    # 每個交易日台灣時間 20:15 (UTC 12:15) 自動執行
+    # 比 volume spike (20:05) 晚 10 分鐘，避免並行衝突
+    - cron: "15 12 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install yfinance pandas requests
+
+      - name: Scan Sector Strength (MA20)
+        run: |
+          python update_sector_strength.py
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
+          git add sector_strength.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-update sector strength (MA20)" && git push origin main)
