@@ -1972,6 +1972,11 @@
                 <label>今日成交量異常變大</label>
                 <div style="font-size: 0.74rem; color: var(--text-secondary); margin-top: 2px;">由「一鍵抓取所有資料」自動更新</div>
             </div>
+
+            <div class="input-group">
+                <label>族群強弱（MA20）</label>
+                <div style="font-size: 0.74rem; color: var(--text-secondary); margin-top: 2px;">由「一鍵抓取所有資料」自動更新</div>
+            </div>
         </div>
     </div>
 
@@ -2025,6 +2030,11 @@
                     <span class="tab-icon">⚡</span>
                     <span class="tab-text">成交量異常</span>
                     <span class="tab-badge" id="badge-volume-spike">0</span>
+                </button>
+                <button class="tab-btn" data-tab="sector-strength" onclick="switchActiveTab('sector-strength')">
+                    <span class="tab-icon">🗺️</span>
+                    <span class="tab-text">族群強弱</span>
+                    <span class="tab-badge" id="badge-sector-strength">0</span>
                 </button>
             </div>
         </div>
@@ -2330,6 +2340,71 @@
                             </td></tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sector Strength View (族群強弱指標) -->
+        <div id="sector-strength-view" style="display:none; flex-direction:column; gap:20px; padding-bottom: 40px;">
+            <div class="reports-section">
+                <div class="section-header" style="flex-wrap:wrap; gap:0.75rem;">
+                    <div>
+                        <h2>🗺️ 族群強弱指標（月線多空掃描）</h2>
+                        <p style="font-size:0.82rem; color:var(--text-secondary); margin-top:4px; line-height:1.5;">掃描全市場上市＋上櫃所有股票，依 TWSE/TPEx 官方產業別分組，計算各族群中股價站上<b style="color:#a5b4fc;">月線（MA20）</b>的比例。≥ 50% 個股站上月線 → 🟢 <b style="color:#10b981;">多方族群</b>；反之 → 🔴 <b style="color:#ef4444;">空方族群</b>。</p>
+                        <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.45rem;">
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); border-radius:4px; color:#6ee7b7;">月線 = MA20（20日移動平均）</span>
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.3); border-radius:4px; color:#a5b4fc;">多方門檻 ≥ 50%</span>
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:4px; color:#94a3b8;">掃描上市 + 上櫃 ~1,900 支</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons" style="flex-shrink:0;">
+                        <button class="btn btn-primary" onclick="fetchSectorStrengthFromGithub()" id="fetch-sector-btn"
+                            style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">🔄 重新載入</button>
+                    </div>
+                </div>
+
+                <!-- 統計卡片 -->
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:0.75rem; margin-top:0.75rem;">
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(99,102,241,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#a5b4fc;">📅 資料日期</div>
+                        <div style="font-size:1.1rem; font-weight:700; color:#f8fafc; margin-top:0.2rem;" id="sector-trade-date">—</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(16,185,129,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#6ee7b7;">🟢 多方族群</div>
+                        <div style="font-size:1.4rem; font-weight:700; color:#10b981; margin-top:0.2rem;" id="sector-bullish-count">—</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(239,68,68,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#fca5a5;">🔴 空方族群</div>
+                        <div style="font-size:1.4rem; font-weight:700; color:#ef4444; margin-top:0.2rem;" id="sector-bearish-count">—</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(245,158,11,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#fcd34d;">📊 全市場站上月線比例</div>
+                        <div style="font-size:1.2rem; font-weight:700; color:#f59e0b; margin-top:0.2rem;" id="sector-overall-ratio">—</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:var(--text-secondary);">🕒 更新時間</div>
+                        <div style="font-size:0.82rem; font-weight:600; color:#94a3b8; margin-top:0.2rem;" id="sector-update-time">—</div>
+                    </div>
+                </div>
+
+                <!-- 搜尋與排序 -->
+                <div style="display:flex; flex-wrap:wrap; gap:0.75rem; align-items:center; justify-content:space-between; margin-top:0.75rem;">
+                    <input type="text" id="sector-search-input" placeholder="🔍 搜尋族群名稱..." autocomplete="off"
+                        style="width:100%; max-width:280px; padding:0.4rem 0.75rem; font-size:0.85rem; border-radius:0.5rem; background:rgba(255,255,255,0.04); border:1px solid var(--card-border); color:#fff;">
+                    <div style="display:flex; gap:0.5rem;" id="sector-signal-filter">
+                        <button class="filter-chip active" data-signal="all">全部</button>
+                        <button class="filter-chip" data-signal="bullish" style="color:#10b981; border-color:rgba(16,185,129,0.4);">🟢 多方</button>
+                        <button class="filter-chip" data-signal="bearish" style="color:#ef4444; border-color:rgba(239,68,68,0.4);">🔴 空方</button>
+                    </div>
+                </div>
+
+                <!-- 族群卡片列表 -->
+                <div id="sector-grid" style="margin-top:0.75rem; display:flex; flex-direction:column; gap:0.6rem;">
+                    <div style="text-align:center; color:var(--text-secondary); padding:3rem 1rem;">
+                        <div style="font-size:2rem; margin-bottom:0.5rem;">🗺️</div>
+                        <div>尚未載入族群強弱資料</div>
+                        <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🔄 重新載入」或「⚡ 一鍵抓取所有資料」</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -3095,6 +3170,7 @@
                 { label: '📉 股價低於CB轉換價', fn: fetchCbBelowConvFromGithub },
                 { label: '🔥 今日成交值排行', fn: () => fetchTopTurnoverFromGithub(true) },
                 { label: '⚡ 成交量異常名單', fn: () => fetchVolumeSpikeFromGithub(true) },
+                { label: '🗺️ 族群強弱指標', fn: () => fetchSectorStrengthFromGithub(true) },
             ];
 
             for (let i = 0; i < steps.length; i++) {
@@ -4159,9 +4235,15 @@ JSON 欄位：
                 volumeSpikeView.style.display = (currentActiveTab === 'volume-spike') ? 'flex' : 'none';
             }
 
+            // 4d. Toggle sector strength view
+            const sectorStrengthView = document.getElementById('sector-strength-view');
+            if (sectorStrengthView) {
+                sectorStrengthView.style.display = (currentActiveTab === 'sector-strength') ? 'flex' : 'none';
+            }
+
             // 5. Toggle persistent tables container and sections
             const persistentContainer = document.getElementById('persistent-csv-tables');
-            const builtinTabs = ['main-reports', 'quant-results', 'active-etf', 'top-turnover', 'volume-spike'];
+            const builtinTabs = ['main-reports', 'quant-results', 'active-etf', 'top-turnover', 'volume-spike', 'sector-strength'];
             if (persistentContainer) {
                 persistentContainer.style.display = builtinTabs.includes(currentActiveTab) ? 'none' : 'flex';
                 const sections = persistentContainer.querySelectorAll('.persistent-table-section');
@@ -6424,6 +6506,155 @@ ${text.slice(0, 30000)}`;
                 const stocks = volumeSpikeData.stocks || [...(volumeSpikeData.twse || []), ...(volumeSpikeData.tpex || [])];
                 if (volspikeBadge) volspikeBadge.innerText = String(stocks.length);
                 renderVolumeSpikeView();
+            }
+        })();
+
+        // ─────────────────────────────────────────────────────────────────
+        // 族群強弱指標 (Sector Strength)
+        // ─────────────────────────────────────────────────────────────────
+        let sectorStrengthData = null;
+        let sectorSignalFilter = 'all';
+
+        async function fetchSectorStrengthFromGithub(silent = false) {
+            const btn = document.getElementById('fetch-sector-btn');
+            if (btn) { btn.disabled = true; btn.textContent = '⏳ 載入中...'; }
+            try {
+                if (!silent) showToast('正在抓取族群強弱資料...');
+                const urls = [
+                    `./sector_strength.json?v=${Date.now()}`,
+                    `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/sector_strength.json?v=${Date.now()}`,
+                    `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/sector_strength.json?v=${Date.now()}`
+                ];
+                let data = null;
+                for (const url of urls) {
+                    try {
+                        const res = await fetch(url);
+                        if (res.ok) {
+                            const json = await res.json();
+                            if (json && json.sectors && json.sectors.length > 0) { data = json; break; }
+                        }
+                    } catch(e) {}
+                }
+                if (!data) throw new Error('無法獲取族群強弱資料');
+                sectorStrengthData = data;
+                try { localStorage.setItem('sector_strength_cache', JSON.stringify({ ts: Date.now(), data })); } catch(e) {}
+                renderSectorStrengthView();
+                if (!silent) showToast('✅ 族群強弱資料已更新！');
+            } catch(e) {
+                if (!silent) showToast('族群強弱抓取失敗: ' + e.message, true);
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerHTML = '🔄 重新載入'; }
+            }
+        }
+
+        function renderSectorStrengthView() {
+            if (!sectorStrengthData) return;
+            const d = sectorStrengthData;
+
+            // 更新統計卡片
+            const el = id => document.getElementById(id);
+            if (el('sector-trade-date')) el('sector-trade-date').textContent = d.tradeDate || '—';
+            if (el('sector-bullish-count')) el('sector-bullish-count').textContent = d.bullishSectors + ' 個';
+            if (el('sector-bearish-count')) el('sector-bearish-count').textContent = d.bearishSectors + ' 個';
+            if (el('sector-update-time')) el('sector-update-time').textContent = (d.updateTime || '—').replace('T', ' ').substring(0, 16);
+
+            // 全市場站上月線比例
+            if (el('sector-overall-ratio') && d.totalStocksScanned > 0) {
+                const overallPct = Math.round(d.totalStocksAboveMA20 / d.totalStocksScanned * 100);
+                el('sector-overall-ratio').textContent = overallPct + '% (' + d.totalStocksAboveMA20 + '/' + d.totalStocksScanned + ')';
+            }
+
+            // 更新 tab badge
+            const badge = document.getElementById('badge-sector-strength');
+            if (badge) badge.textContent = String(d.bullishSectors || 0);
+
+            // 套用篩選
+            const searchQ = (document.getElementById('sector-search-input') || {}).value || '';
+            let sectors = d.sectors || [];
+            if (sectorSignalFilter === 'bullish') sectors = sectors.filter(s => s.signal === '多方');
+            else if (sectorSignalFilter === 'bearish') sectors = sectors.filter(s => s.signal === '空方');
+            if (searchQ.trim()) {
+                const q = searchQ.trim().toLowerCase();
+                sectors = sectors.filter(s => s.industry.toLowerCase().includes(q));
+            }
+
+            const grid = document.getElementById('sector-grid');
+            if (!grid) return;
+            if (sectors.length === 0) {
+                grid.innerHTML = '<div style="text-align:center; color:var(--text-secondary); padding:2rem;">無符合條件的族群</div>';
+                return;
+            }
+
+            const frag = document.createDocumentFragment();
+            sectors.forEach(sector => {
+                const isBull = sector.signal === '多方';
+                const isBear = sector.signal === '空方';
+                const ratio = sector.ratio != null ? Math.round(sector.ratio * 100) : null;
+                const barColor = isBull ? '#10b981' : (isBear ? '#ef4444' : '#6366f1');
+                const borderColor = isBull ? 'rgba(16,185,129,0.3)' : (isBear ? 'rgba(239,68,68,0.3)' : 'rgba(99,102,241,0.2)');
+                const signalBadge = isBull
+                    ? '<span style="background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.4);padding:2px 8px;border-radius:12px;font-size:0.72rem;font-weight:700;">🟢 多方</span>'
+                    : (isBear ? '<span style="background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.4);padding:2px 8px;border-radius:12px;font-size:0.72rem;font-weight:700;">🔴 空方</span>'
+                    : '<span style="background:rgba(100,116,139,0.15);color:#94a3b8;border:1px solid rgba(100,116,139,0.3);padding:2px 8px;border-radius:12px;font-size:0.72rem;">⚪ 不足</span>');
+
+                // 取前 8 個站上月線的股票作為預覽
+                const aboveStocks = (sector.stocks || []).filter(s => s.above_ma20 === true).slice(0, 8);
+                const stockChips = aboveStocks.map(s =>
+                    `<span style="font-size:0.7rem;padding:1px 5px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:3px;color:#6ee7b7;white-space:nowrap;">${s.code} ${s.name}</span>`
+                ).join(' ');
+
+                const card = document.createElement('div');
+                card.style.cssText = `background:rgba(15,23,42,0.5);border:1px solid ${borderColor};border-radius:0.75rem;padding:0.85rem 1rem;transition:border-color 0.2s;cursor:default;`;
+                card.innerHTML = `
+                    <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+                        <div style="font-size:1rem;font-weight:700;color:#f8fafc;min-width:120px;">${sector.industry}</div>
+                        ${signalBadge}
+                        <div style="flex:1;min-width:160px;">
+                            <div style="display:flex;align-items:center;gap:0.5rem;">
+                                <div style="flex:1;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;">
+                                    <div style="width:${ratio != null ? ratio : 0}%;height:100%;background:${barColor};border-radius:3px;transition:width 0.4s ease;"></div>
+                                </div>
+                                <span style="font-size:0.82rem;font-weight:700;color:${barColor};min-width:38px;text-align:right;">${ratio != null ? ratio + '%' : 'N/A'}</span>
+                                <span style="font-size:0.75rem;color:var(--text-secondary);white-space:nowrap;">(${sector.above_count}/${sector.valid_count}支)</span>
+                            </div>
+                        </div>
+                    </div>
+                    ${aboveStocks.length > 0 ? `<div style="margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:0.25rem;">${stockChips}${(sector.stocks||[]).filter(s=>s.above_ma20).length > 8 ? '<span style="font-size:0.7rem;color:#64748b;">...等</span>' : ''}</div>` : ''}
+                `;
+                frag.appendChild(card);
+            });
+            grid.innerHTML = '';
+            grid.appendChild(frag);
+        }
+
+        // 族群強弱 - 篩選按鈕
+        const sectorFilterEl = document.getElementById('sector-signal-filter');
+        if (sectorFilterEl) {
+            sectorFilterEl.addEventListener('click', e => {
+                const btn = e.target.closest('.filter-chip');
+                if (!btn) return;
+                sectorFilterEl.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                sectorSignalFilter = btn.getAttribute('data-signal') || 'all';
+                renderSectorStrengthView();
+            });
+        }
+        const sectorSearchEl = document.getElementById('sector-search-input');
+        if (sectorSearchEl) sectorSearchEl.addEventListener('input', () => renderSectorStrengthView());
+
+        // 族群強弱 - 啟動時從 localStorage cache 載入
+        (() => {
+            try {
+                const cached = localStorage.getItem('sector_strength_cache');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (parsed && parsed.data) sectorStrengthData = parsed.data;
+                }
+            } catch(e) {}
+            if (sectorStrengthData) {
+                const badge = document.getElementById('badge-sector-strength');
+                if (badge) badge.textContent = String(sectorStrengthData.bullishSectors || 0);
+                renderSectorStrengthView();
             }
         })();
     </script>
