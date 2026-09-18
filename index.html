@@ -4327,8 +4327,8 @@ JSON 欄位：
 
             const tabsContainer = document.getElementById('nav-tabs-container');
             if (tabsContainer) {
-                // Keep only main-reports, quant-results, active-etf, top-turnover, volume-spike tab buttons, remove dynamic ones
-                const dynamicTabs = tabsContainer.querySelectorAll('.tab-btn:not([data-tab="main-reports"]):not([data-tab="quant-results"]):not([data-tab="active-etf"]):not([data-tab="top-turnover"]):not([data-tab="volume-spike"])');
+                // Keep only main-reports, quant-results, active-etf, top-turnover, volume-spike, sector-strength tab buttons, remove dynamic ones
+                const dynamicTabs = tabsContainer.querySelectorAll('.tab-btn:not([data-tab="main-reports"]):not([data-tab="quant-results"]):not([data-tab="active-etf"]):not([data-tab="top-turnover"]):not([data-tab="volume-spike"]):not([data-tab="sector-strength"])');
                 dynamicTabs.forEach(t => t.remove());
             }
 

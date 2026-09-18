@@ -125,67 +125,44 @@ def fetch_twse_industry_map(stock_names):
         return {}
 
 
+TPEX_INDUSTRY_CODE_MAP = {
+    "02": "食品工業", "03": "塑膠工業", "04": "紡織纖維", "05": "電機機械", "06": "電器電纜",
+    "10": "鋼鐵工業", "14": "建材營造業", "15": "航運業", "16": "觀光餐旅業", "17": "金融保險業",
+    "20": "其他業", "21": "化學工業", "22": "生技醫療", "23": "油電燃氣業", "24": "半導體業",
+    "25": "電腦及週邊設備業", "26": "光電業", "27": "通信網路業", "28": "電子零組件業", "29": "電子通路業",
+    "30": "資訊服務業", "31": "其他電子業", "32": "文化創意業", "33": "農業科技業", "35": "綠能環保",
+    "36": "數位雲端業", "37": "運動休閒業", "38": "居家生活業"
+}
+
+
 def fetch_tpex_industry_map(stock_names):
     """
     抓取 TPEx 上櫃公司 <-> 產業別對照表
-    來源：ISIN 公開資訊頁（strMode=4 = 上櫃），解析 HTML table
-    表格結構：產業別標題列 -> 各股 "代號　名稱" 資料列
+    來源：TPEx OpenAPI mopsfin_t187ap03_O (SecuritiesCompanyCode + SecuritiesIndustryCode)
     """
-    print("Fetching TPEx industry map from ISIN page (strMode=4)...")
-    url = "https://isin.twse.com.tw/isin/C_public.jsp?strMode=4"
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-        "Accept": "text/html,application/xhtml+xml",
-    }
+    print("Fetching TPEx industry map from OpenAPI mopsfin_t187ap03_O...")
+    url = "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap03_O"
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "Accept": "application/json"}
     result = {}
     try:
         req = urllib.request.Request(url, headers=headers)
         with urllib.request.urlopen(req, timeout=25) as resp:
-            raw = resp.read()
-        html = raw.decode("big5", errors="replace")
-
-        rows = re.findall(r"<tr[^>]*>(.*?)</tr>", html, re.DOTALL | re.IGNORECASE)
-        current_industry = ""
-
-        for row in rows:
-            cells = re.findall(r"<td[^>]*>(.*?)</td>", row, re.DOTALL | re.IGNORECASE)
-            cells = [re.sub(r"<[^>]+>", "", c).strip() for c in cells]
-            cells = [c for c in cells if c]
-
-            if not cells:
-                continue
-
-            # 產業別標題列：只有 1 個 cell，含漢字，不含純數字開頭
-            if len(cells) <= 2 and re.search(r"[\u4e00-\u9fff]", cells[0]) and not cells[0][:4].isdigit():
-                candidate = cells[0]
-                if len(candidate) <= 20:
-                    current_industry = candidate
-                continue
-
-            # 資料列：第一個 cell 為 "XXXX　公司名" 格式
-            first = cells[0]
-            parts = re.split(r"\u3000|\s{2,}", first, maxsplit=1)
-            if len(parts) == 2:
-                code = parts[0].strip()
-                name = parts[1].strip()
-            elif len(first) >= 4 and first[:4].isdigit():
-                code = first[:4]
-                name = first[4:].strip()
-            else:
-                continue
-
-            if len(code) == 4 and code.isdigit() and current_industry:
-                display_name = stock_names.get(code, name)
+            data = json.loads(resp.read().decode("utf-8"))
+        for item in data:
+            code = str(item.get("SecuritiesCompanyCode", "")).strip()
+            ind_code = str(item.get("SecuritiesIndustryCode", "")).strip()
+            if len(code) == 4 and code.isdigit():
+                ind_name = TPEX_INDUSTRY_CODE_MAP.get(ind_code, "其他業")
+                display_name = stock_names.get(code, code)
                 result[code] = {
                     "name": display_name,
-                    "industry": current_industry,
+                    "industry": ind_name,
                     "market": "tpex"
                 }
-
         print(f"TPEx: fetched {len(result)} stocks with industry classification")
         return result
     except Exception as e:
-        print(f"TPEx ISIN fetch error: {e}")
+        print(f"TPEx OpenAPI fetch error: {e}")
         return {}
 
 
@@ -210,7 +187,7 @@ def build_industry_map(stock_names):
 def compute_ma20_signals(industry_map):
     """
     批次下載所有股票 2 個月歷史，計算 MA20
-    回傳 {code: {above_ma20: bool, close: float, ma20: float}}
+    回傳 (signals, detected_trade_date)
     """
     import yfinance as yf
     import pandas as pd
@@ -224,7 +201,7 @@ def compute_ma20_signals(industry_map):
         tickers.append(ticker)
 
     if not tickers:
-        return {}
+        return {}, None
 
     print(f"Downloading price history for {len(tickers)} stocks via yfinance...")
     t0 = time.time()
@@ -239,8 +216,15 @@ def compute_ma20_signals(industry_map):
         )
     except Exception as e:
         print(f"yfinance batch download error: {e}")
-        return {}
+        return {}, None
     print(f"Download completed in {time.time() - t0:.1f}s")
+
+    detected_trade_date = None
+    if df is not None and not df.empty:
+        try:
+            detected_trade_date = df.index[-1].strftime("%Y-%m-%d")
+        except Exception:
+            pass
 
     signals = {}
     for ticker, code in ticker_to_code.items():
@@ -270,8 +254,8 @@ def compute_ma20_signals(industry_map):
         except Exception:
             continue
 
-    print(f"MA20 signals computed for {len(signals)} stocks")
-    return signals
+    print(f"MA20 signals computed for {len(signals)} stocks, latest trade date: {detected_trade_date}")
+    return signals, detected_trade_date
 
 
 def aggregate_sectors(industry_map, signals):
@@ -357,7 +341,7 @@ def aggregate_sectors(industry_map, signals):
 
 
 def get_trade_date():
-    """從 volume_spike.json 讀最新交易日，fallback 為台灣今日"""
+    """Fallback: 從 volume_spike.json 讀最新交易日，或回傳台灣今日"""
     vs_path = os.path.join(REPO_DIR, "volume_spike.json")
     if os.path.exists(vs_path):
         try:
@@ -383,7 +367,7 @@ def main():
         sys.exit(1)
 
     # Step 2: 批次計算 MA20 信號
-    signals = compute_ma20_signals(industry_map)
+    signals, detected_trade_date = compute_ma20_signals(industry_map)
     if not signals:
         print("ERROR: No MA20 signals computed, aborting.")
         sys.exit(1)
@@ -396,7 +380,8 @@ def main():
     bearish = [s for s in sectors if s["signal"] == "空方"]
     insufficient = [s for s in sectors if s["signal"] == "insufficient"]
 
-    trade_date = get_trade_date()
+    # 交易日優先採用從歷史行情中實際提取之最新交易日（如 2026-09-18）
+    trade_date = detected_trade_date or get_trade_date()
     now_iso = datetime.datetime.now(TZ_TW).isoformat()
 
     out_data = {
