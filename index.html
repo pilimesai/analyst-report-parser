@@ -2175,7 +2175,7 @@
                                     <td colspan="5" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
                                         <div style="font-size:1.5rem; margin-bottom:0.5rem;">🎯</div>
                                         <div>尚未執行量化運算</div>
-                                        <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🚀 執行即時量化運算」按鈕，系統將自動分析日周KD、三大法人、營收、大戶、法說會與CB條件。</div>
+                                        <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🚀 執行即時量化運算」按鈕，系統將自動分析日周KD、三大法人、營收、大戶、法說會、CB、主動型ETF獨家持股、今日成交值TOP30與所屬多方族群條件。</div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -3064,7 +3064,8 @@
             'M': '若已有發行的CB,且股價低於轉換價,並且轉換比例<10%',
             'N': '入選毛利三季成長',
             'O': '入選主動型ETF獨家持股',
-            'P': '入選今日成交值TOP30'
+            'P': '入選今日成交值TOP30',
+            'Q': '所在族群為多方族群 (MA20站上>=50%)'
         };
 
         function expandCriteria(criteriaArr) {
@@ -4863,6 +4864,32 @@ JSON 欄位：
             }
             topTurnoverStocks.forEach(sid => { if (!validStocks.includes(sid)) validStocks.push(sid); });
 
+            // 讀取族群強弱資料 (Sector Strength)，建立股票代號 -> 多方族群名稱對照
+            let ssPayload = sectorStrengthData;
+            if (!ssPayload) {
+                try {
+                    const c = localStorage.getItem('sector_strength_cache');
+                    if (c) {
+                        const parsed = JSON.parse(c);
+                        ssPayload = parsed.data || parsed;
+                    }
+                } catch(e) {}
+            }
+            const stockToBullishSectors = {};
+            if (ssPayload && ssPayload.sectors) {
+                const bullishSectors = ssPayload.sectors.filter(s => s.signal === '多方');
+                bullishSectors.forEach(sec => {
+                    const secName = sec.industry;
+                    (sec.stocks || []).forEach(st => {
+                        const code = String(st.code).trim();
+                        if (!stockToBullishSectors[code]) stockToBullishSectors[code] = [];
+                        if (!stockToBullishSectors[code].includes(secName)) {
+                            stockToBullishSectors[code].push(secName);
+                        }
+                    });
+                });
+            }
+
             if (validStocks.length === 0) {
                 showToast("⚠️ 列表內無可供量化計算的股票代號，請先上傳報告、大戶或主動型 ETF 資料。", true);
                 return;
@@ -4920,8 +4947,13 @@ JSON 欄位：
                         if (cbBelowStocks.includes(stockId) && !matched.includes("若已有發行的CB,且股價低於轉換價,並且轉換比例<10%")) {
                             matched.push("若已有發行的CB,且股價低於轉換價,並且轉換比例<10%");
                         }
+                        // 所在族群為多方族群 (MA20站上>=50%) -> 加一分
+                        if (stockToBullishSectors[stockId] && stockToBullishSectors[stockId].length > 0) {
+                            const secNames = stockToBullishSectors[stockId].join(' / ');
+                            matched.push(`所在族群為多方 (${secNames})`);
+                        }
 
-                        // 計算加權總分 (包含大戶持股 3分, 獨家持股 +1分, 今日成交值TOP30 +1分)
+                        // 計算加權總分 (包含大戶持股 3分, 獨家持股 +1分, 今日成交值TOP30 +1分, 多方族群 +1分)
                         let score = matched.length;
                         if (matched.some(m => m.includes("入選大戶持股"))) score += 2;
                         if (matched.some(m => m.includes("入選2周內會有法說會"))) score += 1;
@@ -5331,7 +5363,7 @@ JSON 欄位：
                             <td colspan="5" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
                                 <div style="font-size:1.5rem; margin-bottom:0.5rem;">🎯</div>
                                 <div>尚未執行量化運算</div>
-                                <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🚀 執行即時量化運算」按鈕，系統將自動分析日周KD、三大法人、營收、大戶、法說會、CB、主動型ETF獨家持股與今日成交值TOP30條件。</div>
+                                <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🚀 執行即時量化運算」按鈕，系統將自動分析日周KD、三大法人、營收、大戶、法說會、CB、主動型ETF獨家持股、今日成交值TOP30與所屬多方族群條件。</div>
                             </td>
                         </tr>
                     `;
