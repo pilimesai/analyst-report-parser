@@ -1511,6 +1511,123 @@
             padding-right: 0.5rem !important;
         }
 
+        /* 合約負債新高個股表格專用樣式 */
+        #contract-liabilities-view .cb-table-container {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        #contract-liabilities-table {
+            width: 100% !important;
+            min-width: 860px !important;
+            table-layout: fixed !important;
+        }
+
+        .contract-col-rank {
+            width: 4.5%;
+            text-align: center !important;
+            white-space: nowrap !important;
+            font-size: 0.8rem;
+        }
+        .contract-col-market {
+            width: 5.5%;
+            text-align: center !important;
+            white-space: nowrap !important;
+        }
+        .contract-col-code {
+            width: 6.5%;
+            text-align: center !important;
+            font-weight: 700;
+            color: #60a5fa;
+            white-space: nowrap !important;
+            font-size: 0.84rem;
+        }
+        .contract-col-name {
+            width: 11.5%;
+            font-weight: 600;
+            text-align: left !important;
+            white-space: nowrap !important;
+            color: #f8fafc;
+            padding-left: 0.4rem !important;
+            font-size: 0.84rem;
+        }
+        .contract-col-price {
+            width: 9.5%;
+            text-align: right !important;
+            white-space: nowrap !important;
+            font-size: 0.84rem;
+            padding-right: 0.4rem !important;
+        }
+        .contract-col-cap {
+            width: 8.0%;
+            text-align: right !important;
+            white-space: nowrap !important;
+            font-size: 0.84rem;
+            color: #cbd5e1;
+            padding-right: 0.4rem !important;
+        }
+        .contract-col-val {
+            width: 9.5%;
+            text-align: right !important;
+            font-weight: 600;
+            color: #f59e0b;
+            white-space: nowrap !important;
+            font-size: 0.84rem;
+            padding-right: 0.4rem !important;
+        }
+        .contract-col-liab {
+            width: 10.5%;
+            text-align: right !important;
+            font-weight: 700;
+            color: #38bdf8;
+            white-space: nowrap !important;
+            font-size: 0.84rem;
+            padding-right: 0.4rem !important;
+        }
+        .contract-col-qoq {
+            width: 10.5%;
+            text-align: right !important;
+            font-weight: 700;
+            color: #ef4444;
+            white-space: nowrap !important;
+            font-size: 0.84rem;
+            padding-right: 0.4rem !important;
+        }
+        .contract-col-avg-growth {
+            width: 10.5%;
+            text-align: right !important;
+            font-weight: 600;
+            color: #f97316;
+            white-space: nowrap !important;
+            font-size: 0.84rem;
+            padding-right: 0.4rem !important;
+        }
+        .contract-col-trend {
+            width: 13.5%;
+            text-align: center !important;
+            white-space: nowrap !important;
+            font-size: 0.78rem;
+        }
+        th.contract-col-name {
+            text-align: left !important;
+            padding-left: 0.4rem !important;
+        }
+        th.contract-col-price,
+        th.contract-col-cap,
+        th.contract-col-val,
+        th.contract-col-liab,
+        th.contract-col-qoq,
+        th.contract-col-avg-growth {
+            text-align: right !important;
+            padding-right: 0.4rem !important;
+        }
+        th.contract-col-rank,
+        th.contract-col-market,
+        th.contract-col-code,
+        th.contract-col-trend {
+            text-align: center !important;
+        }
+
         @media (max-width: 900px) {
             .cb-table-container {
                 overflow-x: auto;
@@ -1524,6 +1641,10 @@
             }
             #volume-spike-table {
                 min-width: 650px !important;
+                max-width: 100% !important;
+            }
+            #contract-liabilities-table {
+                min-width: 800px !important;
                 max-width: 100% !important;
             }
             .cb-dahu-table,
@@ -2036,6 +2157,11 @@
                     <span class="tab-text">族群強弱</span>
                     <span class="tab-badge" id="badge-sector-strength">0</span>
                 </button>
+                <button class="tab-btn" data-tab="contract-liabilities" onclick="switchActiveTab('contract-liabilities')">
+                    <span class="tab-icon">💼</span>
+                    <span class="tab-text">合約負債新高</span>
+                    <span class="tab-badge" id="badge-contract-liab">0</span>
+                </button>
             </div>
         </div>
 
@@ -2415,6 +2541,95 @@
                         <div>尚未載入族群強弱資料</div>
                         <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🔄 重新載入」或「⚡ 一鍵抓取所有資料」</div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contract Liabilities Stocks View (合約負債強勢爆發個股) -->
+        <div id="contract-liabilities-view" style="display:none; flex-direction:column; gap:20px; padding-bottom: 40px;">
+            <div class="reports-section">
+                <div class="section-header" style="flex-wrap:wrap; gap:0.75rem;">
+                    <div>
+                        <h2>💼 合約負債創4季新高 & 大幅成長股</h2>
+                        <p style="font-size:0.82rem; color:var(--text-secondary); margin-top:4px; line-height:1.4;">每日盤後結合 AI 自動篩選合約負債爆發黑馬股。合約負債代表客戶預付款項與在手訂單，創高且爆發成長預告未來營收動能強勁！</p>
+                        <!-- 篩選條件標籤列（嚴格符合 XQ 5大規則） -->
+                        <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.45rem;">
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); border-radius:4px; color:#93c5fd;">✓ [日] 股本 &lt; 20億</span>
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); border-radius:4px; color:#6ee7b7;">✓ [季] 合約負債 &gt; 近4季平均</span>
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(234,88,12,0.15); border:1px solid rgba(234,88,12,0.3); border-radius:4px; color:#fdba74;">✓ [季] 合約負債創 4 季新高</span>
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); border-radius:4px; color:#fca5a5;">✓ [季] 近1季合約負債成長 &gt; 50%</span>
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.3); border-radius:4px; color:#d8b4fe;">✓ [日] 成交金額 &gt; 0.5億元</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons" style="flex-shrink:0;">
+                        <button class="btn btn-primary" onclick="fetchContractLiabilitiesFromGithub()" id="fetch-contract-btn"
+                            style="background: linear-gradient(135deg, #0284c7, #2563eb);">🔄 重新載入</button>
+                    </div>
+                </div>
+
+                <!-- 統計指標卡片 -->
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:0.75rem; margin-top:0.5rem;">
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(59,130,246,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#93c5fd;">📅 行情交易日</div>
+                        <div style="font-size:1.1rem; font-weight:700; color:#f8fafc; margin-top:0.2rem;" id="contract-trade-date">—</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(16,185,129,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#6ee7b7;">🎯 符合條件檔數</div>
+                        <div style="font-size:1.2rem; font-weight:700; color:#10b981; margin-top:0.2rem;" id="contract-total-count">—</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(239,68,68,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#fca5a5;">🚀 季增率之冠 (QoQ)</div>
+                        <div style="font-size:0.95rem; font-weight:700; color:#ef4444; margin-top:0.2rem;" id="contract-top-growth">—</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(56,189,248,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#7dd3fc;">💰 合約負債最高</div>
+                        <div style="font-size:0.95rem; font-weight:700; color:#38bdf8; margin-top:0.2rem;" id="contract-top-amount">—</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid var(--card-border); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:var(--text-secondary);">🕒 掃描時間</div>
+                        <div style="font-size:0.85rem; font-weight:600; color:#94a3b8; margin-top:0.2rem;" id="contract-update-time">—</div>
+                    </div>
+                </div>
+
+                <!-- 搜尋與市場篩選 -->
+                <div style="display:flex; flex-wrap:wrap; gap:0.75rem; align-items:center; justify-content:space-between; margin-top:0.75rem;">
+                    <div>
+                        <input type="text" id="contract-search-input" placeholder="🔍 搜尋股票代號或名稱..." autocomplete="off"
+                            style="width:100%; max-width:320px; padding:0.4rem 0.75rem; font-size:0.85rem; border-radius:0.5rem; background:rgba(255,255,255,0.04); border:1px solid var(--card-border); color:#fff;">
+                    </div>
+                    <div style="display:flex; gap:0.5rem;" id="contract-market-filter">
+                        <button class="filter-chip active" data-market="all">全部</button>
+                        <button class="filter-chip" data-market="twse">📈 上市 (TWSE)</button>
+                        <button class="filter-chip" data-market="tpex">📊 上櫃 (TPEx)</button>
+                    </div>
+                </div>
+
+                <!-- 表格 -->
+                <div class="table-responsive persistent-table-container cb-table-container" style="margin-top:0.75rem; overflow-x: auto !important;">
+                    <table class="cb-table" id="contract-liabilities-table">
+                        <thead>
+                            <tr>
+                                <th class="contract-col-rank">排名</th>
+                                <th class="contract-col-market">市場</th>
+                                <th class="contract-col-code">代號</th>
+                                <th class="contract-col-name">名稱</th>
+                                <th class="contract-col-price">收盤 / 漲跌</th>
+                                <th class="contract-col-cap">股本</th>
+                                <th class="contract-col-val">今日成交</th>
+                                <th class="contract-col-liab">合約負債</th>
+                                <th class="contract-col-qoq">季增率 (QoQ)</th>
+                                <th class="contract-col-avg-growth">較4季均成長</th>
+                                <th class="contract-col-trend">近4季趨勢</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contract-tbody">
+                            <tr><td colspan="11" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                                <div style="font-size:1.5rem; margin-bottom:0.5rem;">💼</div>
+                                <div>尚未載入合約負債新高名單</div>
+                                <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🔄 重新載入」按鈕</div>
+                            </td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -3017,6 +3232,7 @@
                     syncActiveEtfFromCloud(),
                     fetchTopTurnoverFromGithub(true),
                     fetchVolumeSpikeFromGithub(true),
+                    fetchContractLiabilitiesFromGithub(true),
                     fetchCBFromGithub(true),
                     fetchCbBelowConvFromGithub(true),
                     fetchEarningsCallFromGithub(true),
@@ -4252,9 +4468,18 @@ JSON 欄位：
                 sectorStrengthView.style.display = (currentActiveTab === 'sector-strength') ? 'flex' : 'none';
             }
 
+            // 4e. Toggle contract liabilities view
+            const contractLiabilitiesView = document.getElementById('contract-liabilities-view');
+            if (contractLiabilitiesView) {
+                contractLiabilitiesView.style.display = (currentActiveTab === 'contract-liabilities') ? 'flex' : 'none';
+                if (currentActiveTab === 'contract-liabilities' && !contractLiabilitiesData) {
+                    fetchContractLiabilitiesFromGithub(true);
+                }
+            }
+
             // 5. Toggle persistent tables container and sections
             const persistentContainer = document.getElementById('persistent-csv-tables');
-            const builtinTabs = ['main-reports', 'quant-results', 'active-etf', 'top-turnover', 'volume-spike', 'sector-strength'];
+            const builtinTabs = ['main-reports', 'quant-results', 'active-etf', 'top-turnover', 'volume-spike', 'sector-strength', 'contract-liabilities'];
             if (persistentContainer) {
                 persistentContainer.style.display = builtinTabs.includes(currentActiveTab) ? 'none' : 'flex';
                 const sections = persistentContainer.querySelectorAll('.persistent-table-section');
@@ -4338,8 +4563,8 @@ JSON 欄位：
 
             const tabsContainer = document.getElementById('nav-tabs-container');
             if (tabsContainer) {
-                // Keep only main-reports, quant-results, active-etf, top-turnover, volume-spike, sector-strength tab buttons, remove dynamic ones
-                const dynamicTabs = tabsContainer.querySelectorAll('.tab-btn:not([data-tab="main-reports"]):not([data-tab="quant-results"]):not([data-tab="active-etf"]):not([data-tab="top-turnover"]):not([data-tab="volume-spike"]):not([data-tab="sector-strength"])');
+                // Keep only main-reports, quant-results, active-etf, top-turnover, volume-spike, sector-strength, contract-liabilities tab buttons, remove dynamic ones
+                const dynamicTabs = tabsContainer.querySelectorAll('.tab-btn:not([data-tab="main-reports"]):not([data-tab="quant-results"]):not([data-tab="active-etf"]):not([data-tab="top-turnover"]):not([data-tab="volume-spike"]):not([data-tab="sector-strength"]):not([data-tab="contract-liabilities"])');
                 dynamicTabs.forEach(t => t.remove());
             }
 
@@ -6746,6 +6971,207 @@ ${text.slice(0, 30000)}`;
                 const badge = document.getElementById('badge-sector-strength');
                 if (badge) badge.textContent = String(sectorStrengthData.bullishSectors || 0);
                 renderSectorStrengthView();
+            }
+        })();
+
+        // ==========================================
+        // 💼 合約負債強勢爆發模組 (Contract Liabilities Module)
+        // ==========================================
+        let contractLiabilitiesData = null;
+        let contractLiabilitiesMarketFilter = 'all';
+
+        async function fetchContractLiabilitiesFromGithub(silent = false) {
+            const fetchBtn = document.getElementById('fetch-contract-btn');
+            if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
+            if (!silent) showToast('💼 正在抓取最新合約負債新高名單...');
+            try {
+                const urls = [
+                    `./contract_liabilities.json?v=${Date.now()}`,
+                    `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/contract_liabilities.json?v=${Date.now()}`,
+                    `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/contract_liabilities.json?v=${Date.now()}`
+                ];
+                let payload = null;
+                for (const u of urls) {
+                    try {
+                        const r = await fetch(u);
+                        if (r.ok) {
+                            const j = await r.json();
+                            if (j && j.stocks && j.stocks.length > 0) { payload = j; break; }
+                        }
+                    } catch(e) {}
+                }
+                if (!payload) throw new Error('無法載入 contract_liabilities.json');
+                contractLiabilitiesData = payload;
+                localStorage.setItem('contract_liabilities_cache', JSON.stringify({ data: payload, savedAt: new Date().toISOString() }));
+                renderContractLiabilitiesView();
+                const total = (payload.stocks || []).length;
+                if (!silent) showToast(`✅ 成功載入合約負債突破名單！共 ${total} 檔黑馬股（${payload.tradeDate}）`);
+            } catch(e) {
+                if (!silent) showToast(`❌ 載入失敗: ${e.message}`, true);
+            } finally {
+                if (fetchBtn) { fetchBtn.disabled = false; fetchBtn.textContent = '🔄 重新載入'; }
+            }
+        }
+
+        function renderContractLiabilitiesView() {
+            const tbody = document.getElementById('contract-tbody');
+            const badgeContract = document.getElementById('badge-contract-liab');
+            const tradeDate = document.getElementById('contract-trade-date');
+            const totalCount = document.getElementById('contract-total-count');
+            const topGrowth = document.getElementById('contract-top-growth');
+            const topAmount = document.getElementById('contract-top-amount');
+            const updateTime = document.getElementById('contract-update-time');
+
+            if (!contractLiabilitiesData) {
+                if (badgeContract) badgeContract.innerText = '0';
+                if (tbody) tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                    <div style="font-size:1.5rem; margin-bottom:0.5rem;">💼</div>
+                    <div>尚未載入合約負債新高名單</div>
+                    <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🔄 重新載入」按鈕</div>
+                </td></tr>`;
+                return;
+            }
+
+            const allStocks = contractLiabilitiesData.stocks || [];
+            if (tradeDate) tradeDate.innerText = contractLiabilitiesData.tradeDate || '—';
+            if (totalCount) totalCount.innerText = `${allStocks.length} 檔`;
+            if (updateTime) updateTime.innerText = (contractLiabilitiesData.updateTime || '').slice(0, 16).replace('T', ' ');
+
+            // KPI Top stats
+            if (topGrowth && allStocks.length > 0) {
+                const maxGrowthStock = [...allStocks].sort((a,b) => (b.qoq_growth_pct || 0) - (a.qoq_growth_pct || 0))[0];
+                if (maxGrowthStock) {
+                    topGrowth.innerText = `${maxGrowthStock.code} ${maxGrowthStock.name} (+${maxGrowthStock.qoq_growth_pct}%)`;
+                }
+            }
+            if (topAmount && allStocks.length > 0) {
+                const maxLiabStock = [...allStocks].sort((a,b) => (b.latest_contract_liab_yi || 0) - (a.latest_contract_liab_yi || 0))[0];
+                if (maxLiabStock) {
+                    topAmount.innerText = `${maxLiabStock.code} ${maxLiabStock.name} (${maxLiabStock.latest_contract_liab_yi}億)`;
+                }
+            }
+
+            if (badgeContract) badgeContract.innerText = String(allStocks.length);
+
+            // Filters
+            let filtered = allStocks;
+            if (contractLiabilitiesMarketFilter === 'twse') {
+                filtered = filtered.filter(s => s.market === 'twse');
+            } else if (contractLiabilitiesMarketFilter === 'tpex') {
+                filtered = filtered.filter(s => s.market === 'tpex');
+            }
+
+            const searchInput = document.getElementById('contract-search-input');
+            const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
+            if (q) {
+                filtered = filtered.filter(s =>
+                    String(s.code).toLowerCase().includes(q) ||
+                    String(s.name).toLowerCase().includes(q)
+                );
+            }
+
+            if (!tbody) return;
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--text-secondary); padding:1.5rem;">無符合篩選或搜尋條件的資料</td></tr>`;
+                return;
+            }
+
+            const frag = document.createDocumentFragment();
+            filtered.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                const isTwse = item.market === 'twse';
+                const marketBadge = isTwse
+                    ? `<span style="font-size:0.68rem; padding:2px 5px; background:rgba(99,102,241,0.2); color:#a5b4fc; border:1px solid rgba(99,102,241,0.3); border-radius:4px; font-weight:600;">上市</span>`
+                    : `<span style="font-size:0.68rem; padding:2px 5px; background:rgba(16,185,129,0.2); color:#34d399; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-weight:600;">上櫃</span>`;
+
+                let rankBadge = `<span style="color:var(--text-secondary); font-size:0.82rem;">${index + 1}</span>`;
+                if (index === 0) rankBadge = `<span style="font-size:1.1rem;">🥇</span>`;
+                else if (index === 1) rankBadge = `<span style="font-size:1.1rem;">🥈</span>`;
+                else if (index === 2) rankBadge = `<span style="font-size:1.1rem;">🥉</span>`;
+
+                const change = item.change !== undefined ? Number(item.change) : 0;
+                let changeHtml = `<span style="color:var(--text-secondary);">—</span>`;
+                if (change > 0) changeHtml = `<span style="color:#ef4444; font-weight:600;">▲${Math.abs(change).toFixed(2)}</span>`;
+                else if (change < 0) changeHtml = `<span style="color:#22c55e; font-weight:600;">▼${Math.abs(change).toFixed(2)}</span>`;
+
+                const pricePair = `
+                    <div style="display:inline-flex; flex-direction:column; align-items:flex-end; justify-content:center; line-height:1.25;">
+                        <span style="color:#f8fafc; font-weight:700; font-size:0.84rem;">${item.close || '—'}</span>
+                        <span style="font-size:0.72rem;">${changeHtml}</span>
+                    </div>
+                `;
+
+                const qoqHtml = `<span style="color:#ef4444; font-weight:700;">+${item.qoq_growth_pct}%</span>`;
+                const avgGrowthHtml = `<span style="color:#f97316; font-weight:600;">+${item.avg_growth_pct}%</span>`;
+
+                // 4-quarter mini sparkline / pill badges
+                let historyBadges = '';
+                if (item.history_4q && item.history_4q.length) {
+                    historyBadges = `<div style="display:inline-flex; gap:3px; align-items:center; justify-content:center; flex-wrap:nowrap;">` +
+                        item.history_4q.map((h, i) => {
+                            const isLatest = i === item.history_4q.length - 1;
+                            const bg = isLatest ? 'rgba(239,68,68,0.25)' : 'rgba(255,255,255,0.06)';
+                            const border = isLatest ? '1px solid rgba(239,68,68,0.6)' : '1px solid rgba(255,255,255,0.1)';
+                            const color = isLatest ? '#fca5a5' : '#94a3b8';
+                            return `<span style="font-size:0.68rem; padding:1px 4px; background:${bg}; border:${border}; color:${color}; border-radius:3px; font-weight:${isLatest ? '700' : '500'};" title="${h.date}: ${h.value_yi}億">${h.value_yi}</span>`;
+                        }).join('') +
+                    `</div>`;
+                }
+
+                tr.innerHTML = `
+                    <td class="contract-col-rank">${rankBadge}</td>
+                    <td class="contract-col-market">${marketBadge}</td>
+                    <td class="contract-col-code">${item.code}</td>
+                    <td class="contract-col-name" title="${item.name || ''}">${item.name || item.code}</td>
+                    <td class="contract-col-price">${pricePair}</td>
+                    <td class="contract-col-cap">${item.capital_yi} 億</td>
+                    <td class="contract-col-val">${item.trade_val_yi} 億</td>
+                    <td class="contract-col-liab">${item.latest_contract_liab_yi} 億</td>
+                    <td class="contract-col-qoq">${qoqHtml}</td>
+                    <td class="contract-col-avg-growth">${avgGrowthHtml}</td>
+                    <td class="contract-col-trend">${historyBadges}</td>
+                `;
+                frag.appendChild(tr);
+            });
+
+            tbody.innerHTML = '';
+            tbody.appendChild(frag);
+        }
+
+        // Contract Liabilities event listeners
+        const contractMarketFilter = document.getElementById('contract-market-filter');
+        if (contractMarketFilter) {
+            contractMarketFilter.addEventListener('click', e => {
+                const btn = e.target.closest('.filter-chip');
+                if (!btn) return;
+                contractMarketFilter.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                contractLiabilitiesMarketFilter = btn.getAttribute('data-market') || 'all';
+                renderContractLiabilitiesView();
+            });
+        }
+        const contractSearchInput = document.getElementById('contract-search-input');
+        if (contractSearchInput) {
+            contractSearchInput.addEventListener('input', () => renderContractLiabilitiesView());
+        }
+
+        // Contract Liabilities - load from cache on startup
+        (() => {
+            try {
+                const cached = localStorage.getItem('contract_liabilities_cache');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (parsed && parsed.data) {
+                        contractLiabilitiesData = parsed.data;
+                    }
+                }
+            } catch(e) {}
+            if (contractLiabilitiesData) {
+                const badge = document.getElementById('badge-contract-liab');
+                if (badge && contractLiabilitiesData.stocks) {
+                    badge.innerText = String(contractLiabilitiesData.stocks.length);
+                }
+                renderContractLiabilitiesView();
             }
         })();
     </script>
