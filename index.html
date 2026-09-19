@@ -2065,12 +2065,8 @@
 
 
             <div class="input-group">
-                <label>合約負債條件</label>
-                <input type="file" id="contract-liabilities-upload" accept=".csv" style="display:none;">
-                <div class="upload-actions">
-                    <button class="btn" onclick="document.getElementById('contract-liabilities-upload').click()"
-                        style="width: 100%;">📥 上傳 CSV</button>
-                </div>
+                <label>合約負債新高</label>
+                <div style="font-size: 0.74rem; color: var(--text-secondary); margin-top: 2px;">由「一鍵抓取所有資料」自動更新</div>
             </div>
 
 
@@ -3378,9 +3374,6 @@
 
         document.getElementById('big-score-upload').addEventListener('change', (e) => handleCsvUpload(e, '大戶持股'));
 
-
-        document.getElementById('contract-liabilities-upload').addEventListener('change', (e) => handleCsvUpload(e, '合約負債條件'));
-
         async function fetchAllData() {
             const btn = document.getElementById('fetch-all-data-btn');
             const statusEl = document.getElementById('fetch-all-status');
@@ -3398,6 +3391,7 @@
                 { label: '🔥 今日成交值排行', fn: () => fetchTopTurnoverFromGithub(true) },
                 { label: '⚡ 成交量異常名單', fn: () => fetchVolumeSpikeFromGithub(true) },
                 { label: '🗺️ 族群強弱指標', fn: () => fetchSectorStrengthFromGithub(true) },
+                { label: '💼 合約負債新高', fn: () => fetchContractLiabilitiesFromGithub(true) },
             ];
 
             for (let i = 0; i < steps.length; i++) {
@@ -5053,7 +5047,11 @@ JSON 欄位：
             const earningsCallStocks = extractCodesFromTableData('法說會');
             earningsCallStocks.forEach(sid => { if (!validStocks.includes(sid)) validStocks.push(sid); });
 
-            const contractLiabilitiesStocks = extractCodesFromTableData('合約負債條件');
+            let contractLiabilitiesStocks = extractCodesFromTableData('合約負債條件');
+            if (contractLiabilitiesData && contractLiabilitiesData.stocks) {
+                const autoCodes = contractLiabilitiesData.stocks.map(s => s.code);
+                contractLiabilitiesStocks = Array.from(new Set([...contractLiabilitiesStocks, ...autoCodes]));
+            }
             contractLiabilitiesStocks.forEach(sid => { if (!validStocks.includes(sid)) validStocks.push(sid); });
 
             // 加入主動型 ETF 獨家持股標的 (僅 1 檔 ETF 重押且權重 > 1%)
