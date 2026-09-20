@@ -1628,6 +1628,34 @@
             text-align: center !important;
         }
 
+        /* 資金族群流向表格專用樣式 */
+        #sector-capital-flow-view .cb-table-container {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        #sector-flow-table {
+            width: 100% !important;
+            min-width: 900px !important;
+            table-layout: fixed !important;
+        }
+
+        .flow-col-rank { width: 4.0%; text-align: center !important; font-size: 0.8rem; }
+        .flow-col-sector { width: 13.0%; text-align: left !important; font-weight: 600; color: #f8fafc; font-size: 0.85rem; padding-left: 0.4rem !important; }
+        .flow-col-type { width: 6.0%; text-align: center !important; }
+        .flow-col-val { width: 9.0%; text-align: right !important; font-weight: 600; color: #f59e0b; font-size: 0.84rem; padding-right: 0.4rem !important; }
+        .flow-col-share { width: 10.0%; text-align: right !important; font-size: 0.82rem; padding-right: 0.4rem !important; }
+        .flow-col-flow { width: 9.5%; text-align: right !important; font-weight: 700; font-size: 0.84rem; padding-right: 0.4rem !important; }
+        .flow-col-growth { width: 8.0%; text-align: right !important; font-size: 0.82rem; padding-right: 0.4rem !important; }
+        .flow-col-avg-chg { width: 8.0%; text-align: right !important; font-weight: 600; font-size: 0.84rem; padding-right: 0.4rem !important; }
+        .flow-col-ad { width: 8.0%; text-align: center !important; font-size: 0.78rem; }
+        .flow-col-signal { width: 10.5%; text-align: center !important; font-size: 0.78rem; }
+        .flow-col-lead { width: 14.0%; text-align: left !important; font-size: 0.78rem; padding-left: 0.4rem !important; }
+
+        th.flow-col-sector, th.flow-col-lead { text-align: left !important; padding-left: 0.4rem !important; }
+        th.flow-col-val, th.flow-col-share, th.flow-col-flow, th.flow-col-growth, th.flow-col-avg-chg { text-align: right !important; padding-right: 0.4rem !important; }
+        th.flow-col-rank, th.flow-col-type, th.flow-col-ad, th.flow-col-signal { text-align: center !important; }
+
         @media (max-width: 900px) {
             .cb-table-container {
                 overflow-x: auto;
@@ -2158,6 +2186,11 @@
                     <span class="tab-text">合約負債新高</span>
                     <span class="tab-badge" id="badge-contract-liab">0</span>
                 </button>
+                <button class="tab-btn" data-tab="sector-capital-flow" onclick="switchActiveTab('sector-capital-flow')">
+                    <span class="tab-icon">🌊</span>
+                    <span class="tab-text">資金族群流向</span>
+                    <span class="tab-badge" id="badge-sector-flow">0</span>
+                </button>
             </div>
         </div>
 
@@ -2623,6 +2656,98 @@
                                 <div style="font-size:1.5rem; margin-bottom:0.5rem;">💼</div>
                                 <div>尚未載入合約負債新高名單</div>
                                 <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🔄 重新載入」按鈕</div>
+                            </td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sector Capital Flow View (資金族群流向監控) -->
+        <div id="sector-capital-flow-view" style="display:none; flex-direction:column; gap:20px; padding-bottom: 40px;">
+            <div class="reports-section">
+                <div class="section-header" style="flex-wrap:wrap; gap:0.75rem;">
+                    <div>
+                        <h2>🌊 資金族群流向監控 (Sector Capital Flow Tracker)</h2>
+                        <p style="font-size:0.82rem; color:var(--text-secondary); margin-top:4px; line-height:1.4;">每日即時運算全市場（上市 + 上櫃）資金在各產業與題材族群的流轉趨勢。透過資金佔比變化（pp）與量價關係，秒懂市場主力熱錢正在大舉進駐哪裡、從哪裡撤退！</p>
+                        <!-- 說明標籤 -->
+                        <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.45rem;">
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.3); border-radius:4px; color:#a5b4fc;">資金比重 = 族群成交額 ÷ 全市場總成交額</span>
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); border-radius:4px; color:#6ee7b7;">🟢 資金流入 = 佔比增加 (pp)</span>
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); border-radius:4px; color:#fca5a5;">🔴 資金流出 = 佔比減少 (pp)</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons" style="flex-shrink:0;">
+                        <button class="btn btn-primary" onclick="fetchSectorCapitalFlowFromGithub()" id="fetch-sector-flow-btn"
+                            style="background: linear-gradient(135deg, #06b6d4, #3b82f6);">🔄 重新載入</button>
+                    </div>
+                </div>
+
+                <!-- 4 大統計指標卡片 -->
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:0.75rem; margin-top:0.5rem;">
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(99,102,241,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#a5b4fc;">📅 交易日 / 全市場總成交</div>
+                        <div style="font-size:1.05rem; font-weight:700; color:#f8fafc; margin-top:0.2rem;" id="flow-mkt-val">—</div>
+                        <div style="font-size:0.72rem; color:var(--text-secondary); margin-top:0.2rem;" id="flow-mkt-diff">—</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(16,185,129,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#6ee7b7;">🔥 今日吸金之冠 (最強流入)</div>
+                        <div style="font-size:1.0rem; font-weight:700; color:#10b981; margin-top:0.2rem;" id="flow-top-inflow">—</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(239,68,68,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#fca5a5;">❄️ 今日失血最多 (最大流出)</div>
+                        <div style="font-size:1.0rem; font-weight:700; color:#ef4444; margin-top:0.2rem;" id="flow-top-outflow">—</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(245,158,11,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#fcd34d;">⚡ 最強進攻族群 (量價齊揚)</div>
+                        <div style="font-size:1.0rem; font-weight:700; color:#f59e0b; margin-top:0.2rem;" id="flow-top-bullish">—</div>
+                    </div>
+                </div>
+
+                <!-- 搜尋與篩選列 -->
+                <div style="display:flex; flex-wrap:wrap; gap:0.75rem; align-items:center; justify-content:space-between; margin-top:0.75rem;">
+                    <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
+                        <input type="text" id="flow-search-input" placeholder="🔍 搜尋族群或成分股 (如 CPO, 聯電)..." autocomplete="off"
+                            style="width:100%; max-width:280px; padding:0.4rem 0.75rem; font-size:0.85rem; border-radius:0.5rem; background:rgba(255,255,255,0.04); border:1px solid var(--card-border); color:#fff;">
+                        
+                        <!-- 類別切換 -->
+                        <div style="display:flex; gap:0.35rem;" id="flow-type-filter">
+                            <button class="filter-chip active" data-type="all">全部維度</button>
+                            <button class="filter-chip" data-type="theme" style="color:#fbbf24; border-color:rgba(245,158,11,0.4);">🔥 熱門題材次族群</button>
+                            <button class="filter-chip" data-type="official" style="color:#a5b4fc; border-color:rgba(99,102,241,0.4);">🏛️ 官方產業別</button>
+                        </div>
+                    </div>
+                    <!-- 流向切換 -->
+                    <div style="display:flex; gap:0.35rem;" id="flow-direction-filter">
+                        <button class="filter-chip active" data-direction="all">全部流向</button>
+                        <button class="filter-chip" data-direction="inflow" style="color:#10b981; border-color:rgba(16,185,129,0.4);">🟢 資金淨流入 (吸金)</button>
+                        <button class="filter-chip" data-direction="outflow" style="color:#ef4444; border-color:rgba(239,68,68,0.4);">🔴 資金淨流出 (失血)</button>
+                    </div>
+                </div>
+
+                <!-- 表格 -->
+                <div class="table-responsive persistent-table-container cb-table-container" style="margin-top:0.75rem; overflow-x: auto !important;">
+                    <table class="cb-table" id="sector-flow-table">
+                        <thead>
+                            <tr>
+                                <th class="flow-col-rank">排名</th>
+                                <th class="flow-col-sector">族群名稱</th>
+                                <th class="flow-col-type">維度</th>
+                                <th class="flow-col-val">今日成交</th>
+                                <th class="flow-col-share">資金比重</th>
+                                <th class="flow-col-flow">流向變化</th>
+                                <th class="flow-col-growth">成交增幅</th>
+                                <th class="flow-col-avg-chg">平均漲跌</th>
+                                <th class="flow-col-ad">漲平跌</th>
+                                <th class="flow-col-signal">量價信號</th>
+                                <th class="flow-col-lead">吸金前 3 大指標股</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sector-flow-tbody">
+                            <tr><td colspan="11" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                                <div style="font-size:1.5rem; margin-bottom:0.5rem;">🌊</div>
+                                <div>尚未載入資金族群流向資料</div>
+                                <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🔄 重新載入」或「⚡ 一鍵抓取所有資料」</div>
                             </td></tr>
                         </tbody>
                     </table>
@@ -3229,6 +3354,7 @@
                     fetchTopTurnoverFromGithub(true),
                     fetchVolumeSpikeFromGithub(true),
                     fetchContractLiabilitiesFromGithub(true),
+                    fetchSectorCapitalFlowFromGithub(true),
                     fetchCBFromGithub(true),
                     fetchCbBelowConvFromGithub(true),
                     fetchEarningsCallFromGithub(true),
@@ -3392,6 +3518,7 @@
                 { label: '⚡ 成交量異常名單', fn: () => fetchVolumeSpikeFromGithub(true) },
                 { label: '🗺️ 族群強弱指標', fn: () => fetchSectorStrengthFromGithub(true) },
                 { label: '💼 合約負債新高', fn: () => fetchContractLiabilitiesFromGithub(true) },
+                { label: '🌊 資金族群流向', fn: () => fetchSectorCapitalFlowFromGithub(true) },
             ];
 
             for (let i = 0; i < steps.length; i++) {
@@ -4471,9 +4598,18 @@ JSON 欄位：
                 }
             }
 
+            // 4f. Toggle sector capital flow view
+            const sectorFlowView = document.getElementById('sector-capital-flow-view');
+            if (sectorFlowView) {
+                sectorFlowView.style.display = (currentActiveTab === 'sector-capital-flow') ? 'flex' : 'none';
+                if (currentActiveTab === 'sector-capital-flow' && !sectorCapitalFlowData) {
+                    fetchSectorCapitalFlowFromGithub(true);
+                }
+            }
+
             // 5. Toggle persistent tables container and sections
             const persistentContainer = document.getElementById('persistent-csv-tables');
-            const builtinTabs = ['main-reports', 'quant-results', 'active-etf', 'top-turnover', 'volume-spike', 'sector-strength', 'contract-liabilities'];
+            const builtinTabs = ['main-reports', 'quant-results', 'active-etf', 'top-turnover', 'volume-spike', 'sector-strength', 'contract-liabilities', 'sector-capital-flow'];
             if (persistentContainer) {
                 persistentContainer.style.display = builtinTabs.includes(currentActiveTab) ? 'none' : 'flex';
                 const sections = persistentContainer.querySelectorAll('.persistent-table-section');
@@ -4557,8 +4693,8 @@ JSON 欄位：
 
             const tabsContainer = document.getElementById('nav-tabs-container');
             if (tabsContainer) {
-                // Keep only main-reports, quant-results, active-etf, top-turnover, volume-spike, sector-strength, contract-liabilities tab buttons, remove dynamic ones
-                const dynamicTabs = tabsContainer.querySelectorAll('.tab-btn:not([data-tab="main-reports"]):not([data-tab="quant-results"]):not([data-tab="active-etf"]):not([data-tab="top-turnover"]):not([data-tab="volume-spike"]):not([data-tab="sector-strength"]):not([data-tab="contract-liabilities"])');
+                // Keep only main-reports, quant-results, active-etf, top-turnover, volume-spike, sector-strength, contract-liabilities, sector-capital-flow tab buttons, remove dynamic ones
+                const dynamicTabs = tabsContainer.querySelectorAll('.tab-btn:not([data-tab="main-reports"]):not([data-tab="quant-results"]):not([data-tab="active-etf"]):not([data-tab="top-turnover"]):not([data-tab="volume-spike"]):not([data-tab="sector-strength"]):not([data-tab="contract-liabilities"]):not([data-tab="sector-capital-flow"])');
                 dynamicTabs.forEach(t => t.remove());
             }
 
@@ -7170,6 +7306,341 @@ ${text.slice(0, 30000)}`;
                     badge.innerText = String(contractLiabilitiesData.stocks.length);
                 }
                 renderContractLiabilitiesView();
+            }
+        })();
+
+        // ==========================================
+        // 🌊 資金族群流向模組 (Sector Capital Flow Module)
+        // ==========================================
+        let sectorCapitalFlowData = null;
+        let sectorCapitalFlowTypeFilter = 'all'; // 'all', 'theme', 'official'
+        let sectorCapitalFlowDirectionFilter = 'all'; // 'all', 'inflow', 'outflow'
+
+        async function fetchSectorCapitalFlowFromGithub(silent = false) {
+            const fetchBtn = document.getElementById('fetch-sector-flow-btn');
+            if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
+            if (!silent) showToast('🌊 正在抓取最新資金族群流向資料...');
+            try {
+                const urls = [
+                    `./sector_capital_flow.json?v=${Date.now()}`,
+                    `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/sector_capital_flow.json?v=${Date.now()}`,
+                    `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/sector_capital_flow.json?v=${Date.now()}`
+                ];
+                let payload = null;
+                for (const u of urls) {
+                    try {
+                        const r = await fetch(u);
+                        if (r.ok) {
+                            const j = await r.json();
+                            if (j && (j.themes || j.official)) { payload = j; break; }
+                        }
+                    } catch(e) {}
+                }
+                if (!payload) throw new Error('無法載入 sector_capital_flow.json');
+                sectorCapitalFlowData = payload;
+                localStorage.setItem('sector_capital_flow_cache', JSON.stringify({ data: payload, savedAt: new Date().toISOString() }));
+                renderSectorCapitalFlowView();
+                const totalThemes = (payload.themes || []).length;
+                const totalOfficial = (payload.official || []).length;
+                if (!silent) showToast(`✅ 成功載入資金族群流向！共 ${totalThemes} 題材 + ${totalOfficial} 官方族群（${payload.tradeDate}）`);
+            } catch(e) {
+                if (!silent) showToast(`❌ 載入失敗: ${e.message}`, true);
+            } finally {
+                if (fetchBtn) { fetchBtn.disabled = false; fetchBtn.textContent = '🔄 重新載入'; }
+            }
+        }
+
+        function renderSectorCapitalFlowView() {
+            const tbody = document.getElementById('sector-flow-tbody');
+            const badgeFlow = document.getElementById('badge-sector-flow');
+            const mktValEl = document.getElementById('flow-mkt-val');
+            const mktDiffEl = document.getElementById('flow-mkt-diff');
+            const topInflowEl = document.getElementById('flow-top-inflow');
+            const topOutflowEl = document.getElementById('flow-top-outflow');
+            const topBullishEl = document.getElementById('flow-top-bullish');
+
+            if (!sectorCapitalFlowData) {
+                if (badgeFlow) badgeFlow.innerText = '0';
+                if (tbody) tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                    <div style="font-size:1.5rem; margin-bottom:0.5rem;">🌊</div>
+                    <div>尚未載入資金族群流向資料</div>
+                    <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🔄 重新載入」或「⚡ 一鍵抓取所有資料」</div>
+                </td></tr>`;
+                return;
+            }
+
+            const mkt = sectorCapitalFlowData.market || {};
+            const sum = sectorCapitalFlowData.summary || {};
+            const themes = sectorCapitalFlowData.themes || [];
+            const official = sectorCapitalFlowData.official || [];
+
+            // Market turnover KPI
+            if (mktValEl) {
+                const growthSign = (mkt.growth_pct || 0) >= 0 ? '+' : '';
+                mktValEl.innerHTML = `<span style="font-size:0.85rem; color:#a5b4fc; font-weight:600; margin-right:4px;">${sectorCapitalFlowData.tradeDate || ''}</span> ${(mkt.t0_total_yi || 0).toLocaleString(undefined, {maximumFractionDigits:1})} <span style="font-size:0.75rem; font-weight:normal; color:#94a3b8;">億</span> <span style="font-size:0.75rem; color:${(mkt.growth_pct || 0) >= 0 ? '#ef4444' : '#22c55e'};">(${growthSign}${mkt.growth_pct}%)</span>`;
+            }
+            if (mktDiffEl) {
+                const diffSign = (mkt.diff_yi || 0) >= 0 ? '+' : '';
+                mktDiffEl.innerText = `前日 ${(mkt.t1_total_yi || 0).toLocaleString(undefined, {maximumFractionDigits:1})} 億 (差額 ${diffSign}${mkt.diff_yi} 億)`;
+            }
+
+            // Top inflow KPI
+            if (topInflowEl) {
+                const topIn = sum.top_inflow_theme && sum.top_inflow_theme[0];
+                if (topIn) {
+                    topInflowEl.innerHTML = `<span title="${topIn.sector_name}">${topIn.sector_name.split('/')[0].trim()}</span> <span style="font-size:0.8rem; color:#10b981;">(+${topIn.flow_pp}%)</span>`;
+                } else {
+                    topInflowEl.innerText = '—';
+                }
+            }
+
+            // Top outflow KPI
+            if (topOutflowEl) {
+                const topOut = sum.top_outflow_theme && sum.top_outflow_theme[0];
+                if (topOut) {
+                    topOutflowEl.innerHTML = `<span title="${topOut.sector_name}">${topOut.sector_name.split('/')[0].trim()}</span> <span style="font-size:0.8rem; color:#ef4444;">(${topOut.flow_pp}%)</span>`;
+                } else {
+                    topOutflowEl.innerText = '—';
+                }
+            }
+
+            // Top bullish KPI
+            if (topBullishEl) {
+                const topBull = sum.top_bullish_theme && sum.top_bullish_theme[0];
+                if (topBull) {
+                    topBullishEl.innerHTML = `<span title="${topBull.sector_name}">${topBull.sector_name.split('/')[0].trim()}</span> <span style="font-size:0.8rem; color:#f59e0b;">(均漲+${topBull.avg_pct_chg}%)</span>`;
+                } else {
+                    topBullishEl.innerText = '—';
+                }
+            }
+
+            // Badge count: number of theme sectors with positive inflow
+            const positiveInflowCount = themes.filter(t => (t.flow_pp || 0) > 0).length;
+            if (badgeFlow) badgeFlow.innerText = String(positiveInflowCount);
+
+            // Filter sectors by dimension
+            let combined = [];
+            if (sectorCapitalFlowTypeFilter === 'all') {
+                combined = [...themes, ...official];
+            } else if (sectorCapitalFlowTypeFilter === 'theme') {
+                combined = [...themes];
+            } else if (sectorCapitalFlowTypeFilter === 'official') {
+                combined = [...official];
+            }
+
+            // Flow direction filter
+            if (sectorCapitalFlowDirectionFilter === 'inflow') {
+                combined = combined.filter(s => (s.flow_pp || 0) > 0);
+            } else if (sectorCapitalFlowDirectionFilter === 'outflow') {
+                combined = combined.filter(s => (s.flow_pp || 0) < 0);
+            }
+
+            // Text search
+            const searchInput = document.getElementById('flow-search-input');
+            const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
+            if (q) {
+                combined = combined.filter(s => {
+                    const matchSector = String(s.sector_name).toLowerCase().includes(q);
+                    const matchStocks = (s.top_stocks || []).some(stk =>
+                        String(stk.code).toLowerCase().includes(q) || String(stk.name).toLowerCase().includes(q)
+                    );
+                    return matchSector || matchStocks;
+                });
+            }
+
+            // Sort: highest turnover
+            combined.sort((a, b) => (b.trade_val_yi || 0) - (a.trade_val_yi || 0));
+
+            if (!tbody) return;
+            if (combined.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--text-secondary); padding:2rem;">無符合篩選或搜尋條件的族群資料</td></tr>`;
+                return;
+            }
+
+            const frag = document.createDocumentFragment();
+            combined.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                const isTheme = item.sector_type === 'theme';
+
+                const typeBadge = isTheme
+                    ? `<span style="font-size:0.68rem; padding:2px 6px; background:rgba(245,158,11,0.15); color:#fbbf24; border:1px solid rgba(245,158,11,0.3); border-radius:4px; font-weight:600;">🔥 題材</span>`
+                    : `<span style="font-size:0.68rem; padding:2px 6px; background:rgba(99,102,241,0.15); color:#a5b4fc; border:1px solid rgba(99,102,241,0.3); border-radius:4px; font-weight:600;">🏛️ 官方</span>`;
+
+                let rankBadge = `<span style="color:var(--text-secondary); font-size:0.82rem;">${index + 1}</span>`;
+                if (index === 0) rankBadge = `<span style="font-size:1.1rem;">🥇</span>`;
+                else if (index === 1) rankBadge = `<span style="font-size:1.1rem;">🥈</span>`;
+                else if (index === 2) rankBadge = `<span style="font-size:1.1rem;">🥉</span>`;
+
+                // Sector Name with stock count pill
+                const sectorHtml = `
+                    <div style="display:flex; flex-direction:column; gap:2px;">
+                        <span style="font-weight:700; color:#f8fafc; font-size:0.88rem;">${item.sector_name}</span>
+                        <span style="font-size:0.7rem; color:#94a3b8;">${item.active_count || item.stock_count || 0} 檔成分股</span>
+                    </div>
+                `;
+
+                // Capital Share with mini horizontal visual bar
+                const sharePct = item.share0_pct !== undefined ? item.share0_pct : 0;
+                const shareBarWidth = Math.min(100, Math.round(sharePct * 4)); // scale for max ~25%
+                const shareHtml = `
+                    <div style="display:flex; flex-direction:column; gap:3px; min-width:70px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700; color:#e2e8f0;">
+                            <span>${sharePct.toFixed(2)}%</span>
+                        </div>
+                        <div style="width:100%; height:4px; background:rgba(255,255,255,0.08); border-radius:2px; overflow:hidden;">
+                            <div style="width:${shareBarWidth}%; height:100%; background:linear-gradient(90deg, #38bdf8, #818cf8); border-radius:2px;"></div>
+                        </div>
+                    </div>
+                `;
+
+                // Flow Change (flow_pp: 今日佔比 - 昨日佔比)
+                const flowPp = item.flow_pp !== undefined ? item.flow_pp : 0;
+                let flowHtml = `<span style="color:var(--text-secondary); font-size:0.82rem;">0.00%</span>`;
+                if (flowPp > 0) {
+                    flowHtml = `<span style="color:#10b981; font-weight:700; font-size:0.84rem; display:inline-flex; align-items:center; gap:2px;">+${flowPp.toFixed(2)}% <span style="font-size:0.68rem; padding:1px 4px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); border-radius:3px;">流入</span></span>`;
+                } else if (flowPp < 0) {
+                    flowHtml = `<span style="color:#ef4444; font-weight:700; font-size:0.84rem; display:inline-flex; align-items:center; gap:2px;">${flowPp.toFixed(2)}% <span style="font-size:0.68rem; padding:1px 4px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); border-radius:3px;">流出</span></span>`;
+                }
+
+                // Growth Pct
+                const growthPct = item.growth_pct !== undefined ? item.growth_pct : 0;
+                let growthHtml = `<span style="color:var(--text-secondary); font-size:0.82rem;">0.0%</span>`;
+                if (growthPct > 0) {
+                    growthHtml = `<span style="color:#f97316; font-weight:600; font-size:0.82rem;">+${growthPct.toFixed(1)}%</span>`;
+                } else if (growthPct < 0) {
+                    growthHtml = `<span style="color:#64748b; font-size:0.82rem;">${growthPct.toFixed(1)}%</span>`;
+                }
+
+                // Average Price Change (Taiwan convention: red=up, green=down)
+                const avgChg = item.avg_pct_chg !== undefined ? item.avg_pct_chg : 0;
+                let avgChgHtml = `<span style="color:var(--text-secondary);">0.00%</span>`;
+                if (avgChg > 0) {
+                    avgChgHtml = `<span style="color:#ef4444; font-weight:700; font-size:0.84rem;">▲+${avgChg.toFixed(2)}%</span>`;
+                } else if (avgChg < 0) {
+                    avgChgHtml = `<span style="color:#22c55e; font-weight:700; font-size:0.84rem;">▼${avgChg.toFixed(2)}%</span>`;
+                }
+
+                // Advances / Declines Pill
+                const adv = item.advances || 0;
+                const dec = item.declines || 0;
+                const unc = item.unchanged || 0;
+                const adHtml = `
+                    <div style="display:inline-flex; gap:3px; align-items:center; font-size:0.72rem; font-weight:600;">
+                        <span style="color:#ef4444;" title="上漲家數">${adv}↑</span>
+                        <span style="color:#94a3b8;">/</span>
+                        <span style="color:#22c55e;" title="下跌家數">${dec}↓</span>
+                        ${unc > 0 ? `<span style="color:#64748b;">(${unc})</span>` : ''}
+                    </div>
+                `;
+
+                // Signal Badge
+                const sig = item.signal || '⚖️ 資金平穩';
+                let sigBg = 'rgba(255,255,255,0.05)';
+                let sigBorder = 'rgba(255,255,255,0.1)';
+                let sigColor = '#94a3b8';
+                if (item.signal_type === 'bullish_inflow') {
+                    sigBg = 'rgba(245,158,11,0.15)';
+                    sigBorder = 'rgba(245,158,11,0.35)';
+                    sigColor = '#fbbf24';
+                } else if (item.signal_type === 'churn_warning') {
+                    sigBg = 'rgba(239,68,68,0.15)';
+                    sigBorder = 'rgba(239,68,68,0.35)';
+                    sigColor = '#fca5a5';
+                } else if (item.signal_type === 'bearish_outflow') {
+                    sigBg = 'rgba(59,130,246,0.15)';
+                    sigBorder = 'rgba(59,130,246,0.35)';
+                    sigColor = '#93c5fd';
+                } else if (item.signal_type === 'consolidation') {
+                    sigBg = 'rgba(168,85,247,0.15)';
+                    sigBorder = 'rgba(168,85,247,0.35)';
+                    sigColor = '#d8b4fe';
+                }
+                const signalHtml = `<span style="font-size:0.72rem; padding:3px 7px; background:${sigBg}; border:1px solid ${sigBorder}; color:${sigColor}; border-radius:9999px; font-weight:600; white-space:nowrap;">${sig}</span>`;
+
+                // Top 3 Leading Stocks
+                let topStocksHtml = `<span style="color:#64748b; font-size:0.75rem;">—</span>`;
+                if (item.top_stocks && item.top_stocks.length > 0) {
+                    topStocksHtml = `<div style="display:flex; flex-wrap:wrap; gap:4px; align-items:center;">` +
+                        item.top_stocks.map(stk => {
+                            const stkChg = stk.pct_change || 0;
+                            const chgColor = stkChg > 0 ? '#ef4444' : (stkChg < 0 ? '#22c55e' : '#94a3b8');
+                            const chgSign = stkChg > 0 ? '+' : '';
+                            return `<span style="display:inline-flex; align-items:center; gap:3px; padding:2px 6px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:4px; font-size:0.72rem;" title="${stk.code} ${stk.name}: 成交 ${stk.trade_val_yi}億">
+                                <span style="font-weight:700; color:#f1f5f9;">${stk.name}</span>
+                                <span style="color:${chgColor}; font-weight:600;">${chgSign}${stkChg}%</span>
+                                <span style="color:#64748b; font-size:0.68rem;">(${stk.trade_val_yi}億)</span>
+                            </span>`;
+                        }).join('') +
+                    `</div>`;
+                }
+
+                tr.innerHTML = `
+                    <td class="flow-col-rank">${rankBadge}</td>
+                    <td class="flow-col-sector">${sectorHtml}</td>
+                    <td class="flow-col-type">${typeBadge}</td>
+                    <td class="flow-col-val" style="font-weight:700; color:#f8fafc;">${(item.trade_val_yi || 0).toLocaleString(undefined, {maximumFractionDigits:1})} 億</td>
+                    <td class="flow-col-share">${shareHtml}</td>
+                    <td class="flow-col-flow">${flowHtml}</td>
+                    <td class="flow-col-growth">${growthHtml}</td>
+                    <td class="flow-col-avg-chg">${avgChgHtml}</td>
+                    <td class="flow-col-ad">${adHtml}</td>
+                    <td class="flow-col-signal">${signalHtml}</td>
+                    <td class="flow-col-lead">${topStocksHtml}</td>
+                `;
+                frag.appendChild(tr);
+            });
+
+            tbody.innerHTML = '';
+            tbody.appendChild(frag);
+        }
+
+        // Sector Capital Flow event listeners
+        const flowTypeFilter = document.getElementById('flow-type-filter');
+        if (flowTypeFilter) {
+            flowTypeFilter.addEventListener('click', e => {
+                const btn = e.target.closest('.filter-chip');
+                if (!btn) return;
+                flowTypeFilter.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                sectorCapitalFlowTypeFilter = btn.getAttribute('data-type') || 'all';
+                renderSectorCapitalFlowView();
+            });
+        }
+
+        const flowDirectionFilter = document.getElementById('flow-direction-filter');
+        if (flowDirectionFilter) {
+            flowDirectionFilter.addEventListener('click', e => {
+                const btn = e.target.closest('.filter-chip');
+                if (!btn) return;
+                flowDirectionFilter.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                sectorCapitalFlowDirectionFilter = btn.getAttribute('data-direction') || 'all';
+                renderSectorCapitalFlowView();
+            });
+        }
+
+        const flowSearchInput = document.getElementById('flow-search-input');
+        if (flowSearchInput) {
+            flowSearchInput.addEventListener('input', () => renderSectorCapitalFlowView());
+        }
+
+        // Sector Capital Flow - load from cache on startup
+        (() => {
+            try {
+                const cached = localStorage.getItem('sector_capital_flow_cache');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (parsed && parsed.data) {
+                        sectorCapitalFlowData = parsed.data;
+                    }
+                }
+            } catch(e) {}
+            if (sectorCapitalFlowData) {
+                const badge = document.getElementById('badge-sector-flow');
+                const themes = sectorCapitalFlowData.themes || [];
+                const positiveInflow = themes.filter(t => (t.flow_pp || 0) > 0).length;
+                if (badge) badge.innerText = String(positiveInflow);
+                renderSectorCapitalFlowView();
             }
         })();
     </script>

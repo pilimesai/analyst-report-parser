@@ -1,0 +1,36 @@
+name: Update Sector Capital Flow Daily
+
+on:
+  schedule:
+    # 每個交易日台灣時間 16:35 (UTC 08:35) 自動執行
+    - cron: '35 8 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Scan Sector Capital Flow
+        run: |
+          python update_sector_capital_flow.py
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
+          git add sector_capital_flow.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-update sector capital flow" && git push origin main)
