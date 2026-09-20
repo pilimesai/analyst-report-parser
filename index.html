@@ -3693,7 +3693,7 @@
             'O': '入選主動型ETF獨家持股',
             'P': '入選今日成交值TOP30',
             'Q': '所在族群為多方族群 (MA20站上>=50%)',
-            'R': '入選大股東質設名單 (質設成本防守)'
+            'R': '大股東質設成本防守 (現價在質設成本20%以內)'
         };
 
         function expandCriteria(criteriaArr) {
@@ -5550,7 +5550,7 @@ JSON 欄位：
             }
 
             // 加入大股東質設名單 (質設成本防守) 標的
-            let stockPledgeCodes = new Set();
+            let stockPledgeMap = {};
             const spPayload = stockPledgeData || (() => {
                 try {
                     const c = localStorage.getItem('stock_pledge_cache');
@@ -5558,10 +5558,28 @@ JSON 欄位：
                 } catch(e) { return null; }
             })();
             if (spPayload && Array.isArray(spPayload.stocks)) {
+                let cutoffRocVal = 0;
+                if (spPayload.tradeDate) {
+                    const p = spPayload.tradeDate.split('-');
+                    if (p.length === 3) {
+                        const y = (parseInt(p[0], 10) || 2026) - 1911 - 3;
+                        const m = parseInt(p[1], 10) || 1;
+                        const d = parseInt(p[2], 10) || 1;
+                        cutoffRocVal = y * 10000 + m * 100 + d;
+                    }
+                }
+                function parseRocDateVal(dStr) {
+                    if (!dStr) return 0;
+                    const p = String(dStr).split('/');
+                    if (p.length === 3) return (parseInt(p[0], 10) || 0) * 10000 + (parseInt(p[1], 10) || 0) * 100 + (parseInt(p[2], 10) || 0);
+                    return 0;
+                }
+
                 spPayload.stocks.forEach(s => {
                     const sc = String(s.code).trim();
                     if (sc) {
-                        stockPledgeCodes.add(sc);
+                        if (cutoffRocVal && parseRocDateVal(s.pledge_date) < cutoffRocVal) return;
+                        stockPledgeMap[sc] = s;
                         if (!validStocks.includes(sc)) validStocks.push(sc);
                     }
                 });
@@ -5629,17 +5647,29 @@ JSON 欄位：
                             const secNames = stockToBullishSectors[stockId].join(' / ');
                             matched.push(`所在族群為多方 (${secNames})`);
                         }
-                        // 入選大股東質設名單 (質設成本防守)
-                        if (stockPledgeCodes.has(stockId)) {
-                            matched.push("入選大股東質設名單");
+                        // 大股東質設成本防守：只要股價還在質設成本20%以內, 選股積分就+2分
+                        if (stockPledgeMap[stockId]) {
+                            const pInfo = stockPledgeMap[stockId];
+                            const pledgePrice = Number(pInfo.pledge_price) || 0;
+                            const curPrice = Number(pInfo.current_price) || 0;
+                            let diffPct = pInfo.diff_pct !== undefined ? Number(pInfo.diff_pct) : 0;
+                            if (diffPct === 0 && pledgePrice > 0 && curPrice > 0) {
+                                diffPct = ((curPrice - pledgePrice) / pledgePrice) * 100;
+                            }
+
+                            // 判斷是否在質設成本 20% 以內 (-20% <= diff_pct <= +20%)
+                            if (pledgePrice > 0 && Math.abs(diffPct) <= 20) {
+                                const signStr = diffPct >= 0 ? '+' : '';
+                                matched.push(`大股東質設成本防守 (現價在成本20%以內, 距成本${signStr}${diffPct.toFixed(1)}%)`);
+                            }
                         }
 
-                        // 計算加權總分 (包含大戶持股 3分, 獨家持股 +1分, 今日成交值TOP30 +1分, 多方族群 +1分, 大股東質設 +1分)
+                        // 計算加權總分 (包含大戶持股 3分, 獨家持股 +1分, 今日成交值TOP30 +1分, 多方族群 +1分, 大股東質設成本防守 +2分)
                         let score = matched.length;
                         if (matched.some(m => m.includes("入選大戶持股"))) score += 2;
                         if (matched.some(m => m.includes("入選2周內會有法說會"))) score += 1;
                         if (matched.some(m => m.includes("低於轉換價"))) score += 1;
-                        if (matched.some(m => m.includes("大股東質設"))) score += 1;
+                        if (matched.some(m => m.includes("大股東質設成本防守"))) score += 1;
 
                         liveScores[stockId] = score;
                         liveMatches[stockId] = matched;

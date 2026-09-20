@@ -1742,6 +1742,22 @@ if st.session_state.history:
             # 計算今日成交值前30名加分 (上市櫃 TOP30)
             if m_code and m_code.group() in top_turnover_stocks:
                 all_c.add("入選今日成交值TOP30")
+
+            # 計算大股東質設成本防守加分 (只要股價在質設成本20%以內，選股積分+2分)
+            pledge_json_path = os.path.join(os.path.dirname(__file__), 'stock_pledge.json')
+            if m_code and os.path.exists(pledge_json_path):
+                try:
+                    with open(pledge_json_path, 'r', encoding='utf-8') as f:
+                        sp_data = json.load(f)
+                        for sp in sp_data.get('stocks', []):
+                            if str(sp.get('code', '')).strip() == m_code.group():
+                                diff_pct = float(sp.get('diff_pct', 999))
+                                pledge_price = sp.get('pledge_price')
+                                if abs(diff_pct) <= 20:
+                                    sign_str = '+' if diff_pct >= 0 else ''
+                                    all_c.add(f"大股東質設成本防守 (現價在成本20%以內, 距成本{sign_str}{diff_pct}%)")
+                except Exception:
+                    pass
             
             score = len(all_c)
             if "大戶持股比例成長" in all_c:
@@ -1750,6 +1766,8 @@ if st.session_state.history:
                 score += 1  # 法說會符合，積分加二 (額外加 1 分)
             if any("低於轉換價" in str(c) for c in all_c):
                 score += 1  # 股價低於CB轉換價符合，積分加二 (額外加 1 分)
+            if any("大股東質設成本防守" in str(c) for c in all_c):
+                score += 1  # 大股東質設成本20%以內符合，積分加二 (基礎1分 + 額外加 1 分 = 2分)
             group_scores[stock_clean] = score
             group_criteria[stock_clean] = all_c
             
