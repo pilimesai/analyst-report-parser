@@ -2938,7 +2938,7 @@
                 <!-- 4 大統計指標卡片 -->
                 <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:0.75rem; margin-top:0.5rem;">
                     <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(99,102,241,0.3); border-radius:0.75rem; padding:0.85rem;">
-                        <div style="font-size:0.72rem; color:#a5b4fc;">🏛️ 當前有效質設個股</div>
+                        <div style="font-size:0.72rem; color:#a5b4fc;">🏛️ 當前有效質設個股 (近3年內)</div>
                         <div style="font-size:1.15rem; font-weight:700; color:#f8fafc; margin-top:0.2rem;" id="pledge-stat-total">—</div>
                         <div style="font-size:0.72rem; color:var(--text-secondary); margin-top:0.2rem;" id="pledge-stat-date">—</div>
                     </div>
@@ -2967,7 +2967,7 @@
                         
                         <!-- 狀態切換 -->
                         <div style="display:flex; gap:0.35rem;" id="pledge-status-filter">
-                            <button class="filter-chip active" data-status="all">全部有效</button>
+                            <button class="filter-chip active" data-status="all">近三年有效</button>
                             <button class="filter-chip" data-status="above" style="color:#10b981; border-color:rgba(16,185,129,0.4);">🛡️ 高於質設價</button>
                             <button class="filter-chip" data-status="below" style="color:#ef4444; border-color:rgba(239,68,68,0.4);">⚠️ 跌破質設價</button>
                             <button class="filter-chip" data-status="recent" style="color:#a5b4fc; border-color:rgba(99,102,241,0.4);">⚡ 近期新設質 (3個月內)</button>
@@ -8035,26 +8035,6 @@ ${text.slice(0, 30000)}`;
                 return;
             }
 
-            const sum = stockPledgeData.summary || {};
-            const stocks = stockPledgeData.stocks || [];
-            const excluded = stockPledgeData.excluded_stocks || [];
-
-            // Update KPI cards
-            if (statTotal) statTotal.innerText = `${sum.total_active_stocks || stocks.length} 檔`;
-            if (statDate) statDate.innerText = `更新日期：${stockPledgeData.tradeDate || ''}`;
-            if (statAbove) statAbove.innerText = `${sum.above_pledge_count || 0} 檔`;
-            if (statAbovePct) statAbovePct.innerText = `佔比 ${sum.above_pledge_ratio || 0}%`;
-            if (statBelow) statBelow.innerText = `${sum.below_pledge_count || 0} 檔`;
-            const belowPct = sum.total_active_stocks ? ((sum.below_pledge_count / sum.total_active_stocks) * 100).toFixed(1) : '0.0';
-            if (statBelowPct) statBelowPct.innerText = `佔比 ${belowPct}%`;
-            if (statExcluded) statExcluded.innerText = `${excluded.length} 檔`;
-            if (excludedCountBtn) excludedCountBtn.innerText = String(excluded.length);
-            if (modalBadge) modalBadge.innerText = `${excluded.length} 檔`;
-            if (badge) badge.innerText = String(stocks.length);
-
-            // Filter logic
-            let filtered = [...stocks];
-
             // 輔助函式：將民國年字串（如 113/04/09 或 99/12/21）轉為數值以便精確排序與過濾
             function parseRocDateVal(dStr) {
                 if (!dStr) return 0;
@@ -8068,14 +8048,71 @@ ${text.slice(0, 30000)}`;
                 return 0;
             }
 
+            // 計算 3 年前的截止門檻（依使用者需求：超過三年前質設的不列入）
+            let cutoffRocVal = 0;
+            if (stockPledgeData.tradeDate) {
+                const p = stockPledgeData.tradeDate.split('-');
+                if (p.length === 3) {
+                    const y = (parseInt(p[0], 10) || 2026) - 1911 - 3;
+                    const m = parseInt(p[1], 10) || 1;
+                    const d = parseInt(p[2], 10) || 1;
+                    cutoffRocVal = y * 10000 + m * 100 + d;
+                }
+            }
+            if (!cutoffRocVal) {
+                const now = new Date();
+                const y = (now.getFullYear() - 1911) - 3;
+                cutoffRocVal = y * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+            }
+
+            const rawStocks = stockPledgeData.stocks || [];
+            // 嚴格過濾：僅保留近三年內質設之個股
+            const activeWithin3Years = rawStocks.filter(s => parseRocDateVal(s.pledge_date) >= cutoffRocVal);
+            const excluded = stockPledgeData.excluded_stocks || [];
+
+            // Update KPI cards based on valid stocks within 3 years
+            const totalCount = activeWithin3Years.length;
+            const aboveStocks = activeWithin3Years.filter(s => (s.diff_pct || 0) >= 0);
+            const belowStocks = activeWithin3Years.filter(s => (s.diff_pct || 0) < 0);
+            const aboveCount = aboveStocks.length;
+            const belowCount = belowStocks.length;
+            const aboveRatio = totalCount ? ((aboveCount / totalCount) * 100).toFixed(1) : '0.0';
+            const belowRatio = totalCount ? ((belowCount / totalCount) * 100).toFixed(1) : '0.0';
+
+            if (statTotal) statTotal.innerText = `${totalCount} 檔`;
+            if (statDate) statDate.innerText = `更新日期：${stockPledgeData.tradeDate || ''}`;
+            if (statAbove) statAbove.innerText = `${aboveCount} 檔`;
+            if (statAbovePct) statAbovePct.innerText = `佔比 ${aboveRatio}%`;
+            if (statBelow) statBelow.innerText = `${belowCount} 檔`;
+            if (statBelowPct) statBelowPct.innerText = `佔比 ${belowRatio}%`;
+            if (statExcluded) statExcluded.innerText = `${excluded.length} 檔`;
+            if (excludedCountBtn) excludedCountBtn.innerText = String(excluded.length);
+            if (modalBadge) modalBadge.innerText = `${excluded.length} 檔`;
+            if (badge) badge.innerText = String(totalCount);
+
+            // Filter logic
+            let filtered = [...activeWithin3Years];
+
             // Status filter
             if (stockPledgeStatusFilter === 'above') {
                 filtered = filtered.filter(s => (s.diff_pct || 0) >= 0);
             } else if (stockPledgeStatusFilter === 'below') {
                 filtered = filtered.filter(s => (s.diff_pct || 0) < 0);
             } else if (stockPledgeStatusFilter === 'recent') {
-                // 近期（113年第二季以後，如 113/04/01 以後）
-                filtered = filtered.filter(s => parseRocDateVal(s.pledge_date) >= 1130401);
+                // 近期（3個月內質設）
+                let threeMonthsAgoVal = 0;
+                if (stockPledgeData.tradeDate) {
+                    const p = stockPledgeData.tradeDate.split('-');
+                    if (p.length === 3) {
+                        let y = (parseInt(p[0], 10) || 2026) - 1911;
+                        let m = (parseInt(p[1], 10) || 1) - 3;
+                        let d = parseInt(p[2], 10) || 1;
+                        if (m <= 0) { y -= 1; m += 12; }
+                        threeMonthsAgoVal = y * 10000 + m * 100 + d;
+                    }
+                }
+                if (!threeMonthsAgoVal) threeMonthsAgoVal = cutoffRocVal;
+                filtered = filtered.filter(s => parseRocDateVal(s.pledge_date) >= threeMonthsAgoVal);
             } else if (stockPledgeStatusFilter === 'heavy') {
                 filtered = filtered.filter(s => (s.cum_shares_lots || 0) >= 3000);
             }

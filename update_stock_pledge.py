@@ -445,10 +445,26 @@ def analyze_stock_pledges(candidate_stocks, quotes):
             seen.add(s['code'])
             unique_active.append(s)
 
+    # 依使用者需求：超過三年前質設的就不列入
+    today = datetime.date.today()
+    cutoff_date = datetime.date(today.year - 3, today.month, today.day)
+
+    def is_within_3_years(d_str):
+        try:
+            parts = [int(p) for p in str(d_str).split('/')]
+            if len(parts) == 3:
+                ad_date = datetime.date(parts[0] + 1911, parts[1], parts[2])
+                return ad_date >= cutoff_date
+        except Exception:
+            pass
+        return False
+
+    filtered_active = [s for s in unique_active if is_within_3_years(s.get('pledge_date', ''))]
+
     # 排除股依最新解質日降序排序
     excluded_stocks.sort(key=lambda x: parse_roc_date_key(x.get('unpledge_date', '')), reverse=True)
 
-    return unique_active, excluded_stocks
+    return filtered_active, excluded_stocks
 
 def main():
     start_time = time.time()
