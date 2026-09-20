@@ -1636,24 +1636,32 @@
 
         #sector-flow-table {
             width: 100% !important;
-            min-width: 900px !important;
-            table-layout: fixed !important;
+            min-width: 1260px !important;
+            border-collapse: separate;
+            border-spacing: 0;
         }
 
-        .flow-col-rank { width: 4.0%; text-align: center !important; font-size: 0.8rem; }
-        .flow-col-sector { width: 13.0%; text-align: left !important; font-weight: 600; color: #f8fafc; font-size: 0.85rem; padding-left: 0.4rem !important; }
-        .flow-col-type { width: 6.0%; text-align: center !important; }
-        .flow-col-val { width: 9.0%; text-align: right !important; font-weight: 600; color: #f59e0b; font-size: 0.84rem; padding-right: 0.4rem !important; }
-        .flow-col-share { width: 10.0%; text-align: right !important; font-size: 0.82rem; padding-right: 0.4rem !important; }
-        .flow-col-flow { width: 9.5%; text-align: right !important; font-weight: 700; font-size: 0.84rem; padding-right: 0.4rem !important; }
-        .flow-col-growth { width: 8.0%; text-align: right !important; font-size: 0.82rem; padding-right: 0.4rem !important; }
-        .flow-col-avg-chg { width: 8.0%; text-align: right !important; font-weight: 600; font-size: 0.84rem; padding-right: 0.4rem !important; }
-        .flow-col-ad { width: 8.0%; text-align: center !important; font-size: 0.78rem; }
-        .flow-col-signal { width: 10.5%; text-align: center !important; font-size: 0.78rem; }
-        .flow-col-lead { width: 14.0%; text-align: left !important; font-size: 0.78rem; padding-left: 0.4rem !important; }
+        #sector-flow-table th,
+        #sector-flow-table td {
+            vertical-align: middle !important;
+            padding: 0.65rem 0.5rem !important;
+            white-space: nowrap !important;
+        }
 
-        th.flow-col-sector, th.flow-col-lead { text-align: left !important; padding-left: 0.4rem !important; }
-        th.flow-col-val, th.flow-col-share, th.flow-col-flow, th.flow-col-growth, th.flow-col-avg-chg { text-align: right !important; padding-right: 0.4rem !important; }
+        .flow-col-rank { width: 50px; min-width: 50px; text-align: center !important; font-size: 0.82rem; }
+        .flow-col-sector { width: 175px; min-width: 160px; text-align: left !important; font-weight: 600; color: #f8fafc; font-size: 0.85rem; padding-left: 0.75rem !important; }
+        .flow-col-type { width: 80px; min-width: 80px; text-align: center !important; }
+        .flow-col-val { width: 105px; min-width: 100px; text-align: right !important; font-weight: 700; color: #f8fafc; font-size: 0.85rem; padding-right: 0.6rem !important; }
+        .flow-col-share { width: 115px; min-width: 110px; text-align: right !important; font-size: 0.82rem; padding-right: 0.6rem !important; }
+        .flow-col-flow { width: 130px; min-width: 125px; text-align: right !important; font-weight: 700; font-size: 0.84rem; padding-right: 0.6rem !important; }
+        .flow-col-growth { width: 95px; min-width: 90px; text-align: right !important; font-size: 0.82rem; padding-right: 0.6rem !important; }
+        .flow-col-avg-chg { width: 100px; min-width: 95px; text-align: right !important; font-weight: 600; font-size: 0.84rem; padding-right: 0.6rem !important; }
+        .flow-col-ad { width: 125px; min-width: 120px; text-align: center !important; font-size: 0.78rem; }
+        .flow-col-signal { width: 135px; min-width: 130px; text-align: center !important; font-size: 0.78rem; }
+        .flow-col-lead { min-width: 320px; text-align: left !important; font-size: 0.78rem; padding-left: 0.75rem !important; }
+
+        th.flow-col-sector, th.flow-col-lead { text-align: left !important; padding-left: 0.75rem !important; }
+        th.flow-col-val, th.flow-col-share, th.flow-col-flow, th.flow-col-growth, th.flow-col-avg-chg { text-align: right !important; padding-right: 0.6rem !important; }
         th.flow-col-rank, th.flow-col-type, th.flow-col-ad, th.flow-col-signal { text-align: center !important; }
 
         @media (max-width: 900px) {
@@ -7473,7 +7481,7 @@ ${text.slice(0, 30000)}`;
 
                 // Sector Name with stock count pill
                 const sectorHtml = `
-                    <div style="display:flex; flex-direction:column; gap:2px;">
+                    <div style="display:flex; flex-direction:column; gap:2px; white-space:nowrap;">
                         <span style="font-weight:700; color:#f8fafc; font-size:0.88rem;">${item.sector_name}</span>
                         <span style="font-size:0.7rem; color:#94a3b8;">${item.active_count || item.stock_count || 0} 檔成分股</span>
                     </div>
@@ -7481,11 +7489,11 @@ ${text.slice(0, 30000)}`;
 
                 // Capital Share with mini horizontal visual bar
                 const sharePct = item.share0_pct !== undefined ? item.share0_pct : 0;
-                const shareBarWidth = Math.min(100, Math.round(sharePct * 4)); // scale for max ~25%
+                const shareBarWidth = Math.min(100, Math.round(sharePct * 3.5)); // scale for max ~25%
                 const shareHtml = `
-                    <div style="display:flex; flex-direction:column; gap:3px; min-width:70px;">
-                        <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700; color:#e2e8f0;">
-                            <span>${sharePct.toFixed(2)}%</span>
+                    <div style="display:inline-flex; flex-direction:column; gap:3px; min-width:85px; align-items:flex-end;">
+                        <div style="font-size:0.84rem; font-weight:700; color:#e2e8f0; white-space:nowrap;">
+                            ${sharePct.toFixed(2)}%
                         </div>
                         <div style="width:100%; height:4px; background:rgba(255,255,255,0.08); border-radius:2px; overflow:hidden;">
                             <div style="width:${shareBarWidth}%; height:100%; background:linear-gradient(90deg, #38bdf8, #818cf8); border-radius:2px;"></div>
@@ -7495,29 +7503,29 @@ ${text.slice(0, 30000)}`;
 
                 // Flow Change (flow_pp: 今日佔比 - 昨日佔比)
                 const flowPp = item.flow_pp !== undefined ? item.flow_pp : 0;
-                let flowHtml = `<span style="color:var(--text-secondary); font-size:0.82rem;">0.00%</span>`;
+                let flowHtml = `<span style="color:var(--text-secondary); font-size:0.82rem; white-space:nowrap;">0.00%</span>`;
                 if (flowPp > 0) {
-                    flowHtml = `<span style="color:#10b981; font-weight:700; font-size:0.84rem; display:inline-flex; align-items:center; gap:2px;">+${flowPp.toFixed(2)}% <span style="font-size:0.68rem; padding:1px 4px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); border-radius:3px;">流入</span></span>`;
+                    flowHtml = `<span style="color:#10b981; font-weight:700; font-size:0.84rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;">+${flowPp.toFixed(2)}% <span style="font-size:0.68rem; padding:1px 5px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); border-radius:3px; font-weight:600; white-space:nowrap;">流入</span></span>`;
                 } else if (flowPp < 0) {
-                    flowHtml = `<span style="color:#ef4444; font-weight:700; font-size:0.84rem; display:inline-flex; align-items:center; gap:2px;">${flowPp.toFixed(2)}% <span style="font-size:0.68rem; padding:1px 4px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); border-radius:3px;">流出</span></span>`;
+                    flowHtml = `<span style="color:#ef4444; font-weight:700; font-size:0.84rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;">${flowPp.toFixed(2)}% <span style="font-size:0.68rem; padding:1px 5px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); border-radius:3px; font-weight:600; white-space:nowrap;">流出</span></span>`;
                 }
 
                 // Growth Pct
                 const growthPct = item.growth_pct !== undefined ? item.growth_pct : 0;
-                let growthHtml = `<span style="color:var(--text-secondary); font-size:0.82rem;">0.0%</span>`;
+                let growthHtml = `<span style="color:var(--text-secondary); font-size:0.82rem; white-space:nowrap;">0.0%</span>`;
                 if (growthPct > 0) {
-                    growthHtml = `<span style="color:#f97316; font-weight:600; font-size:0.82rem;">+${growthPct.toFixed(1)}%</span>`;
+                    growthHtml = `<span style="color:#f97316; font-weight:600; font-size:0.84rem; white-space:nowrap;">+${growthPct.toFixed(1)}%</span>`;
                 } else if (growthPct < 0) {
-                    growthHtml = `<span style="color:#64748b; font-size:0.82rem;">${growthPct.toFixed(1)}%</span>`;
+                    growthHtml = `<span style="color:#64748b; font-size:0.84rem; white-space:nowrap;">${growthPct.toFixed(1)}%</span>`;
                 }
 
                 // Average Price Change (Taiwan convention: red=up, green=down)
                 const avgChg = item.avg_pct_chg !== undefined ? item.avg_pct_chg : 0;
-                let avgChgHtml = `<span style="color:var(--text-secondary);">0.00%</span>`;
+                let avgChgHtml = `<span style="color:var(--text-secondary); white-space:nowrap;">0.00%</span>`;
                 if (avgChg > 0) {
-                    avgChgHtml = `<span style="color:#ef4444; font-weight:700; font-size:0.84rem;">▲+${avgChg.toFixed(2)}%</span>`;
+                    avgChgHtml = `<span style="color:#ef4444; font-weight:700; font-size:0.84rem; white-space:nowrap;">▲+${avgChg.toFixed(2)}%</span>`;
                 } else if (avgChg < 0) {
-                    avgChgHtml = `<span style="color:#22c55e; font-weight:700; font-size:0.84rem;">▼${avgChg.toFixed(2)}%</span>`;
+                    avgChgHtml = `<span style="color:#22c55e; font-weight:700; font-size:0.84rem; white-space:nowrap;">▼${avgChg.toFixed(2)}%</span>`;
                 }
 
                 // Advances / Declines Pill
@@ -7525,11 +7533,11 @@ ${text.slice(0, 30000)}`;
                 const dec = item.declines || 0;
                 const unc = item.unchanged || 0;
                 const adHtml = `
-                    <div style="display:inline-flex; gap:3px; align-items:center; font-size:0.72rem; font-weight:600;">
+                    <div style="display:inline-flex; gap:3px; align-items:center; font-size:0.75rem; font-weight:600; white-space:nowrap;">
                         <span style="color:#ef4444;" title="上漲家數">${adv}↑</span>
-                        <span style="color:#94a3b8;">/</span>
+                        <span style="color:#94a3b8; margin:0 1px;">/</span>
                         <span style="color:#22c55e;" title="下跌家數">${dec}↓</span>
-                        ${unc > 0 ? `<span style="color:#64748b;">(${unc})</span>` : ''}
+                        ${unc > 0 ? `<span style="color:#64748b; font-size:0.7rem; margin-left:2px;">(${unc})</span>` : ''}
                     </div>
                 `;
 
@@ -7555,20 +7563,20 @@ ${text.slice(0, 30000)}`;
                     sigBorder = 'rgba(168,85,247,0.35)';
                     sigColor = '#d8b4fe';
                 }
-                const signalHtml = `<span style="font-size:0.72rem; padding:3px 7px; background:${sigBg}; border:1px solid ${sigBorder}; color:${sigColor}; border-radius:9999px; font-weight:600; white-space:nowrap;">${sig}</span>`;
+                const signalHtml = `<span style="font-size:0.72rem; padding:3px 8px; background:${sigBg}; border:1px solid ${sigBorder}; color:${sigColor}; border-radius:9999px; font-weight:600; white-space:nowrap; display:inline-block;">${sig}</span>`;
 
                 // Top 3 Leading Stocks
                 let topStocksHtml = `<span style="color:#64748b; font-size:0.75rem;">—</span>`;
                 if (item.top_stocks && item.top_stocks.length > 0) {
-                    topStocksHtml = `<div style="display:flex; flex-wrap:wrap; gap:4px; align-items:center;">` +
+                    topStocksHtml = `<div style="display:inline-flex; flex-wrap:nowrap; gap:6px; align-items:center; white-space:nowrap;">` +
                         item.top_stocks.map(stk => {
-                            const stkChg = stk.pct_change || 0;
+                            const stkChg = stk.pct_change !== undefined ? Number(stk.pct_change) : 0;
                             const chgColor = stkChg > 0 ? '#ef4444' : (stkChg < 0 ? '#22c55e' : '#94a3b8');
                             const chgSign = stkChg > 0 ? '+' : '';
-                            return `<span style="display:inline-flex; align-items:center; gap:3px; padding:2px 6px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:4px; font-size:0.72rem;" title="${stk.code} ${stk.name}: 成交 ${stk.trade_val_yi}億">
+                            return `<span style="display:inline-flex; align-items:center; gap:4px; padding:3px 8px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:5px; font-size:0.74rem; white-space:nowrap; flex-shrink:0;" title="${stk.code} ${stk.name}: 成交 ${stk.trade_val_yi}億">
                                 <span style="font-weight:700; color:#f1f5f9;">${stk.name}</span>
                                 <span style="color:${chgColor}; font-weight:600;">${chgSign}${stkChg}%</span>
-                                <span style="color:#64748b; font-size:0.68rem;">(${stk.trade_val_yi}億)</span>
+                                <span style="color:#94a3b8; font-size:0.68rem;">(${stk.trade_val_yi}億)</span>
                             </span>`;
                         }).join('') +
                     `</div>`;
@@ -7578,7 +7586,7 @@ ${text.slice(0, 30000)}`;
                     <td class="flow-col-rank">${rankBadge}</td>
                     <td class="flow-col-sector">${sectorHtml}</td>
                     <td class="flow-col-type">${typeBadge}</td>
-                    <td class="flow-col-val" style="font-weight:700; color:#f8fafc;">${(item.trade_val_yi || 0).toLocaleString(undefined, {maximumFractionDigits:1})} 億</td>
+                    <td class="flow-col-val">${(item.trade_val_yi || 0).toLocaleString(undefined, {maximumFractionDigits:1})} 億</td>
                     <td class="flow-col-share">${shareHtml}</td>
                     <td class="flow-col-flow">${flowHtml}</td>
                     <td class="flow-col-growth">${growthHtml}</td>
