@@ -1664,6 +1664,44 @@
         th.flow-col-val, th.flow-col-share, th.flow-col-flow, th.flow-col-growth, th.flow-col-avg-chg { text-align: right !important; padding-right: 0.6rem !important; }
         th.flow-col-rank, th.flow-col-type, th.flow-col-ad, th.flow-col-signal { text-align: center !important; }
 
+        /* 大股東質設名單表格樣式 */
+        #stock-pledge-view .cb-table-container {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        #stock-pledge-table {
+            width: 100% !important;
+            min-width: 1260px !important;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        #stock-pledge-table th,
+        #stock-pledge-table td {
+            vertical-align: middle !important;
+            padding: 0.65rem 0.5rem !important;
+            white-space: nowrap !important;
+        }
+
+        .pledge-col-rank { width: 50px; min-width: 50px; text-align: center !important; font-size: 0.82rem; }
+        .pledge-col-market { width: 70px; min-width: 70px; text-align: center !important; }
+        .pledge-col-code { width: 70px; min-width: 70px; text-align: center !important; font-weight: 700; color: #38bdf8; font-size: 0.84rem; }
+        .pledge-col-name { width: 120px; min-width: 110px; text-align: left !important; font-weight: 700; color: #f8fafc; font-size: 0.85rem; padding-left: 0.6rem !important; }
+        .pledge-col-holder { width: 140px; min-width: 130px; text-align: left !important; font-weight: 600; color: #f1f5f9; font-size: 0.84rem; }
+        .pledge-col-title { width: 95px; min-width: 90px; text-align: center !important; font-size: 0.78rem; }
+        .pledge-col-date { width: 95px; min-width: 90px; text-align: center !important; font-size: 0.82rem; color: #cbd5e1; }
+        .pledge-col-price { width: 105px; min-width: 100px; text-align: right !important; font-weight: 700; color: #f59e0b; font-size: 0.85rem; padding-right: 0.6rem !important; }
+        .pledge-col-curr { width: 110px; min-width: 105px; text-align: right !important; font-size: 0.85rem; padding-right: 0.6rem !important; }
+        .pledge-col-diff { width: 120px; min-width: 115px; text-align: right !important; font-weight: 700; font-size: 0.85rem; padding-right: 0.6rem !important; }
+        .pledge-col-shares { width: 100px; min-width: 95px; text-align: right !important; font-size: 0.82rem; padding-right: 0.6rem !important; }
+        .pledge-col-cum { width: 110px; min-width: 105px; text-align: right !important; font-weight: 600; color: #93c5fd; font-size: 0.82rem; padding-right: 0.6rem !important; }
+        .pledge-col-bank { min-width: 140px; text-align: left !important; font-size: 0.78rem; color: #94a3b8; padding-left: 0.6rem !important; }
+
+        th.pledge-col-name, th.pledge-col-holder, th.pledge-col-bank { text-align: left !important; padding-left: 0.6rem !important; }
+        th.pledge-col-price, th.pledge-col-curr, th.pledge-col-diff, th.pledge-col-shares, th.pledge-col-cum { text-align: right !important; padding-right: 0.6rem !important; }
+        th.pledge-col-rank, th.pledge-col-market, th.pledge-col-code, th.pledge-col-title, th.pledge-col-date { text-align: center !important; }
+
         @media (max-width: 900px) {
             .cb-table-container {
                 overflow-x: auto;
@@ -2130,6 +2168,11 @@
                 <label>族群強弱（MA20）</label>
                 <div style="font-size: 0.74rem; color: var(--text-secondary); margin-top: 2px;">由「一鍵抓取所有資料」自動更新</div>
             </div>
+
+            <div class="input-group">
+                <label>大股東質設名單</label>
+                <div style="font-size: 0.74rem; color: var(--text-secondary); margin-top: 2px;">由「一鍵抓取所有資料」自動更新</div>
+            </div>
         </div>
     </div>
 
@@ -2198,6 +2241,11 @@
                     <span class="tab-icon">🌊</span>
                     <span class="tab-text">資金族群流向</span>
                     <span class="tab-badge" id="badge-sector-flow">0</span>
+                </button>
+                <button class="tab-btn" data-tab="stock-pledge" onclick="switchActiveTab('stock-pledge')">
+                    <span class="tab-icon">🏛️</span>
+                    <span class="tab-text">大股東質設名單</span>
+                    <span class="tab-badge" id="badge-stock-pledge">0</span>
                 </button>
             </div>
         </div>
@@ -2759,6 +2807,137 @@
                             </td></tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stock Pledge View (大股東質設成本防守追蹤) -->
+        <div id="stock-pledge-view" style="display:none; flex-direction:column; gap:20px; padding-bottom: 40px;">
+            <div class="reports-section">
+                <div class="section-header" style="flex-wrap:wrap; gap:0.75rem;">
+                    <div>
+                        <h2>🏛️ 大股東質設成本防守追蹤 (Insider Pledge Tracker)</h2>
+                        <p style="font-size:0.82rem; color:var(--text-secondary); margin-top:4px; line-height:1.4;">每日即時追蹤全市場（上市 + 上櫃）董監事與大股東持股設質日誌。以設質當日收盤價作為「大股東成本防守價」；若同一大股東申報解質則即刻自名單中剔除，直至新設質再次出現！</p>
+                        <!-- 說明標籤 -->
+                        <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.45rem;">
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.3); border-radius:4px; color:#a5b4fc;">成本基準線 = 最新質設申報日收盤價</span>
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); border-radius:4px; color:#6ee7b7;">🟢 質設溢價 = 現價高於質設成本 (主力防守強勢)</span>
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); border-radius:4px; color:#fca5a5;">🔴 破底警戒 = 現價跌破質設成本 (留意補繳擔保品/斷頭風險)</span>
+                            <span style="font-size:0.72rem; padding:2px 7px; background:rgba(148,163,184,0.15); border:1px solid rgba(148,163,184,0.3); border-radius:4px; color:#cbd5e1;">⛔ 解質動態 = 同一大股東最新異動為解質，即刻剔除</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons" style="flex-shrink:0; display:flex; gap:0.5rem;">
+                        <button class="btn" onclick="toggleStockPledgeExcludedModal(true)" id="toggle-pledge-excluded-btn"
+                            style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.35); color:#fca5a5;">🚫 檢視已解質剔除股 (<span id="pledge-excluded-count">0</span>)</button>
+                        <button class="btn btn-primary" onclick="fetchStockPledgeFromGithub(true)" id="fetch-stock-pledge-btn"
+                            style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">🔄 重新載入</button>
+                    </div>
+                </div>
+
+                <!-- 4 大統計指標卡片 -->
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:0.75rem; margin-top:0.5rem;">
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(99,102,241,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#a5b4fc;">🏛️ 當前有效質設個股</div>
+                        <div style="font-size:1.15rem; font-weight:700; color:#f8fafc; margin-top:0.2rem;" id="pledge-stat-total">—</div>
+                        <div style="font-size:0.72rem; color:var(--text-secondary); margin-top:0.2rem;" id="pledge-stat-date">—</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(16,185,129,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#6ee7b7;">🛡️ 守在質設價之上 (溢價)</div>
+                        <div style="font-size:1.15rem; font-weight:700; color:#10b981; margin-top:0.2rem;" id="pledge-stat-above">—</div>
+                        <div style="font-size:0.72rem; color:var(--text-secondary); margin-top:0.2rem;" id="pledge-stat-above-pct">佔比 —%</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(239,68,68,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#fca5a5;">⚠️ 跌破質設成本線 (破底)</div>
+                        <div style="font-size:1.15rem; font-weight:700; color:#ef4444; margin-top:0.2rem;" id="pledge-stat-below">—</div>
+                        <div style="font-size:0.72rem; color:var(--text-secondary); margin-top:0.2rem;" id="pledge-stat-below-pct">佔比 —%</div>
+                    </div>
+                    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(245,158,11,0.3); border-radius:0.75rem; padding:0.85rem;">
+                        <div style="font-size:0.72rem; color:#fcd34d;">🔄 大股東解質剔除數</div>
+                        <div style="font-size:1.15rem; font-weight:700; color:#f59e0b; margin-top:0.2rem;" id="pledge-stat-excluded">—</div>
+                        <div style="font-size:0.72rem; color:var(--text-secondary); margin-top:0.2rem;">依規則暫時剔除</div>
+                    </div>
+                </div>
+
+                <!-- 搜尋與篩選列 -->
+                <div style="display:flex; flex-wrap:wrap; gap:0.75rem; align-items:center; justify-content:space-between; margin-top:0.75rem;">
+                    <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
+                        <input type="text" id="pledge-search-input" placeholder="🔍 搜尋股票代號、名稱、大股東姓名..." autocomplete="off"
+                            style="width:100%; max-width:280px; padding:0.4rem 0.75rem; font-size:0.85rem; border-radius:0.5rem; background:rgba(255,255,255,0.04); border:1px solid var(--card-border); color:#fff;">
+                        
+                        <!-- 狀態切換 -->
+                        <div style="display:flex; gap:0.35rem;" id="pledge-status-filter">
+                            <button class="filter-chip active" data-status="all">全部有效</button>
+                            <button class="filter-chip" data-status="above" style="color:#10b981; border-color:rgba(16,185,129,0.4);">🛡️ 高於質設價</button>
+                            <button class="filter-chip" data-status="below" style="color:#ef4444; border-color:rgba(239,68,68,0.4);">⚠️ 跌破質設價</button>
+                            <button class="filter-chip" data-status="recent" style="color:#a5b4fc; border-color:rgba(99,102,241,0.4);">⚡ 近期新設質 (3個月內)</button>
+                            <button class="filter-chip" data-status="heavy" style="color:#fbbf24; border-color:rgba(245,158,11,0.4);">📦 大額質押 (>3,000張)</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 表格 -->
+                <div class="table-responsive persistent-table-container cb-table-container" style="margin-top:0.75rem; overflow-x: auto !important;">
+                    <table class="cb-table" id="stock-pledge-table">
+                        <thead>
+                            <tr>
+                                <th class="pledge-col-rank">排名</th>
+                                <th class="pledge-col-stock">股票代號 / 名稱</th>
+                                <th class="pledge-col-price">最新現價</th>
+                                <th class="pledge-col-pledge-price">質設日成本價</th>
+                                <th class="pledge-col-diff">相對於質設價</th>
+                                <th class="pledge-col-date">最新質設日期</th>
+                                <th class="pledge-col-shareholder">大股東身份 / 姓名</th>
+                                <th class="pledge-col-shares">本次質設張數</th>
+                                <th class="pledge-col-cum-shares">累計質設張數</th>
+                                <th class="pledge-col-creditor">質權金融機構</th>
+                                <th class="pledge-col-status">防守狀態</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stock-pledge-tbody">
+                            <tr><td colspan="11" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                                <div style="font-size:1.5rem; margin-bottom:0.5rem;">🏛️</div>
+                                <div>尚未載入大股東質設資料</div>
+                                <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🔄 重新載入」或「⚡ 一鍵抓取所有資料」</div>
+                            </td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stock Pledge Excluded Modal (已解質剔除名單彈窗) -->
+        <div id="pledge-excluded-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center; backdrop-filter:blur(4px);">
+            <div style="background:#0f172a; border:1px solid rgba(239,68,68,0.4); border-radius:1rem; width:90%; max-width:860px; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 10px 30px rgba(0,0,0,0.5); overflow:hidden;">
+                <div style="padding:1rem 1.25rem; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:space-between;">
+                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                        <span style="font-size:1.2rem;">🚫</span>
+                        <h3 style="margin:0; font-size:1.05rem; color:#f8fafc;">大股東已解質剔除名單</h3>
+                        <span style="font-size:0.75rem; padding:2px 8px; border-radius:10px; background:rgba(239,68,68,0.2); color:#fca5a5;" id="pledge-modal-badge">0 檔</span>
+                    </div>
+                    <button onclick="toggleStockPledgeExcludedModal(false)" style="background:transparent; border:none; color:#94a3b8; font-size:1.25rem; cursor:pointer; padding:0 0.5rem;">✕</button>
+                </div>
+                <div style="padding:0.75rem 1.25rem; background:rgba(239,68,68,0.08); font-size:0.8rem; color:#fca5a5; line-height:1.4;">
+                    📌 依您所設定之策略邏輯：只要同一位大股東最新申報異動為「解質」（資金/擔保撤回），該股票將立即自監控名單剔除，直至後續有「新的質設」公告進來才會重新納入。
+                </div>
+                <div style="flex:1; overflow-y:auto; padding:1rem 1.25rem;">
+                    <table class="cb-table" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th>股票代號/名稱</th>
+                                <th>大股東姓名 / 身分</th>
+                                <th>最新解質發生日</th>
+                                <th>解質張數</th>
+                                <th>累計質設餘額</th>
+                                <th>剔除原因</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pledge-excluded-tbody">
+                            <tr><td colspan="6" style="text-align:center; color:#94a3b8; padding:2rem;">尚無剔除資料</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="padding:0.75rem 1.25rem; border-top:1px solid rgba(255,255,255,0.1); display:flex; justify-content:flex-end;">
+                    <button class="btn" onclick="toggleStockPledgeExcludedModal(false)" style="background:rgba(255,255,255,0.1); color:#f8fafc; padding:0.4rem 1.2rem;">關閉</button>
                 </div>
             </div>
         </div>
@@ -3363,6 +3542,7 @@
                     fetchVolumeSpikeFromGithub(true),
                     fetchContractLiabilitiesFromGithub(true),
                     fetchSectorCapitalFlowFromGithub(true),
+                    fetchStockPledgeFromGithub(true),
                     fetchCBFromGithub(true),
                     fetchCbBelowConvFromGithub(true),
                     fetchEarningsCallFromGithub(true),
@@ -3411,7 +3591,8 @@
             'N': '入選毛利三季成長',
             'O': '入選主動型ETF獨家持股',
             'P': '入選今日成交值TOP30',
-            'Q': '所在族群為多方族群 (MA20站上>=50%)'
+            'Q': '所在族群為多方族群 (MA20站上>=50%)',
+            'R': '入選大股東質設名單 (質設成本防守)'
         };
 
         function expandCriteria(criteriaArr) {
@@ -3527,6 +3708,7 @@
                 { label: '🗺️ 族群強弱指標', fn: () => fetchSectorStrengthFromGithub(true) },
                 { label: '💼 合約負債新高', fn: () => fetchContractLiabilitiesFromGithub(true) },
                 { label: '🌊 資金族群流向', fn: () => fetchSectorCapitalFlowFromGithub(true) },
+                { label: '🏛️ 大股東質設名單', fn: () => fetchStockPledgeFromGithub(true) },
             ];
 
             for (let i = 0; i < steps.length; i++) {
@@ -4615,9 +4797,18 @@ JSON 欄位：
                 }
             }
 
+            // 4g. Toggle stock pledge view
+            const stockPledgeView = document.getElementById('stock-pledge-view');
+            if (stockPledgeView) {
+                stockPledgeView.style.display = (currentActiveTab === 'stock-pledge') ? 'flex' : 'none';
+                if (currentActiveTab === 'stock-pledge' && !stockPledgeData) {
+                    fetchStockPledgeFromGithub(true);
+                }
+            }
+
             // 5. Toggle persistent tables container and sections
             const persistentContainer = document.getElementById('persistent-csv-tables');
-            const builtinTabs = ['main-reports', 'quant-results', 'active-etf', 'top-turnover', 'volume-spike', 'sector-strength', 'contract-liabilities', 'sector-capital-flow'];
+            const builtinTabs = ['main-reports', 'quant-results', 'active-etf', 'top-turnover', 'volume-spike', 'sector-strength', 'contract-liabilities', 'sector-capital-flow', 'stock-pledge'];
             if (persistentContainer) {
                 persistentContainer.style.display = builtinTabs.includes(currentActiveTab) ? 'none' : 'flex';
                 const sections = persistentContainer.querySelectorAll('.persistent-table-section');
@@ -4701,8 +4892,8 @@ JSON 欄位：
 
             const tabsContainer = document.getElementById('nav-tabs-container');
             if (tabsContainer) {
-                // Keep only main-reports, quant-results, active-etf, top-turnover, volume-spike, sector-strength, contract-liabilities, sector-capital-flow tab buttons, remove dynamic ones
-                const dynamicTabs = tabsContainer.querySelectorAll('.tab-btn:not([data-tab="main-reports"]):not([data-tab="quant-results"]):not([data-tab="active-etf"]):not([data-tab="top-turnover"]):not([data-tab="volume-spike"]):not([data-tab="sector-strength"]):not([data-tab="contract-liabilities"]):not([data-tab="sector-capital-flow"])');
+                // Keep only main-reports, quant-results, active-etf, top-turnover, volume-spike, sector-strength, contract-liabilities, sector-capital-flow, stock-pledge tab buttons, remove dynamic ones
+                const dynamicTabs = tabsContainer.querySelectorAll('.tab-btn:not([data-tab="main-reports"]):not([data-tab="quant-results"]):not([data-tab="active-etf"]):not([data-tab="top-turnover"]):not([data-tab="volume-spike"]):not([data-tab="sector-strength"]):not([data-tab="contract-liabilities"]):not([data-tab="sector-capital-flow"]):not([data-tab="stock-pledge"])');
                 dynamicTabs.forEach(t => t.remove());
             }
 
@@ -5257,6 +5448,24 @@ JSON 欄位：
                 });
             }
 
+            // 加入大股東質設名單 (質設成本防守) 標的
+            let stockPledgeCodes = new Set();
+            const spPayload = stockPledgeData || (() => {
+                try {
+                    const c = localStorage.getItem('stock_pledge_cache');
+                    return c ? (JSON.parse(c).data || JSON.parse(c)) : null;
+                } catch(e) { return null; }
+            })();
+            if (spPayload && Array.isArray(spPayload.stocks)) {
+                spPayload.stocks.forEach(s => {
+                    const sc = String(s.code).trim();
+                    if (sc) {
+                        stockPledgeCodes.add(sc);
+                        if (!validStocks.includes(sc)) validStocks.push(sc);
+                    }
+                });
+            }
+
             if (validStocks.length === 0) {
                 showToast("⚠️ 列表內無可供量化計算的股票代號，請先上傳報告、大戶或主動型 ETF 資料。", true);
                 return;
@@ -5319,12 +5528,17 @@ JSON 欄位：
                             const secNames = stockToBullishSectors[stockId].join(' / ');
                             matched.push(`所在族群為多方 (${secNames})`);
                         }
+                        // 入選大股東質設名單 (質設成本防守)
+                        if (stockPledgeCodes.has(stockId)) {
+                            matched.push("入選大股東質設名單");
+                        }
 
-                        // 計算加權總分 (包含大戶持股 3分, 獨家持股 +1分, 今日成交值TOP30 +1分, 多方族群 +1分)
+                        // 計算加權總分 (包含大戶持股 3分, 獨家持股 +1分, 今日成交值TOP30 +1分, 多方族群 +1分, 大股東質設 +1分)
                         let score = matched.length;
                         if (matched.some(m => m.includes("入選大戶持股"))) score += 2;
                         if (matched.some(m => m.includes("入選2周內會有法說會"))) score += 1;
                         if (matched.some(m => m.includes("低於轉換價"))) score += 1;
+                        if (matched.some(m => m.includes("大股東質設"))) score += 1;
 
                         liveScores[stockId] = score;
                         liveMatches[stockId] = matched;
@@ -7649,6 +7863,295 @@ ${text.slice(0, 30000)}`;
                 const positiveInflow = themes.filter(t => (t.flow_pp || 0) > 0).length;
                 if (badge) badge.innerText = String(positiveInflow);
                 renderSectorCapitalFlowView();
+            }
+        })();
+
+        // ==========================================
+        // 大股東質設成本防守追蹤 (Stock Pledge) 模組
+        // ==========================================
+        let stockPledgeData = null;
+        let stockPledgeStatusFilter = 'all';
+
+        function toggleStockPledgeExcludedModal(show = true) {
+            const modal = document.getElementById('pledge-excluded-modal');
+            if (modal) modal.style.display = show ? 'flex' : 'none';
+        }
+
+        async function fetchStockPledgeFromGithub(silent = false) {
+            const fetchBtn = document.getElementById('fetch-stock-pledge-btn');
+            if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
+            if (!silent) showToast('🏛️ 正在抓取最新大股東質設名單...');
+            try {
+                const urls = [
+                    `./stock_pledge.json?v=${Date.now()}`,
+                    `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/stock_pledge.json?v=${Date.now()}`,
+                    `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/stock_pledge.json?v=${Date.now()}`
+                ];
+                let payload = null;
+                for (const u of urls) {
+                    try {
+                        const r = await fetch(u);
+                        if (r.ok) {
+                            const j = await r.json();
+                            if (j && (j.stocks || j.summary)) { payload = j; break; }
+                        }
+                    } catch(e) {}
+                }
+                if (!payload) throw new Error('無法載入 stock_pledge.json');
+                stockPledgeData = payload;
+                localStorage.setItem('stock_pledge_cache', JSON.stringify({ data: payload, savedAt: new Date().toISOString() }));
+                renderStockPledgeView();
+                const totalActive = (payload.stocks || []).length;
+                if (!silent) showToast(`✅ 成功載入大股東質設名單！共 ${totalActive} 檔有效質設股（${payload.tradeDate || ''}）`);
+            } catch(e) {
+                if (!silent) showToast(`❌ 載入失敗: ${e.message}`, true);
+            } finally {
+                if (fetchBtn) { fetchBtn.disabled = false; fetchBtn.textContent = '🔄 重新載入'; }
+            }
+        }
+
+        function renderStockPledgeView() {
+            const tbody = document.getElementById('stock-pledge-tbody');
+            const badge = document.getElementById('badge-stock-pledge');
+            const statTotal = document.getElementById('pledge-stat-total');
+            const statDate = document.getElementById('pledge-stat-date');
+            const statAbove = document.getElementById('pledge-stat-above');
+            const statAbovePct = document.getElementById('pledge-stat-above-pct');
+            const statBelow = document.getElementById('pledge-stat-below');
+            const statBelowPct = document.getElementById('pledge-stat-below-pct');
+            const statExcluded = document.getElementById('pledge-stat-excluded');
+            const excludedCountBtn = document.getElementById('pledge-excluded-count');
+            const modalBadge = document.getElementById('pledge-modal-badge');
+            const excludedTbody = document.getElementById('pledge-excluded-tbody');
+
+            if (!stockPledgeData) {
+                if (badge) badge.innerText = '0';
+                if (tbody) tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                    <div style="font-size:1.5rem; margin-bottom:0.5rem;">🏛️</div>
+                    <div>尚未載入大股東質設資料</div>
+                    <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🔄 重新載入」或「⚡ 一鍵抓取所有資料」</div>
+                </td></tr>`;
+                return;
+            }
+
+            const sum = stockPledgeData.summary || {};
+            const stocks = stockPledgeData.stocks || [];
+            const excluded = stockPledgeData.excluded_stocks || [];
+
+            // Update KPI cards
+            if (statTotal) statTotal.innerText = `${sum.total_active_stocks || stocks.length} 檔`;
+            if (statDate) statDate.innerText = `更新日期：${stockPledgeData.tradeDate || ''}`;
+            if (statAbove) statAbove.innerText = `${sum.above_pledge_count || 0} 檔`;
+            if (statAbovePct) statAbovePct.innerText = `佔比 ${sum.above_pledge_ratio || 0}%`;
+            if (statBelow) statBelow.innerText = `${sum.below_pledge_count || 0} 檔`;
+            const belowPct = sum.total_active_stocks ? ((sum.below_pledge_count / sum.total_active_stocks) * 100).toFixed(1) : '0.0';
+            if (statBelowPct) statBelowPct.innerText = `佔比 ${belowPct}%`;
+            if (statExcluded) statExcluded.innerText = `${excluded.length} 檔`;
+            if (excludedCountBtn) excludedCountBtn.innerText = String(excluded.length);
+            if (modalBadge) modalBadge.innerText = `${excluded.length} 檔`;
+            if (badge) badge.innerText = String(stocks.length);
+
+            // Filter logic
+            let filtered = [...stocks];
+
+            // 輔助函式：將民國年字串（如 113/04/09 或 99/12/21）轉為數值以便精確排序與過濾
+            function parseRocDateVal(dStr) {
+                if (!dStr) return 0;
+                const p = String(dStr).split('/');
+                if (p.length === 3) {
+                    const y = parseInt(p[0], 10) || 0;
+                    const m = parseInt(p[1], 10) || 0;
+                    const d = parseInt(p[2], 10) || 0;
+                    return y * 10000 + m * 100 + d;
+                }
+                return 0;
+            }
+
+            // Status filter
+            if (stockPledgeStatusFilter === 'above') {
+                filtered = filtered.filter(s => (s.diff_pct || 0) >= 0);
+            } else if (stockPledgeStatusFilter === 'below') {
+                filtered = filtered.filter(s => (s.diff_pct || 0) < 0);
+            } else if (stockPledgeStatusFilter === 'recent') {
+                // 近期（113年第二季以後，如 113/04/01 以後）
+                filtered = filtered.filter(s => parseRocDateVal(s.pledge_date) >= 1130401);
+            } else if (stockPledgeStatusFilter === 'heavy') {
+                filtered = filtered.filter(s => (s.cum_shares_lots || 0) >= 3000);
+            }
+
+            // Search filter
+            const searchInput = document.getElementById('pledge-search-input');
+            const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
+            if (q) {
+                filtered = filtered.filter(s =>
+                    String(s.code).toLowerCase().includes(q) ||
+                    String(s.name).toLowerCase().includes(q) ||
+                    String(s.shareholder_name).toLowerCase().includes(q) ||
+                    String(s.creditor).toLowerCase().includes(q)
+                );
+            }
+
+            // 依最新設質日（民國年精確數值）降序排序；同日則依累計設質張數排序
+            filtered.sort((a, b) => {
+                const dateDiff = parseRocDateVal(b.pledge_date) - parseRocDateVal(a.pledge_date);
+                if (dateDiff !== 0) return dateDiff;
+                return (b.cum_shares || 0) - (a.cum_shares || 0);
+            });
+
+            if (!tbody) return;
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--text-secondary); padding:2rem;">無符合篩選或搜尋條件的質設資料</td></tr>`;
+                return;
+            }
+
+            const frag = document.createDocumentFragment();
+            filtered.forEach((item, index) => {
+                const tr = document.createElement('tr');
+
+                let rankBadge = `<span style="color:var(--text-secondary); font-size:0.82rem;">${index + 1}</span>`;
+                if (index === 0) rankBadge = `<span style="font-size:1.1rem;">🥇</span>`;
+                else if (index === 1) rankBadge = `<span style="font-size:1.1rem;">🥈</span>`;
+                else if (index === 2) rankBadge = `<span style="font-size:1.1rem;">🥉</span>`;
+
+                const stockHtml = `
+                    <div style="display:flex; align-items:center; gap:6px; white-space:nowrap;">
+                        <span style="font-weight:700; color:#f8fafc; font-size:0.88rem;">${item.code}</span>
+                        <span style="color:#cbd5e1; font-weight:600; font-size:0.84rem;">${item.name}</span>
+                        <span style="font-size:0.65rem; padding:1px 5px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:3px; color:#94a3b8;">${item.market === 'twse' ? '上市' : '上櫃'}</span>
+                    </div>
+                `;
+
+                // Price and daily change
+                const curPrice = Number(item.current_price) || 0;
+                const curChg = Number(item.current_change) || 0;
+                const chgSign = curChg > 0 ? '+' : '';
+                const chgColor = curChg > 0 ? '#ef4444' : (curChg < 0 ? '#22c55e' : '#94a3b8');
+                const priceHtml = `
+                    <div style="display:flex; flex-direction:column; align-items:flex-end; white-space:nowrap;">
+                        <span style="font-weight:700; color:#f1f5f9; font-size:0.88rem;">${curPrice.toFixed(2)}</span>
+                        <span style="font-size:0.72rem; color:${chgColor}; font-weight:600;">${chgSign}${curChg.toFixed(2)}</span>
+                    </div>
+                `;
+
+                // Pledge price
+                const pledgePrice = Number(item.pledge_price) || curPrice;
+                const pledgePriceHtml = `<span style="font-weight:600; color:#e2e8f0; font-size:0.85rem; white-space:nowrap;">${pledgePrice.toFixed(2)}</span>`;
+
+                // Diff from pledge price
+                const diffPct = Number(item.diff_pct) || 0;
+                const isAbove = diffPct >= 0;
+                const diffSign = isAbove ? '+' : '';
+                const diffColor = isAbove ? '#10b981' : '#ef4444';
+                const diffBg = isAbove ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)';
+                const diffBorder = isAbove ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)';
+                const diffHtml = `
+                    <div style="display:inline-flex; align-items:center; gap:4px; padding:2px 8px; background:${diffBg}; border:1px solid ${diffBorder}; border-radius:6px; font-weight:700; color:${diffColor}; font-size:0.82rem; white-space:nowrap;">
+                        <span>${isAbove ? '▲' : '▼'}</span>
+                        <span>${diffSign}${diffPct.toFixed(2)}%</span>
+                    </div>
+                `;
+
+                // Status Badge
+                let statusBadge = '';
+                if (diffPct >= 15) {
+                    statusBadge = `<span style="font-size:0.7rem; padding:2px 7px; background:rgba(16,185,129,0.2); border:1px solid rgba(16,185,129,0.4); color:#6ee7b7; border-radius:9999px; font-weight:600; white-space:nowrap;">🚀 大幅溢價防守</span>`;
+                } else if (diffPct >= 0) {
+                    statusBadge = `<span style="font-size:0.7rem; padding:2px 7px; background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.35); color:#93c5fd; border-radius:9999px; font-weight:600; white-space:nowrap;">🛡️ 質設成本上方</span>`;
+                } else if (diffPct > -10) {
+                    statusBadge = `<span style="font-size:0.7rem; padding:2px 7px; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.35); color:#fcd34d; border-radius:9999px; font-weight:600; white-space:nowrap;">⚠️ 成本線微幅跌破</span>`;
+                } else {
+                    statusBadge = `<span style="font-size:0.7rem; padding:2px 7px; background:rgba(239,68,68,0.2); border:1px solid rgba(239,68,68,0.4); color:#fca5a5; border-radius:9999px; font-weight:600; white-space:nowrap;">🚨 破底斷頭警戒</span>`;
+                }
+
+                // Shareholder
+                const shareholderHtml = `
+                    <div style="display:flex; flex-direction:column; gap:2px; white-space:nowrap;">
+                        <span style="font-weight:700; color:#f8fafc; font-size:0.84rem;">${item.shareholder_name || '大股東'}</span>
+                        <span style="font-size:0.7rem; color:#94a3b8;">${item.shareholder_title || ''}</span>
+                    </div>
+                `;
+
+                // Lots
+                const pledgeLots = Number(item.pledge_shares_lots) || 0;
+                const cumLots = Number(item.cum_shares_lots) || 0;
+
+                tr.innerHTML = `
+                    <td class="pledge-col-rank">${rankBadge}</td>
+                    <td class="pledge-col-stock">${stockHtml}</td>
+                    <td class="pledge-col-price">${priceHtml}</td>
+                    <td class="pledge-col-pledge-price">${pledgePriceHtml}</td>
+                    <td class="pledge-col-diff">${diffHtml}</td>
+                    <td class="pledge-col-date" style="font-size:0.82rem; color:#a5b4fc; font-weight:600; white-space:nowrap;">${item.pledge_date || '—'}</td>
+                    <td class="pledge-col-shareholder">${shareholderHtml}</td>
+                    <td class="pledge-col-shares" style="font-weight:600; color:#e2e8f0; font-size:0.84rem; white-space:nowrap;">${pledgeLots.toLocaleString()} 張</td>
+                    <td class="pledge-col-cum-shares" style="font-weight:700; color:#fbbf24; font-size:0.84rem; white-space:nowrap;">${cumLots.toLocaleString()} 張</td>
+                    <td class="pledge-col-creditor" style="font-size:0.78rem; color:#94a3b8; white-space:nowrap;" title="${item.creditor || ''}">${(item.creditor || '金融機構').slice(0, 10)}</td>
+                    <td class="pledge-col-status">${statusBadge}</td>
+                `;
+                frag.appendChild(tr);
+            });
+
+            tbody.innerHTML = '';
+            tbody.appendChild(frag);
+
+            // Render excluded list in modal
+            if (excludedTbody) {
+                if (excluded.length === 0) {
+                    excludedTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#94a3b8; padding:2rem;">目前無大股東解質剔除記錄</td></tr>`;
+                } else {
+                    const exFrag = document.createDocumentFragment();
+                    excluded.forEach(ex => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td style="font-weight:700; color:#f8fafc; white-space:nowrap;">${ex.code} ${ex.name}</td>
+                            <td style="white-space:nowrap;">${ex.shareholder_name} <span style="font-size:0.72rem; color:#94a3b8;">(${ex.shareholder_title || ''})</span></td>
+                            <td style="color:#ef4444; font-weight:600; white-space:nowrap;">${ex.unpledge_date || '—'}</td>
+                            <td style="color:#fca5a5; font-weight:600; white-space:nowrap;">-${(ex.unpledge_shares_lots || 0).toLocaleString()} 張</td>
+                            <td style="color:#94a3b8; white-space:nowrap;">${(Math.round((ex.cum_shares || 0)/1000)).toLocaleString()} 張</td>
+                            <td style="font-size:0.75rem; color:#cbd5e1; white-space:nowrap;">${ex.reason || '大股東最新為解質'}</td>
+                        `;
+                        exFrag.appendChild(tr);
+                    });
+                    excludedTbody.innerHTML = '';
+                    excludedTbody.appendChild(exFrag);
+                }
+            }
+        }
+
+        // Stock Pledge event listeners
+        const pledgeStatusFilter = document.getElementById('pledge-status-filter');
+        if (pledgeStatusFilter) {
+            pledgeStatusFilter.addEventListener('click', e => {
+                const btn = e.target.closest('.filter-chip');
+                if (!btn) return;
+                pledgeStatusFilter.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                stockPledgeStatusFilter = btn.getAttribute('data-status') || 'all';
+                renderStockPledgeView();
+            });
+        }
+
+        const pledgeSearchInput = document.getElementById('pledge-search-input');
+        if (pledgeSearchInput) {
+            pledgeSearchInput.addEventListener('input', () => renderStockPledgeView());
+        }
+
+        // Stock Pledge - load from cache on startup
+        (() => {
+            try {
+                const cached = localStorage.getItem('stock_pledge_cache');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (parsed && parsed.data) {
+                        stockPledgeData = parsed.data;
+                    }
+                }
+            } catch(e) {}
+            if (stockPledgeData) {
+                const badge = document.getElementById('badge-stock-pledge');
+                const stocks = stockPledgeData.stocks || [];
+                if (badge) badge.innerText = String(stocks.length);
+                renderStockPledgeView();
             }
         })();
     </script>
