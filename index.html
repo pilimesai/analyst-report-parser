@@ -2236,6 +2236,11 @@
                     <span id="live-server-dot" style="width: 7px; height: 7px; border-radius: 50%; background: #64748b; display: inline-block;"></span>
                     <span id="live-server-text">偵測本地即時爬蟲服務...</span>
                 </div>
+                <div style="margin-top: 0.45rem; text-align: center;">
+                    <a href="javascript:void(0)" onclick="toggleGhTokenModal(true)" style="font-size: 0.75rem; color: #38bdf8; text-decoration: underline; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.25); border-radius: 6px;">
+                        <span>☁️</span> <span>設定「免開電腦/手機雲端抓取」Token</span>
+                    </a>
+                </div>
                 <div id="fetch-all-status" style="display: none; margin-top: 0.5rem; padding: 0.5rem 0.65rem; background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.3); border-radius: 0.45rem; font-size: 0.78rem; color: #a5b4fc; line-height: 1.4;"></div>
             </div>
 
@@ -3057,6 +3062,48 @@
             </div>
         </div>
 
+        <!-- GitHub Token Cloud Setup Modal (手機/電腦關機免開電腦爬蟲彈窗) -->
+        <div id="gh-token-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); z-index:10000; align-items:center; justify-content:center; backdrop-filter:blur(6px);">
+            <div style="background:#0f172a; border:1px solid rgba(56,189,248,0.4); border-radius:1rem; width:92%; max-width:540px; display:flex; flex-direction:column; box-shadow:0 15px 40px rgba(0,0,0,0.6); overflow:hidden;">
+                <div style="padding:1.1rem 1.3rem; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:space-between; background:rgba(56,189,248,0.06);">
+                    <div style="display:flex; align-items:center; gap:0.6rem;">
+                        <span style="font-size:1.3rem;">☁️</span>
+                        <h3 style="margin:0; font-size:1.08rem; color:#f8fafc; font-weight:700;">設定 GitHub 雲端免開電腦抓取</h3>
+                    </div>
+                    <button onclick="toggleGhTokenModal(false)" style="background:transparent; border:none; color:#94a3b8; font-size:1.3rem; cursor:pointer; padding:0 0.4rem;">✕</button>
+                </div>
+
+                <div style="padding:1.25rem 1.4rem; display:flex; flex-direction:column; gap:1.1rem; font-size:0.86rem; color:#cbd5e1; line-height:1.5;">
+                    <div style="background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.25); border-radius:0.6rem; padding:0.85rem;">
+                        💡 <b>設定一次，永久有效！</b><br>
+                        綁定後，即使您<b>電腦完全關機、人在外面拿手機</b>，只要在網頁點擊「一鍵抓取」，GitHub 雲端電腦就會現場為您爬取當天最新台股盤後數據！
+                    </div>
+
+                    <div>
+                        <div style="font-weight:700; color:#f8fafc; margin-bottom:0.4rem;">步驟 1：點擊下方按鈕前往 GitHub 取得金鑰</div>
+                        <a href="https://github.com/settings/tokens/new?scopes=repo,workflow&description=TaiwanStockReportAnalyzer" target="_blank" class="btn" style="display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; width:100%; padding:0.8rem 1rem; background:linear-gradient(135deg, #0284c7, #2563eb); color:#fff; font-weight:700; border-radius:0.5rem; text-decoration:none; box-shadow:0 4px 12px rgba(2,132,199,0.35); font-size:0.92rem;">
+                            <span>👉</span> <span>點此一鍵取得免費 Token (已預選好權限) ↗</span>
+                        </a>
+                        <div style="font-size:0.75rem; color:#94a3b8; margin-top:0.4rem; line-height:1.4;">
+                            ※ 點開後，在 GitHub 網頁拉到最下方點擊綠色的 <b>「Generate token」</b>，然後複製那一串以 <code>ghp_</code> 開頭的金鑰。
+                        </div>
+                    </div>
+
+                    <div>
+                        <div style="font-weight:700; color:#f8fafc; margin-bottom:0.4rem;">步驟 2：貼上金鑰並儲存啟用</div>
+                        <div style="display:flex; gap:0.5rem;">
+                            <input type="password" id="modal-gh-token-input" placeholder="貼上 ghp_ 開頭的金鑰..." style="flex:1; padding:0.65rem 0.85rem; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.2); border-radius:0.5rem; color:#fff; font-size:0.85rem; font-family:monospace;">
+                            <button class="btn btn-primary" onclick="saveGhTokenFromModal()" style="padding:0.65rem 1.25rem; font-weight:700; background:linear-gradient(135deg, #10b981, #059669); border:none; border-radius:0.5rem; white-space:nowrap; cursor:pointer;">💾 儲存啟用</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="padding:0.85rem 1.4rem; border-top:1px solid rgba(255,255,255,0.1); display:flex; justify-content:flex-end;">
+                    <button class="btn" onclick="toggleGhTokenModal(false)" style="background:rgba(255,255,255,0.1); color:#f8fafc; padding:0.45rem 1.2rem; border-radius:0.4rem;">關閉</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Standalone Active ETF Screener View (主動型ETF選股專屬頁面) -->
         <div id="active-etf-view" style="display:none; flex-direction:column; gap:20px; padding-bottom: 40px; width: 100%; min-width: 0;">
             <div class="active-etf-grid-layout">
@@ -3865,8 +3912,37 @@
             }
         }
 
+        function toggleGhTokenModal(show = true) {
+            const modal = document.getElementById('gh-token-modal');
+            if (modal) {
+                modal.style.display = show ? 'flex' : 'none';
+                if (show) {
+                    const inp = document.getElementById('modal-gh-token-input');
+                    if (inp) {
+                        inp.value = localStorage.getItem('github_token') || '';
+                        inp.focus();
+                    }
+                }
+            }
+        }
+
+        function saveGhTokenFromModal() {
+            const inp = document.getElementById('modal-gh-token-input');
+            const val = (inp ? inp.value : '').trim();
+            if (!val) {
+                showToast('❌ 請先貼上 GitHub Token！', true);
+                return;
+            }
+            localStorage.setItem('github_token', val);
+            const sideInp = document.getElementById('github-token');
+            if (sideInp) sideInp.value = val;
+            toggleGhTokenModal(false);
+            checkLiveServer();
+            showToast('🎉 GitHub Token 儲存成功！現在電腦關機或用手機也能直接按按鈕現場爬取！');
+        }
+
         function showLiveServerHelp() {
-            alert("【兩種現場抓取模式】\n\n1. 💻 電腦開機模式：\n   在專案資料夾執行「啟動台股即時分析系統.bat」，點擊按鈕即可由電腦現場 10 秒抓取。\n\n2. ☁️ 電腦關機 / 手機免電腦模式：\n   在左側「系統設定」填入 GitHub Token，電腦完全關機時，只要在網頁點擊「一鍵抓取」，系統就會自動喚醒 GitHub 雲端虛擬電腦為您現場爬蟲！");
+            toggleGhTokenModal(true);
         }
 
         // 定期偵測本地伺服器狀態
