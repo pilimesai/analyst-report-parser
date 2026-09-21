@@ -3766,7 +3766,7 @@
                 fetchCbBelowConvFromGithub(true);
                 fetchEarningsCallFromGithub(true);
                 fetchSettingsFromCloud();
-            }, 1200);
+            }, 120);
         });
 
         // Event listeners for saving settings
@@ -4285,6 +4285,8 @@
                 if (switchTab) {
                     currentActiveTab = sheetName;
                 }
+                // 即時更新表格與數量標籤，無需等待雲端 Google Apps Script 回應
+                renderPersistentTables();
 
                 const scriptUrl = scriptUrlInput.value.trim();
                 if (scriptUrl) {
@@ -4826,20 +4828,13 @@ JSON 欄位：
 
         // Helper: Check if a CB table row is expired (到期或發行日/掛牌日已過)
         function isCbRowExpired(row, statusIdx, dateIdx, expiryIdx, today) {
-            // 1. 若有到期日欄位且到期日 < 今天，則視為過期
+            // 1. 若到期日欄位存在且到期日 < 今天，則判定過期
             if (expiryIdx >= 0 && row[expiryIdx]) {
                 const expDate = parseDateHelper(row[expiryIdx]);
                 if (expDate && expDate < today) return true;
             }
 
-            // 2. 掛牌日/發行日/進度日判斷：只要該日期早於今天（已在過去），即判定為過期移除
-            if (dateIdx >= 0 && row[dateIdx]) {
-                const d = parseDateHelper(row[dateIdx]);
-                if (d && d < today) {
-                    return true;
-                }
-            }
-
+            // 備註：近期發行CB 的「掛牌日/進度日」代表近期已掛牌或申報生效（存續期間3~5年），絕不可因已過掛牌日而過濾！
             return false;
         }
 
