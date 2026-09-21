@@ -3798,7 +3798,7 @@
         // ⚡ 本地即時爬蟲橋樑 (Live Crawler Bridge)
         // ==========================================
         let isLocalLiveServerOnline = false;
-        const LIVE_SERVER_URL = (window.location.protocol.startsWith('http') && (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'))
+        const LIVE_SERVER_URL = (window.location.protocol.startsWith('http') && !window.location.hostname.includes('github.io'))
             ? window.location.origin
             : 'http://127.0.0.1:8000';
 

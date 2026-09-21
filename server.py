@@ -234,22 +234,36 @@ class LiveAnalysisHandler(SimpleHTTPRequestHandler):
             }
 
 
+def get_lan_ip():
+    try:
+        import socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        return '127.0.0.1'
+
 def main():
-    server_address = ('127.0.0.1', PORT)
+    server_address = ('0.0.0.0', PORT)
     try:
         httpd = HTTPServer(server_address, LiveAnalysisHandler)
     except OSError:
         print(f"⚠️ 埠號 {PORT} 已被佔用，嘗試切換至 8080...")
-        server_address = ('127.0.0.1', 8080)
+        server_address = ('0.0.0.0', 8080)
         httpd = HTTPServer(server_address, LiveAnalysisHandler)
 
     active_port = server_address[1]
-    url = f"http://127.0.0.1:{active_port}/index.html"
+    local_url = f"http://127.0.0.1:{active_port}/index.html"
+    lan_ip = get_lan_ip()
+    mobile_url = f"http://{lan_ip}:{active_port}/index.html"
 
     print("=" * 70)
     print("🚀 台股量化研報分析平台 - 本地即時爬蟲伺服器 (Live Server)")
     print("=" * 70)
-    print(f"📍 網頁服務位址: {url}")
+    print(f"💻 電腦瀏覽位址: {local_url}")
+    print(f"📱 手機瀏覽位址: {mobile_url} (連同個 Wi-Fi 即可用手機現場抓取！)")
     print("⚡ 模式: 【現場即時爬取】")
     print("   當您在網頁點擊「一鍵抓取所有資料」或各分頁「重新載入」時，")
     print("   本伺服器將直接在現場調用 Python 爬蟲，實時抓取當天最新資料！")
