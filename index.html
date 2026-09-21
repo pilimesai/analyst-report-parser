@@ -2232,16 +2232,11 @@
                     <span style="font-size: 1.1rem;">⚡</span>
                     <span>一鍵抓取所有資料</span>
                 </button>
-                <div id="live-server-status-pill" style="margin-top: 0.45rem; font-size: 0.76rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem; color: #94a3b8;">
+                <div id="live-server-status-pill" style="margin-top: 0.5rem; font-size: 0.78rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem; color: #94a3b8; padding: 4px 10px; background: rgba(56,189,248,0.06); border: 1px solid rgba(56,189,248,0.18); border-radius: 6px;">
                     <span id="live-server-dot" style="width: 7px; height: 7px; border-radius: 50%; background: #64748b; display: inline-block;"></span>
-                    <span id="live-server-text">偵測本地即時爬蟲服務...</span>
+                    <span id="live-server-text">讀取雲端狀態...</span>
                 </div>
-                <div style="margin-top: 0.45rem; text-align: center;">
-                    <a href="javascript:void(0)" onclick="toggleGhTokenModal(true)" style="font-size: 0.75rem; color: #38bdf8; text-decoration: underline; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.25); border-radius: 6px;">
-                        <span>☁️</span> <span>設定「免開電腦/手機雲端抓取」Token</span>
-                    </a>
-                </div>
-                <div id="fetch-all-status" style="display: none; margin-top: 0.5rem; padding: 0.5rem 0.65rem; background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.3); border-radius: 0.45rem; font-size: 0.78rem; color: #a5b4fc; line-height: 1.4;"></div>
+                <div id="fetch-all-status" style="display: none; margin-top: 0.5rem; padding: 0.6rem 0.75rem; background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.3); border-radius: 0.5rem; font-size: 0.78rem; color: #38bdf8; line-height: 1.45;"></div>
             </div>
 
             <div class="input-group">
@@ -3867,48 +3862,22 @@
         // ==========================================
         // ⚡ 本地即時爬蟲橋樑 (Live Crawler Bridge)
         // ==========================================
-        let isLocalLiveServerOnline = false;
-        const LIVE_SERVER_URL = (window.location.protocol.startsWith('http') && !window.location.hostname.includes('github.io'))
-            ? window.location.origin
-            : 'http://127.0.0.1:8000';
-
-        async function checkLiveServer() {
-            try {
-                const ctrl = new AbortController();
-                const tid = setTimeout(() => ctrl.abort(), 1200);
-                const res = await fetch(`${LIVE_SERVER_URL}/api/status`, { method: 'GET', signal: ctrl.signal });
-                clearTimeout(tid);
-                if (res.ok) {
-                    isLocalLiveServerOnline = true;
-                    updateLiveServerUI(true);
-                    return true;
-                }
-            } catch(e) {}
-            isLocalLiveServerOnline = false;
-            updateLiveServerUI(false);
-            return false;
-        }
-
-        function updateLiveServerUI(online) {
+        // ==========================================
+        // ☁️ GitHub 雲端爬蟲引擎 (100% 免開電腦雲端抓取)
+        // ==========================================
+        function updateCloudCrawlerUI() {
             const dot = document.getElementById('live-server-dot');
             const txt = document.getElementById('live-server-text');
-            if (dot && txt) {
-                if (online) {
-                    dot.style.background = '#22c55e';
-                    dot.style.boxShadow = '0 0 6px #22c55e';
-                    txt.innerHTML = '<span style="color:#22c55e; font-weight:600;">⚡ 本地即時爬蟲已連線</span> (電腦現場即時爬取)';
-                } else {
-                    const hasToken = !!(localStorage.getItem('github_token') || (document.getElementById('github-token') || {}).value);
-                    if (hasToken) {
-                        dot.style.background = '#38bdf8';
-                        dot.style.boxShadow = '0 0 6px #38bdf8';
-                        txt.innerHTML = '<span style="color:#38bdf8; font-weight:600;">☁️ GitHub 雲端爬蟲就緒</span> (電腦關機/手機免電腦模式)';
-                    } else {
-                        dot.style.background = '#f59e0b';
-                        dot.style.boxShadow = 'none';
-                        txt.innerHTML = '<span style="color:#f59e0b;">雲端快取模式</span> <a href="#" onclick="showLiveServerHelp();return false;" style="color:#a5b4fc; text-decoration:underline;">(免開電腦設定)</a>';
-                    }
-                }
+            if (!dot || !txt) return;
+            const token = (localStorage.getItem('github_token') || '').trim();
+            if (token) {
+                dot.style.background = '#38bdf8';
+                dot.style.boxShadow = '0 0 6px #38bdf8';
+                txt.innerHTML = '<span style="color:#38bdf8; font-weight:700;">☁️ GitHub 雲端爬蟲就緒</span> <a href="javascript:void(0)" onclick="toggleGhTokenModal(true)" style="color:#94a3b8; text-decoration:underline; font-size:0.72rem; margin-left:4px;">(更換 Token)</a>';
+            } else {
+                dot.style.background = '#f59e0b';
+                dot.style.boxShadow = 'none';
+                txt.innerHTML = '<span style="color:#f59e0b; font-weight:600;">⚠️ 尚未綁定 GitHub Token</span> <a href="javascript:void(0)" onclick="toggleGhTokenModal(true)" style="color:#38bdf8; text-decoration:underline; font-size:0.74rem; font-weight:700; margin-left:4px;">(點此 30 秒設定 ↗)</a>';
             }
         }
 
@@ -3937,17 +3906,12 @@
             const sideInp = document.getElementById('github-token');
             if (sideInp) sideInp.value = val;
             toggleGhTokenModal(false);
-            checkLiveServer();
-            showToast('🎉 GitHub Token 儲存成功！現在電腦關機或用手機也能直接按按鈕現場爬取！');
+            updateCloudCrawlerUI();
+            showToast('🎉 GitHub Token 儲存成功！現在點擊「一鍵抓取」即可隨時雲端現場爬取！');
         }
 
-        function showLiveServerHelp() {
-            toggleGhTokenModal(true);
-        }
-
-        // 定期偵測本地伺服器狀態
-        setInterval(checkLiveServer, 5000);
-        setTimeout(checkLiveServer, 300);
+        // 初始化更新 UI 狀態
+        setTimeout(updateCloudCrawlerUI, 150);
 
         async function triggerGitHubCloudUpdate(token, btn, statusEl) {
             const OWNER = 'pilimesai';
@@ -3965,7 +3929,7 @@
             }
 
             try {
-                showToast('☁️ 正在喚醒 GitHub 雲端電腦現場爬取台股數據...');
+                showToast('☁️ 正在喚醒 GitHub 雲端伺服器現場爬取台股數據...');
                 const dispatchRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/dispatches`, {
                     method: 'POST',
                     headers: {
@@ -4030,6 +3994,7 @@
                 if (statusEl) statusEl.innerHTML = '🎉 GitHub 雲端爬取全量完成！正在即時下載最新數據...';
                 showToast('🎉 GitHub 雲端全量爬取成功！正在載入最新數據...');
 
+                // 重新載入最新數據
                 await fetchTopTurnoverFromGithub(true);
                 await fetchVolumeSpikeFromGithub(true);
                 await fetchSectorStrengthFromGithub(true);
@@ -4038,7 +4003,7 @@
                 await fetchStockPledgeFromGithub(true);
                 try { await fetchGoalStarActiveFunds(); } catch(e) {}
 
-                if (statusEl) statusEl.innerHTML = '✅ 雲端現場抓取全量完成！最新台股盤後數據已同步！';
+                if (statusEl) statusEl.innerHTML = '✅ 雲端現場抓取全量完成！最新台股盤後數據已同步呈現在畫面上！';
                 showToast('✅ 雲端現場抓取全量完成！今日最新盤後資料已全面更新！');
 
             } catch (err) {
@@ -4050,122 +4015,21 @@
                     btn.style.opacity = '1';
                     btn.innerHTML = '<span style="font-size:1.1rem;">⚡</span><span>一鍵抓取所有資料</span>';
                 }
+                setTimeout(() => { if (statusEl) statusEl.style.display = 'none'; }, 8000);
             }
         }
 
         async function fetchAllData() {
             const btn = document.getElementById('fetch-all-data-btn');
             const statusEl = document.getElementById('fetch-all-status');
-            if (btn.disabled) return;
-            btn.disabled = true;
-            btn.style.opacity = '0.6';
-            btn.innerHTML = '<span style="font-size:1.1rem;">⏳</span><span>正在抓取中...</span>';
-            statusEl.style.display = 'block';
+            const token = (localStorage.getItem('github_token') || (document.getElementById('github-token') || {}).value || '').trim();
 
-            const liveOnline = await checkLiveServer();
-
-            if (liveOnline) {
-                statusEl.innerHTML = '⚡ 本地即時爬蟲服務已連線，開始現場執行爬蟲...';
-                const liveSteps = [
-                    { task: 'top_turnover', label: '🔥 今日成交值排行', apply: (data) => { if(data){ topTurnoverData = data; renderTopTurnoverView(); } } },
-                    { task: 'volume_spike', label: '⚡ 成交量異常名單', apply: (data) => { if(data){ volumeSpikeData = data; renderVolumeSpikeView(); } } },
-                    { task: 'sector_strength', label: '🗺️ 族群強弱指標', apply: (data) => { if(data){ sectorStrengthData = data; renderSectorStrengthView(); } } },
-                    { task: 'sector_capital_flow', label: '🌊 資金族群流向', apply: (data) => { if(data){ sectorCapitalFlowData = data; renderSectorCapitalFlowView(); } } },
-                    { task: 'contract_liabilities', label: '💼 合約負債新高', apply: (data) => { if(data){ contractLiabilitiesData = data; renderContractLiabilitiesView(); } } },
-                    { task: 'stock_pledge', label: '🏛️ 大股東質設名單', apply: (data) => { if(data){ stockPledgeData = data; renderStockPledgeView(); } } }
-                ];
-
-                for (let i = 0; i < liveSteps.length; i++) {
-                    const step = liveSteps[i];
-                    statusEl.innerHTML = `(${i + 1}/${liveSteps.length + 3}) 正在現場即時爬取 ${step.label}...`;
-                    try {
-                        const res = await fetch(`${LIVE_SERVER_URL}/api/run-task`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ task: step.task })
-                        });
-                        const resJson = await res.json();
-                        if (resJson && resJson.success) {
-                            step.apply(resJson.data);
-                            statusEl.innerHTML = `(${i + 1}/${liveSteps.length + 3}) ✅ ${step.label} 完成 (${resJson.tradeDate || '今日'})`;
-                        } else {
-                            statusEl.innerHTML += ` ⚠️ ${step.label} 錯誤: ${resJson.error || ''}`;
-                        }
-                    } catch(e) {
-                        statusEl.innerHTML += ` ❌ ${step.label} 失敗: ${e.message}`;
-                    }
-                }
-
-                try {
-                    statusEl.innerHTML = `正在抓取 🎯 主動型ETF篩選...`;
-                    await fetchGoalStarActiveFunds();
-                    statusEl.innerHTML = `正在抓取 📅 法說會...`;
-                    await fetchEarningsCallFromGithub(true);
-                    statusEl.innerHTML = `正在抓取 🔵 近期發行CB...`;
-                    await fetchCBFromGithub(true);
-                    await fetchCbBelowConvFromGithub(true);
-                } catch(e) {}
-
-                statusEl.innerHTML = '🎉 現場即時抓取全部完成！所有最新資料已同步！';
-                showToast('✅ 現場即時抓取全部完成！已獲取今日最新盤後資料！');
-                if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = '<span style="font-size:1.1rem;">⚡</span><span>一鍵抓取所有資料</span>'; }
-            } else {
-                // 電腦未開機 (手機在外網路或本機伺服器關閉)
-                const ghToken = localStorage.getItem('github_token') || (document.getElementById('github-token') || {}).value || '';
-                if (ghToken && ghToken.trim()) {
-                    await triggerGitHubCloudUpdate(ghToken.trim(), btn, statusEl);
-                    return;
-                }
-
-                // 未設定 Token 時，彈出指引
-                const wantCloud = confirm("【☁️ 偵測到本機電腦未開機】\n\n您是否要直接喚醒「GitHub 雲端電腦」為您免費現場爬取最新台股盤後資料？\n\n👉 點擊「確定」：前往左側設定填入一次 GitHub Token（免費、1分鐘完成）。\n👉 點擊「取消」：僅讀取目前的歷史快取資料。");
-                if (wantCloud) {
-                    btn.disabled = false;
-                    btn.style.opacity = '1';
-                    btn.innerHTML = '<span style="font-size:1.1rem;">⚡</span><span>一鍵抓取所有資料</span>';
-                    statusEl.innerHTML = '💡 請在左側「系統設定」填入 GitHub Token，即可開啟電腦關機時的免電腦雲端抓取功能！';
-                    const tokenInput = document.getElementById('github-token');
-                    if (tokenInput) {
-                        tokenInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        tokenInput.focus();
-                        tokenInput.style.border = '2px solid #38bdf8';
-                        tokenInput.style.boxShadow = '0 0 10px rgba(56,189,248,0.5)';
-                    }
-                    return;
-                }
-
-                const steps = [
-                    { label: '🎯 主動型ETF篩選', fn: fetchGoalStarActiveFunds },
-                    { label: '📅 法說會', fn: fetchEarningsCallFromGithub },
-                    { label: '🔵 近期發行CB', fn: fetchCBFromGithub },
-                    { label: '📉 股價低於CB轉換價', fn: fetchCbBelowConvFromGithub },
-                    { label: '🔥 今日成交值排行', fn: () => fetchTopTurnoverFromGithub(true) },
-                    { label: '⚡ 成交量異常名單', fn: () => fetchVolumeSpikeFromGithub(true) },
-                    { label: '🗺️ 族群強弱指標', fn: () => fetchSectorStrengthFromGithub(true) },
-                    { label: '💼 合約負債新高', fn: () => fetchContractLiabilitiesFromGithub(true) },
-                    { label: '🌊 資金族群流向', fn: () => fetchSectorCapitalFlowFromGithub(true) },
-                    { label: '🏛️ 大股東質設名單', fn: () => fetchStockPledgeFromGithub(true) },
-                ];
-
-                for (let i = 0; i < steps.length; i++) {
-                    const step = steps[i];
-                    statusEl.innerHTML = `(${i + 1}/${steps.length}) 正在載入 ${step.label}...`;
-                    try {
-                        await step.fn();
-                    } catch (e) {
-                        statusEl.innerHTML += ` ❌ 失敗: ${e.message}`;
-                    }
-                    if (i < steps.length - 1) await new Promise(r => setTimeout(r, 200));
-                }
-
-                statusEl.innerHTML = '✅ 雲端資料載入完畢！(欲現場即時爬取當日最新資料請啟動本地伺服器)';
-                showToast('✅ 資料載入完成！若要現場即時爬取最新資料，請雙擊「啟動台股即時分析系統.bat」');
+            if (!token) {
+                toggleGhTokenModal(true);
+                return;
             }
 
-            btn.disabled = false;
-            btn.style.opacity = '1';
-            btn.innerHTML = '<span style="font-size:1.1rem;">⚡</span><span>一鍵抓取所有資料</span>';
-            setTimeout(() => { statusEl.style.display = 'none'; }, 8000);
+            await triggerGitHubCloudUpdate(token, btn, statusEl);
         }
 
         async function fetchCBFromGithub(silent = false) {
@@ -7243,29 +7107,6 @@ ${text.slice(0, 30000)}`;
         }
 
         async function runLiveTaskOrFallback(taskKey, label, fetchBtn, silent, onLiveSuccess, staticFallbackFn) {
-            if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 現場抓取中...'; }
-            const liveOnline = await checkLiveServer();
-            if (liveOnline) {
-                if (!silent) showToast(`⚡ 正在透過本地服務現場即時爬取【${label}】...`);
-                try {
-                    const res = await fetch(`${LIVE_SERVER_URL}/api/run-task`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ task: taskKey })
-                    });
-                    const resJson = await res.json();
-                    if (resJson && resJson.success && resJson.data) {
-                        onLiveSuccess(resJson.data);
-                        if (!silent) showToast(`✅ 【${label}】現場即時爬取完成！交易日：${resJson.tradeDate || '今日'}`);
-                        if (fetchBtn) { fetchBtn.disabled = false; fetchBtn.textContent = '🔄 重新載入'; }
-                        return;
-                    } else {
-                        console.warn('Live task returned error:', resJson.error);
-                    }
-                } catch(e) {
-                    console.warn('Live task network error, falling back:', e);
-                }
-            }
             await staticFallbackFn();
         }
 
