@@ -52,57 +52,104 @@ def save_price_cache(cache):
 def get_market_quotes():
     """抓取全市場上市與上櫃當前收盤行情"""
     quotes = {}
-    print("抓取 TWSE 上市當前收盤行情...")
-    try:
-        r = requests.get('https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL', headers=HEADERS, timeout=12)
-        if r.status_code == 200:
-            for item in r.json():
-                code = item.get('Code') or item.get('證券代號')
-                name = item.get('Name') or item.get('證券名稱')
-                close_str = item.get('ClosingPrice') or item.get('收盤價')
-                chg_str = item.get('Change') or item.get('漲跌價差')
-                try:
-                    close = float(str(close_str).replace(',', ''))
-                except (ValueError, TypeError):
-                    close = None
-                try:
-                    chg = float(str(chg_str).replace(',', ''))
-                except (ValueError, TypeError):
-                    chg = 0.0
-                if code and close is not None:
-                    quotes[code] = {
-                        'code': code,
-                        'name': name,
-                        'close': close,
-                        'change': chg,
-                        'market': 'twse'
-                    }
-    except Exception as e:
-        print(f"TWSE quotes fetch failed: {e}")
-
-    print("抓取 TPEx 上櫃當前收盤行情...")
     today = datetime.date.today()
+    trade_date = None
+
+    print("抓取 TWSE 上市當前收盤行情 (優先 MI_INDEX)...")
     for delta in range(5):
         d = today - datetime.timedelta(days=delta)
+        if d.weekday() >= 5:
+            continue
+        d_str = d.strftime("%Y%m%d")
+        url = f"https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date={d_str}&type=ALLBUT0999&response=json"
+        try:
+            req = urllib.request.Request(url, headers={'User-Agent': HEADERS['User-Agent'], 'Accept': 'application/json'})
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                jd = json.loads(resp.read().decode('utf-8', errors='ignore'))
+            if jd.get("stat") == "OK":
+                tables = [tbl for tbl in jd.get("tables", []) if len(tbl.get("data", [])) > 500]
+                if tables:
+                    for r in tables[0].get("data", []):
+                        code = str(r[0]).strip()
+                        name = str(r[1]).strip()
+                        if len(code) == 4 and code.isdigit():
+                            cp_str = str(r[8]).replace(",", "").strip()
+                            chg_sign = -1 if "-" in str(r[9]) else (1 if "+" in str(r[9]) else 0)
+                            chg_val = str(r[10]).replace(",", "").strip()
+                            try:
+                                close = float(cp_str)
+                                chg = float(chg_val) * chg_sign if chg_sign != 0 else 0.0
+                                quotes[code] = {
+                                    'code': code,
+                                    'name': name,
+                                    'close': close,
+                                    'change': chg,
+                                    'market': 'twse'
+                                }
+                            except ValueError:
+                                pass
+                    trade_date = d.strftime("%Y-%m-%d")
+                    print(f"TWSE quotes fetched via MI_INDEX: {len(quotes)} stocks ({trade_date})")
+                    break
+        except Exception as ex:
+            print(f"TWSE MI_INDEX {d_str} error: {ex}")
+
+    if not quotes:
+        print("Fallback to TWSE OpenAPI STOCK_DAY_ALL...")
+        try:
+            r = requests.get('https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL', headers=HEADERS, timeout=12)
+            if r.status_code == 200:
+                for item in r.json():
+                    code = item.get('Code') or item.get('證券代號')
+                    name = item.get('Name') or item.get('證券名稱')
+                    close_str = item.get('ClosingPrice') or item.get('收盤價')
+                    chg_str = item.get('Change') or item.get('漲跌價差')
+                    try:
+                        close = float(str(close_str).replace(',', ''))
+                    except (ValueError, TypeError):
+                        close = None
+                    try:
+                        chg = float(str(chg_str).replace(',', ''))
+                    except (ValueError, TypeError):
+                        chg = 0.0
+                    if code and close is not None:
+                        quotes[code] = {
+                            'code': code,
+                            'name': name,
+                            'close': close,
+                            'change': chg,
+                            'market': 'twse'
+                        }
+        except Exception as e:
+            print(f"TWSE quotes fetch failed: {e}")
+
+    print("抓取 TPEx 上櫃當前收盤行情...")
+    for delta in range(5):
+        d = today - datetime.timedelta(days=delta)
+        if d.weekday() >= 5:
+            continue
         roc = f"{d.year - 1911}/{d.month:02d}/{d.day:02d}"
-        url = f"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={roc.replace('/', '%2F')}&se=AL&_=1"
+        url = f"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={roc}&se=AL&_=1"
         raw_bytes = None
 
         try:
-            req = urllib.request.Request(url, headers={'User-Agent': HEADERS['User-Agent'], 'Accept': 'application/json, */*'})
-            with urllib.request.urlopen(req, timeout=8) as resp:
-                raw_bytes = resp.read()
-        except Exception:
+            res = subprocess.run(
+                ['curl.exe', '-s', '--http1.1', url, '-H', f'User-Agent: {HEADERS["User-Agent"]}'],
+                capture_output=True,
+                timeout=35
+            )
+            if res.returncode == 0 and res.stdout:
+                raw_bytes = res.stdout
+        except Exception as ex:
+            print(f"TPEx curl error for {d}: {ex}")
+
+        if not raw_bytes:
             try:
-                tmp = tempfile.mktemp(suffix='.json')
-                subprocess.run(['curl.exe', '-s', '--http1.1', url, '-H', f'User-Agent: {HEADERS["User-Agent"]}', '-o', tmp], check=True, timeout=10)
-                if os.path.exists(tmp):
-                    with open(tmp, 'rb') as f:
-                        raw_bytes = f.read()
-                    try: os.remove(tmp)
-                    except Exception: pass
-            except Exception:
-                pass
+                req = urllib.request.Request(url, headers={'User-Agent': HEADERS['User-Agent'], 'Accept': 'application/json, */*'})
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    raw_bytes = resp.read()
+            except Exception as ex:
+                print(f"TPEx urllib error for {d}: {ex}")
 
         if raw_bytes:
             try:
@@ -131,13 +178,15 @@ def get_market_quotes():
                                 'change': chg,
                                 'market': 'tpex'
                             }
-                    if len(quotes) > 1000:
-                        break
+                    if not trade_date:
+                        trade_date = d.strftime("%Y-%m-%d")
+                    print(f"TPEx quotes fetched: got rows for {d}")
+                    break
             except Exception:
                 pass
 
     print(f"全市場行情已抓取完成，共 {len(quotes)} 檔個股。")
-    return quotes
+    return quotes, (trade_date or today.strftime("%Y-%m-%d"))
 
 def get_pledged_candidates():
     """從 TWSE/TPEx 開放資料取得目前有內部人質押之公司代號清單"""
@@ -472,7 +521,7 @@ def main():
     print("啟動大股東股票質設追蹤掃描器")
     print("=" * 60)
 
-    quotes = get_market_quotes()
+    quotes, detected_trade_date = get_market_quotes()
     candidates = get_pledged_candidates()
     active_stocks, excluded_stocks = analyze_stock_pledges(candidates, quotes)
 
@@ -485,10 +534,11 @@ def main():
 
     today_str = datetime.date.today().isoformat()
     now_str = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).isoformat()
+    trade_date = detected_trade_date or today_str
 
     output_data = {
         'updateTime': now_str,
-        'tradeDate': today_str,
+        'tradeDate': trade_date,
         'summary': {
             'total_active_stocks': total_active,
             'above_pledge_count': above_count,
@@ -519,6 +569,7 @@ def main():
 
     elapsed = round(time.time() - start_time, 1)
     print(f"\n[OK] 掃描完成！耗時 {elapsed} 秒。")
+    print(f"交易日期：{trade_date}")
     print(f"有效質設標的：{total_active} 檔（現價高於質設價比例：{above_ratio}%）")
     if top_gain:
         print(f"最大溢價標的：{top_gain['code']} {top_gain['name']} (+{top_gain['diff_pct']}%)")
@@ -526,6 +577,15 @@ def main():
         print(f"最大跌破標的：{top_loss['code']} {top_loss['name']} ({top_loss['diff_pct']}%)")
     print(f"解質剔除標的：{len(excluded_stocks)} 筆")
     print(f"產出檔案：{output_path}")
+
+    if '--push' in sys.argv:
+        try:
+            subprocess.run(['git', 'add', 'stock_pledge.json'], check=True)
+            subprocess.run(['git', 'commit', '-m', f'auto: update stock pledge ({trade_date})'], check=True)
+            subprocess.run(['git', 'push', 'origin', 'main'], check=True)
+            print('Successfully pushed stock_pledge.json to GitHub!')
+        except Exception as e:
+            print(f'Git push error: {e}')
 
 if __name__ == '__main__':
     main()

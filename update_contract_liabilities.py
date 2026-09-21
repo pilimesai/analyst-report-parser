@@ -83,6 +83,8 @@ def fetch_twse_daily_turnover(stock_names):
 
     for delta in range(5):
         d = today - datetime.timedelta(days=delta)
+        if d.weekday() >= 5:
+            continue  # 略過週末
         d_str = d.strftime("%Y%m%d")
         url = f"https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date={d_str}&type=ALLBUT0999&response=json"
         headers = {
@@ -91,7 +93,7 @@ def fetch_twse_daily_turnover(stock_names):
         }
         try:
             req = urllib.request.Request(url, headers=headers)
-            with urllib.request.urlopen(req, timeout=12) as resp:
+            with urllib.request.urlopen(req, timeout=20) as resp:
                 jd = json.loads(resp.read().decode("utf-8", errors="ignore"))
             if jd.get("stat") == "OK":
                 tables = [tbl for tbl in jd.get("tables", []) if len(tbl.get("data", [])) > 500]
@@ -120,8 +122,8 @@ def fetch_twse_daily_turnover(stock_names):
                     trade_date = d.strftime("%Y-%m-%d")
                     print(f"TWSE turnover fetched: {len(turnovers)} stocks ({trade_date})")
                     break
-        except Exception:
-            pass
+        except Exception as ex:
+            print(f"TWSE MI_INDEX {d_str} error: {ex}")
 
     return turnovers, trade_date
 
@@ -137,13 +139,15 @@ def fetch_tpex_daily_turnover(stock_names):
 
     for delta in range(5):
         d = today - datetime.timedelta(days=delta)
+        if d.weekday() >= 5:
+            continue  # 略過週末
         roc = f"{d.year - 1911}/{d.month:02d}/{d.day:02d}"
-        url = f"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={roc.replace('/', '%2F')}&se=AL&_=1"
+        url = f"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={roc}&se=AL&_=1"
         try:
             res = subprocess.run(
-                ["curl.exe", "-s", "--http1.1", url, "-H", "User-Agent: Mozilla/5.0"],
+                ["curl.exe", "-s", "--http1.1", url, "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)"],
                 capture_output=True,
-                timeout=15
+                timeout=35
             )
             jd = json.loads(res.stdout.decode("utf-8", errors="ignore"))
             tables = jd.get("tables", [])
@@ -171,8 +175,8 @@ def fetch_tpex_daily_turnover(stock_names):
                 trade_date = d.strftime("%Y-%m-%d")
                 print(f"TPEx turnover fetched: {len(turnovers)} stocks ({trade_date})")
                 break
-        except Exception:
-            pass
+        except Exception as ex:
+            print(f"TPEx stk_wn1430 {d} error: {ex}")
 
     return turnovers, trade_date
 
@@ -339,6 +343,15 @@ def main():
     print(f"Trade Date: {trade_date}")
     print(f"Matched Stocks: {len(matched_results)} / {len(candidates)} candidates")
     print(f"Saved to: {out_path}")
+
+    if '--push' in sys.argv:
+        try:
+            subprocess.run(['git', 'add', 'contract_liabilities.json'], cwd=REPO_DIR, check=True)
+            subprocess.run(['git', 'commit', '-m', f'auto: update contract liabilities ({trade_date})'], cwd=REPO_DIR, check=True)
+            subprocess.run(['git', 'push', 'origin', 'main'], cwd=REPO_DIR, check=True)
+            print('Successfully pushed contract_liabilities.json to GitHub!')
+        except Exception as e:
+            print(f'Git push error: {e}')
 
 
 if __name__ == "__main__":

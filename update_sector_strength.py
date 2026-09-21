@@ -213,12 +213,14 @@ def fetch_official_today_closes():
     print("Fetching TWSE official closing quotes (MI_INDEX)...")
     for delta in range(5):
         d = today - datetime.timedelta(days=delta)
+        if d.weekday() >= 5:
+            continue  # 略過週末
         d_str = d.strftime("%Y%m%d")
         url = f"https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date={d_str}&type=ALLBUT0999&response=json"
         headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "Accept": "application/json"}
         try:
             req = urllib.request.Request(url, headers=headers)
-            with urllib.request.urlopen(req, timeout=12) as resp:
+            with urllib.request.urlopen(req, timeout=20) as resp:
                 jd = json.loads(resp.read().decode("utf-8", errors="ignore"))
             if jd.get("stat") == "OK":
                 tables = [tbl for tbl in jd.get("tables", []) if len(tbl.get("data", [])) > 500]
@@ -234,16 +236,18 @@ def fetch_official_today_closes():
                     twse_date = d.strftime("%Y-%m-%d")
                     print(f"TWSE official closes: {len(closes)} stocks ({twse_date})")
                     break
-        except Exception:
-            pass
+        except Exception as ex:
+            print(f"TWSE MI_INDEX {d_str} error: {ex}")
 
     print("Fetching TPEx official closing quotes (stk_wn1430)...")
     for delta in range(5):
         d = today - datetime.timedelta(days=delta)
+        if d.weekday() >= 5:
+            continue  # 略過週末
         roc = f"{d.year - 1911}/{d.month:02d}/{d.day:02d}"
-        url = f"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={roc.replace('/', '%2F')}&se=AL&_=1"
+        url = f"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={roc}&se=AL&_=1"
         try:
-            res = subprocess.run(["curl.exe", "-s", "--http1.1", url, "-H", "User-Agent: Mozilla/5.0"], capture_output=True, timeout=15)
+            res = subprocess.run(["curl.exe", "-s", "--http1.1", url, "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)"], capture_output=True, timeout=35)
             jd = json.loads(res.stdout.decode("utf-8", errors="ignore"))
             tables = jd.get("tables", [])
             if tables and tables[0].get("data"):
@@ -260,8 +264,8 @@ def fetch_official_today_closes():
                 tpex_date = d.strftime("%Y-%m-%d")
                 print(f"TPEx official closes: {cnt} stocks ({tpex_date})")
                 break
-        except Exception:
-            pass
+        except Exception as ex:
+            print(f"TPEx stk_wn1430 {d} error: {ex}")
 
     official_trade_date = twse_date or tpex_date
     return closes, official_trade_date
@@ -500,8 +504,8 @@ def main():
     bearish = [s for s in sectors if s["signal"] == "空方"]
     insufficient = [s for s in sectors if s["signal"] == "insufficient"]
 
-    # 交易日優先採用從歷史行情中實際提取之最新交易日（如 2026-09-18）
-    trade_date = detected_trade_date or get_trade_date()
+    # 交易日優先採用從歷史行情中實際提取之最新交易日（如 2026-09-21）
+    trade_date = detected_trade_date or official_trade_date or datetime.datetime.now(TZ_TW).strftime("%Y-%m-%d")
     now_iso = datetime.datetime.now(TZ_TW).isoformat()
 
     out_data = {
@@ -535,6 +539,16 @@ def main():
         for s in list(reversed(bearish))[:5]:
             print(f"  [{s['industry']}] {s['ratio']:.0%} ({s['above_count']}/{s['valid_count']})")
     print(f"\nSaved to {out_path}")
+
+    # 若帶有 --push 參數或非 CI 環境，支援自動 push 到 GitHub
+    if '--push' in sys.argv:
+        try:
+            subprocess.run(['git', 'add', 'sector_strength.json'], cwd=REPO_DIR, check=True)
+            subprocess.run(['git', 'commit', '-m', f'auto: update sector strength ({trade_date})'], cwd=REPO_DIR, check=True)
+            subprocess.run(['git', 'push', 'origin', 'main'], cwd=REPO_DIR, check=True)
+            print('Successfully pushed sector_strength.json to GitHub!')
+        except Exception as e:
+            print(f'Git push error: {e}')
 
 
 if __name__ == "__main__":

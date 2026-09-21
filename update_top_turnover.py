@@ -59,6 +59,8 @@ def fetch_twse_top30(stock_names):
     # 優先從 TWSE 官網 MI_INDEX 抓取最新行情（即時盤後，無 OpenAPI 跨日延遲問題）
     for delta in range(5):
         d = today - datetime.timedelta(days=delta)
+        if d.weekday() >= 5:
+            continue  # 略過週末
         d_str = d.strftime('%Y%m%d')
         url = f'https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date={d_str}&type=ALLBUT0999&response=json'
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', 'Accept': 'application/json, */*'}
@@ -125,7 +127,7 @@ def fetch_twse_top30(stock_names):
             'close_price': str(item.get('ClosingPrice', '')).strip(),
             'change': str(item.get('Change', '')).strip(),
             'date': date_str})
-    print(f'TWSE Top30 done via OpenAPI: {result[0]["code"]} {result[0]["name"]} value={result[0]["trade_value"]:,}')
+    print(f'TWSE Top30 done via OpenAPI ({result[0]["date"]}): {result[0]["code"]} {result[0]["name"]} value={result[0]["trade_value"]:,}')
     return result
 
 def fetch_tpex_top30(stock_names):
@@ -134,14 +136,37 @@ def fetch_tpex_top30(stock_names):
     data = None
     for delta in range(5):
         d = today - datetime.timedelta(days=delta)
+        if d.weekday() >= 5:
+            continue  # 略過週末
         roc = f'{d.year - 1911}/{d.month:02d}/{d.day:02d}'
-        url = f'https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={roc.replace("/", "%2F")}&se=AL&_=1'
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', 'Accept': 'application/json, */*'}
+        url = f'https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={roc}&se=AL&_=1'
+        
+        # 優先使用 curl.exe (處理 Windows 環境下 Python urllib 的 SSL/TLS Handshake 中斷與大封包超時)
+        raw_text = None
         try:
-            req = urllib.request.Request(url, headers=headers)
-            with urllib.request.urlopen(req, timeout=20) as resp:
-                raw = resp.read()
-                jd = json.loads(raw.decode('utf-8', errors='ignore'))
+            res = subprocess.run(
+                ['curl.exe', '-s', '--http1.1', url, '-H', 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)'],
+                capture_output=True,
+                timeout=35
+            )
+            if res.returncode == 0 and res.stdout:
+                raw_text = res.stdout.decode('utf-8', errors='ignore')
+        except Exception as ex:
+            print(f'TPEx curl error for {d}: {ex}')
+
+        # 備援嘗試 urllib
+        if not raw_text:
+            try:
+                headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', 'Accept': 'application/json, */*'}
+                req = urllib.request.Request(url, headers=headers)
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    raw_text = resp.read().decode('utf-8', errors='ignore')
+            except Exception as e:
+                print(f'TPEx urllib {d}: {e}')
+
+        if raw_text:
+            try:
+                jd = json.loads(raw_text)
                 tables = jd.get('tables', [])
                 if tables:
                     rows = tables[0].get('data', [])
@@ -149,8 +174,9 @@ def fetch_tpex_top30(stock_names):
                         data = {'rows': rows, 'date': d.strftime('%Y-%m-%d')}
                         print(f'TPEx: got {len(rows)} rows for {d}')
                         break
-        except Exception as e:
-            print(f'TPEx {d}: {e}')
+            except Exception as ex:
+                print(f'TPEx JSON parse error for {d}: {ex}')
+
     if not data:
         print('TPEx: no data')
         return []

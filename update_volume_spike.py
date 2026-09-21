@@ -70,6 +70,8 @@ def fetch_twse_candidates(stock_names):
     today = datetime.datetime.now(TZ_TW).date()
     for delta in range(5):
         d = today - datetime.timedelta(days=delta)
+        if d.weekday() >= 5:
+            continue  # 略過週末
         d_str = d.strftime('%Y%m%d')
         url = f'https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date={d_str}&type=ALLBUT0999&response=json'
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', 'Accept': 'application/json, */*'}
@@ -179,30 +181,32 @@ def fetch_tpex_candidates(stock_names):
 
     for delta in range(5):
         d = today - datetime.timedelta(days=delta)
+        if d.weekday() >= 5:
+            continue  # 略過週末
         roc = f"{d.year - 1911}/{d.month:02d}/{d.day:02d}"
-        url = f"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={roc.replace('/', '%2F')}&se=AL&_=1"
+        url = f"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={roc}&se=AL&_=1"
         raw_bytes = None
 
-        # 優先嘗試 urllib
+        # 優先使用 curl.exe (處理 Windows 環境下 Python urllib 的 SSL/TLS Handshake 中斷與大封包超時)
         try:
-            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', 'Accept': 'application/json, */*'})
-            with urllib.request.urlopen(req, timeout=10) as resp:
-                raw_bytes = resp.read()
-        except Exception:
-            # 備援使用 curl.exe (處理 Windows 環境下的 SSL/TLS reset)
+            res = subprocess.run(
+                ['curl.exe', '-s', '--http1.1', url, '-H', 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)'],
+                capture_output=True,
+                timeout=35
+            )
+            if res.returncode == 0 and res.stdout:
+                raw_bytes = res.stdout
+        except Exception as ex:
+            print(f"TPEx curl error for {d}: {ex}")
+
+        # 備援嘗試 urllib
+        if not raw_bytes:
             try:
-                import tempfile
-                tmp = tempfile.mktemp(suffix='.json')
-                subprocess.run(['curl.exe', '-s', '--http1.1', url, '-H', 'User-Agent: Mozilla/5.0', '-o', tmp], check=True, timeout=15)
-                if os.path.exists(tmp):
-                    with open(tmp, 'rb') as f:
-                        raw_bytes = f.read()
-                    try:
-                        os.remove(tmp)
-                    except Exception:
-                        pass
+                req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', 'Accept': 'application/json, */*'})
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    raw_bytes = resp.read()
             except Exception as ex:
-                pass
+                print(f"TPEx urllib error for {d}: {ex}")
 
         if raw_bytes:
             try:

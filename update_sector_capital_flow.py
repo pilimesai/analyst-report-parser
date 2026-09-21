@@ -135,12 +135,14 @@ def fetch_twse_quotes_two_days(stock_names):
 
     for delta in range(10):
         d = today - datetime.timedelta(days=delta)
+        if d.weekday() >= 5:
+            continue  # 略過週末
         d_str = d.strftime("%Y%m%d")
         url = f"https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date={d_str}&type=ALLBUT0999&response=json"
-        headers = {"User-Agent": "Mozilla/5.0"}
+        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
         try:
             req = urllib.request.Request(url, headers=headers)
-            with urllib.request.urlopen(req, timeout=12) as resp:
+            with urllib.request.urlopen(req, timeout=20) as resp:
                 jd = json.loads(resp.read().decode("utf-8", errors="ignore"))
             if jd.get("stat") == "OK":
                 tbl = [t for t in jd.get("tables", []) if len(t.get("data", [])) > 500]
@@ -174,8 +176,8 @@ def fetch_twse_quotes_two_days(stock_names):
                     print(f"TWSE fetched {len(day_dict)} stocks for {fmt_date} (Total: {tot_val/1e8:.1f}億)")
                     if len(found_days) == 2:
                         break
-        except Exception:
-            pass
+        except Exception as ex:
+            print(f"TWSE MI_INDEX {d_str} error: {ex}")
 
     return found_days
 
@@ -187,12 +189,14 @@ def fetch_tpex_quotes_two_days(stock_names):
 
     for delta in range(10):
         d = today - datetime.timedelta(days=delta)
+        if d.weekday() >= 5:
+            continue  # 略過週末
         roc = f"{d.year - 1911}/{d.month:02d}/{d.day:02d}"
-        url = f"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={roc.replace('/', '%2F')}&se=AL&_=1"
+        url = f"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={roc}&se=AL&_=1"
         try:
             res = subprocess.run(
-                ["curl.exe", "-s", "--http1.1", url, "-H", "User-Agent: Mozilla/5.0"],
-                capture_output=True, timeout=15
+                ["curl.exe", "-s", "--http1.1", url, "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)"],
+                capture_output=True, timeout=35
             )
             jd = json.loads(res.stdout.decode("utf-8", errors="ignore"))
             tbl = jd.get("tables", [])
@@ -223,8 +227,8 @@ def fetch_tpex_quotes_two_days(stock_names):
                 print(f"TPEx fetched {len(day_dict)} stocks for {fmt_date} (Total: {tot_val/1e8:.1f}億)")
                 if len(found_days) == 2:
                     break
-        except Exception:
-            pass
+        except Exception as ex:
+            print(f"TPEx stk_wn1430 {d} error: {ex}")
 
     return found_days
 
@@ -353,15 +357,32 @@ def main():
         print("Error: Could not obtain 2 complete trading days from TWSE/TPEx")
         return
 
-    # 合併 TWSE + TPEx
-    t0_date = twse_days[0]["date"]
-    t1_date = twse_days[1]["date"]
+    # 確保 TWSE 與 TPEx 採用完全相同的交易日
+    twse_by_date = {d["date"]: d for d in twse_days}
+    tpex_by_date = {d["date"]: d for d in tpex_days}
+    common_dates = [d["date"] for d in twse_days if d["date"] in tpex_by_date]
 
-    quotes_t0 = {**twse_days[0]["stocks"], **tpex_days[0]["stocks"]}
-    quotes_t1 = {**twse_days[1]["stocks"], **tpex_days[1]["stocks"]}
+    if len(common_dates) >= 2:
+        t0_date = common_dates[0]
+        t1_date = common_dates[1]
+        t0_twse = twse_by_date[t0_date]
+        t0_tpex = tpex_by_date[t0_date]
+        t1_twse = twse_by_date[t1_date]
+        t1_tpex = tpex_by_date[t1_date]
+    else:
+        print(f"Warning: Exact date alignment fallback: TWSE dates={[d['date'] for d in twse_days]}, TPEx dates={[d['date'] for d in tpex_days]}")
+        t0_date = twse_days[0]["date"]
+        t1_date = twse_days[1]["date"]
+        t0_twse = twse_days[0]
+        t0_tpex = tpex_days[0]
+        t1_twse = twse_days[1]
+        t1_tpex = tpex_days[1]
 
-    tot_mkt_t0 = twse_days[0]["total_val"] + tpex_days[0]["total_val"]
-    tot_mkt_t1 = twse_days[1]["total_val"] + tpex_days[1]["total_val"]
+    quotes_t0 = {**t0_twse["stocks"], **t0_tpex["stocks"]}
+    quotes_t1 = {**t1_twse["stocks"], **t1_tpex["stocks"]}
+
+    tot_mkt_t0 = t0_twse["total_val"] + t0_tpex["total_val"]
+    tot_mkt_t1 = t1_twse["total_val"] + t1_tpex["total_val"]
 
     print(f"\n--- Market Summary ---")
     print(f"T0 (Today): {t0_date} | Total Turnover: {tot_mkt_t0/1e8:.1f}億 ({len(quotes_t0)} stocks)")
@@ -437,6 +458,15 @@ def main():
     print(f"Top Theme Inflow      : {[s['sector_name'] + ' (+' + str(s['flow_pp']) + '%)' for s in top_inflow_theme]}")
     print(f"Top Theme Outflow     : {[s['sector_name'] + ' (' + str(s['flow_pp']) + '%)' for s in top_outflow_theme]}")
     print(f"Saved to: {out_file}")
+
+    if '--push' in sys.argv:
+        try:
+            subprocess.run(['git', 'add', 'sector_capital_flow.json'], cwd=REPO_DIR, check=True)
+            subprocess.run(['git', 'commit', '-m', f'auto: update sector capital flow ({t0_date})'], cwd=REPO_DIR, check=True)
+            subprocess.run(['git', 'push', 'origin', 'main'], cwd=REPO_DIR, check=True)
+            print('Successfully pushed sector_capital_flow.json to GitHub!')
+        except Exception as e:
+            print(f'Git push error: {e}')
 
 
 if __name__ == "__main__":
