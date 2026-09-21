@@ -2210,6 +2210,16 @@
                     設定後，解析新報告或點擊同步按鈕時會直接寫入 Sheets 中。
                 </div>
             </div>
+
+            <div class="input-group" id="group-github-token">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <label for="github-token" style="margin-bottom:0;">GitHub Token (雲端/手機免開電腦)</label>
+                </div>
+                <input type="password" id="github-token" placeholder="貼上 GitHub PAT 權限金鑰" style="margin-top:4px;">
+                <div class="helper-text">
+                    設定後，電腦關機時點擊抓取會自動喚醒 GitHub 雲端爬蟲。<a href="https://github.com/settings/tokens/new?scopes=repo,workflow&description=TaiwanStockReportAnalyzer" target="_blank">取得免費 Token ↗</a>
+                </div>
+            </div>
         </div>
 
         <div class="sidebar-section">
@@ -3549,6 +3559,19 @@
             const activeScriptUrl = CONFIG_SCRIPT_URL || localStorage.getItem('google_script_url');
             if (activeScriptUrl) scriptUrlInput.value = activeScriptUrl;
 
+            // 還原與監聽 GitHub Token
+            const ghTokenInput = document.getElementById('github-token');
+            if (urlParams.get('gh_token')) localStorage.setItem('github_token', urlParams.get('gh_token'));
+            const savedGhToken = localStorage.getItem('github_token') || '';
+            if (ghTokenInput && savedGhToken) ghTokenInput.value = savedGhToken;
+            if (ghTokenInput) {
+                ghTokenInput.addEventListener('input', (e) => {
+                    const val = e.target.value.trim();
+                    localStorage.setItem('github_token', val);
+                    if (val) showToast('🔑 GitHub Token 已儲存！電腦關機時將自動由雲端抓取！');
+                });
+            }
+
             // 3. 瞬間讀取本地所有快取 (0ms 秒開畫面)
             if (localStorage.getItem('stock_names_cache')) {
                 try { stockNameMap = JSON.parse(localStorage.getItem('stock_names_cache')); } catch (e) { }
@@ -3826,22 +3849,133 @@
                 if (online) {
                     dot.style.background = '#22c55e';
                     dot.style.boxShadow = '0 0 6px #22c55e';
-                    txt.innerHTML = '<span style="color:#22c55e; font-weight:600;">⚡ 本地即時爬蟲已連線</span> (現場即時爬取模式)';
+                    txt.innerHTML = '<span style="color:#22c55e; font-weight:600;">⚡ 本地即時爬蟲已連線</span> (電腦現場即時爬取)';
                 } else {
-                    dot.style.background = '#f59e0b';
-                    dot.style.boxShadow = 'none';
-                    txt.innerHTML = '<span style="color:#f59e0b;">雲端快取模式</span> <a href="#" onclick="showLiveServerHelp();return false;" style="color:#a5b4fc; text-decoration:underline;">(如何現場爬取?)</a>';
+                    const hasToken = !!(localStorage.getItem('github_token') || (document.getElementById('github-token') || {}).value);
+                    if (hasToken) {
+                        dot.style.background = '#38bdf8';
+                        dot.style.boxShadow = '0 0 6px #38bdf8';
+                        txt.innerHTML = '<span style="color:#38bdf8; font-weight:600;">☁️ GitHub 雲端爬蟲就緒</span> (電腦關機/手機免電腦模式)';
+                    } else {
+                        dot.style.background = '#f59e0b';
+                        dot.style.boxShadow = 'none';
+                        txt.innerHTML = '<span style="color:#f59e0b;">雲端快取模式</span> <a href="#" onclick="showLiveServerHelp();return false;" style="color:#a5b4fc; text-decoration:underline;">(免開電腦設定)</a>';
+                    }
                 }
             }
         }
 
         function showLiveServerHelp() {
-            alert("【如何開啟現場即時爬蟲模式？】\n\n1. 請在專案資料夾中雙擊「啟動台股即時分析系統.bat」（或終端機執行 python server.py）。\n2. 啟動後，網頁將自動連線本地爬蟲服務（顯示綠燈 ⚡）。\n3. 之後點擊「一鍵抓取所有資料」或各分頁「重新載入」時，系統就會在現場直接執行 Python 爬蟲，抓取當天最新資料！");
+            alert("【兩種現場抓取模式】\n\n1. 💻 電腦開機模式：\n   在專案資料夾執行「啟動台股即時分析系統.bat」，點擊按鈕即可由電腦現場 10 秒抓取。\n\n2. ☁️ 電腦關機 / 手機免電腦模式：\n   在左側「系統設定」填入 GitHub Token，電腦完全關機時，只要在網頁點擊「一鍵抓取」，系統就會自動喚醒 GitHub 雲端虛擬電腦為您現場爬蟲！");
         }
 
         // 定期偵測本地伺服器狀態
         setInterval(checkLiveServer, 5000);
         setTimeout(checkLiveServer, 300);
+
+        async function triggerGitHubCloudUpdate(token, btn, statusEl) {
+            const OWNER = 'pilimesai';
+            const REPO = 'analyst-report-parser';
+            const WORKFLOW_ID = 'run_all_updates.yml';
+
+            if (btn) {
+                btn.disabled = true;
+                btn.style.opacity = '0.7';
+                btn.innerHTML = '<span style="font-size:1.1rem;">☁️</span><span>雲端現場爬取中...</span>';
+            }
+            if (statusEl) {
+                statusEl.style.display = 'block';
+                statusEl.innerHTML = '☁️ 正在連線喚醒 GitHub 雲端虛擬電腦 (GitHub Actions)...';
+            }
+
+            try {
+                showToast('☁️ 正在喚醒 GitHub 雲端電腦現場爬取台股數據...');
+                const dispatchRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/dispatches`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token.trim()}`,
+                        'Accept': 'application/vnd.github+json',
+                        'X-GitHub-Api-Version': '2022-11-28'
+                    },
+                    body: JSON.stringify({ ref: 'main' })
+                });
+
+                if (!dispatchRes.ok) {
+                    const errTxt = await dispatchRes.text();
+                    throw new Error(`GitHub Token 驗證失敗 (${dispatchRes.status})，請確認 Token 權限（需勾選 repo 與 workflow 權限）: ${errTxt.slice(0, 100)}`);
+                }
+
+                showToast('🚀 GitHub 雲端電腦已啟動！正在全量爬取台股盤後數據...');
+                if (statusEl) statusEl.innerHTML = '🚀 GitHub 雲端電腦已啟動！正在全量爬取台股數據 (預計 40~60 秒)...';
+
+                await new Promise(r => setTimeout(r, 4000));
+
+                const startTime = Date.now();
+                let success = false;
+                const maxWaitSec = 180;
+
+                while ((Date.now() - startTime) < maxWaitSec * 1000) {
+                    const elapsed = Math.round((Date.now() - startTime) / 1000);
+                    if (statusEl) statusEl.innerHTML = `☁️ GitHub 雲端電腦現場爬取中... (已執行 ${elapsed} 秒，預計約 50 秒完成)`;
+
+                    try {
+                        const runsRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/runs?per_page=1`, {
+                            headers: {
+                                'Authorization': `Bearer ${token.trim()}`,
+                                'Accept': 'application/vnd.github+json',
+                                'X-GitHub-Api-Version': '2022-11-28'
+                            }
+                        });
+                        if (runsRes.ok) {
+                            const runsData = await runsRes.json();
+                            const latestRun = runsData.workflow_runs && runsData.workflow_runs[0];
+                            if (latestRun) {
+                                if (latestRun.status === 'completed') {
+                                    if (latestRun.conclusion === 'success') {
+                                        success = true;
+                                        break;
+                                    } else {
+                                        throw new Error(`雲端爬蟲執行結束，但回報狀態: ${latestRun.conclusion}`);
+                                    }
+                                }
+                            }
+                        }
+                    } catch(pollErr) {
+                        if (pollErr.message && pollErr.message.includes('回報狀態')) throw pollErr;
+                    }
+
+                    await new Promise(r => setTimeout(r, 4000));
+                }
+
+                if (!success) {
+                    throw new Error('雲端爬取執行逾時，請稍後刷新頁面');
+                }
+
+                if (statusEl) statusEl.innerHTML = '🎉 GitHub 雲端爬取全量完成！正在即時下載最新數據...';
+                showToast('🎉 GitHub 雲端全量爬取成功！正在載入最新數據...');
+
+                await fetchTopTurnoverFromGithub(true);
+                await fetchVolumeSpikeFromGithub(true);
+                await fetchSectorStrengthFromGithub(true);
+                await fetchContractLiabilitiesFromGithub(true);
+                await fetchSectorCapitalFlowFromGithub(true);
+                await fetchStockPledgeFromGithub(true);
+                try { await fetchGoalStarActiveFunds(); } catch(e) {}
+
+                if (statusEl) statusEl.innerHTML = '✅ 雲端現場抓取全量完成！最新台股盤後數據已同步！';
+                showToast('✅ 雲端現場抓取全量完成！今日最新盤後資料已全面更新！');
+
+            } catch (err) {
+                if (statusEl) statusEl.innerHTML = `❌ 雲端爬取失敗: ${err.message}`;
+                showToast(`❌ 雲端抓取失敗: ${err.message}`, true);
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.innerHTML = '<span style="font-size:1.1rem;">⚡</span><span>一鍵抓取所有資料</span>';
+                }
+            }
+        }
 
         async function fetchAllData() {
             const btn = document.getElementById('fetch-all-data-btn');
@@ -3898,7 +4032,32 @@
 
                 statusEl.innerHTML = '🎉 現場即時抓取全部完成！所有最新資料已同步！';
                 showToast('✅ 現場即時抓取全部完成！已獲取今日最新盤後資料！');
+                if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = '<span style="font-size:1.1rem;">⚡</span><span>一鍵抓取所有資料</span>'; }
             } else {
+                // 電腦未開機 (手機在外網路或本機伺服器關閉)
+                const ghToken = localStorage.getItem('github_token') || (document.getElementById('github-token') || {}).value || '';
+                if (ghToken && ghToken.trim()) {
+                    await triggerGitHubCloudUpdate(ghToken.trim(), btn, statusEl);
+                    return;
+                }
+
+                // 未設定 Token 時，彈出指引
+                const wantCloud = confirm("【☁️ 偵測到本機電腦未開機】\n\n您是否要直接喚醒「GitHub 雲端電腦」為您免費現場爬取最新台股盤後資料？\n\n👉 點擊「確定」：前往左側設定填入一次 GitHub Token（免費、1分鐘完成）。\n👉 點擊「取消」：僅讀取目前的歷史快取資料。");
+                if (wantCloud) {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.innerHTML = '<span style="font-size:1.1rem;">⚡</span><span>一鍵抓取所有資料</span>';
+                    statusEl.innerHTML = '💡 請在左側「系統設定」填入 GitHub Token，即可開啟電腦關機時的免電腦雲端抓取功能！';
+                    const tokenInput = document.getElementById('github-token');
+                    if (tokenInput) {
+                        tokenInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        tokenInput.focus();
+                        tokenInput.style.border = '2px solid #38bdf8';
+                        tokenInput.style.boxShadow = '0 0 10px rgba(56,189,248,0.5)';
+                    }
+                    return;
+                }
+
                 const steps = [
                     { label: '🎯 主動型ETF篩選', fn: fetchGoalStarActiveFunds },
                     { label: '📅 法說會', fn: fetchEarningsCallFromGithub },
