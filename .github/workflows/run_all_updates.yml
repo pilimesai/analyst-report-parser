@@ -1,0 +1,38 @@
+name: Run All Updates On Demand
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 每個交易日台灣時間 20:30 (UTC 12:30) 自動執行全量同步備份
+    - cron: '30 12 * * 1-5'
+
+permissions:
+  contents: write
+
+jobs:
+  run-all:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests pandas yfinance
+
+      - name: Run All Market Crawlers
+        run: |
+          python run_all_updates.py
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
+          git add *.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: cloud update all market data [skip ci]" && git push origin main)
