@@ -2222,6 +2222,10 @@
                     <span style="font-size: 1.1rem;">⚡</span>
                     <span>一鍵抓取所有資料</span>
                 </button>
+                <div id="live-server-status-pill" style="margin-top: 0.45rem; font-size: 0.76rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem; color: #94a3b8;">
+                    <span id="live-server-dot" style="width: 7px; height: 7px; border-radius: 50%; background: #64748b; display: inline-block;"></span>
+                    <span id="live-server-text">偵測本地即時爬蟲服務...</span>
+                </div>
                 <div id="fetch-all-status" style="display: none; margin-top: 0.5rem; padding: 0.5rem 0.65rem; background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.3); border-radius: 0.45rem; font-size: 0.78rem; color: #a5b4fc; line-height: 1.4;"></div>
             </div>
 
@@ -3790,6 +3794,55 @@
 
         document.getElementById('big-score-upload').addEventListener('change', (e) => handleCsvUpload(e, '大戶持股'));
 
+        // ==========================================
+        // ⚡ 本地即時爬蟲橋樑 (Live Crawler Bridge)
+        // ==========================================
+        let isLocalLiveServerOnline = false;
+        const LIVE_SERVER_URL = (window.location.protocol.startsWith('http') && (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'))
+            ? window.location.origin
+            : 'http://127.0.0.1:8000';
+
+        async function checkLiveServer() {
+            try {
+                const ctrl = new AbortController();
+                const tid = setTimeout(() => ctrl.abort(), 1200);
+                const res = await fetch(`${LIVE_SERVER_URL}/api/status`, { method: 'GET', signal: ctrl.signal });
+                clearTimeout(tid);
+                if (res.ok) {
+                    isLocalLiveServerOnline = true;
+                    updateLiveServerUI(true);
+                    return true;
+                }
+            } catch(e) {}
+            isLocalLiveServerOnline = false;
+            updateLiveServerUI(false);
+            return false;
+        }
+
+        function updateLiveServerUI(online) {
+            const dot = document.getElementById('live-server-dot');
+            const txt = document.getElementById('live-server-text');
+            if (dot && txt) {
+                if (online) {
+                    dot.style.background = '#22c55e';
+                    dot.style.boxShadow = '0 0 6px #22c55e';
+                    txt.innerHTML = '<span style="color:#22c55e; font-weight:600;">⚡ 本地即時爬蟲已連線</span> (現場即時爬取模式)';
+                } else {
+                    dot.style.background = '#f59e0b';
+                    dot.style.boxShadow = 'none';
+                    txt.innerHTML = '<span style="color:#f59e0b;">雲端快取模式</span> <a href="#" onclick="showLiveServerHelp();return false;" style="color:#a5b4fc; text-decoration:underline;">(如何現場爬取?)</a>';
+                }
+            }
+        }
+
+        function showLiveServerHelp() {
+            alert("【如何開啟現場即時爬蟲模式？】\n\n1. 請在專案資料夾中雙擊「啟動台股即時分析系統.bat」（或終端機執行 python server.py）。\n2. 啟動後，網頁將自動連線本地爬蟲服務（顯示綠燈 ⚡）。\n3. 之後點擊「一鍵抓取所有資料」或各分頁「重新載入」時，系統就會在現場直接執行 Python 爬蟲，抓取當天最新資料！");
+        }
+
+        // 定期偵測本地伺服器狀態
+        setInterval(checkLiveServer, 5000);
+        setTimeout(checkLiveServer, 300);
+
         async function fetchAllData() {
             const btn = document.getElementById('fetch-all-data-btn');
             const statusEl = document.getElementById('fetch-all-status');
@@ -3799,37 +3852,85 @@
             btn.innerHTML = '<span style="font-size:1.1rem;">⏳</span><span>正在抓取中...</span>';
             statusEl.style.display = 'block';
 
-            const steps = [
-                { label: '🎯 主動型ETF篩選', fn: fetchGoalStarActiveFunds },
-                { label: '📅 法說會', fn: fetchEarningsCallFromGithub },
-                { label: '🔵 近期發行CB', fn: fetchCBFromGithub },
-                { label: '📉 股價低於CB轉換價', fn: fetchCbBelowConvFromGithub },
-                { label: '🔥 今日成交值排行', fn: () => fetchTopTurnoverFromGithub(true) },
-                { label: '⚡ 成交量異常名單', fn: () => fetchVolumeSpikeFromGithub(true) },
-                { label: '🗺️ 族群強弱指標', fn: () => fetchSectorStrengthFromGithub(true) },
-                { label: '💼 合約負債新高', fn: () => fetchContractLiabilitiesFromGithub(true) },
-                { label: '🌊 資金族群流向', fn: () => fetchSectorCapitalFlowFromGithub(true) },
-                { label: '🏛️ 大股東質設名單', fn: () => fetchStockPledgeFromGithub(true) },
-            ];
+            const liveOnline = await checkLiveServer();
 
-            for (let i = 0; i < steps.length; i++) {
-                const step = steps[i];
-                statusEl.innerHTML = `(${i + 1}/${steps.length}) 正在抓取 ${step.label}...`;
-                try {
-                    await step.fn();
-                } catch (e) {
-                    statusEl.innerHTML += ` ❌ 失敗: ${e.message}`;
+            if (liveOnline) {
+                statusEl.innerHTML = '⚡ 本地即時爬蟲服務已連線，開始現場執行爬蟲...';
+                const liveSteps = [
+                    { task: 'top_turnover', label: '🔥 今日成交值排行', apply: (data) => { if(data){ topTurnoverData = data; renderTopTurnoverView(); } } },
+                    { task: 'volume_spike', label: '⚡ 成交量異常名單', apply: (data) => { if(data){ volumeSpikeData = data; renderVolumeSpikeView(); } } },
+                    { task: 'sector_strength', label: '🗺️ 族群強弱指標', apply: (data) => { if(data){ sectorStrengthData = data; renderSectorStrengthView(); } } },
+                    { task: 'sector_capital_flow', label: '🌊 資金族群流向', apply: (data) => { if(data){ sectorCapitalFlowData = data; renderSectorCapitalFlowView(); } } },
+                    { task: 'contract_liabilities', label: '💼 合約負債新高', apply: (data) => { if(data){ contractLiabilitiesData = data; renderContractLiabilitiesView(); } } },
+                    { task: 'stock_pledge', label: '🏛️ 大股東質設名單', apply: (data) => { if(data){ stockPledgeData = data; renderStockPledgeView(); } } }
+                ];
+
+                for (let i = 0; i < liveSteps.length; i++) {
+                    const step = liveSteps[i];
+                    statusEl.innerHTML = `(${i + 1}/${liveSteps.length + 3}) 正在現場即時爬取 ${step.label}...`;
+                    try {
+                        const res = await fetch(`${LIVE_SERVER_URL}/api/run-task`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ task: step.task })
+                        });
+                        const resJson = await res.json();
+                        if (resJson && resJson.success) {
+                            step.apply(resJson.data);
+                            statusEl.innerHTML = `(${i + 1}/${liveSteps.length + 3}) ✅ ${step.label} 完成 (${resJson.tradeDate || '今日'})`;
+                        } else {
+                            statusEl.innerHTML += ` ⚠️ ${step.label} 錯誤: ${resJson.error || ''}`;
+                        }
+                    } catch(e) {
+                        statusEl.innerHTML += ` ❌ ${step.label} 失敗: ${e.message}`;
+                    }
                 }
-                // 短暫間隔避免請求過快
-                if (i < steps.length - 1) await new Promise(r => setTimeout(r, 300));
+
+                try {
+                    statusEl.innerHTML = `正在抓取 🎯 主動型ETF篩選...`;
+                    await fetchGoalStarActiveFunds();
+                    statusEl.innerHTML = `正在抓取 📅 法說會...`;
+                    await fetchEarningsCallFromGithub(true);
+                    statusEl.innerHTML = `正在抓取 🔵 近期發行CB...`;
+                    await fetchCBFromGithub(true);
+                    await fetchCbBelowConvFromGithub(true);
+                } catch(e) {}
+
+                statusEl.innerHTML = '🎉 現場即時抓取全部完成！所有最新資料已同步！';
+                showToast('✅ 現場即時抓取全部完成！已獲取今日最新盤後資料！');
+            } else {
+                const steps = [
+                    { label: '🎯 主動型ETF篩選', fn: fetchGoalStarActiveFunds },
+                    { label: '📅 法說會', fn: fetchEarningsCallFromGithub },
+                    { label: '🔵 近期發行CB', fn: fetchCBFromGithub },
+                    { label: '📉 股價低於CB轉換價', fn: fetchCbBelowConvFromGithub },
+                    { label: '🔥 今日成交值排行', fn: () => fetchTopTurnoverFromGithub(true) },
+                    { label: '⚡ 成交量異常名單', fn: () => fetchVolumeSpikeFromGithub(true) },
+                    { label: '🗺️ 族群強弱指標', fn: () => fetchSectorStrengthFromGithub(true) },
+                    { label: '💼 合約負債新高', fn: () => fetchContractLiabilitiesFromGithub(true) },
+                    { label: '🌊 資金族群流向', fn: () => fetchSectorCapitalFlowFromGithub(true) },
+                    { label: '🏛️ 大股東質設名單', fn: () => fetchStockPledgeFromGithub(true) },
+                ];
+
+                for (let i = 0; i < steps.length; i++) {
+                    const step = steps[i];
+                    statusEl.innerHTML = `(${i + 1}/${steps.length}) 正在載入 ${step.label}...`;
+                    try {
+                        await step.fn();
+                    } catch (e) {
+                        statusEl.innerHTML += ` ❌ 失敗: ${e.message}`;
+                    }
+                    if (i < steps.length - 1) await new Promise(r => setTimeout(r, 200));
+                }
+
+                statusEl.innerHTML = '✅ 雲端資料載入完畢！(欲現場即時爬取當日最新資料請啟動本地伺服器)';
+                showToast('✅ 資料載入完成！若要現場即時爬取最新資料，請雙擊「啟動台股即時分析系統.bat」');
             }
 
-            statusEl.innerHTML = '✅ 所有資料已更新完畢！';
             btn.disabled = false;
             btn.style.opacity = '1';
             btn.innerHTML = '<span style="font-size:1.1rem;">⚡</span><span>一鍵抓取所有資料</span>';
-            showToast('✅ 所有資料一鍵抓取完成！');
-            setTimeout(() => { statusEl.style.display = 'none'; }, 5000);
+            setTimeout(() => { statusEl.style.display = 'none'; }, 8000);
         }
 
         async function fetchCBFromGithub(silent = false) {
@@ -6906,37 +7007,72 @@ ${text.slice(0, 30000)}`;
             return n.toLocaleString();
         }
 
+        async function runLiveTaskOrFallback(taskKey, label, fetchBtn, silent, onLiveSuccess, staticFallbackFn) {
+            if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 現場抓取中...'; }
+            const liveOnline = await checkLiveServer();
+            if (liveOnline) {
+                if (!silent) showToast(`⚡ 正在透過本地服務現場即時爬取【${label}】...`);
+                try {
+                    const res = await fetch(`${LIVE_SERVER_URL}/api/run-task`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ task: taskKey })
+                    });
+                    const resJson = await res.json();
+                    if (resJson && resJson.success && resJson.data) {
+                        onLiveSuccess(resJson.data);
+                        if (!silent) showToast(`✅ 【${label}】現場即時爬取完成！交易日：${resJson.tradeDate || '今日'}`);
+                        if (fetchBtn) { fetchBtn.disabled = false; fetchBtn.textContent = '🔄 重新載入'; }
+                        return;
+                    } else {
+                        console.warn('Live task returned error:', resJson.error);
+                    }
+                } catch(e) {
+                    console.warn('Live task network error, falling back:', e);
+                }
+            }
+            await staticFallbackFn();
+        }
+
         async function fetchTopTurnoverFromGithub(silent = false) {
             const fetchBtn = document.getElementById('fetch-turnover-btn');
-            if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
-            if (!silent) showToast('🔥 正在從 GitHub 抓取最新成交值排行...');
-            try {
-                const urls = [
-                    `./top_turnover.json?v=${Date.now()}`,
-                    `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/top_turnover.json?v=${Date.now()}`,
-                    `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/top_turnover.json?v=${Date.now()}`
-                ];
-                let payload = null;
-                for (const u of urls) {
-                    try {
-                        const r = await fetch(u);
-                        if (r.ok) {
-                            const j = await r.json();
-                            if (j && (j.twse || j.tpex)) { payload = j; break; }
-                        }
-                    } catch(e) {}
+            const doStatic = async () => {
+                if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
+                if (!silent) showToast('🔥 正在從 GitHub 抓取最新成交值排行...');
+                try {
+                    const urls = [
+                        `./top_turnover.json?v=${Date.now()}`,
+                        `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/top_turnover.json?v=${Date.now()}`,
+                        `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/top_turnover.json?v=${Date.now()}`
+                    ];
+                    let payload = null;
+                    for (const u of urls) {
+                        try {
+                            const r = await fetch(u);
+                            if (r.ok) {
+                                const j = await r.json();
+                                if (j && (j.twse || j.tpex)) { payload = j; break; }
+                            }
+                        } catch(e) {}
+                    }
+                    if (!payload) throw new Error('無法從 GitHub 取得資料');
+                    topTurnoverData = payload;
+                    localStorage.setItem('top_turnover_cache', JSON.stringify({ data: payload, savedAt: new Date().toISOString() }));
+                    renderTopTurnoverView();
+                    const total = (payload.twse || []).length + (payload.tpex || []).length;
+                    if (!silent) showToast(`✅ 成功載入成交值排行！上市+上櫃共 ${total} 筆（${payload.tradeDate}）`);
+                } catch(e) {
+                    if (!silent) showToast(`❌ 載入失敗: ${e.message}`, true);
+                } finally {
+                    if (fetchBtn) { fetchBtn.disabled = false; fetchBtn.textContent = '🔄 重新載入'; }
                 }
-                if (!payload) throw new Error('無法從 GitHub 取得資料');
-                topTurnoverData = payload;
-                localStorage.setItem('top_turnover_cache', JSON.stringify({ data: payload, savedAt: new Date().toISOString() }));
+            };
+
+            await runLiveTaskOrFallback('top_turnover', '今日成交值排行', fetchBtn, silent, (data) => {
+                topTurnoverData = data;
+                localStorage.setItem('top_turnover_cache', JSON.stringify({ data, savedAt: new Date().toISOString() }));
                 renderTopTurnoverView();
-                const total = (payload.twse || []).length + (payload.tpex || []).length;
-                if (!silent) showToast(`✅ 成功載入成交值排行！上市+上櫃共 ${total} 筆（${payload.tradeDate}）`);
-            } catch(e) {
-                if (!silent) showToast(`❌ 載入失敗: ${e.message}`, true);
-            } finally {
-                if (fetchBtn) { fetchBtn.disabled = false; fetchBtn.textContent = '🔄 重新載入'; }
-            }
+            }, doStatic);
         }
 
         function renderTopTurnoverView() {
@@ -7077,41 +7213,49 @@ ${text.slice(0, 30000)}`;
 
         async function fetchVolumeSpikeFromGithub(silent = false) {
             const fetchBtn = document.getElementById('fetch-volspike-btn');
-            if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
-            if (!silent) showToast('⚡ 正在從 GitHub 抓取最新成交量異常名單...');
-            try {
-                const urls = [
-                    `./volume_spike.json?v=${Date.now()}`,
-                    `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/volume_spike.json?v=${Date.now()}`,
-                    `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/volume_spike.json?v=${Date.now()}`
-                ];
-                let payload = null;
-                for (const u of urls) {
-                    try {
-                        const r = await fetch(u);
-                        if (r.ok) {
-                            const j = await r.json();
-                            if (j && (j.stocks || j.twse || j.tpex)) { payload = j; break; }
-                        }
-                    } catch(e) {}
-                }
-                if (!payload) {
-                    if (typeof INITIAL_VOLUME_SPIKE_DATA !== 'undefined' && INITIAL_VOLUME_SPIKE_DATA) {
-                        payload = INITIAL_VOLUME_SPIKE_DATA;
-                    } else {
-                        throw new Error('無法從 GitHub 取得資料');
+            const doStatic = async () => {
+                if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
+                if (!silent) showToast('⚡ 正在從 GitHub 抓取最新成交量異常名單...');
+                try {
+                    const urls = [
+                        `./volume_spike.json?v=${Date.now()}`,
+                        `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/volume_spike.json?v=${Date.now()}`,
+                        `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/volume_spike.json?v=${Date.now()}`
+                    ];
+                    let payload = null;
+                    for (const u of urls) {
+                        try {
+                            const r = await fetch(u);
+                            if (r.ok) {
+                                const j = await r.json();
+                                if (j && (j.stocks || j.twse || j.tpex)) { payload = j; break; }
+                            }
+                        } catch(e) {}
                     }
+                    if (!payload) {
+                        if (typeof INITIAL_VOLUME_SPIKE_DATA !== 'undefined' && INITIAL_VOLUME_SPIKE_DATA) {
+                            payload = INITIAL_VOLUME_SPIKE_DATA;
+                        } else {
+                            throw new Error('無法從 GitHub 取得資料');
+                        }
+                    }
+                    volumeSpikeData = payload;
+                    localStorage.setItem('volume_spike_cache', JSON.stringify({ data: payload, savedAt: new Date().toISOString() }));
+                    renderVolumeSpikeView();
+                    const total = (payload.stocks || []).length;
+                    if (!silent) showToast(`✅ 成功載入成交量異常名單！共篩選出 ${total} 檔爆量股（${payload.tradeDate}）`);
+                } catch(e) {
+                    if (!silent) showToast(`❌ 載入失敗: ${e.message}`, true);
+                } finally {
+                    if (fetchBtn) { fetchBtn.disabled = false; fetchBtn.textContent = '🔄 重新載入'; }
                 }
-                volumeSpikeData = payload;
-                localStorage.setItem('volume_spike_cache', JSON.stringify({ data: payload, savedAt: new Date().toISOString() }));
+            };
+
+            await runLiveTaskOrFallback('volume_spike', '成交量異常名單', fetchBtn, silent, (data) => {
+                volumeSpikeData = data;
+                localStorage.setItem('volume_spike_cache', JSON.stringify({ data, savedAt: new Date().toISOString() }));
                 renderVolumeSpikeView();
-                const total = (payload.stocks || []).length;
-                if (!silent) showToast(`✅ 成功載入成交量異常名單！共篩選出 ${total} 檔爆量股（${payload.tradeDate}）`);
-            } catch(e) {
-                if (!silent) showToast(`❌ 載入失敗: ${e.message}`, true);
-            } finally {
-                if (fetchBtn) { fetchBtn.disabled = false; fetchBtn.textContent = '🔄 重新載入'; }
-            }
+            }, doStatic);
         }
 
         function renderVolumeSpikeView() {
@@ -7272,34 +7416,42 @@ ${text.slice(0, 30000)}`;
 
         async function fetchSectorStrengthFromGithub(silent = false) {
             const btn = document.getElementById('fetch-sector-btn');
-            if (btn) { btn.disabled = true; btn.textContent = '⏳ 載入中...'; }
-            try {
-                if (!silent) showToast('正在抓取族群強弱資料...');
-                const urls = [
-                    `./sector_strength.json?v=${Date.now()}`,
-                    `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/sector_strength.json?v=${Date.now()}`,
-                    `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/sector_strength.json?v=${Date.now()}`
-                ];
-                let data = null;
-                for (const url of urls) {
-                    try {
-                        const res = await fetch(url);
-                        if (res.ok) {
-                            const json = await res.json();
-                            if (json && json.sectors && json.sectors.length > 0) { data = json; break; }
-                        }
-                    } catch(e) {}
+            const doStatic = async () => {
+                if (btn) { btn.disabled = true; btn.textContent = '⏳ 載入中...'; }
+                try {
+                    if (!silent) showToast('正在抓取族群強弱資料...');
+                    const urls = [
+                        `./sector_strength.json?v=${Date.now()}`,
+                        `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/sector_strength.json?v=${Date.now()}`,
+                        `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/sector_strength.json?v=${Date.now()}`
+                    ];
+                    let data = null;
+                    for (const url of urls) {
+                        try {
+                            const res = await fetch(url);
+                            if (res.ok) {
+                                const json = await res.json();
+                                if (json && json.sectors && json.sectors.length > 0) { data = json; break; }
+                            }
+                        } catch(e) {}
+                    }
+                    if (!data) throw new Error('無法獲取族群強弱資料');
+                    sectorStrengthData = data;
+                    try { localStorage.setItem('sector_strength_cache', JSON.stringify({ ts: Date.now(), data })); } catch(e) {}
+                    renderSectorStrengthView();
+                    if (!silent) showToast('✅ 族群強弱資料已更新！');
+                } catch(e) {
+                    if (!silent) showToast('族群強弱抓取失敗: ' + e.message, true);
+                } finally {
+                    if (btn) { btn.disabled = false; btn.innerHTML = '🔄 重新載入'; }
                 }
-                if (!data) throw new Error('無法獲取族群強弱資料');
+            };
+
+            await runLiveTaskOrFallback('sector_strength', '族群強弱指標', btn, silent, (data) => {
                 sectorStrengthData = data;
                 try { localStorage.setItem('sector_strength_cache', JSON.stringify({ ts: Date.now(), data })); } catch(e) {}
                 renderSectorStrengthView();
-                if (!silent) showToast('✅ 族群強弱資料已更新！');
-            } catch(e) {
-                if (!silent) showToast('族群強弱抓取失敗: ' + e.message, true);
-            } finally {
-                if (btn) { btn.disabled = false; btn.innerHTML = '🔄 重新載入'; }
-            }
+            }, doStatic);
         }
 
         function renderSectorStrengthView() {
@@ -7469,35 +7621,43 @@ ${text.slice(0, 30000)}`;
 
         async function fetchContractLiabilitiesFromGithub(silent = false) {
             const fetchBtn = document.getElementById('fetch-contract-btn');
-            if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
-            if (!silent) showToast('💼 正在抓取最新合約負債新高名單...');
-            try {
-                const urls = [
-                    `./contract_liabilities.json?v=${Date.now()}`,
-                    `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/contract_liabilities.json?v=${Date.now()}`,
-                    `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/contract_liabilities.json?v=${Date.now()}`
-                ];
-                let payload = null;
-                for (const u of urls) {
-                    try {
-                        const r = await fetch(u);
-                        if (r.ok) {
-                            const j = await r.json();
-                            if (j && j.stocks && j.stocks.length > 0) { payload = j; break; }
-                        }
-                    } catch(e) {}
+            const doStatic = async () => {
+                if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
+                if (!silent) showToast('💼 正在抓取最新合約負債新高名單...');
+                try {
+                    const urls = [
+                        `./contract_liabilities.json?v=${Date.now()}`,
+                        `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/contract_liabilities.json?v=${Date.now()}`,
+                        `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/contract_liabilities.json?v=${Date.now()}`
+                    ];
+                    let payload = null;
+                    for (const u of urls) {
+                        try {
+                            const r = await fetch(u);
+                            if (r.ok) {
+                                const j = await r.json();
+                                if (j && j.stocks && j.stocks.length > 0) { payload = j; break; }
+                            }
+                        } catch(e) {}
+                    }
+                    if (!payload) throw new Error('無法載入 contract_liabilities.json');
+                    contractLiabilitiesData = payload;
+                    localStorage.setItem('contract_liabilities_cache', JSON.stringify({ data: payload, savedAt: new Date().toISOString() }));
+                    renderContractLiabilitiesView();
+                    const total = (payload.stocks || []).length;
+                    if (!silent) showToast(`✅ 成功載入合約負債突破名單！共 ${total} 檔黑馬股（${payload.tradeDate}）`);
+                } catch(e) {
+                    if (!silent) showToast(`❌ 載入失敗: ${e.message}`, true);
+                } finally {
+                    if (fetchBtn) { fetchBtn.disabled = false; fetchBtn.textContent = '🔄 重新載入'; }
                 }
-                if (!payload) throw new Error('無法載入 contract_liabilities.json');
-                contractLiabilitiesData = payload;
-                localStorage.setItem('contract_liabilities_cache', JSON.stringify({ data: payload, savedAt: new Date().toISOString() }));
+            };
+
+            await runLiveTaskOrFallback('contract_liabilities', '合約負債新高名單', fetchBtn, silent, (data) => {
+                contractLiabilitiesData = data;
+                localStorage.setItem('contract_liabilities_cache', JSON.stringify({ data, savedAt: new Date().toISOString() }));
                 renderContractLiabilitiesView();
-                const total = (payload.stocks || []).length;
-                if (!silent) showToast(`✅ 成功載入合約負債突破名單！共 ${total} 檔黑馬股（${payload.tradeDate}）`);
-            } catch(e) {
-                if (!silent) showToast(`❌ 載入失敗: ${e.message}`, true);
-            } finally {
-                if (fetchBtn) { fetchBtn.disabled = false; fetchBtn.textContent = '🔄 重新載入'; }
-            }
+            }, doStatic);
         }
 
         function renderContractLiabilitiesView() {
@@ -7671,36 +7831,44 @@ ${text.slice(0, 30000)}`;
 
         async function fetchSectorCapitalFlowFromGithub(silent = false) {
             const fetchBtn = document.getElementById('fetch-sector-flow-btn');
-            if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
-            if (!silent) showToast('🌊 正在抓取最新資金族群流向資料...');
-            try {
-                const urls = [
-                    `./sector_capital_flow.json?v=${Date.now()}`,
-                    `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/sector_capital_flow.json?v=${Date.now()}`,
-                    `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/sector_capital_flow.json?v=${Date.now()}`
-                ];
-                let payload = null;
-                for (const u of urls) {
-                    try {
-                        const r = await fetch(u);
-                        if (r.ok) {
-                            const j = await r.json();
-                            if (j && (j.themes || j.official)) { payload = j; break; }
-                        }
-                    } catch(e) {}
+            const doStatic = async () => {
+                if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
+                if (!silent) showToast('🌊 正在抓取最新資金族群流向資料...');
+                try {
+                    const urls = [
+                        `./sector_capital_flow.json?v=${Date.now()}`,
+                        `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/sector_capital_flow.json?v=${Date.now()}`,
+                        `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/sector_capital_flow.json?v=${Date.now()}`
+                    ];
+                    let payload = null;
+                    for (const u of urls) {
+                        try {
+                            const r = await fetch(u);
+                            if (r.ok) {
+                                const j = await r.json();
+                                if (j && (j.themes || j.official)) { payload = j; break; }
+                            }
+                        } catch(e) {}
+                    }
+                    if (!payload) throw new Error('無法載入 sector_capital_flow.json');
+                    sectorCapitalFlowData = payload;
+                    localStorage.setItem('sector_capital_flow_cache', JSON.stringify({ data: payload, savedAt: new Date().toISOString() }));
+                    renderSectorCapitalFlowView();
+                    const totalThemes = (payload.themes || []).length;
+                    const totalOfficial = (payload.official || []).length;
+                    if (!silent) showToast(`✅ 成功載入資金族群流向！共 ${totalThemes} 題材 + ${totalOfficial} 官方族群（${payload.tradeDate}）`);
+                } catch(e) {
+                    if (!silent) showToast(`❌ 載入失敗: ${e.message}`, true);
+                } finally {
+                    if (fetchBtn) { fetchBtn.disabled = false; fetchBtn.textContent = '🔄 重新載入'; }
                 }
-                if (!payload) throw new Error('無法載入 sector_capital_flow.json');
-                sectorCapitalFlowData = payload;
-                localStorage.setItem('sector_capital_flow_cache', JSON.stringify({ data: payload, savedAt: new Date().toISOString() }));
+            };
+
+            await runLiveTaskOrFallback('sector_capital_flow', '資金族群流向', fetchBtn, silent, (data) => {
+                sectorCapitalFlowData = data;
+                localStorage.setItem('sector_capital_flow_cache', JSON.stringify({ data, savedAt: new Date().toISOString() }));
                 renderSectorCapitalFlowView();
-                const totalThemes = (payload.themes || []).length;
-                const totalOfficial = (payload.official || []).length;
-                if (!silent) showToast(`✅ 成功載入資金族群流向！共 ${totalThemes} 題材 + ${totalOfficial} 官方族群（${payload.tradeDate}）`);
-            } catch(e) {
-                if (!silent) showToast(`❌ 載入失敗: ${e.message}`, true);
-            } finally {
-                if (fetchBtn) { fetchBtn.disabled = false; fetchBtn.textContent = '🔄 重新載入'; }
-            }
+            }, doStatic);
         }
 
         function renderSectorCapitalFlowView() {
@@ -8010,35 +8178,43 @@ ${text.slice(0, 30000)}`;
 
         async function fetchStockPledgeFromGithub(silent = false) {
             const fetchBtn = document.getElementById('fetch-stock-pledge-btn');
-            if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
-            if (!silent) showToast('🏛️ 正在抓取最新大股東質設名單...');
-            try {
-                const urls = [
-                    `./stock_pledge.json?v=${Date.now()}`,
-                    `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/stock_pledge.json?v=${Date.now()}`,
-                    `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/stock_pledge.json?v=${Date.now()}`
-                ];
-                let payload = null;
-                for (const u of urls) {
-                    try {
-                        const r = await fetch(u);
-                        if (r.ok) {
-                            const j = await r.json();
-                            if (j && (j.stocks || j.summary)) { payload = j; break; }
-                        }
-                    } catch(e) {}
+            const doStatic = async () => {
+                if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
+                if (!silent) showToast('🏛️ 正在抓取最新大股東質設名單...');
+                try {
+                    const urls = [
+                        `./stock_pledge.json?v=${Date.now()}`,
+                        `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/stock_pledge.json?v=${Date.now()}`,
+                        `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/stock_pledge.json?v=${Date.now()}`
+                    ];
+                    let payload = null;
+                    for (const u of urls) {
+                        try {
+                            const r = await fetch(u);
+                            if (r.ok) {
+                                const j = await r.json();
+                                if (j && (j.stocks || j.summary)) { payload = j; break; }
+                            }
+                        } catch(e) {}
+                    }
+                    if (!payload) throw new Error('無法載入 stock_pledge.json');
+                    stockPledgeData = payload;
+                    localStorage.setItem('stock_pledge_cache', JSON.stringify({ data: payload, savedAt: new Date().toISOString() }));
+                    renderStockPledgeView();
+                    const totalActive = (payload.stocks || []).length;
+                    if (!silent) showToast(`✅ 成功載入大股東質設名單！共 ${totalActive} 檔有效質設股（${payload.tradeDate || ''}）`);
+                } catch(e) {
+                    if (!silent) showToast(`❌ 載入失敗: ${e.message}`, true);
+                } finally {
+                    if (fetchBtn) { fetchBtn.disabled = false; fetchBtn.textContent = '🔄 重新載入'; }
                 }
-                if (!payload) throw new Error('無法載入 stock_pledge.json');
-                stockPledgeData = payload;
-                localStorage.setItem('stock_pledge_cache', JSON.stringify({ data: payload, savedAt: new Date().toISOString() }));
+            };
+
+            await runLiveTaskOrFallback('stock_pledge', '大股東質設名單', fetchBtn, silent, (data) => {
+                stockPledgeData = data;
+                localStorage.setItem('stock_pledge_cache', JSON.stringify({ data, savedAt: new Date().toISOString() }));
                 renderStockPledgeView();
-                const totalActive = (payload.stocks || []).length;
-                if (!silent) showToast(`✅ 成功載入大股東質設名單！共 ${totalActive} 檔有效質設股（${payload.tradeDate || ''}）`);
-            } catch(e) {
-                if (!silent) showToast(`❌ 載入失敗: ${e.message}`, true);
-            } finally {
-                if (fetchBtn) { fetchBtn.disabled = false; fetchBtn.textContent = '🔄 重新載入'; }
-            }
+            }, doStatic);
         }
 
         function renderStockPledgeView() {
