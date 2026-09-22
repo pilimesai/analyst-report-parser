@@ -33,6 +33,11 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase origin main
           git add contract_liabilities.json contract_liabilities_cache.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-update contract liabilities breakout stocks" && git push origin main)
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: auto-update contract liabilities breakout stocks"
+            git pull --rebase origin main
+            git push origin main
+          else
+            echo "No changes to commit."
+          fi

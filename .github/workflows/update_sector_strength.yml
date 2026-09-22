@@ -36,6 +36,11 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase origin main
           git add sector_strength.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-update sector strength (MA20)" && git push origin main)
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: auto-update sector strength (MA20)"
+            git pull --rebase origin main
+            git push origin main
+          else
+            echo "No changes to commit."
+          fi
