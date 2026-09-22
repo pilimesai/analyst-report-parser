@@ -188,8 +188,8 @@ def get_market_quotes():
     print(f"全市場行情已抓取完成，共 {len(quotes)} 檔個股。")
     return quotes, (trade_date or today.strftime("%Y-%m-%d"))
 
-def get_pledged_candidates():
-    """從 TWSE/TPEx 開放資料取得目前有內部人質押之公司代號清單"""
+def get_pledged_candidates(quotes=None):
+    """從 TWSE/TPEx 開放資料取得目前有內部人質押之公司代號清單，並合併持久候選名單"""
     candidate_stocks = {}
     print("從 TWSE OpenAPI 取得上市內部人持股設質清單 (t187ap11_L)...")
     try:
@@ -229,74 +229,114 @@ def get_pledged_candidates():
     except Exception as e:
         print(f"TPEx pledge candidates fetch error: {e}")
 
-    print(f"共發現 {len(candidate_stocks)} 家公司目前有董監事/大股東持股設質。")
+    # 合併持久化候選名單快取 (包含 6830 汎銓 等當月最新設質個股，避免因月報時滯漏掉)
+    CACHE_CANDIDATES_FILE = 'pledge_candidates_cache.json'
+    persistent_candidates = set(['6830'])
+    if os.path.exists(CACHE_CANDIDATES_FILE):
+        try:
+            with open(CACHE_CANDIDATES_FILE, 'r', encoding='utf-8') as f:
+                persistent_candidates.update(json.load(f))
+        except Exception:
+            pass
+
+    if quotes:
+        for code in persistent_candidates:
+            if code not in candidate_stocks and code in quotes:
+                q = quotes[code]
+                candidate_stocks[code] = {
+                    'code': code,
+                    'name': q['name'],
+                    'market': q.get('market', 'twse'),
+                    'total_pledged': 0
+                }
+
+    try:
+        with open(CACHE_CANDIDATES_FILE, 'w', encoding='utf-8') as f:
+            json.dump(sorted(list(set(list(candidate_stocks.keys()) + list(persistent_candidates)))), f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+
+    print(f"共發現 {len(candidate_stocks)} 家公司列入董監事/大股東持股設質追蹤。")
     return candidate_stocks
 
 def fetch_mops_stock_pledge_history(code):
-    """查詢個別公司在公開資訊觀測站的設質解質公告完整日誌"""
+    """查詢個別公司在公開資訊觀測站的設質解質公告完整日誌 (優先查今年，無異動再查前一年)"""
     url = "https://mopsov.twse.com.tw/mops/web/ajax_STAMAK03_1"
-    data = {
-        "encodeURIComponent": "1",
-        "step": "1",
-        "firstin": "1",
-        "off": "1",
-        "co_id": code,
-        "year": "113"
-    }
-    try:
-        r = requests.post(url, data=data, headers=HEADERS, timeout=8)
-        if r.status_code != 200 or len(r.text) < 1000:
-            return []
-        soup = BeautifulSoup(r.text, 'html.parser')
-        tables = soup.find_all('table')
-        if not tables:
-            return []
-        rows = tables[0].find_all('tr')
-        if len(rows) <= 1:
-            return []
-        
-        events = []
-        for row in rows[1:]:
-            tds = [td.get_text(strip=True) for td in row.find_all(['th', 'td'])]
-            if len(tds) < 9:
-                continue
-            # tds: [公司代號, 公司名稱, 設質人身分, 設質人姓名, 設質變動發生日, 設質股數, 解質股數, 累積設質股數, 質權人姓名, 備註, 申報日]
-            identity = tds[2]
-            name = tds[3]
-            event_date = tds[4] # 如 113/04/09
-            try:
-                pledge_shares = int(tds[5].replace(',', ''))
-            except ValueError:
-                pledge_shares = 0
-            try:
-                unpledge_shares = int(tds[6].replace(',', ''))
-            except ValueError:
-                unpledge_shares = 0
-            try:
-                cum_shares = int(tds[7].replace(',', ''))
-            except ValueError:
-                cum_shares = 0
-            creditor = tds[8]
-            report_date = tds[10] if len(tds) > 10 else event_date
+    current_roc_year = datetime.date.today().year - 1911
 
-            events.append({
-                'identity': identity,
-                'name': name,
-                'event_date': event_date,
-                'pledge_shares': pledge_shares,
-                'unpledge_shares': unpledge_shares,
-                'cum_shares': cum_shares,
-                'creditor': creditor,
-                'report_date': report_date
-            })
-        return events
-    except Exception:
-        return []
+    def query_year(yr):
+        ev_list = []
+        data = {
+            "encodeURIComponent": "1",
+            "step": "1",
+            "firstin": "1",
+            "off": "1",
+            "co_id": code,
+            "year": yr
+        }
+        try:
+            r = requests.post(url, data=data, headers=HEADERS, timeout=6)
+            if r.status_code == 200 and len(r.text) > 1000:
+                soup = BeautifulSoup(r.text, 'html.parser')
+                tables = soup.find_all('table')
+                if tables:
+                    rows = tables[0].find_all('tr')
+                    for row in rows[1:]:
+                        tds = [td.get_text(strip=True) for td in row.find_all(['th', 'td'])]
+                        if len(tds) >= 9:
+                            try:
+                                pledge_shares = int(tds[5].replace(',', ''))
+                            except ValueError:
+                                pledge_shares = 0
+                            try:
+                                unpledge_shares = int(tds[6].replace(',', ''))
+                            except ValueError:
+                                unpledge_shares = 0
+                            try:
+                                cum_shares = int(tds[7].replace(',', ''))
+                            except ValueError:
+                                cum_shares = 0
+                            ev_list.append({
+                                'identity': tds[2],
+                                'name': tds[3],
+                                'event_date': tds[4],
+                                'pledge_shares': pledge_shares,
+                                'unpledge_shares': unpledge_shares,
+                                'cum_shares': cum_shares,
+                                'creditor': tds[8],
+                                'report_date': tds[10] if len(tds) > 10 else tds[4]
+                            })
+        except Exception:
+            pass
+        return ev_list
+
+    # 優先查當年度 (115)，若有資料即為最新
+    events = query_year(str(current_roc_year))
+    if not events:
+        events = query_year(str(current_roc_year - 1))
+
+    # 去重並以日期由舊到新排序，確保狀態機 latest_ev = ev_list[-1] 取到真正最新事件
+    seen = set()
+    unique_evts = []
+    for e in events:
+        k = (e['name'], e['identity'], e['event_date'], e['pledge_shares'], e['unpledge_shares'], e['cum_shares'])
+        if k not in seen:
+            seen.add(k)
+            unique_evts.append(e)
+
+    def parse_key(e):
+        try:
+            p = [int(x) for x in e['event_date'].split('/')]
+            return (p[0], p[1], p[2])
+        except Exception:
+            return (0, 0, 0)
+    unique_evts.sort(key=parse_key, reverse=False)
+    return unique_evts
 
 def get_closing_price_for_date(code, roc_date, price_cache, current_price=None):
     """
     透過 TWSE/TPEx STOCK_DAY 查詢某特定日期的收盤價
-    roc_date: 如 "113/04/09"
+    roc_date: 如 "115/09/21"
     """
     cache_key = f"{code}_{roc_date}"
     if cache_key in price_cache:
@@ -314,8 +354,9 @@ def get_closing_price_for_date(code, roc_date, price_cache, current_price=None):
     except ValueError:
         return current_price
 
-    # 僅對今年（民國 113 年）以來之最新設質進行線上精準對齊，歷史久遠者使用現價或既有快取，以大幅提升掃描速度
-    if roc_year < 113:
+    current_roc_year = datetime.date.today().year - 1911
+    # 僅對近 2 年以內之最新設質進行線上精準對齊，歷史久遠者使用現價或既有快取
+    if roc_year < (current_roc_year - 2):
         return current_price
 
     date_str = f"{ad_year}{month:02d}01"
@@ -361,10 +402,14 @@ def analyze_stock_pledges(candidate_stocks, quotes):
     stock_codes = list(candidate_stocks.keys())
 
     events_map = {}
+    done_cnt = 0
     with ThreadPoolExecutor(max_workers=16) as executor:
         future_to_code = {executor.submit(fetch_mops_stock_pledge_history, code): code for code in stock_codes}
         for future in as_completed(future_to_code):
             code = future_to_code[future]
+            done_cnt += 1
+            if done_cnt % 50 == 0 or done_cnt == len(stock_codes):
+                print(f"MOPS 查詢進度: {done_cnt}/{len(stock_codes)} (已獲取 {len(events_map)} 檔質設事件)...")
             try:
                 evts = future.result()
                 if evts:
@@ -438,9 +483,14 @@ def analyze_stock_pledges(candidate_stocks, quotes):
 
     print(f"發現 {len(raw_active)} 筆有效質設紀錄，正在對齊質設日收盤價...")
 
-    # 批次查詢收盤價（優先查詢 113 年最新設質；久遠設質直接以現價作為防守基準，避免大量外部請求壅塞）
-    needed_prices = set((item['code'], item['pledge_date']) for item in raw_active if item['pledge_date'].startswith('113') and f"{item['code']}_{item['pledge_date']}" not in price_cache)
-    print(f"需查詢 113 年最新質設收盤價：{len(needed_prices)} 筆 (已有快取 {len(price_cache)} 筆)")
+    # 批次查詢收盤價（優先查詢近 2 年最新設質；久遠設質直接以現價作為防守基準，避免大量外部請求壅塞）
+    current_roc_year = datetime.date.today().year - 1911
+    needed_prices = set(
+        (item['code'], item['pledge_date'])
+        for item in raw_active
+        if item['pledge_date'] and (int(item['pledge_date'].split('/')[0]) >= current_roc_year - 2) and f"{item['code']}_{item['pledge_date']}" not in price_cache
+    )
+    print(f"需查詢最新質設收盤價：{len(needed_prices)} 筆 (已有快取 {len(price_cache)} 筆)")
 
     # 限制並發數避免被 TWSE 限速
     with ThreadPoolExecutor(max_workers=8) as executor:
@@ -522,7 +572,7 @@ def main():
     print("=" * 60)
 
     quotes, detected_trade_date = get_market_quotes()
-    candidates = get_pledged_candidates()
+    candidates = get_pledged_candidates(quotes)
     active_stocks, excluded_stocks = analyze_stock_pledges(candidates, quotes)
 
     total_active = len(active_stocks)
