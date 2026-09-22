@@ -2,6 +2,11 @@ name: Run All Updates On Demand
 
 on:
   workflow_dispatch:
+    inputs:
+      gh_token:
+        description: 'GitHub Personal Access Token'
+        required: false
+        default: ''
   schedule:
     # 每個交易日台灣時間 20:30 (UTC 12:30) 自動執行全量同步備份
     - cron: '30 12 * * 1-5'
@@ -12,27 +17,36 @@ permissions:
 jobs:
   run-all:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ inputs.gh_token != '' && inputs.gh_token || secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
 
       - name: Install dependencies
         run: |
-          pip install requests pandas yfinance
+          pip install requests pandas yfinance beautifulsoup4 lxml
 
       - name: Run All Market Crawlers
         run: |
           python run_all_updates.py
 
       - name: Commit and push changes
+        env:
+          PUSH_TOKEN: ${{ inputs.gh_token != '' && inputs.gh_token || secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${PUSH_TOKEN}@github.com/${{ github.repository }}.git
           git pull --rebase origin main
           git add *.json
           git diff --quiet && git diff --staged --quiet || (git commit -m "chore: cloud update all market data [skip ci]" && git push origin main)

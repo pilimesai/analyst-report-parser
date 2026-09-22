@@ -79,44 +79,56 @@ def get_json_info(json_name):
     except Exception:
         return "解析失敗", "N/A"
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+def run_single_script(item):
+    s_name = item["name"]
+    s_file = item["file"]
+    script_path = os.path.join(REPO_DIR, s_file)
+
+    if not os.path.exists(script_path):
+        print(f"⚠️ 找不到腳本: {script_path}")
+        return item, (s_name, s_file, "找不到檔案", 0, "N/A")
+
+    t0 = time.time()
+    try:
+        proc = subprocess.run(
+            [sys.executable, s_file],
+            cwd=REPO_DIR,
+            capture_output=True,
+            text=True
+        )
+        elapsed = round(time.time() - t0, 1)
+        if proc.returncode == 0:
+            t_date, _ = get_json_info(item["json"])
+            print(f"✅ [{s_name}] 完成 ({elapsed}s, 交易日: {t_date})")
+            return item, (s_name, s_file, "✅ 成功", elapsed, t_date)
+        else:
+            print(f"❌ [{s_name}] 失敗 (代碼 {proc.returncode}, {elapsed}s)")
+            if proc.stderr:
+                print(f"   錯誤訊息: {proc.stderr[-300:]}")
+            return item, (s_name, s_file, f"❌ 失敗 (代碼 {proc.returncode})", elapsed, "N/A")
+    except Exception as e:
+        elapsed = round(time.time() - t0, 1)
+        print(f"❌ [{s_name}] 發生例外: {e}")
+        return item, (s_name, s_file, f"❌ 例外 ({e})", elapsed, "N/A")
+
 def main():
     print("=" * 70)
     print(f"🚀 台股盤後資料庫一鍵整合更新 ({datetime.datetime.now(TZ_TW).strftime('%Y-%m-%d %H:%M:%S')})")
     print("=" * 70)
 
-    results = []
     total_start = time.time()
+    results_map = {}
 
-    for idx, item in enumerate(SCRIPTS, 1):
-        s_name = item["name"]
-        s_file = item["file"]
-        script_path = os.path.join(REPO_DIR, s_file)
+    print(f"⚡ 啟動並行加速引擎 (3 Workers) 同時爬取 8 大模組...")
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        futures = {executor.submit(run_single_script, item): item for item in SCRIPTS}
+        for future in as_completed(futures):
+            item, res = future.result()
+            results_map[item["file"]] = res
 
-        print(f"\n[{idx}/{len(SCRIPTS)}] 正在執行: {s_name} ({s_file})...")
-        if not os.path.exists(script_path):
-            print(f"⚠️ 找不到腳本: {script_path}")
-            results.append((s_name, s_file, "找不到檔案", 0, "N/A"))
-            continue
-
-        t0 = time.time()
-        try:
-            # 傳遞 Python 直譯器環境
-            proc = subprocess.run(
-                [sys.executable, s_file],
-                cwd=REPO_DIR,
-                capture_output=False, # 即時輸出以利觀察進度
-                text=True
-            )
-            elapsed = round(time.time() - t0, 1)
-            if proc.returncode == 0:
-                t_date, _ = get_json_info(item["json"])
-                results.append((s_name, s_file, "✅ 成功", elapsed, t_date))
-            else:
-                results.append((s_name, s_file, f"❌ 失敗 (代碼 {proc.returncode})", elapsed, "N/A"))
-        except Exception as e:
-            elapsed = round(time.time() - t0, 1)
-            results.append((s_name, s_file, f"❌ 例外 ({e})", elapsed, "N/A"))
-
+    results = [results_map.get(item["file"], (item["name"], item["file"], "未執行", 0, "N/A")) for item in SCRIPTS]
     total_elapsed = round(time.time() - total_start, 1)
 
     print("\n" + "=" * 70)
