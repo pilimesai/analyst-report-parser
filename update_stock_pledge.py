@@ -276,40 +276,45 @@ def fetch_mops_stock_pledge_history(code):
             "co_id": code,
             "year": yr
         }
-        try:
-            r = requests.post(url, data=data, headers=HEADERS, timeout=6)
-            if r.status_code == 200 and len(r.text) > 1000:
-                soup = BeautifulSoup(r.text, 'html.parser')
-                tables = soup.find_all('table')
-                if tables:
-                    rows = tables[0].find_all('tr')
-                    for row in rows[1:]:
-                        tds = [td.get_text(strip=True) for td in row.find_all(['th', 'td'])]
-                        if len(tds) >= 9:
-                            try:
-                                pledge_shares = int(tds[5].replace(',', ''))
-                            except ValueError:
-                                pledge_shares = 0
-                            try:
-                                unpledge_shares = int(tds[6].replace(',', ''))
-                            except ValueError:
-                                unpledge_shares = 0
-                            try:
-                                cum_shares = int(tds[7].replace(',', ''))
-                            except ValueError:
-                                cum_shares = 0
-                            ev_list.append({
-                                'identity': tds[2],
-                                'name': tds[3],
-                                'event_date': tds[4],
-                                'pledge_shares': pledge_shares,
-                                'unpledge_shares': unpledge_shares,
-                                'cum_shares': cum_shares,
-                                'creditor': tds[8],
-                                'report_date': tds[10] if len(tds) > 10 else tds[4]
-                            })
-        except Exception:
-            pass
+        # 最多重試 2 次，避免 MOPS 高並發下偶發 timeout 漏掉資料
+        for attempt in range(2):
+            try:
+                r = requests.post(url, data=data, headers=HEADERS, timeout=10)
+                if r.status_code == 200 and len(r.text) > 1000:
+                    soup = BeautifulSoup(r.text, 'html.parser')
+                    tables = soup.find_all('table')
+                    if tables:
+                        rows = tables[0].find_all('tr')
+                        for row in rows[1:]:
+                            tds = [td.get_text(strip=True) for td in row.find_all(['th', 'td'])]
+                            if len(tds) >= 9:
+                                try:
+                                    pledge_shares = int(tds[5].replace(',', ''))
+                                except ValueError:
+                                    pledge_shares = 0
+                                try:
+                                    unpledge_shares = int(tds[6].replace(',', ''))
+                                except ValueError:
+                                    unpledge_shares = 0
+                                try:
+                                    cum_shares = int(tds[7].replace(',', ''))
+                                except ValueError:
+                                    cum_shares = 0
+                                ev_list.append({
+                                    'identity': tds[2],
+                                    'name': tds[3],
+                                    'event_date': tds[4],
+                                    'pledge_shares': pledge_shares,
+                                    'unpledge_shares': unpledge_shares,
+                                    'cum_shares': cum_shares,
+                                    'creditor': tds[8],
+                                    'report_date': tds[10] if len(tds) > 10 else tds[4]
+                                })
+                    return ev_list  # 成功則立即返回，不重試
+            except Exception:
+                if attempt == 0:
+                    import time as _time
+                    _time.sleep(1)  # 重試前短暫等待
         return ev_list
 
     # 優先查當年度 (115)，若有資料即為最新
@@ -405,7 +410,8 @@ def analyze_stock_pledges(candidate_stocks, quotes):
 
     events_map = {}
     done_cnt = 0
-    with ThreadPoolExecutor(max_workers=16) as executor:
+    # 降低並發數至 10，避免 MOPS 高並發限速造成資料遺漏
+    with ThreadPoolExecutor(max_workers=10) as executor:
         future_to_code = {executor.submit(fetch_mops_stock_pledge_history, code): code for code in stock_codes}
         for future in as_completed(future_to_code):
             code = future_to_code[future]
@@ -418,6 +424,24 @@ def analyze_stock_pledges(candidate_stocks, quotes):
                     events_map[code] = evts
             except Exception:
                 pass
+
+    # 確保 persistent_candidates 中的個股一定有被查到，若缺失則立即補查（防止高並發 timeout 漏掉）
+    CACHE_CANDIDATES_FILE = 'pledge_candidates_cache.json'
+    persistent_candidates = set(['6830'])
+    if os.path.exists(CACHE_CANDIDATES_FILE):
+        try:
+            with open(CACHE_CANDIDATES_FILE, 'r', encoding='utf-8') as _f:
+                persistent_candidates.update(json.load(_f))
+        except Exception:
+            pass
+    missed = [c for c in persistent_candidates if c in candidate_stocks and c not in events_map]
+    if missed:
+        print(f"補查遺漏的持久候選標的（{len(missed)} 檔）: {missed}")
+        for c in missed:
+            evts = fetch_mops_stock_pledge_history(c)
+            if evts:
+                events_map[c] = evts
+                print(f"  補查成功: {c} ({len(evts)} 筆)")
 
     print(f"成功取得 {len(events_map)} 檔個股之完整質押異動記錄。")
 
