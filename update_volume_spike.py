@@ -19,6 +19,7 @@ import datetime
 from zoneinfo import ZoneInfo
 import urllib.request
 import subprocess
+import shutil
 import time
 
 TZ_TW = ZoneInfo('Asia/Taipei')
@@ -187,10 +188,11 @@ def fetch_tpex_candidates(stock_names):
         url = f"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={roc}&se=AL&_=1"
         raw_bytes = None
 
-        # 優先使用 curl.exe (處理 Windows 環境下 Python urllib 的 SSL/TLS Handshake 中斷與大封包超時)
+        # 優先使用 curl (處理 Windows/Linux 環境下 TLS Handshake 與大封包)
+        curl_bin = shutil.which("curl") or shutil.which("curl.exe") or "curl"
         try:
             res = subprocess.run(
-                ['curl.exe', '-s', '--http1.1', url, '-H', 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)'],
+                [curl_bin, '-s', '--http1.1', url, '-H', 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)'],
                 capture_output=True,
                 timeout=35
             )

@@ -21,6 +21,7 @@ import datetime
 from zoneinfo import ZoneInfo
 import urllib.request
 import subprocess
+import shutil
 from concurrent.futures import ThreadPoolExecutor
 
 TZ_TW = ZoneInfo("Asia/Taipei")
@@ -143,40 +144,58 @@ def fetch_tpex_daily_turnover(stock_names):
             continue  # 略過週末
         roc = f"{d.year - 1911}/{d.month:02d}/{d.day:02d}"
         url = f"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={roc}&se=AL&_=1"
+        curl_bin = shutil.which("curl") or shutil.which("curl.exe") or "curl"
+        raw_text = None
         try:
             res = subprocess.run(
-                ["curl.exe", "-s", "--http1.1", url, "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)"],
+                [curl_bin, "-s", "--http1.1", url, "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)"],
                 capture_output=True,
                 timeout=35
             )
-            jd = json.loads(res.stdout.decode("utf-8", errors="ignore"))
-            tables = jd.get("tables", [])
-            if tables and tables[0].get("data"):
-                for r in tables[0]["data"]:
-                    code = str(r[0]).strip()
-                    if len(code) == 4 and code.isdigit():
-                        val_str = str(r[8]).replace(",", "").strip()
-                        cp_str = str(r[2]).replace(",", "").strip()
-                        chg_str = str(r[3]).replace(",", "").strip()
-                        try:
-                            val = float(val_str)
-                            cp = float(cp_str)
-                            chg = float(chg_str) if chg_str else 0.0
-                            turnovers[code] = {
-                                "market": "tpex",
-                                "code": code,
-                                "name": stock_names.get(code, str(r[1]).strip()),
-                                "trade_val": val,
-                                "close": cp,
-                                "change": round(chg, 2)
-                            }
-                        except ValueError:
-                            pass
-                trade_date = d.strftime("%Y-%m-%d")
-                print(f"TPEx turnover fetched: {len(turnovers)} stocks ({trade_date})")
-                break
+            if res.returncode == 0 and res.stdout:
+                raw_text = res.stdout.decode("utf-8", errors="ignore")
         except Exception as ex:
-            print(f"TPEx stk_wn1430 {d} error: {ex}")
+            print(f"TPEx curl error for {d}: {ex}")
+
+        if not raw_text:
+            try:
+                headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "Accept": "application/json, */*"}
+                req = urllib.request.Request(url, headers=headers)
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    raw_text = resp.read().decode("utf-8", errors="ignore")
+            except Exception as e:
+                print(f"TPEx urllib error for {d}: {e}")
+
+        if raw_text:
+            try:
+                jd = json.loads(raw_text)
+                tables = jd.get("tables", [])
+                if tables and tables[0].get("data"):
+                    for r in tables[0]["data"]:
+                        code = str(r[0]).strip()
+                        if len(code) == 4 and code.isdigit():
+                            val_str = str(r[8]).replace(",", "").strip()
+                            cp_str = str(r[2]).replace(",", "").strip()
+                            chg_str = str(r[3]).replace(",", "").strip()
+                            try:
+                                val = float(val_str)
+                                cp = float(cp_str)
+                                chg = float(chg_str) if chg_str else 0.0
+                                turnovers[code] = {
+                                    "market": "tpex",
+                                    "code": code,
+                                    "name": stock_names.get(code, str(r[1]).strip()),
+                                    "trade_val": val,
+                                    "close": cp,
+                                    "change": round(chg, 2)
+                                }
+                            except ValueError:
+                                pass
+                    trade_date = d.strftime("%Y-%m-%d")
+                    print(f"TPEx turnover fetched: {len(turnovers)} stocks ({trade_date})")
+                    break
+            except Exception as ex:
+                print(f"TPEx parse error for {d}: {ex}")
 
     return turnovers, trade_date
 

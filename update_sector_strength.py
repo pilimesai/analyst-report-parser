@@ -16,6 +16,7 @@ import datetime
 from zoneinfo import ZoneInfo
 import urllib.request
 import subprocess
+import shutil
 import time
 
 TZ_TW = ZoneInfo("Asia/Taipei")
@@ -246,26 +247,44 @@ def fetch_official_today_closes():
             continue  # 略過週末
         roc = f"{d.year - 1911}/{d.month:02d}/{d.day:02d}"
         url = f"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={roc}&se=AL&_=1"
+        curl_bin = shutil.which("curl") or shutil.which("curl.exe") or "curl"
+        raw_text = None
         try:
-            res = subprocess.run(["curl.exe", "-s", "--http1.1", url, "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)"], capture_output=True, timeout=35)
-            jd = json.loads(res.stdout.decode("utf-8", errors="ignore"))
-            tables = jd.get("tables", [])
-            if tables and tables[0].get("data"):
-                cnt = 0
-                for r in tables[0]["data"]:
-                    code = str(r[0]).strip()
-                    if len(code) == 4 and code.isdigit():
-                        cp_str = str(r[2]).replace(",", "").strip()
-                        try:
-                            closes[code] = float(cp_str)
-                            cnt += 1
-                        except ValueError:
-                            pass
-                tpex_date = d.strftime("%Y-%m-%d")
-                print(f"TPEx official closes: {cnt} stocks ({tpex_date})")
-                break
+            res = subprocess.run([curl_bin, "-s", "--http1.1", url, "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)"], capture_output=True, timeout=35)
+            if res.returncode == 0 and res.stdout:
+                raw_text = res.stdout.decode("utf-8", errors="ignore")
         except Exception as ex:
-            print(f"TPEx stk_wn1430 {d} error: {ex}")
+            print(f"TPEx curl error for {d}: {ex}")
+
+        if not raw_text:
+            try:
+                headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "Accept": "application/json, */*"}
+                req = urllib.request.Request(url, headers=headers)
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    raw_text = resp.read().decode("utf-8", errors="ignore")
+            except Exception as e:
+                print(f"TPEx urllib error for {d}: {e}")
+
+        if raw_text:
+            try:
+                jd = json.loads(raw_text)
+                tables = jd.get("tables", [])
+                if tables and tables[0].get("data"):
+                    cnt = 0
+                    for r in tables[0]["data"]:
+                        code = str(r[0]).strip()
+                        if len(code) == 4 and code.isdigit():
+                            cp_str = str(r[2]).replace(",", "").strip()
+                            try:
+                                closes[code] = float(cp_str)
+                                cnt += 1
+                            except ValueError:
+                                pass
+                    tpex_date = d.strftime("%Y-%m-%d")
+                    print(f"TPEx official closes: {cnt} stocks ({tpex_date})")
+                    break
+            except Exception as ex:
+                print(f"TPEx stk_wn1430 parse error for {d}: {ex}")
 
     official_trade_date = twse_date or tpex_date
     return closes, official_trade_date

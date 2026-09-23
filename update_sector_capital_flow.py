@@ -24,6 +24,7 @@ import datetime
 from zoneinfo import ZoneInfo
 import urllib.request
 import subprocess
+import shutil
 
 TZ_TW = ZoneInfo("Asia/Taipei")
 
@@ -112,15 +113,28 @@ def build_industry_map(stock_names):
     # TPEx
     url_tpex = "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap03_O"
     try:
-        req = urllib.request.Request(url_tpex, headers={"User-Agent": "Mozilla/5.0"})
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-        for item in data:
-            code = str(item.get("SecuritiesCompanyCode", "")).strip()
-            raw_ind = str(item.get("SecuritiesIndustryCode", "")).strip()
-            if len(code) == 4 and code.isdigit():
-                ind_name = TPEX_INDUSTRY_CODE_MAP.get(raw_ind, "其他業")
-                ind_map[code] = ind_name
+        curl_bin = shutil.which("curl") or shutil.which("curl.exe") or "curl"
+        raw_text = None
+        try:
+            res = subprocess.run([curl_bin, "-s", "--http1.1", url_tpex, "-H", "User-Agent: Mozilla/5.0"], capture_output=True, timeout=20)
+            if res.returncode == 0 and res.stdout:
+                raw_text = res.stdout.decode("utf-8", errors="ignore")
+        except Exception:
+            pass
+
+        if not raw_text:
+            req = urllib.request.Request(url_tpex, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                raw_text = resp.read().decode("utf-8", errors="ignore")
+
+        if raw_text:
+            data = json.loads(raw_text)
+            for item in data:
+                code = str(item.get("SecuritiesCompanyCode", "")).strip()
+                raw_ind = str(item.get("SecuritiesIndustryCode", "")).strip()
+                if len(code) == 4 and code.isdigit():
+                    ind_name = TPEX_INDUSTRY_CODE_MAP.get(raw_ind, "其他業")
+                    ind_map[code] = ind_name
     except Exception as e:
         print(f"Warning: TPEx industry fetch failed: {e}")
 
@@ -186,6 +200,7 @@ def fetch_tpex_quotes_two_days(stock_names):
     """抓取 TPEx 最近 2 個交易日的成交行情"""
     today = datetime.datetime.now(TZ_TW).date()
     found_days = []
+    curl_bin = shutil.which("curl") or shutil.which("curl.exe") or "curl"
 
     for delta in range(10):
         d = today - datetime.timedelta(days=delta)
@@ -193,42 +208,59 @@ def fetch_tpex_quotes_two_days(stock_names):
             continue  # 略過週末
         roc = f"{d.year - 1911}/{d.month:02d}/{d.day:02d}"
         url = f"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={roc}&se=AL&_=1"
+        raw_text = None
         try:
             res = subprocess.run(
-                ["curl.exe", "-s", "--http1.1", url, "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)"],
+                [curl_bin, "-s", "--http1.1", url, "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)"],
                 capture_output=True, timeout=35
             )
-            jd = json.loads(res.stdout.decode("utf-8", errors="ignore"))
-            tbl = jd.get("tables", [])
-            if tbl and tbl[0].get("data") and len(tbl[0]["data"]) > 500:
-                day_dict = {}
-                tot_val = 0.0
-                for row in tbl[0]["data"]:
-                    code = str(row[0]).strip()
-                    if len(code) == 4 and code.isdigit():
-                        try:
-                            val = float(str(row[8]).replace(",", "").strip())
-                            cp = float(str(row[2]).replace(",", "").strip())
-                            chg_raw = str(row[3]).replace(",", "").strip()
-                            chg = float(chg_raw) if chg_raw not in ["--", "", "0.00"] else 0.0
-                            name = stock_names.get(code, str(row[1]).strip())
-                            day_dict[code] = {
-                                "market": "tpex",
-                                "name": name,
-                                "trade_val": val,
-                                "close": cp,
-                                "change": round(chg, 2)
-                            }
-                            tot_val += val
-                        except ValueError:
-                            pass
-                fmt_date = f"{d.year}-{d.month:02d}-{d.day:02d}"
-                found_days.append({"date": fmt_date, "stocks": day_dict, "total_val": tot_val})
-                print(f"TPEx fetched {len(day_dict)} stocks for {fmt_date} (Total: {tot_val/1e8:.1f}億)")
-                if len(found_days) == 2:
-                    break
+            if res.returncode == 0 and res.stdout:
+                raw_text = res.stdout.decode("utf-8", errors="ignore")
         except Exception as ex:
-            print(f"TPEx stk_wn1430 {d} error: {ex}")
+            print(f"TPEx curl error for {d}: {ex}")
+
+        if not raw_text:
+            try:
+                headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "Accept": "application/json, */*"}
+                req = urllib.request.Request(url, headers=headers)
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    raw_text = resp.read().decode("utf-8", errors="ignore")
+            except Exception as e:
+                print(f"TPEx urllib error for {d}: {e}")
+
+        if raw_text:
+            try:
+                jd = json.loads(raw_text)
+                tbl = jd.get("tables", [])
+                if tbl and tbl[0].get("data") and len(tbl[0]["data"]) > 500:
+                    day_dict = {}
+                    tot_val = 0.0
+                    for row in tbl[0]["data"]:
+                        code = str(row[0]).strip()
+                        if len(code) == 4 and code.isdigit():
+                            try:
+                                val = float(str(row[8]).replace(",", "").strip())
+                                cp = float(str(row[2]).replace(",", "").strip())
+                                chg_raw = str(row[3]).replace(",", "").strip()
+                                chg = float(chg_raw) if chg_raw not in ["--", "", "0.00"] else 0.0
+                                name = stock_names.get(code, str(row[1]).strip())
+                                day_dict[code] = {
+                                    "market": "tpex",
+                                    "name": name,
+                                    "trade_val": val,
+                                    "close": cp,
+                                    "change": round(chg, 2)
+                                }
+                                tot_val += val
+                            except ValueError:
+                                pass
+                    fmt_date = f"{d.year}-{d.month:02d}-{d.day:02d}"
+                    found_days.append({"date": fmt_date, "stocks": day_dict, "total_val": tot_val})
+                    print(f"TPEx fetched {len(day_dict)} stocks for {fmt_date} (Total: {tot_val/1e8:.1f}億)")
+                    if len(found_days) == 2:
+                        break
+            except Exception as ex:
+                print(f"TPEx stk_wn1430 parse error for {d}: {ex}")
 
     return found_days
 

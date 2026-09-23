@@ -20,6 +20,7 @@ import datetime
 import subprocess
 import tempfile
 import urllib.request
+import shutil
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import requests
 from bs4 import BeautifulSoup
@@ -132,9 +133,10 @@ def get_market_quotes():
         url = f"https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={roc}&se=AL&_=1"
         raw_bytes = None
 
+        curl_bin = shutil.which("curl") or shutil.which("curl.exe") or "curl"
         try:
             res = subprocess.run(
-                ['curl.exe', '-s', '--http1.1', url, '-H', f'User-Agent: {HEADERS["User-Agent"]}'],
+                [curl_bin, '-s', '--http1.1', url, '-H', f'User-Agent: {HEADERS["User-Agent"]}'],
                 capture_output=True,
                 timeout=35
             )
