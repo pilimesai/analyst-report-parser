@@ -231,9 +231,9 @@ def get_pledged_candidates(quotes=None):
     except Exception as e:
         print(f"TPEx pledge candidates fetch error: {e}")
 
-    # 合併持久化候選名單快取 (包含 6830 汎銓 等當月最新設質個股，避免因月報時滯漏掉)
+    # 合併持久化候選名單快取 (包含 6830 汎銓、2383 台光電 等當月最新設質個股，避免因月報時滯漏掉)
     CACHE_CANDIDATES_FILE = 'pledge_candidates_cache.json'
-    persistent_candidates = set(['6830'])
+    persistent_candidates = set(['6830', '2383'])
     if os.path.exists(CACHE_CANDIDATES_FILE):
         try:
             with open(CACHE_CANDIDATES_FILE, 'r', encoding='utf-8') as f:
@@ -427,7 +427,7 @@ def analyze_stock_pledges(candidate_stocks, quotes):
 
     # 確保 persistent_candidates 中的個股一定有被查到，若缺失則立即補查（防止高並發 timeout 漏掉）
     CACHE_CANDIDATES_FILE = 'pledge_candidates_cache.json'
-    persistent_candidates = set(['6830'])
+    persistent_candidates = set(['6830', '2383'])
     if os.path.exists(CACHE_CANDIDATES_FILE):
         try:
             with open(CACHE_CANDIDATES_FILE, 'r', encoding='utf-8') as _f:

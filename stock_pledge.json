@@ -1,11 +1,11 @@
 {
-  "updateTime": "2026-09-24T00:40:32.419249+08:00",
+  "updateTime": "2026-09-24T07:44:49.404821+08:00",
   "tradeDate": "2026-09-23",
   "summary": {
-    "total_active_stocks": 273,
-    "above_pledge_count": 142,
-    "below_pledge_count": 131,
-    "above_pledge_ratio": 52.0,
+    "total_active_stocks": 272,
+    "above_pledge_count": 143,
+    "below_pledge_count": 129,
+    "above_pledge_ratio": 52.6,
     "top_gain_stock": {
       "code": "3017",
       "name": "奇鋐",
@@ -147,6 +147,24 @@
       "pledge_price": 553.0,
       "diff_pct": -1.45,
       "status": "below_pledge"
+    },
+    {
+      "code": "2383",
+      "name": "台光電",
+      "market": "twse",
+      "current_price": 5020.0,
+      "current_change": 160.0,
+      "shareholder_name": "董王妙方",
+      "shareholder_title": "12董事長配偶",
+      "pledge_date": "115/09/21",
+      "pledge_shares": 250000,
+      "pledge_shares_lots": 250.0,
+      "cum_shares": 500000,
+      "cum_shares_lots": 500.0,
+      "creditor": "瑞士商瑞士銀行股份有限公司台北分公司",
+      "pledge_price": 4895.0,
+      "diff_pct": 2.55,
+      "status": "above_pledge"
     },
     {
       "code": "1522",
@@ -3191,24 +3209,6 @@
       "status": "above_pledge"
     },
     {
-      "code": "2433",
-      "name": "互盛電",
-      "market": "twse",
-      "current_price": 40.25,
-      "current_change": -0.05,
-      "shareholder_name": "震旦國際股份有限公司",
-      "shareholder_title": "董事",
-      "pledge_date": "114/12/31",
-      "pledge_shares": 500000,
-      "pledge_shares_lots": 500.0,
-      "cum_shares": 18390000,
-      "cum_shares_lots": 18390.0,
-      "creditor": "大中票券金融股份有限公司",
-      "pledge_price": 47.5,
-      "diff_pct": -15.26,
-      "status": "below_pledge"
-    },
-    {
       "code": "2438",
       "name": "翔耀",
       "market": "twse",
@@ -3981,24 +3981,6 @@
       "pledge_price": 40.8,
       "diff_pct": 61.03,
       "status": "above_pledge"
-    },
-    {
-      "code": "2429",
-      "name": "銘旺科",
-      "market": "twse",
-      "current_price": 30.75,
-      "current_change": -0.35,
-      "shareholder_name": "承濬投資股份有限公司",
-      "shareholder_title": "董事",
-      "pledge_date": "114/04/21",
-      "pledge_shares": 600000,
-      "pledge_shares_lots": 600.0,
-      "cum_shares": 600000,
-      "cum_shares_lots": 600.0,
-      "creditor": "陽信商業銀行股份有限公司永和分公司",
-      "pledge_price": 31.1,
-      "diff_pct": -1.13,
-      "status": "below_pledge"
     },
     {
       "code": "1909",
@@ -4951,18 +4933,6 @@
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
-      "code": "7722",
-      "name": "LINEPAY",
-      "market": "twse",
-      "shareholder_name": "林佳亨",
-      "shareholder_title": "副總經理",
-      "unpledge_date": "115/09/22",
-      "unpledge_shares": 4000,
-      "unpledge_shares_lots": 4.0,
-      "cum_shares": 11000,
-      "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
-    },
-    {
       "code": "5515",
       "name": "建國",
       "market": "twse",
@@ -4972,6 +4942,18 @@
       "unpledge_shares": 5856000,
       "unpledge_shares_lots": 5856.0,
       "cum_shares": 7376000,
+      "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
+    },
+    {
+      "code": "7722",
+      "name": "LINEPAY",
+      "market": "twse",
+      "shareholder_name": "林佳亨",
+      "shareholder_title": "副總經理",
+      "unpledge_date": "115/09/22",
+      "unpledge_shares": 4000,
+      "unpledge_shares_lots": 4.0,
+      "cum_shares": 11000,
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
@@ -5143,18 +5125,6 @@
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
-      "code": "2461",
-      "name": "光群雷",
-      "market": "twse",
-      "shareholder_name": "郭維武",
-      "shareholder_title": "董事長",
-      "unpledge_date": "115/09/02",
-      "unpledge_shares": 700000,
-      "unpledge_shares_lots": 700.0,
-      "cum_shares": 9969000,
-      "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
-    },
-    {
       "code": "4764",
       "name": "雙鍵",
       "market": "twse",
@@ -5176,6 +5146,18 @@
       "unpledge_shares": 1590000,
       "unpledge_shares_lots": 1590.0,
       "cum_shares": 0,
+      "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
+    },
+    {
+      "code": "2461",
+      "name": "光群雷",
+      "market": "twse",
+      "shareholder_name": "郭維武",
+      "shareholder_title": "董事長",
+      "unpledge_date": "115/09/02",
+      "unpledge_shares": 700000,
+      "unpledge_shares_lots": 700.0,
+      "cum_shares": 9969000,
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
