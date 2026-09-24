@@ -1,5 +1,5 @@
 {
-  "updateTime": "2026-09-24T15:16:05.484616+08:00",
+  "updateTime": "2026-09-24T21:43:53.794538+08:00",
   "tradeDate": "2026-09-24",
   "totalScanned": 300,
   "totalMatched": 43,
@@ -24,7 +24,7 @@
       "close": 8525.0,
       "change": 140.0,
       "capital_yi": 13.4,
-      "trade_val_yi": 120.46,
+      "trade_val_yi": 123.67,
       "latest_report_date": "2026-06-30",
       "latest_contract_liab_yi": 132.15,
       "prev_contract_liab_yi": 81.32,
