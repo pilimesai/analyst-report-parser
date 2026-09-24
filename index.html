@@ -2237,7 +2237,14 @@
                     style="width: 100%; padding: 0.75rem 1rem; font-size: 0.95rem; font-weight: 700; background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899); border: none; border-radius: 0.6rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 4px 15px rgba(99,102,241,0.4); letter-spacing: 0.03em; transition: opacity 0.2s, transform 0.1s;">
                     <span style="font-size: 1.1rem;">⚡</span>
                     <span>一鍵抓取所有資料</span>
-                </button>
+                </button>
+                <div style="margin-top: 0.45rem; display: flex; align-items: center; justify-content: center;">
+                    <label style="display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.78rem; color: #cbd5e1; cursor: pointer; user-select: none;" title="勾選後將在雲端對全市場 1,800+ 檔普通股執行質押地毯式深度巡檢（約需 2~4 分鐘）">
+                        <input type="checkbox" id="pledge-full-scan-toggle" style="accent-color: #8b5cf6; cursor: pointer;" onchange="try{localStorage.setItem('pledge_full_scan', this.checked)}catch(e){}">
+                        <span>包含全市場 1,800+ 檔質押深度巡檢</span>
+                    </label>
+                    <script>try{const s=localStorage.getItem('pledge_full_scan');if(s!==null)document.getElementById('pledge-full-scan-toggle').checked=(s==='true');}catch(e){}</script>
+                </div>
                 <div id="live-server-status-pill" style="margin-top: 0.5rem; font-size: 0.78rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem; color: #94a3b8; padding: 4px 10px; background: rgba(56,189,248,0.06); border: 1px solid rgba(56,189,248,0.18); border-radius: 6px;">
                     <span id="live-server-dot" style="width: 7px; height: 7px; border-radius: 50%; background: #64748b; display: inline-block;"></span>
                     <span id="live-server-text">讀取雲端狀態...</span>
@@ -3954,7 +3961,7 @@
         // 初始化更新 UI 狀態
         setTimeout(updateCloudCrawlerUI, 150);
 
-        async function triggerGitHubCloudUpdate(token, btn, statusEl) {
+        async function triggerGitHubCloudUpdate(token, btn, statusEl, isFullScan = false) {
             const OWNER = 'pilimesai';
             const REPO = 'analyst-report-parser';
             const WORKFLOW_ID = 'run_all_updates.yml';
@@ -3981,7 +3988,8 @@
                     body: JSON.stringify({
                         ref: 'main',
                         inputs: {
-                            gh_token: token.trim()
+                            gh_token: token.trim(),
+                            full_scan: isFullScan ? 'true' : 'false'
                         }
                     })
                 });
@@ -3998,11 +4006,11 @@
 
                 const startTime = Date.now();
                 let success = false;
-                const maxWaitSec = 300;
+                const maxWaitSec = isFullScan ? 600 : 360;
 
                 while ((Date.now() - startTime) < maxWaitSec * 1000) {
                     const elapsed = Math.round((Date.now() - startTime) / 1000);
-                    if (statusEl) statusEl.innerHTML = `☁️ GitHub 雲端電腦現場爬取中... (已執行 ${elapsed} 秒，8 大模組約需 40~80 秒)`;
+                    if (statusEl) statusEl.innerHTML = `☁️ GitHub 雲端電腦現場爬取中... (已執行 ${elapsed} 秒，${isFullScan ? "8 大模組＋全市場質押深度巡檢約需 2~4 分鐘" : "8 大模組約需 40~80 秒"})`;
 
                     try {
                         const runsRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/runs?per_page=5`, {
@@ -4081,7 +4089,8 @@
                 return;
             }
 
-            await triggerGitHubCloudUpdate(token, btn, statusEl);
+            const isFullScan = document.getElementById('pledge-full-scan-toggle')?.checked || false;
+            await triggerGitHubCloudUpdate(token, btn, statusEl, isFullScan);
         }
 
         async function fetchCBFromGithub(silent = false) {

@@ -7,6 +7,11 @@ on:
         description: 'GitHub Personal Access Token'
         required: false
         default: ''
+      full_scan:
+        description: '是否執行全市場質押深度巡檢 (Full Market Deep Scan)'
+        required: false
+        type: boolean
+        default: false
   schedule:
     # 每個交易日台灣時間 20:30 (UTC 12:30) 自動執行全量同步備份
     - cron: '30 12 * * 1-5'
@@ -38,7 +43,11 @@ jobs:
 
       - name: Run All Market Crawlers
         run: |
-          python run_all_updates.py
+          if [ "${{ github.event.inputs.full_scan }}" = "true" ]; then
+            python run_all_updates.py --full-scan
+          else
+            python run_all_updates.py
+          fi
 
       - name: Commit and push changes
         env:

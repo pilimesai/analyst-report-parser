@@ -81,7 +81,7 @@ def get_json_info(json_name):
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-def run_single_script(item):
+def run_single_script(item, full_scan=False):
     s_name = item["name"]
     s_file = item["file"]
     script_path = os.path.join(REPO_DIR, s_file)
@@ -90,10 +90,14 @@ def run_single_script(item):
         print(f"⚠️ 找不到腳本: {script_path}")
         return item, (s_name, s_file, "找不到檔案", 0, "N/A")
 
+    cmd = [sys.executable, s_file]
+    if s_file == "update_stock_pledge.py" and full_scan:
+        cmd.append("--full-scan")
+
     t0 = time.time()
     try:
         proc = subprocess.run(
-            [sys.executable, s_file],
+            cmd,
             cwd=REPO_DIR,
             capture_output=True,
             text=True
@@ -114,8 +118,10 @@ def run_single_script(item):
         return item, (s_name, s_file, f"❌ 例外 ({e})", elapsed, "N/A")
 
 def main():
+    full_scan = ('--full-scan' in sys.argv or '--full' in sys.argv)
+    mode_text = "【含全市場質押深度巡檢】" if full_scan else ""
     print("=" * 70)
-    print(f"🚀 台股盤後資料庫一鍵整合更新 ({datetime.datetime.now(TZ_TW).strftime('%Y-%m-%d %H:%M:%S')})")
+    print(f"🚀 台股盤後資料庫一鍵整合更新 ({datetime.datetime.now(TZ_TW).strftime('%Y-%m-%d %H:%M:%S')}){mode_text}")
     print("=" * 70)
 
     total_start = time.time()
@@ -123,7 +129,7 @@ def main():
 
     print(f"⚡ 啟動並行加速引擎 (3 Workers) 同時爬取 8 大模組...")
     with ThreadPoolExecutor(max_workers=3) as executor:
-        futures = {executor.submit(run_single_script, item): item for item in SCRIPTS}
+        futures = {executor.submit(run_single_script, item, full_scan): item for item in SCRIPTS}
         for future in as_completed(futures):
             item, res = future.result()
             results_map[item["file"]] = res
