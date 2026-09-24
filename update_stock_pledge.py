@@ -190,9 +190,82 @@ def get_market_quotes():
     print(f"全市場行情已抓取完成，共 {len(quotes)} 檔個股。")
     return quotes, (trade_date or today.strftime("%Y-%m-%d"))
 
-def get_pledged_candidates(quotes=None):
-    """從 TWSE/TPEx 開放資料取得目前有內部人質押之公司代號清單，並合併持久候選名單"""
+def fetch_daily_announcement_candidates():
+    """
+    方案 3：每日即時掃描上市櫃重大訊息與內部人事前申報，
+    捕捉主旨或內文包含設質、質押、解質、質權等關鍵字之個股，杜絕月報時滯盲區。
+    """
+    discovered_codes = set()
+    keywords = ('質', '設質', '質押', '解質', '質權', '抵押')
+
+    # 1. TWSE 上市每日重大訊息 (t187ap04_L)
+    try:
+        r = requests.get('https://openapi.twse.com.tw/v1/opendata/t187ap04_L', headers=HEADERS, timeout=10)
+        if r.status_code == 200:
+            for item in r.json():
+                code = str(item.get('公司代號', '')).strip()
+                title = str(item.get('主旨', ''))
+                content = str(item.get('詳細內容', ''))
+                if any(kw in title or kw in content for kw in keywords):
+                    if code and len(code) == 4 and code.isdigit():
+                        discovered_codes.add(code)
+    except Exception as e:
+        print(f"TWSE material info fetch error: {e}")
+
+    # 2. TPEx 上櫃每日重大訊息 (mopsfin_t187ap04_O)
+    try:
+        r = requests.get('https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O', headers=HEADERS, timeout=10)
+        if r.status_code == 200:
+            for item in r.json():
+                code = str(item.get('SecuritiesCompanyCode', '')).strip()
+                title = str(item.get('主旨', ''))
+                content = str(item.get('詳細內容', ''))
+                if any(kw in title or kw in content for kw in keywords):
+                    if code and len(code) == 4 and code.isdigit():
+                        discovered_codes.add(code)
+    except Exception as e:
+        print(f"TPEx material info fetch error: {e}")
+
+    # 3. TWSE 上市每日內部人事前申報 (t187ap12_L: 事前申報, t187ap13_L: 每日持股轉讓/信託等)
+    for ep in ['t187ap12_L', 't187ap13_L']:
+        try:
+            r = requests.get(f'https://openapi.twse.com.tw/v1/opendata/{ep}', headers=HEADERS, timeout=10)
+            if r.status_code == 200:
+                for item in r.json():
+                    code = str(item.get('公司代號', '')).strip()
+                    if code and len(code) == 4 and code.isdigit():
+                        discovered_codes.add(code)
+        except Exception:
+            pass
+
+    if discovered_codes:
+        print(f"【即時捕捉】從當日重大訊息及內部人申報發現 {len(discovered_codes)} 檔相關標的: {sorted(list(discovered_codes))}")
+    return discovered_codes
+
+def get_pledged_candidates(quotes=None, full_scan=False):
+    """
+    取得董監事/大股東持股設質之候選公司代號清單。
+    - full_scan=False (日常模式): 整合 TWSE/TPEx 月報 API + 每日重大訊息即時捕捉 + 持久化快取名單。
+    - full_scan=True  (全市場巡檢模式): 將全市場所有普通股納入掃描，全面排查無死角。
+    """
     candidate_stocks = {}
+    CACHE_CANDIDATES_FILE = 'pledge_candidates_cache.json'
+    persistent_candidates = set(['6830', '2383'])
+
+    if full_scan:
+        print("【全市場深度巡檢模式 (方案 2)】將對全市場所有普通股逐一核查質設狀態...")
+        if quotes:
+            for code, q in quotes.items():
+                if len(code) == 4 and code.isdigit():
+                    candidate_stocks[code] = {
+                        'code': code,
+                        'name': q['name'],
+                        'market': q.get('market', 'twse'),
+                        'total_pledged': 0
+                    }
+        print(f"全市場深度巡檢標的共 {len(candidate_stocks)} 檔。")
+        return candidate_stocks
+
     print("從 TWSE OpenAPI 取得上市內部人持股設質清單 (t187ap11_L)...")
     try:
         r = requests.get('https://openapi.twse.com.tw/v1/opendata/t187ap11_L', headers=HEADERS, timeout=15)
@@ -231,9 +304,11 @@ def get_pledged_candidates(quotes=None):
     except Exception as e:
         print(f"TPEx pledge candidates fetch error: {e}")
 
+    # 方案 3：每日重大訊息與內部人事前申報即時捕捉 (彌補月報時滯)
+    announcement_codes = fetch_daily_announcement_candidates()
+    persistent_candidates.update(announcement_codes)
+
     # 合併持久化候選名單快取 (包含 6830 汎銓、2383 台光電 等當月最新設質個股，避免因月報時滯漏掉)
-    CACHE_CANDIDATES_FILE = 'pledge_candidates_cache.json'
-    persistent_candidates = set(['6830', '2383'])
     if os.path.exists(CACHE_CANDIDATES_FILE):
         try:
             with open(CACHE_CANDIDATES_FILE, 'r', encoding='utf-8') as f:
@@ -443,6 +518,17 @@ def analyze_stock_pledges(candidate_stocks, quotes):
                 events_map[c] = evts
                 print(f"  補查成功: {c} ({len(evts)} 筆)")
 
+    # 滾動更新持久候選名單快取：將所有查出有設解質紀錄之標的加入快取
+    try:
+        updated_cache = set(persistent_candidates)
+        for c, evts in events_map.items():
+            if evts:
+                updated_cache.add(c)
+        with open(CACHE_CANDIDATES_FILE, 'w', encoding='utf-8') as _f:
+            json.dump(sorted(list(updated_cache)), _f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"Update pledge_candidates_cache error: {e}")
+
     print(f"成功取得 {len(events_map)} 檔個股之完整質押異動記錄。")
 
     raw_active = []
@@ -593,12 +679,13 @@ def analyze_stock_pledges(candidate_stocks, quotes):
 
 def main():
     start_time = time.time()
+    full_scan = ('--full-scan' in sys.argv or '--full' in sys.argv)
     print("=" * 60)
-    print("啟動大股東股票質設追蹤掃描器")
+    print("啟動大股東股票質設追蹤掃描器" + ("【全市場深度巡檢模式】" if full_scan else "【日常增量模式】"))
     print("=" * 60)
 
     quotes, detected_trade_date = get_market_quotes()
-    candidates = get_pledged_candidates(quotes)
+    candidates = get_pledged_candidates(quotes, full_scan=full_scan)
     active_stocks, excluded_stocks = analyze_stock_pledges(candidates, quotes)
 
     total_active = len(active_stocks)
