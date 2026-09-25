@@ -1,5 +1,5 @@
 {
-  "updateTime": "2026-09-24T22:01:50.738733+08:00",
+  "updateTime": "2026-09-25T22:23:13.357043+08:00",
   "tradeDate": "2026-09-24",
   "summary": {
     "total_active_stocks": 408,
@@ -7417,18 +7417,6 @@
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
-      "code": "5515",
-      "name": "建國",
-      "market": "twse",
-      "shareholder_name": "建輝投資事業股份有限公司",
-      "shareholder_title": "董事長",
-      "unpledge_date": "115/09/22",
-      "unpledge_shares": 5856000,
-      "unpledge_shares_lots": 5856.0,
-      "cum_shares": 7376000,
-      "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
-    },
-    {
       "code": "7722",
       "name": "LINEPAY",
       "market": "twse",
@@ -7438,6 +7426,18 @@
       "unpledge_shares": 4000,
       "unpledge_shares_lots": 4.0,
       "cum_shares": 11000,
+      "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
+    },
+    {
+      "code": "5515",
+      "name": "建國",
+      "market": "twse",
+      "shareholder_name": "建輝投資事業股份有限公司",
+      "shareholder_title": "董事長",
+      "unpledge_date": "115/09/22",
+      "unpledge_shares": 5856000,
+      "unpledge_shares_lots": 5856.0,
+      "cum_shares": 7376000,
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
@@ -7489,18 +7489,6 @@
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
-      "code": "5546",
-      "name": "永固-KY",
-      "market": "twse",
-      "shareholder_name": "甘懷軒",
-      "shareholder_title": "經理",
-      "unpledge_date": "115/09/16",
-      "unpledge_shares": 171000,
-      "unpledge_shares_lots": 171.0,
-      "cum_shares": 0,
-      "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
-    },
-    {
       "code": "6918",
       "name": "愛派司",
       "market": "twse",
@@ -7521,6 +7509,18 @@
       "unpledge_date": "115/09/16",
       "unpledge_shares": 834000,
       "unpledge_shares_lots": 834.0,
+      "cum_shares": 0,
+      "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
+    },
+    {
+      "code": "5546",
+      "name": "永固-KY",
+      "market": "twse",
+      "shareholder_name": "甘懷軒",
+      "shareholder_title": "經理",
+      "unpledge_date": "115/09/16",
+      "unpledge_shares": 171000,
+      "unpledge_shares_lots": 171.0,
       "cum_shares": 0,
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
@@ -7597,18 +7597,6 @@
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
-      "code": "6679",
-      "name": "鈺太",
-      "market": "tpex",
-      "shareholder_name": "林俊弘",
-      "shareholder_title": "協理",
-      "unpledge_date": "115/09/08",
-      "unpledge_shares": 15000,
-      "unpledge_shares_lots": 15.0,
-      "cum_shares": 61000,
-      "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
-    },
-    {
       "code": "2883",
       "name": "凱基金",
       "market": "twse",
@@ -7621,15 +7609,15 @@
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
-      "code": "5519",
-      "name": "隆大",
-      "market": "twse",
-      "shareholder_name": "大進投資股份有限公司",
-      "shareholder_title": "大股東",
-      "unpledge_date": "115/09/07",
-      "unpledge_shares": 2000000,
-      "unpledge_shares_lots": 2000.0,
-      "cum_shares": 3000000,
+      "code": "6679",
+      "name": "鈺太",
+      "market": "tpex",
+      "shareholder_name": "林俊弘",
+      "shareholder_title": "協理",
+      "unpledge_date": "115/09/08",
+      "unpledge_shares": 15000,
+      "unpledge_shares_lots": 15.0,
+      "cum_shares": 61000,
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
@@ -7642,6 +7630,18 @@
       "unpledge_shares": 1000000,
       "unpledge_shares_lots": 1000.0,
       "cum_shares": 3800000,
+      "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
+    },
+    {
+      "code": "5519",
+      "name": "隆大",
+      "market": "twse",
+      "shareholder_name": "大進投資股份有限公司",
+      "shareholder_title": "大股東",
+      "unpledge_date": "115/09/07",
+      "unpledge_shares": 2000000,
+      "unpledge_shares_lots": 2000.0,
+      "cum_shares": 3000000,
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
@@ -7681,6 +7681,18 @@
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
+      "code": "2461",
+      "name": "光群雷",
+      "market": "twse",
+      "shareholder_name": "郭維武",
+      "shareholder_title": "董事長",
+      "unpledge_date": "115/09/02",
+      "unpledge_shares": 700000,
+      "unpledge_shares_lots": 700.0,
+      "cum_shares": 9969000,
+      "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
+    },
+    {
       "code": "6794",
       "name": "向榮生技",
       "market": "twse",
@@ -7693,15 +7705,15 @@
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
-      "code": "2461",
-      "name": "光群雷",
+      "code": "2206",
+      "name": "三陽工業",
       "market": "twse",
-      "shareholder_name": "郭維武",
-      "shareholder_title": "董事長",
-      "unpledge_date": "115/09/02",
-      "unpledge_shares": 700000,
-      "unpledge_shares_lots": 700.0,
-      "cum_shares": 9969000,
+      "shareholder_name": "鼎爵投資有限公司",
+      "shareholder_title": "17董事法人人利用他人名義持有者",
+      "unpledge_date": "115/09/01",
+      "unpledge_shares": 1600000,
+      "unpledge_shares_lots": 1600.0,
+      "cum_shares": 16100000,
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
@@ -7741,18 +7753,6 @@
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
-      "code": "2206",
-      "name": "三陽工業",
-      "market": "twse",
-      "shareholder_name": "鼎爵投資有限公司",
-      "shareholder_title": "17董事法人人利用他人名義持有者",
-      "unpledge_date": "115/09/01",
-      "unpledge_shares": 1600000,
-      "unpledge_shares_lots": 1600.0,
-      "cum_shares": 16100000,
-      "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
-    },
-    {
       "code": "8446",
       "name": "華研",
       "market": "tpex",
@@ -7789,6 +7789,18 @@
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
+      "code": "3691",
+      "name": "碩禾",
+      "market": "tpex",
+      "shareholder_name": "國碩科技工業股份有限公司",
+      "shareholder_title": "董事長",
+      "unpledge_date": "115/08/27",
+      "unpledge_shares": 500000,
+      "unpledge_shares_lots": 500.0,
+      "cum_shares": 12400000,
+      "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
+    },
+    {
       "code": "1569",
       "name": "濱川",
       "market": "tpex",
@@ -7810,18 +7822,6 @@
       "unpledge_shares": 1500000,
       "unpledge_shares_lots": 1500.0,
       "cum_shares": 4700000,
-      "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
-    },
-    {
-      "code": "3691",
-      "name": "碩禾",
-      "market": "tpex",
-      "shareholder_name": "國碩科技工業股份有限公司",
-      "shareholder_title": "董事長",
-      "unpledge_date": "115/08/27",
-      "unpledge_shares": 500000,
-      "unpledge_shares_lots": 500.0,
-      "cum_shares": 12400000,
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
@@ -7909,15 +7909,15 @@
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
-      "code": "6180",
-      "name": "橘子",
+      "code": "8147",
+      "name": "正淩",
       "market": "tpex",
-      "shareholder_name": "劉柏園",
-      "shareholder_title": "董事長",
+      "shareholder_name": "賴琦憲",
+      "shareholder_title": "董事",
       "unpledge_date": "115/08/19",
-      "unpledge_shares": 1000000,
-      "unpledge_shares_lots": 1000.0,
-      "cum_shares": 14710000,
+      "unpledge_shares": 200000,
+      "unpledge_shares_lots": 200.0,
+      "cum_shares": 220000,
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
@@ -7933,15 +7933,15 @@
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
-      "code": "8147",
-      "name": "正淩",
+      "code": "6180",
+      "name": "橘子",
       "market": "tpex",
-      "shareholder_name": "賴琦憲",
-      "shareholder_title": "董事",
+      "shareholder_name": "劉柏園",
+      "shareholder_title": "董事長",
       "unpledge_date": "115/08/19",
-      "unpledge_shares": 200000,
-      "unpledge_shares_lots": 200.0,
-      "cum_shares": 220000,
+      "unpledge_shares": 1000000,
+      "unpledge_shares_lots": 1000.0,
+      "cum_shares": 14710000,
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
@@ -7969,18 +7969,6 @@
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
-      "code": "3003",
-      "name": "健和興",
-      "market": "twse",
-      "shareholder_name": "鄭傑元",
-      "shareholder_title": "董事",
-      "unpledge_date": "115/08/17",
-      "unpledge_shares": 1500000,
-      "unpledge_shares_lots": 1500.0,
-      "cum_shares": 1600000,
-      "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
-    },
-    {
       "code": "4722",
       "name": "國精化",
       "market": "twse",
@@ -7990,6 +7978,18 @@
       "unpledge_shares": 1200000,
       "unpledge_shares_lots": 1200.0,
       "cum_shares": 1300000,
+      "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
+    },
+    {
+      "code": "3003",
+      "name": "健和興",
+      "market": "twse",
+      "shareholder_name": "鄭傑元",
+      "shareholder_title": "董事",
+      "unpledge_date": "115/08/17",
+      "unpledge_shares": 1500000,
+      "unpledge_shares_lots": 1500.0,
+      "cum_shares": 1600000,
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
@@ -8029,6 +8029,18 @@
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
+      "code": "6657",
+      "name": "華安",
+      "market": "twse",
+      "shareholder_name": "陳翰民",
+      "shareholder_title": "董事長",
+      "unpledge_date": "115/08/14",
+      "unpledge_shares": 200000,
+      "unpledge_shares_lots": 200.0,
+      "cum_shares": 0,
+      "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
+    },
+    {
       "code": "6834",
       "name": "天二科技",
       "market": "twse",
@@ -8053,18 +8065,6 @@
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
-      "code": "6657",
-      "name": "華安",
-      "market": "twse",
-      "shareholder_name": "陳翰民",
-      "shareholder_title": "董事長",
-      "unpledge_date": "115/08/14",
-      "unpledge_shares": 200000,
-      "unpledge_shares_lots": 200.0,
-      "cum_shares": 0,
-      "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
-    },
-    {
       "code": "2820",
       "name": "華票",
       "market": "twse",
@@ -8077,15 +8077,15 @@
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     },
     {
-      "code": "2061",
-      "name": "風青",
+      "code": "4523",
+      "name": "永彰",
       "market": "tpex",
-      "shareholder_name": "陳信宇",
-      "shareholder_title": "總經理",
+      "shareholder_name": "佳峻投資股份有限公司",
+      "shareholder_title": "董事",
       "unpledge_date": "115/08/13",
-      "unpledge_shares": 800600,
-      "unpledge_shares_lots": 800.6,
-      "cum_shares": 0,
+      "unpledge_shares": 6400000,
+      "unpledge_shares_lots": 6400.0,
+      "cum_shares": 17700000,
       "reason": "同一大股東最新異動為解質，依規定剔除於名單之外"
     }
   ]
