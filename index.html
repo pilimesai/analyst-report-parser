@@ -4006,7 +4006,7 @@
 
                 const startTime = Date.now();
                 let success = false;
-                const maxWaitSec = isFullScan ? 600 : 360;
+                const maxWaitSec = isFullScan ? 900 : 480;
 
                 while ((Date.now() - startTime) < maxWaitSec * 1000) {
                     const elapsed = Math.round((Date.now() - startTime) / 1000);
@@ -4058,7 +4058,7 @@
                 }
 
                 if (!success) {
-                    throw new Error('雲端爬取執行逾時，請稍後刷新頁面');
+                    throw new Error('雲端電腦仍在背景處理中（無須重複點擊），稍候 1~2 分鐘後重新整理網頁即可查看最新數據');
                 }
 
                 if (statusEl) statusEl.innerHTML = '🎉 GitHub 雲端爬取全量完成！正在即時下載最新數據...';

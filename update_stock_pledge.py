@@ -327,11 +327,12 @@ def get_pledged_candidates(quotes=None, full_scan=False):
                     'total_pledged': 0
                 }
 
-    try:
-        with open(CACHE_CANDIDATES_FILE, 'w', encoding='utf-8') as f:
-            json.dump(sorted(list(set(list(candidate_stocks.keys()) + list(persistent_candidates)))), f, ensure_ascii=False, indent=2)
-    except Exception:
-        pass
+    if not full_scan:
+        try:
+            with open(CACHE_CANDIDATES_FILE, 'w', encoding='utf-8') as f:
+                json.dump(sorted(list(set(list(candidate_stocks.keys()) + list(persistent_candidates)))), f, ensure_ascii=False, indent=2)
+        except Exception:
+            pass
 
     print(f"共發現 {len(candidate_stocks)} 家公司列入董監事/大股東持股設質追蹤。")
     return candidate_stocks
@@ -469,7 +470,7 @@ def get_closing_price_for_date(code, roc_date, price_cache, current_price=None):
 
     return current_price
 
-def analyze_stock_pledges(candidate_stocks, quotes):
+def analyze_stock_pledges(candidate_stocks, quotes, full_scan=False):
     """
     核心狀態機：
     對每個候選個股查詢歷史異動，依大股東個別分析最新狀態：
@@ -480,25 +481,48 @@ def analyze_stock_pledges(candidate_stocks, quotes):
     active_stocks = []
     excluded_stocks = []
 
-    print(f"正在向 MOPS 查詢質設解質歷史異動（候選股共 {len(candidate_stocks)} 檔）...")
+    EVENTS_CACHE_FILE = 'pledge_events_cache.json'
+    cached_events = {}
+    if os.path.exists(EVENTS_CACHE_FILE):
+        try:
+            with open(EVENTS_CACHE_FILE, 'r', encoding='utf-8') as f:
+                cached_events = json.load(f)
+        except Exception:
+            pass
+
+    events_map = dict(cached_events)
     stock_codes = list(candidate_stocks.keys())
 
-    events_map = {}
+    if full_scan:
+        to_query = stock_codes
+        print(f"【全市場深度巡檢】正在向 MOPS 查詢所有候選股（共 {len(to_query)} 檔）...")
+    else:
+        # 日常模式：只查快取中沒有的個股，或是新進入名單的個股
+        to_query = [c for c in stock_codes if c not in cached_events]
+        print(f"【日常增量模式】已自快取載入 {len(cached_events)} 檔質設事件，僅需線上增量查詢 {len(to_query)} 檔新標的...")
+
     done_cnt = 0
-    # 降低並發數至 10，避免 MOPS 高並發限速造成資料遺漏
-    with ThreadPoolExecutor(max_workers=10) as executor:
-        future_to_code = {executor.submit(fetch_mops_stock_pledge_history, code): code for code in stock_codes}
-        for future in as_completed(future_to_code):
-            code = future_to_code[future]
-            done_cnt += 1
-            if done_cnt % 50 == 0 or done_cnt == len(stock_codes):
-                print(f"MOPS 查詢進度: {done_cnt}/{len(stock_codes)} (已獲取 {len(events_map)} 檔質設事件)...")
-            try:
-                evts = future.result()
-                if evts:
-                    events_map[code] = evts
-            except Exception:
-                pass
+    if to_query:
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            future_to_code = {executor.submit(fetch_mops_stock_pledge_history, code): code for code in to_query}
+            for future in as_completed(future_to_code):
+                code = future_to_code[future]
+                done_cnt += 1
+                if done_cnt % 50 == 0 or done_cnt == len(to_query):
+                    print(f"MOPS 查詢進度: {done_cnt}/{len(to_query)} (已獲取 {len(events_map)} 檔質設事件)...")
+                try:
+                    evts = future.result()
+                    if evts:
+                        events_map[code] = evts
+                except Exception:
+                    pass
+
+    # 儲存持久快取供日後秒級複用
+    try:
+        with open(EVENTS_CACHE_FILE, 'w', encoding='utf-8') as f:
+            json.dump(events_map, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"Update pledge_events_cache error: {e}")
 
     # 確保 persistent_candidates 中的個股一定有被查到，若缺失則立即補查（防止高並發 timeout 漏掉）
     CACHE_CANDIDATES_FILE = 'pledge_candidates_cache.json'
@@ -686,7 +710,7 @@ def main():
 
     quotes, detected_trade_date = get_market_quotes()
     candidates = get_pledged_candidates(quotes, full_scan=full_scan)
-    active_stocks, excluded_stocks = analyze_stock_pledges(candidates, quotes)
+    active_stocks, excluded_stocks = analyze_stock_pledges(candidates, quotes, full_scan=full_scan)
 
     total_active = len(active_stocks)
     above_count = sum(1 for s in active_stocks if s['diff_pct'] >= 0)
