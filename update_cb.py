@@ -9,68 +9,30 @@ import json
 import datetime
 import subprocess
 import sys
-
-def install_requirements():
-    try:
-        import playwright
-        import pandas
-        import requests
-    except ImportError:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "playwright", "pandas", "requests"])
-        subprocess.check_call([sys.executable, "-m", "playwright", "install", "chromium"])
-
-install_requirements()
-
-from playwright.sync_api import sync_playwright
 import pandas as pd
 import requests
 import urllib3
 urllib3.disable_warnings()
 
 def scrape_expected_cb():
-    url = "https://cbas16889.pscnet.com.tw/marketInfo/expectedRelease"
-    print(f"開啟瀏覽器攔截預計發行 CB API: {url}")
-
+    print("正在請求 PSCNet 預計發行 CB 專區 API...")
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+        'Referer': 'https://cbas16889.pscnet.com.tw/marketInfo/expectedRelease',
+        'Accept': 'application/json, text/plain, */*'
+    }
     apis = {}
-
-    def handle_response(response):
-        """攔截預計發行專區的三大 API 回應"""
-        ct = response.headers.get("content-type", "")
-        if "json" in ct and response.status == 200:
-            for name in ["GetRecentlyListed", "GetRecentlyEffectively", "GetBoardAnnouncement"]:
-                if name in response.url:
-                    try:
-                        res_json = response.json()
-                        result = res_json.get("result", [])
-                        if isinstance(result, list):
-                            apis[name] = result
-                            print(f"  [攔截成功] {name} ({len(result)} 筆)")
-                    except Exception as e:
-                        print(f"  [解析失敗] {name}: {e}")
-
-    with sync_playwright() as p:
-        browser = p.chromium.launch(
-            headless=True,
-            args=["--no-sandbox", "--disable-blink-features=AutomationControlled"]
-        )
-        context = browser.new_context(
-            viewport={"width": 1920, "height": 1080},
-            user_agent=(
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/125.0.0.0 Safari/537.36"
-            ),
-        )
-        page = context.new_page()
-        page.add_init_script(
-            "Object.defineProperty(navigator, 'webdriver', { get: () => undefined });"
-        )
-        page.on("response", handle_response)
-
-        print("載入頁面，等待預計發行 API 回應...")
-        page.goto(url, timeout=30000, wait_until="networkidle")
-        page.wait_for_timeout(3000)
-        browser.close()
+    for name in ["GetRecentlyListed", "GetRecentlyEffectively", "GetBoardAnnouncement"]:
+        url = f"https://cbas16889.pscnet.com.tw/api/CbasQuote/{name}"
+        try:
+            r = requests.get(url, headers=headers, verify=False, timeout=15)
+            if r.status_code == 200:
+                result = r.json().get("result", [])
+                if isinstance(result, list):
+                    apis[name] = result
+                    print(f"  [獲取成功] {name} ({len(result)} 筆)")
+        except Exception as e:
+            print(f"  [獲取失敗] {name}: {e}")
 
     output_rows = []
 

@@ -12,6 +12,9 @@ import subprocess
 import datetime
 from zoneinfo import ZoneInfo
 
+if sys.stdout and hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
 TZ_TW = ZoneInfo('Asia/Taipei')
 REPO_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -63,6 +66,18 @@ SCRIPTS = [
         "file": "update_active_etf.py",
         "json": "active_etf_holdings.json",
         "desc": "Goal Star 主動型 ETF 持股"
+    },
+    {
+        "name": "兩週內近期法說會",
+        "file": "update_earnings_call.py",
+        "json": "近期法說會.csv",
+        "desc": "公開資訊觀測站法說會名單"
+    },
+    {
+        "name": "可轉換公司債 (CB)",
+        "file": "update_cb.py",
+        "json": "近期發行CB.csv",
+        "desc": "近期發行與低於轉換價 CB 名單"
     }
 ]
 
@@ -71,6 +86,10 @@ def get_json_info(json_name):
     if not os.path.exists(path):
         return "N/A", "不存在"
     try:
+        if json_name.endswith('.csv'):
+            with open(path, "r", encoding="utf-8-sig") as f:
+                lines = [l for l in f if l.strip()]
+            return f"{max(0, len(lines)-1)} 筆", "CSV"
         with open(path, "r", encoding="utf-8") as f:
             d = json.load(f)
         trade_date = d.get("tradeDate") or d.get("date") or "N/A"
@@ -100,7 +119,8 @@ def run_single_script(item, full_scan=False):
             cmd,
             cwd=REPO_DIR,
             capture_output=True,
-            text=True
+            encoding='utf-8',
+            errors='replace'
         )
         elapsed = round(time.time() - t0, 1)
         if proc.returncode == 0:
@@ -127,8 +147,8 @@ def main():
     total_start = time.time()
     results_map = {}
 
-    print(f"⚡ 啟動並行加速引擎 (8 Workers 全並行) 同時爬取 8 大模組...")
-    with ThreadPoolExecutor(max_workers=8) as executor:
+    print(f"⚡ 啟動並行加速引擎 (10 Workers 全並行) 同時爬取 10 大模組...")
+    with ThreadPoolExecutor(max_workers=10) as executor:
         futures = {executor.submit(run_single_script, item, full_scan): item for item in SCRIPTS}
         for future in as_completed(futures):
             item, res = future.result()
@@ -140,7 +160,7 @@ def main():
     print("\n" + "=" * 70)
     print(f"📊 執行摘要報告 (總耗時: {total_elapsed} 秒)")
     print("=" * 70)
-    print(f"{'任務名稱':<22} {'狀態':<12} {'耗時':<8} {'產出交易日':<12} {'JSON 檔案'}")
+    print(f"{'任務名稱':<22} {'狀態':<12} {'耗時':<8} {'產出交易日':<12} {'產出檔案'}")
     print("-" * 70)
     for res, item in zip(results, SCRIPTS):
         name, file, status, elapsed, t_date = res
@@ -151,6 +171,9 @@ def main():
         print("\n📤 準備推送所有產出資料至 GitHub...")
         try:
             files_to_add = [item["json"] for item in SCRIPTS if os.path.exists(os.path.join(REPO_DIR, item["json"]))]
+            for extra in ["目前股價低於CB轉換價.csv", "pledge_events_cache.json", "pledge_candidates_cache.json"]:
+                if os.path.exists(os.path.join(REPO_DIR, extra)) and extra not in files_to_add:
+                    files_to_add.append(extra)
             subprocess.run(["git", "add"] + files_to_add, cwd=REPO_DIR, check=True)
             status_out = subprocess.check_output(["git", "status", "--porcelain"], cwd=REPO_DIR).decode("utf-8")
             if any(f in status_out for f in files_to_add):

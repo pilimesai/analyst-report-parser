@@ -2267,6 +2267,11 @@
 
 
             <div class="input-group">
+                <label>兩週內近期法說會</label>
+                <div style="font-size: 0.74rem; color: var(--text-secondary); margin-top: 2px;">由「一鍵抓取所有資料」自動更新</div>
+            </div>
+
+            <div class="input-group">
                 <label>合約負債新高</label>
                 <div style="font-size: 0.74rem; color: var(--text-secondary); margin-top: 2px;">由「一鍵抓取所有資料」自動更新</div>
             </div>
@@ -4016,7 +4021,7 @@
                         } else if (elapsed < 30) {
                             statusEl.innerHTML = `☁️ 雲端虛擬機排隊與環境初始化中 (已執行 ${elapsed} 秒)...`;
                         } else if (elapsed < 85) {
-                            statusEl.innerHTML = `🚀 8 大台股模組全並行爬取中 (已執行 ${elapsed} 秒，全流程預估約 1.5 ~ 2 分鐘)...`;
+                            statusEl.innerHTML = `🚀 10 大台股模組全並行爬取中（含法說會與可轉債，已執行 ${elapsed} 秒）...`;
                         } else {
                             statusEl.innerHTML = `📦 爬蟲已完成，正在推播更新至 GitHub 並載入數據 (已執行 ${elapsed} 秒)...`;
                         }
@@ -4070,7 +4075,10 @@
                 await fetchSectorStrengthFromGithub(true);
                 await fetchContractLiabilitiesFromGithub(true);
                 await fetchSectorCapitalFlowFromGithub(true);
-                await fetchStockPledgeFromGithub(true);
+                await fetchStockPledgeFromGithub(true);
+                await fetchEarningsCallFromGithub(true);
+                await fetchCBFromGithub(true);
+                await fetchCbBelowConvFromGithub(true);
                 try { await fetchGoalStarActiveFunds(); } catch(e) {}
 
                 if (statusEl) statusEl.innerHTML = '✅ 雲端現場抓取全量完成！最新台股盤後數據已同步呈現在畫面上！';
