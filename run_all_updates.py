@@ -127,8 +127,8 @@ def main():
     total_start = time.time()
     results_map = {}
 
-    print(f"⚡ 啟動並行加速引擎 (3 Workers) 同時爬取 8 大模組...")
-    with ThreadPoolExecutor(max_workers=3) as executor:
+    print(f"⚡ 啟動並行加速引擎 (8 Workers 全並行) 同時爬取 8 大模組...")
+    with ThreadPoolExecutor(max_workers=8) as executor:
         futures = {executor.submit(run_single_script, item, full_scan): item for item in SCRIPTS}
         for future in as_completed(futures):
             item, res = future.result()

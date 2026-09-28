@@ -4010,7 +4010,17 @@
 
                 while ((Date.now() - startTime) < maxWaitSec * 1000) {
                     const elapsed = Math.round((Date.now() - startTime) / 1000);
-                    if (statusEl) statusEl.innerHTML = `☁️ GitHub 雲端電腦現場爬取中... (已執行 ${elapsed} 秒，${isFullScan ? "8 大模組＋全市場質押深度巡檢約需 2~4 分鐘" : "8 大模組約需 40~80 秒"})`;
+                    if (statusEl) {
+                        if (isFullScan) {
+                            statusEl.innerHTML = `⚙️ 全市場質押深度巡檢中 (已執行 ${elapsed} 秒，1,800+ 檔地毯式巡檢約需 2~4 分鐘)...`;
+                        } else if (elapsed < 30) {
+                            statusEl.innerHTML = `☁️ 雲端虛擬機排隊與環境初始化中 (已執行 ${elapsed} 秒)...`;
+                        } else if (elapsed < 85) {
+                            statusEl.innerHTML = `🚀 8 大台股模組全並行爬取中 (已執行 ${elapsed} 秒，全流程預估約 1.5 ~ 2 分鐘)...`;
+                        } else {
+                            statusEl.innerHTML = `📦 爬蟲已完成，正在推播更新至 GitHub 並載入數據 (已執行 ${elapsed} 秒)...`;
+                        }
+                    }
 
                     try {
                         const runsRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/runs?per_page=5`, {
