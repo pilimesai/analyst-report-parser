@@ -1,7 +1,7 @@
 {
-  "updateTime": "2026-09-28T22:38:36.047744+08:00",
+  "updateTime": "2026-09-29T03:36:09.883169+08:00",
   "tradeDate": "2026-09-24",
-  "totalCount": 23,
+  "totalCount": 15,
   "conditions": [
     "[日] 成交量大於 2000 張 (>= 2000 張)",
     "[日] 成交金額大於 0.5 億 (>= 5000 萬元)",
@@ -48,7 +48,7 @@
       "ma10w_vol_lots": 2924,
       "vol_multiple": 10.94,
       "vol_week_multiple": 14.81,
-      "rank": 3
+      "rank": 2
     },
     {
       "market": "twse",
@@ -68,7 +68,7 @@
       "ma10w_vol_lots": 647,
       "vol_multiple": 10.82,
       "vol_week_multiple": 11.06,
-      "rank": 4
+      "rank": 3
     },
     {
       "market": "twse",
@@ -88,7 +88,7 @@
       "ma10w_vol_lots": 2469,
       "vol_multiple": 9.82,
       "vol_week_multiple": 3.13,
-      "rank": 5
+      "rank": 4
     },
     {
       "market": "twse",
@@ -108,7 +108,7 @@
       "ma10w_vol_lots": 420,
       "vol_multiple": 9.36,
       "vol_week_multiple": 8.46,
-      "rank": 6
+      "rank": 5
     },
     {
       "market": "twse",
@@ -128,7 +128,7 @@
       "ma10w_vol_lots": 4387,
       "vol_multiple": 5.9,
       "vol_week_multiple": 10.87,
-      "rank": 8
+      "rank": 6
     },
     {
       "market": "twse",
@@ -148,7 +148,7 @@
       "ma10w_vol_lots": 2058,
       "vol_multiple": 4.99,
       "vol_week_multiple": 1.81,
-      "rank": 10
+      "rank": 7
     },
     {
       "market": "twse",
@@ -168,7 +168,7 @@
       "ma10w_vol_lots": 1367,
       "vol_multiple": 4.53,
       "vol_week_multiple": 6.29,
-      "rank": 12
+      "rank": 8
     },
     {
       "market": "twse",
@@ -188,7 +188,7 @@
       "ma10w_vol_lots": 3292,
       "vol_multiple": 4.1,
       "vol_week_multiple": 2.21,
-      "rank": 15
+      "rank": 9
     },
     {
       "market": "twse",
@@ -208,7 +208,7 @@
       "ma10w_vol_lots": 886,
       "vol_multiple": 3.75,
       "vol_week_multiple": 6.76,
-      "rank": 16
+      "rank": 10
     },
     {
       "market": "twse",
@@ -228,7 +228,7 @@
       "ma10w_vol_lots": 1752,
       "vol_multiple": 3.65,
       "vol_week_multiple": 4.0,
-      "rank": 18
+      "rank": 11
     },
     {
       "market": "twse",
@@ -248,7 +248,7 @@
       "ma10w_vol_lots": 14381,
       "vol_multiple": 3.55,
       "vol_week_multiple": 2.88,
-      "rank": 19
+      "rank": 12
     },
     {
       "market": "twse",
@@ -268,7 +268,7 @@
       "ma10w_vol_lots": 1639,
       "vol_multiple": 3.47,
       "vol_week_multiple": 3.96,
-      "rank": 20
+      "rank": 13
     },
     {
       "market": "twse",
@@ -288,7 +288,7 @@
       "ma10w_vol_lots": 4295,
       "vol_multiple": 3.18,
       "vol_week_multiple": 3.49,
-      "rank": 21
+      "rank": 14
     },
     {
       "market": "twse",
@@ -308,171 +308,10 @@
       "ma10w_vol_lots": 2400,
       "vol_multiple": 3.01,
       "vol_week_multiple": 7.46,
-      "rank": 23
+      "rank": 15
     }
   ],
-  "tpex": [
-    {
-      "market": "tpex",
-      "code": "3317",
-      "name": "尼克森",
-      "volume_shares": 15975000,
-      "volume_lots": 15975,
-      "trade_value": 1099723900,
-      "trade_value_yi": 11.0,
-      "open_price": 64.1,
-      "close_price": 68.3,
-      "change": 1.8,
-      "transaction": 10634,
-      "date": "2026-09-24",
-      "today_vol_lots": 15986,
-      "ma10_vol_lots": 1387,
-      "ma10w_vol_lots": 1114,
-      "vol_multiple": 11.53,
-      "vol_week_multiple": 14.35,
-      "rank": 2
-    },
-    {
-      "market": "tpex",
-      "code": "6693",
-      "name": "廣閎科",
-      "volume_shares": 7507000,
-      "volume_lots": 7507,
-      "trade_value": 1525145500,
-      "trade_value_yi": 15.25,
-      "open_price": 201.5,
-      "close_price": 209.5,
-      "change": 12.5,
-      "transaction": 6051,
-      "date": "2026-09-24",
-      "today_vol_lots": 7533,
-      "ma10_vol_lots": 1186,
-      "ma10w_vol_lots": 1054,
-      "vol_multiple": 6.35,
-      "vol_week_multiple": 7.14,
-      "rank": 7
-    },
-    {
-      "market": "tpex",
-      "code": "6122",
-      "name": "擎邦",
-      "volume_shares": 2682000,
-      "volume_lots": 2682,
-      "trade_value": 151665500,
-      "trade_value_yi": 1.52,
-      "open_price": 54.2,
-      "close_price": 58.2,
-      "change": 3.0,
-      "transaction": 1795,
-      "date": "2026-09-24",
-      "today_vol_lots": 2691,
-      "ma10_vol_lots": 523,
-      "ma10w_vol_lots": 350,
-      "vol_multiple": 5.14,
-      "vol_week_multiple": 7.67,
-      "rank": 9
-    },
-    {
-      "market": "tpex",
-      "code": "3552",
-      "name": "同致",
-      "volume_shares": 3275000,
-      "volume_lots": 3275,
-      "trade_value": 146486350,
-      "trade_value_yi": 1.46,
-      "open_price": 43.5,
-      "close_price": 45.4,
-      "change": 2.35,
-      "transaction": 2255,
-      "date": "2026-09-24",
-      "today_vol_lots": 3278,
-      "ma10_vol_lots": 720,
-      "ma10w_vol_lots": 195,
-      "vol_multiple": 4.55,
-      "vol_week_multiple": 16.77,
-      "rank": 11
-    },
-    {
-      "market": "tpex",
-      "code": "6643",
-      "name": "M31",
-      "volume_shares": 3032000,
-      "volume_lots": 3032,
-      "trade_value": 1557355000,
-      "trade_value_yi": 15.57,
-      "open_price": 471.0,
-      "close_price": 515.0,
-      "change": 38.5,
-      "transaction": 2542,
-      "date": "2026-09-24",
-      "today_vol_lots": 3036,
-      "ma10_vol_lots": 680,
-      "ma10w_vol_lots": 459,
-      "vol_multiple": 4.46,
-      "vol_week_multiple": 6.61,
-      "rank": 13
-    },
-    {
-      "market": "tpex",
-      "code": "8040",
-      "name": "九暘",
-      "volume_shares": 10470000,
-      "volume_lots": 10470,
-      "trade_value": 990622300,
-      "trade_value_yi": 9.91,
-      "open_price": 92.3,
-      "close_price": 94.5,
-      "change": 3.4,
-      "transaction": 8061,
-      "date": "2026-09-24",
-      "today_vol_lots": 10485,
-      "ma10_vol_lots": 2370,
-      "ma10w_vol_lots": 936,
-      "vol_multiple": 4.42,
-      "vol_week_multiple": 11.19,
-      "rank": 14
-    },
-    {
-      "market": "tpex",
-      "code": "3293",
-      "name": "鈊象",
-      "volume_shares": 5224000,
-      "volume_lots": 5224,
-      "trade_value": 3969802000,
-      "trade_value_yi": 39.7,
-      "open_price": 734.0,
-      "close_price": 761.0,
-      "change": 32.0,
-      "transaction": 4013,
-      "date": "2026-09-24",
-      "today_vol_lots": 5225,
-      "ma10_vol_lots": 1409,
-      "ma10w_vol_lots": 2274,
-      "vol_multiple": 3.71,
-      "vol_week_multiple": 2.3,
-      "rank": 17
-    },
-    {
-      "market": "tpex",
-      "code": "7792",
-      "name": "安葆",
-      "volume_shares": 2768000,
-      "volume_lots": 2768,
-      "trade_value": 1206636500,
-      "trade_value_yi": 12.07,
-      "open_price": 415.0,
-      "close_price": 435.5,
-      "change": 20.0,
-      "transaction": 2416,
-      "date": "2026-09-24",
-      "today_vol_lots": 2771,
-      "ma10_vol_lots": 890,
-      "ma10w_vol_lots": 402,
-      "vol_multiple": 3.11,
-      "vol_week_multiple": 6.88,
-      "rank": 22
-    }
-  ],
+  "tpex": [],
   "stocks": [
     {
       "market": "twse",
@@ -495,26 +334,6 @@
       "rank": 1
     },
     {
-      "market": "tpex",
-      "code": "3317",
-      "name": "尼克森",
-      "volume_shares": 15975000,
-      "volume_lots": 15975,
-      "trade_value": 1099723900,
-      "trade_value_yi": 11.0,
-      "open_price": 64.1,
-      "close_price": 68.3,
-      "change": 1.8,
-      "transaction": 10634,
-      "date": "2026-09-24",
-      "today_vol_lots": 15986,
-      "ma10_vol_lots": 1387,
-      "ma10w_vol_lots": 1114,
-      "vol_multiple": 11.53,
-      "vol_week_multiple": 14.35,
-      "rank": 2
-    },
-    {
       "market": "twse",
       "code": "2342",
       "name": "茂矽",
@@ -532,7 +351,7 @@
       "ma10w_vol_lots": 2924,
       "vol_multiple": 10.94,
       "vol_week_multiple": 14.81,
-      "rank": 3
+      "rank": 2
     },
     {
       "market": "twse",
@@ -552,7 +371,7 @@
       "ma10w_vol_lots": 647,
       "vol_multiple": 10.82,
       "vol_week_multiple": 11.06,
-      "rank": 4
+      "rank": 3
     },
     {
       "market": "twse",
@@ -572,7 +391,7 @@
       "ma10w_vol_lots": 2469,
       "vol_multiple": 9.82,
       "vol_week_multiple": 3.13,
-      "rank": 5
+      "rank": 4
     },
     {
       "market": "twse",
@@ -592,27 +411,7 @@
       "ma10w_vol_lots": 420,
       "vol_multiple": 9.36,
       "vol_week_multiple": 8.46,
-      "rank": 6
-    },
-    {
-      "market": "tpex",
-      "code": "6693",
-      "name": "廣閎科",
-      "volume_shares": 7507000,
-      "volume_lots": 7507,
-      "trade_value": 1525145500,
-      "trade_value_yi": 15.25,
-      "open_price": 201.5,
-      "close_price": 209.5,
-      "change": 12.5,
-      "transaction": 6051,
-      "date": "2026-09-24",
-      "today_vol_lots": 7533,
-      "ma10_vol_lots": 1186,
-      "ma10w_vol_lots": 1054,
-      "vol_multiple": 6.35,
-      "vol_week_multiple": 7.14,
-      "rank": 7
+      "rank": 5
     },
     {
       "market": "twse",
@@ -632,27 +431,7 @@
       "ma10w_vol_lots": 4387,
       "vol_multiple": 5.9,
       "vol_week_multiple": 10.87,
-      "rank": 8
-    },
-    {
-      "market": "tpex",
-      "code": "6122",
-      "name": "擎邦",
-      "volume_shares": 2682000,
-      "volume_lots": 2682,
-      "trade_value": 151665500,
-      "trade_value_yi": 1.52,
-      "open_price": 54.2,
-      "close_price": 58.2,
-      "change": 3.0,
-      "transaction": 1795,
-      "date": "2026-09-24",
-      "today_vol_lots": 2691,
-      "ma10_vol_lots": 523,
-      "ma10w_vol_lots": 350,
-      "vol_multiple": 5.14,
-      "vol_week_multiple": 7.67,
-      "rank": 9
+      "rank": 6
     },
     {
       "market": "twse",
@@ -672,27 +451,7 @@
       "ma10w_vol_lots": 2058,
       "vol_multiple": 4.99,
       "vol_week_multiple": 1.81,
-      "rank": 10
-    },
-    {
-      "market": "tpex",
-      "code": "3552",
-      "name": "同致",
-      "volume_shares": 3275000,
-      "volume_lots": 3275,
-      "trade_value": 146486350,
-      "trade_value_yi": 1.46,
-      "open_price": 43.5,
-      "close_price": 45.4,
-      "change": 2.35,
-      "transaction": 2255,
-      "date": "2026-09-24",
-      "today_vol_lots": 3278,
-      "ma10_vol_lots": 720,
-      "ma10w_vol_lots": 195,
-      "vol_multiple": 4.55,
-      "vol_week_multiple": 16.77,
-      "rank": 11
+      "rank": 7
     },
     {
       "market": "twse",
@@ -712,47 +471,7 @@
       "ma10w_vol_lots": 1367,
       "vol_multiple": 4.53,
       "vol_week_multiple": 6.29,
-      "rank": 12
-    },
-    {
-      "market": "tpex",
-      "code": "6643",
-      "name": "M31",
-      "volume_shares": 3032000,
-      "volume_lots": 3032,
-      "trade_value": 1557355000,
-      "trade_value_yi": 15.57,
-      "open_price": 471.0,
-      "close_price": 515.0,
-      "change": 38.5,
-      "transaction": 2542,
-      "date": "2026-09-24",
-      "today_vol_lots": 3036,
-      "ma10_vol_lots": 680,
-      "ma10w_vol_lots": 459,
-      "vol_multiple": 4.46,
-      "vol_week_multiple": 6.61,
-      "rank": 13
-    },
-    {
-      "market": "tpex",
-      "code": "8040",
-      "name": "九暘",
-      "volume_shares": 10470000,
-      "volume_lots": 10470,
-      "trade_value": 990622300,
-      "trade_value_yi": 9.91,
-      "open_price": 92.3,
-      "close_price": 94.5,
-      "change": 3.4,
-      "transaction": 8061,
-      "date": "2026-09-24",
-      "today_vol_lots": 10485,
-      "ma10_vol_lots": 2370,
-      "ma10w_vol_lots": 936,
-      "vol_multiple": 4.42,
-      "vol_week_multiple": 11.19,
-      "rank": 14
+      "rank": 8
     },
     {
       "market": "twse",
@@ -772,7 +491,7 @@
       "ma10w_vol_lots": 3292,
       "vol_multiple": 4.1,
       "vol_week_multiple": 2.21,
-      "rank": 15
+      "rank": 9
     },
     {
       "market": "twse",
@@ -792,27 +511,7 @@
       "ma10w_vol_lots": 886,
       "vol_multiple": 3.75,
       "vol_week_multiple": 6.76,
-      "rank": 16
-    },
-    {
-      "market": "tpex",
-      "code": "3293",
-      "name": "鈊象",
-      "volume_shares": 5224000,
-      "volume_lots": 5224,
-      "trade_value": 3969802000,
-      "trade_value_yi": 39.7,
-      "open_price": 734.0,
-      "close_price": 761.0,
-      "change": 32.0,
-      "transaction": 4013,
-      "date": "2026-09-24",
-      "today_vol_lots": 5225,
-      "ma10_vol_lots": 1409,
-      "ma10w_vol_lots": 2274,
-      "vol_multiple": 3.71,
-      "vol_week_multiple": 2.3,
-      "rank": 17
+      "rank": 10
     },
     {
       "market": "twse",
@@ -832,7 +531,7 @@
       "ma10w_vol_lots": 1752,
       "vol_multiple": 3.65,
       "vol_week_multiple": 4.0,
-      "rank": 18
+      "rank": 11
     },
     {
       "market": "twse",
@@ -852,7 +551,7 @@
       "ma10w_vol_lots": 14381,
       "vol_multiple": 3.55,
       "vol_week_multiple": 2.88,
-      "rank": 19
+      "rank": 12
     },
     {
       "market": "twse",
@@ -872,7 +571,7 @@
       "ma10w_vol_lots": 1639,
       "vol_multiple": 3.47,
       "vol_week_multiple": 3.96,
-      "rank": 20
+      "rank": 13
     },
     {
       "market": "twse",
@@ -892,27 +591,7 @@
       "ma10w_vol_lots": 4295,
       "vol_multiple": 3.18,
       "vol_week_multiple": 3.49,
-      "rank": 21
-    },
-    {
-      "market": "tpex",
-      "code": "7792",
-      "name": "安葆",
-      "volume_shares": 2768000,
-      "volume_lots": 2768,
-      "trade_value": 1206636500,
-      "trade_value_yi": 12.07,
-      "open_price": 415.0,
-      "close_price": 435.5,
-      "change": 20.0,
-      "transaction": 2416,
-      "date": "2026-09-24",
-      "today_vol_lots": 2771,
-      "ma10_vol_lots": 890,
-      "ma10w_vol_lots": 402,
-      "vol_multiple": 3.11,
-      "vol_week_multiple": 6.88,
-      "rank": 22
+      "rank": 14
     },
     {
       "market": "twse",
@@ -932,7 +611,7 @@
       "ma10w_vol_lots": 2400,
       "vol_multiple": 3.01,
       "vol_week_multiple": 7.46,
-      "rank": 23
+      "rank": 15
     }
   ]
 }
