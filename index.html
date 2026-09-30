@@ -7157,7 +7157,6 @@ ${text.slice(0, 30000)}`;
         function formatTradeValue(v) {
             if (!v || isNaN(v)) return '—';
             const n = Number(v);
-            if (n >= 1e9) return (n / 1e9).toFixed(2) + ' 億';
             if (n >= 1e8) return (n / 1e8).toFixed(2) + ' 億';
             if (n >= 1e6) return (n / 1e6).toFixed(2) + ' 百萬';
             return n.toLocaleString();
