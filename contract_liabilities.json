@@ -1,8 +1,8 @@
 {
-  "updateTime": "2026-09-30T02:10:54.397509+08:00",
-  "tradeDate": "2026-09-29",
-  "totalScanned": 305,
-  "totalMatched": 45,
+  "updateTime": "2026-09-30T23:11:36.296407+08:00",
+  "tradeDate": "2026-09-30",
+  "totalScanned": 339,
+  "totalMatched": 48,
   "criteria": [
     "[日] 股本(億)小於 20 億",
     "[季] 合約負債大於近 4 季平均",
@@ -11,53 +11,20 @@
     "[日] 成交金額(元)大於 0.5 億元"
   ],
   "summary": {
-    "avg_qoq_growth_pct": 265.6,
+    "avg_qoq_growth_pct": 247.8,
     "max_contract_liab_code": "3443",
     "max_contract_liab_name": "創意",
     "max_contract_liab_yi": 132.15
   },
   "stocks": [
     {
-      "code": "3443",
-      "name": "創意",
-      "market": "twse",
-      "close": 7925.0,
-      "change": -600.0,
-      "capital_yi": 13.4,
-      "trade_val_yi": 87.89,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 132.15,
-      "prev_contract_liab_yi": 81.32,
-      "avg4_contract_liab_yi": 88.13,
-      "qoq_growth_pct": 62.5,
-      "avg_growth_pct": 49.9,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 65.87
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 73.19
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 81.32
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 132.15
-        }
-      ]
-    },
-    {
       "code": "6187",
       "name": "萬潤",
       "market": "tpex",
       "close": 1310.0,
-      "change": 115.0,
+      "change": 0.0,
       "capital_yi": 9.83,
-      "trade_val_yi": 43.14,
+      "trade_val_yi": 66.03,
       "latest_report_date": "2026-06-30",
       "latest_contract_liab_yi": 2.99,
       "prev_contract_liab_yi": 0.74,
@@ -84,13 +51,46 @@
       ]
     },
     {
+      "code": "3443",
+      "name": "創意",
+      "market": "twse",
+      "close": 8040.0,
+      "change": 115.0,
+      "capital_yi": 13.4,
+      "trade_val_yi": 53.48,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 132.15,
+      "prev_contract_liab_yi": 81.32,
+      "avg4_contract_liab_yi": 88.13,
+      "qoq_growth_pct": 62.5,
+      "avg_growth_pct": 49.9,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 65.87
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 73.19
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 81.32
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 132.15
+        }
+      ]
+    },
+    {
       "code": "3026",
       "name": "禾伸堂",
       "market": "twse",
-      "close": 796.0,
-      "change": -14.0,
+      "close": 791.0,
+      "change": -5.0,
       "capital_yi": 16.59,
-      "trade_val_yi": 41.13,
+      "trade_val_yi": 50.52,
       "latest_report_date": "2026-06-30",
       "latest_contract_liab_yi": 1.25,
       "prev_contract_liab_yi": 0.61,
@@ -120,10 +120,10 @@
       "code": "6515",
       "name": "穎崴",
       "market": "twse",
-      "close": 5675.0,
-      "change": -175.0,
+      "close": 5930.0,
+      "change": 255.0,
       "capital_yi": 3.64,
-      "trade_val_yi": 21.94,
+      "trade_val_yi": 27.99,
       "latest_report_date": "2026-06-30",
       "latest_contract_liab_yi": 4.41,
       "prev_contract_liab_yi": 2.93,
@@ -153,10 +153,10 @@
       "code": "4991",
       "name": "環宇-KY",
       "market": "tpex",
-      "close": 474.5,
-      "change": 11.0,
+      "close": 488.0,
+      "change": 13.5,
       "capital_yi": 12.14,
-      "trade_val_yi": 19.86,
+      "trade_val_yi": 24.26,
       "latest_report_date": "2026-06-30",
       "latest_contract_liab_yi": 0.71,
       "prev_contract_liab_yi": 0.45,
@@ -183,112 +183,13 @@
       ]
     },
     {
-      "code": "6933",
-      "name": "AMAX-KY",
-      "market": "twse",
-      "close": 378.0,
-      "change": -7.0,
-      "capital_yi": 4.25,
-      "trade_val_yi": 15.91,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 8.27,
-      "prev_contract_liab_yi": 4.97,
-      "avg4_contract_liab_yi": 5.43,
-      "qoq_growth_pct": 66.4,
-      "avg_growth_pct": 52.2,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 4.03
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 4.47
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 4.97
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 8.27
-        }
-      ]
-    },
-    {
-      "code": "6693",
-      "name": "廣閎科",
-      "market": "tpex",
-      "close": 218.0,
-      "change": 8.5,
-      "capital_yi": 4.57,
-      "trade_val_yi": 8.22,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.09,
-      "prev_contract_liab_yi": 0.01,
-      "avg4_contract_liab_yi": 0.03,
-      "qoq_growth_pct": 628.8,
-      "avg_growth_pct": 191.6,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.01
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 0.01
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 0.01
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 0.09
-        }
-      ]
-    },
-    {
-      "code": "3680",
-      "name": "家登",
-      "market": "tpex",
-      "close": 548.0,
-      "change": 6.0,
-      "capital_yi": 9.62,
-      "trade_val_yi": 5.58,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 7.37,
-      "prev_contract_liab_yi": 3.52,
-      "avg4_contract_liab_yi": 4.23,
-      "qoq_growth_pct": 109.5,
-      "avg_growth_pct": 74.4,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 2.85
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 3.17
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 3.52
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 7.37
-        }
-      ]
-    },
-    {
       "code": "4551",
       "name": "智伸科",
       "market": "twse",
-      "close": 179.5,
-      "change": 16.0,
+      "close": 174.5,
+      "change": -5.0,
       "capital_yi": 11.52,
-      "trade_val_yi": 4.7,
+      "trade_val_yi": 9.65,
       "latest_report_date": "2026-06-30",
       "latest_contract_liab_yi": 0.02,
       "prev_contract_liab_yi": 0.02,
@@ -315,68 +216,35 @@
       ]
     },
     {
-      "code": "6155",
-      "name": "鈞寶",
+      "code": "6933",
+      "name": "AMAX-KY",
       "market": "twse",
-      "close": 64.0,
-      "change": 3.8,
-      "capital_yi": 8.8,
-      "trade_val_yi": 4.67,
+      "close": 371.0,
+      "change": -7.0,
+      "capital_yi": 4.25,
+      "trade_val_yi": 9.22,
       "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.01,
-      "prev_contract_liab_yi": 0.01,
-      "avg4_contract_liab_yi": 0.01,
-      "qoq_growth_pct": 96.2,
-      "avg_growth_pct": 76.9,
+      "latest_contract_liab_yi": 8.27,
+      "prev_contract_liab_yi": 4.97,
+      "avg4_contract_liab_yi": 5.43,
+      "qoq_growth_pct": 66.4,
+      "avg_growth_pct": 52.2,
       "history_4q": [
         {
           "date": "2025-09-30",
-          "value_yi": 0.0
+          "value_yi": 4.03
         },
         {
           "date": "2025-12-31",
-          "value_yi": 0.01
+          "value_yi": 4.47
         },
         {
           "date": "2026-03-31",
-          "value_yi": 0.01
+          "value_yi": 4.97
         },
         {
           "date": "2026-06-30",
-          "value_yi": 0.01
-        }
-      ]
-    },
-    {
-      "code": "4566",
-      "name": "時碩工業",
-      "market": "twse",
-      "close": 73.2,
-      "change": -1.1,
-      "capital_yi": 11.04,
-      "trade_val_yi": 4.59,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.38,
-      "prev_contract_liab_yi": 0.19,
-      "avg4_contract_liab_yi": 0.24,
-      "qoq_growth_pct": 97.2,
-      "avg_growth_pct": 55.8,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.24
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 0.16
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 0.19
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 0.38
+          "value_yi": 8.27
         }
       ]
     },
@@ -384,10 +252,10 @@
       "code": "6290",
       "name": "良維",
       "market": "tpex",
-      "close": 269.5,
-      "change": -4.5,
+      "close": 280.0,
+      "change": 10.5,
       "capital_yi": 16.97,
-      "trade_val_yi": 4.38,
+      "trade_val_yi": 9.22,
       "latest_report_date": "2026-06-30",
       "latest_contract_liab_yi": 0.1,
       "prev_contract_liab_yi": 0.02,
@@ -414,134 +282,68 @@
       ]
     },
     {
-      "code": "8096",
-      "name": "擎亞",
+      "code": "3680",
+      "name": "家登",
       "market": "tpex",
-      "close": 88.7,
-      "change": 4.1,
-      "capital_yi": 14.93,
-      "trade_val_yi": 3.99,
+      "close": 555.0,
+      "change": 7.0,
+      "capital_yi": 9.62,
+      "trade_val_yi": 8.75,
       "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 62.76,
-      "prev_contract_liab_yi": 11.12,
-      "avg4_contract_liab_yi": 23.22,
-      "qoq_growth_pct": 464.6,
-      "avg_growth_pct": 170.3,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 9.0
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 10.0
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 11.12
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 62.76
-        }
-      ]
-    },
-    {
-      "code": "6937",
-      "name": "天虹",
-      "market": "twse",
-      "close": 308.0,
-      "change": 7.5,
-      "capital_yi": 6.77,
-      "trade_val_yi": 3.65,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.8,
-      "prev_contract_liab_yi": 0.24,
-      "avg4_contract_liab_yi": 0.37,
-      "qoq_growth_pct": 227.3,
-      "avg_growth_pct": 118.8,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.2
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 0.22
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 0.24
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 0.8
-        }
-      ]
-    },
-    {
-      "code": "6291",
-      "name": "沛亨",
-      "market": "tpex",
-      "close": 499.0,
-      "change": 15.0,
-      "capital_yi": 4.2,
-      "trade_val_yi": 3.53,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.32,
-      "prev_contract_liab_yi": 0.15,
-      "avg4_contract_liab_yi": 0.18,
-      "qoq_growth_pct": 109.4,
+      "latest_contract_liab_yi": 7.37,
+      "prev_contract_liab_yi": 3.52,
+      "avg4_contract_liab_yi": 4.23,
+      "qoq_growth_pct": 109.5,
       "avg_growth_pct": 74.4,
       "history_4q": [
         {
           "date": "2025-09-30",
-          "value_yi": 0.12
+          "value_yi": 2.85
         },
         {
           "date": "2025-12-31",
-          "value_yi": 0.14
+          "value_yi": 3.17
         },
         {
           "date": "2026-03-31",
-          "value_yi": 0.15
+          "value_yi": 3.52
         },
         {
           "date": "2026-06-30",
-          "value_yi": 0.32
+          "value_yi": 7.37
         }
       ]
     },
     {
-      "code": "2221",
-      "name": "大甲",
+      "code": "6693",
+      "name": "廣閎科",
       "market": "tpex",
-      "close": 180.0,
-      "change": 16.0,
-      "capital_yi": 4.23,
-      "trade_val_yi": 3.52,
+      "close": 211.5,
+      "change": -6.5,
+      "capital_yi": 4.57,
+      "trade_val_yi": 6.32,
       "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.07,
-      "prev_contract_liab_yi": 0.0,
-      "avg4_contract_liab_yi": 0.02,
-      "qoq_growth_pct": 1695.9,
-      "avg_growth_pct": 247.6,
+      "latest_contract_liab_yi": 0.09,
+      "prev_contract_liab_yi": 0.01,
+      "avg4_contract_liab_yi": 0.03,
+      "qoq_growth_pct": 628.8,
+      "avg_growth_pct": 191.6,
       "history_4q": [
         {
           "date": "2025-09-30",
-          "value_yi": 0.0
+          "value_yi": 0.01
         },
         {
           "date": "2025-12-31",
-          "value_yi": 0.0
+          "value_yi": 0.01
         },
         {
           "date": "2026-03-31",
-          "value_yi": 0.0
+          "value_yi": 0.01
         },
         {
           "date": "2026-06-30",
-          "value_yi": 0.07
+          "value_yi": 0.09
         }
       ]
     },
@@ -549,10 +351,10 @@
       "code": "3580",
       "name": "友威科",
       "market": "tpex",
-      "close": 111.0,
-      "change": 9.0,
+      "close": 110.5,
+      "change": -0.5,
       "capital_yi": 3.95,
-      "trade_val_yi": 3.5,
+      "trade_val_yi": 5.43,
       "latest_report_date": "2026-06-30",
       "latest_contract_liab_yi": 0.57,
       "prev_contract_liab_yi": 0.27,
@@ -579,52 +381,19 @@
       ]
     },
     {
-      "code": "4961",
-      "name": "天鈺",
-      "market": "twse",
-      "close": 184.5,
-      "change": 4.0,
-      "capital_yi": 12.13,
-      "trade_val_yi": 2.99,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 1.82,
-      "prev_contract_liab_yi": 0.63,
-      "avg4_contract_liab_yi": 0.88,
-      "qoq_growth_pct": 187.2,
-      "avg_growth_pct": 105.8,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.51
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 0.57
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 0.63
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 1.82
-        }
-      ]
-    },
-    {
-      "code": "7717",
-      "name": "萊德光電-KY",
+      "code": "2221",
+      "name": "大甲",
       "market": "tpex",
-      "close": 592.0,
-      "change": -2.0,
-      "capital_yi": 2.48,
-      "trade_val_yi": 2.66,
+      "close": 197.5,
+      "change": 17.5,
+      "capital_yi": 4.23,
+      "trade_val_yi": 5.19,
       "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.06,
+      "latest_contract_liab_yi": 0.07,
       "prev_contract_liab_yi": 0.0,
       "avg4_contract_liab_yi": 0.02,
-      "qoq_growth_pct": 1392.4,
-      "avg_growth_pct": 238.5,
+      "qoq_growth_pct": 1695.9,
+      "avg_growth_pct": 247.6,
       "history_4q": [
         {
           "date": "2025-09-30",
@@ -640,40 +409,40 @@
         },
         {
           "date": "2026-06-30",
-          "value_yi": 0.06
+          "value_yi": 0.07
         }
       ]
     },
     {
-      "code": "6919",
-      "name": "康霈*",
-      "market": "twse",
-      "close": 79.5,
-      "change": -0.6,
-      "capital_yi": 7.79,
-      "trade_val_yi": 2.64,
+      "code": "6291",
+      "name": "沛亨",
+      "market": "tpex",
+      "close": 500.0,
+      "change": 1.0,
+      "capital_yi": 4.2,
+      "trade_val_yi": 4.51,
       "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.13,
-      "prev_contract_liab_yi": 0.08,
-      "avg4_contract_liab_yi": 0.09,
-      "qoq_growth_pct": 57.0,
-      "avg_growth_pct": 46.7,
+      "latest_contract_liab_yi": 0.32,
+      "prev_contract_liab_yi": 0.15,
+      "avg4_contract_liab_yi": 0.18,
+      "qoq_growth_pct": 109.4,
+      "avg_growth_pct": 74.4,
       "history_4q": [
         {
           "date": "2025-09-30",
-          "value_yi": 0.07
+          "value_yi": 0.12
         },
         {
           "date": "2025-12-31",
-          "value_yi": 0.07
+          "value_yi": 0.14
         },
         {
           "date": "2026-03-31",
-          "value_yi": 0.08
+          "value_yi": 0.15
         },
         {
           "date": "2026-06-30",
-          "value_yi": 0.13
+          "value_yi": 0.32
         }
       ]
     },
@@ -681,10 +450,10 @@
       "code": "7711",
       "name": "永擎",
       "market": "twse",
-      "close": 546.0,
-      "change": 4.0,
+      "close": 560.0,
+      "change": 14.0,
       "capital_yi": 7.17,
-      "trade_val_yi": 2.4,
+      "trade_val_yi": 4.5,
       "latest_report_date": "2026-06-30",
       "latest_contract_liab_yi": 13.23,
       "prev_contract_liab_yi": 4.17,
@@ -711,695 +480,35 @@
       ]
     },
     {
-      "code": "8042",
-      "name": "金山電",
-      "market": "tpex",
-      "close": 111.5,
-      "change": -2.5,
-      "capital_yi": 13.15,
-      "trade_val_yi": 2.39,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.04,
-      "prev_contract_liab_yi": 0.01,
-      "avg4_contract_liab_yi": 0.01,
-      "qoq_growth_pct": 455.6,
-      "avg_growth_pct": 168.9,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.01
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 0.01
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 0.01
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 0.04
-        }
-      ]
-    },
-    {
-      "code": "4977",
-      "name": "眾達-KY",
+      "code": "6919",
+      "name": "康霈*",
       "market": "twse",
-      "close": 168.5,
-      "change": 0.0,
-      "capital_yi": 9.1,
-      "trade_val_yi": 2.1,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.11,
-      "prev_contract_liab_yi": 0.06,
-      "avg4_contract_liab_yi": 0.07,
-      "qoq_growth_pct": 74.5,
-      "avg_growth_pct": 56.7,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.05
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 0.06
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 0.06
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 0.11
-        }
-      ]
-    },
-    {
-      "code": "3518",
-      "name": "柏騰",
-      "market": "twse",
-      "close": 37.4,
-      "change": 3.4,
-      "capital_yi": 10.25,
-      "trade_val_yi": 2.09,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.03,
-      "prev_contract_liab_yi": 0.0,
-      "avg4_contract_liab_yi": 0.01,
-      "qoq_growth_pct": 0,
-      "avg_growth_pct": 211.8,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.0
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 0.0
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 0.0
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 0.03
-        }
-      ]
-    },
-    {
-      "code": "3490",
-      "name": "單井",
-      "market": "tpex",
-      "close": 45.1,
-      "change": 0.05,
-      "capital_yi": 5.5,
-      "trade_val_yi": 1.95,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.3,
-      "prev_contract_liab_yi": 0.18,
-      "avg4_contract_liab_yi": 0.2,
-      "qoq_growth_pct": 68.8,
-      "avg_growth_pct": 53.5,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.14
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 0.16
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 0.18
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 0.3
-        }
-      ]
-    },
-    {
-      "code": "6206",
-      "name": "飛捷",
-      "market": "twse",
-      "close": 143.0,
-      "change": 4.0,
-      "capital_yi": 14.31,
-      "trade_val_yi": 1.84,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 1.1,
-      "prev_contract_liab_yi": 0.58,
-      "avg4_contract_liab_yi": 0.67,
-      "qoq_growth_pct": 88.2,
-      "avg_growth_pct": 63.9,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.47
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 0.53
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 0.58
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 1.1
-        }
-      ]
-    },
-    {
-      "code": "4542",
-      "name": "科嶠",
-      "market": "tpex",
-      "close": 339.0,
-      "change": 11.0,
-      "capital_yi": 3.53,
-      "trade_val_yi": 1.75,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 3.82,
-      "prev_contract_liab_yi": 2.46,
-      "avg4_contract_liab_yi": 2.62,
-      "qoq_growth_pct": 55.1,
-      "avg_growth_pct": 45.6,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 1.99
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 2.22
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 2.46
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 3.82
-        }
-      ]
-    },
-    {
-      "code": "3228",
-      "name": "金麗科",
-      "market": "tpex",
-      "close": 180.0,
-      "change": 6.0,
-      "capital_yi": 7.19,
-      "trade_val_yi": 1.64,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.04,
-      "prev_contract_liab_yi": 0.01,
-      "avg4_contract_liab_yi": 0.01,
-      "qoq_growth_pct": 173.5,
-      "avg_growth_pct": 178.0,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.0
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 0.0
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 0.01
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 0.04
-        }
-      ]
-    },
-    {
-      "code": "6438",
-      "name": "迅得",
-      "market": "twse",
-      "close": 162.0,
-      "change": 4.5,
-      "capital_yi": 8.22,
-      "trade_val_yi": 1.63,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 5.86,
-      "prev_contract_liab_yi": 3.64,
-      "avg4_contract_liab_yi": 4.76,
-      "qoq_growth_pct": 61.3,
-      "avg_growth_pct": 23.2,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 5.7
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 3.84
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 3.64
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 5.86
-        }
-      ]
-    },
-    {
-      "code": "2302",
-      "name": "麗正",
-      "market": "twse",
-      "close": 45.3,
-      "change": -0.75,
-      "capital_yi": 16.63,
-      "trade_val_yi": 1.6,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.01,
-      "prev_contract_liab_yi": 0.01,
-      "avg4_contract_liab_yi": 0.01,
-      "qoq_growth_pct": 92.9,
-      "avg_growth_pct": 66.3,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.0
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 0.0
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 0.01
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 0.01
-        }
-      ]
-    },
-    {
-      "code": "6715",
-      "name": "嘉基",
-      "market": "twse",
-      "close": 452.0,
-      "change": -16.5,
-      "capital_yi": 6.83,
-      "trade_val_yi": 1.57,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.3,
-      "prev_contract_liab_yi": 0.17,
-      "avg4_contract_liab_yi": 0.19,
-      "qoq_growth_pct": 78.9,
-      "avg_growth_pct": 59.1,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.14
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 0.15
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 0.17
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 0.3
-        }
-      ]
-    },
-    {
-      "code": "3441",
-      "name": "聯一光電",
-      "market": "tpex",
-      "close": 185.0,
-      "change": 4.0,
-      "capital_yi": 4.0,
-      "trade_val_yi": 1.35,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.03,
-      "prev_contract_liab_yi": 0.02,
-      "avg4_contract_liab_yi": 0.02,
-      "qoq_growth_pct": 97.4,
-      "avg_growth_pct": 68.6,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.01
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 0.01
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 0.02
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 0.03
-        }
-      ]
-    },
-    {
-      "code": "3645",
-      "name": "達邁",
-      "market": "twse",
-      "close": 72.7,
-      "change": -0.6,
-      "capital_yi": 13.68,
-      "trade_val_yi": 1.27,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.02,
-      "prev_contract_liab_yi": 0.0,
-      "avg4_contract_liab_yi": 0.01,
-      "qoq_growth_pct": 684.4,
-      "avg_growth_pct": 197.3,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.0
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 0.0
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 0.0
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 0.02
-        }
-      ]
-    },
-    {
-      "code": "2465",
-      "name": "麗臺",
-      "market": "twse",
-      "close": 91.9,
-      "change": 3.0,
-      "capital_yi": 9.39,
-      "trade_val_yi": 1.13,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 3.03,
-      "prev_contract_liab_yi": 1.52,
-      "avg4_contract_liab_yi": 1.79,
-      "qoq_growth_pct": 99.7,
-      "avg_growth_pct": 69.7,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 1.23
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 1.37
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 1.52
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 3.03
-        }
-      ]
-    },
-    {
-      "code": "8271",
-      "name": "宇瞻",
-      "market": "twse",
-      "close": 199.5,
+      "close": 79.0,
       "change": -0.5,
-      "capital_yi": 12.96,
-      "trade_val_yi": 1.13,
+      "capital_yi": 7.79,
+      "trade_val_yi": 4.17,
       "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 2.74,
-      "prev_contract_liab_yi": 0.82,
-      "avg4_contract_liab_yi": 1.24,
-      "qoq_growth_pct": 235.2,
-      "avg_growth_pct": 121.2,
+      "latest_contract_liab_yi": 0.13,
+      "prev_contract_liab_yi": 0.08,
+      "avg4_contract_liab_yi": 0.09,
+      "qoq_growth_pct": 57.0,
+      "avg_growth_pct": 46.7,
       "history_4q": [
         {
           "date": "2025-09-30",
-          "value_yi": 0.66
+          "value_yi": 0.07
         },
         {
           "date": "2025-12-31",
-          "value_yi": 0.74
+          "value_yi": 0.07
         },
         {
           "date": "2026-03-31",
-          "value_yi": 0.82
+          "value_yi": 0.08
         },
         {
           "date": "2026-06-30",
-          "value_yi": 2.74
-        }
-      ]
-    },
-    {
-      "code": "6245",
-      "name": "立端",
-      "market": "tpex",
-      "close": 88.7,
-      "change": 3.0,
-      "capital_yi": 14.66,
-      "trade_val_yi": 1.07,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 1.99,
-      "prev_contract_liab_yi": 1.18,
-      "avg4_contract_liab_yi": 1.3,
-      "qoq_growth_pct": 68.1,
-      "avg_growth_pct": 53.1,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.96
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 1.07
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 1.18
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 1.99
-        }
-      ]
-    },
-    {
-      "code": "6922",
-      "name": "宸曜",
-      "market": "tpex",
-      "close": 225.0,
-      "change": 13.0,
-      "capital_yi": 2.72,
-      "trade_val_yi": 1.07,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 1.15,
-      "prev_contract_liab_yi": 0.59,
-      "avg4_contract_liab_yi": 0.76,
-      "qoq_growth_pct": 96.0,
-      "avg_growth_pct": 52.3,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.66
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 0.62
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 0.59
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 1.15
-        }
-      ]
-    },
-    {
-      "code": "6491",
-      "name": "晶碩",
-      "market": "twse",
-      "close": 406.0,
-      "change": 4.0,
-      "capital_yi": 7.8,
-      "trade_val_yi": 0.86,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 2.47,
-      "prev_contract_liab_yi": 1.12,
-      "avg4_contract_liab_yi": 1.38,
-      "qoq_growth_pct": 120.5,
-      "avg_growth_pct": 79.5,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.91
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 1.01
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 1.12
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 2.47
-        }
-      ]
-    },
-    {
-      "code": "6679",
-      "name": "鈺太",
-      "market": "tpex",
-      "close": 206.0,
-      "change": 3.5,
-      "capital_yi": 5.5,
-      "trade_val_yi": 0.77,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.04,
-      "prev_contract_liab_yi": 0.01,
-      "avg4_contract_liab_yi": 0.02,
-      "qoq_growth_pct": 227.2,
-      "avg_growth_pct": 77.4,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.02
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 0.02
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 0.01
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 0.04
-        }
-      ]
-    },
-    {
-      "code": "6425",
-      "name": "易發",
-      "market": "tpex",
-      "close": 74.0,
-      "change": 2.9,
-      "capital_yi": 5.14,
-      "trade_val_yi": 0.76,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 1.94,
-      "prev_contract_liab_yi": 0.66,
-      "avg4_contract_liab_yi": 0.93,
-      "qoq_growth_pct": 192.9,
-      "avg_growth_pct": 107.8,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.54
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 0.6
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 0.66
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 1.94
-        }
-      ]
-    },
-    {
-      "code": "6588",
-      "name": "東典光電",
-      "market": "tpex",
-      "close": 107.5,
-      "change": -4.5,
-      "capital_yi": 3.47,
-      "trade_val_yi": 0.76,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.35,
-      "prev_contract_liab_yi": 0.03,
-      "avg4_contract_liab_yi": 0.11,
-      "qoq_growth_pct": 1159.9,
-      "avg_growth_pct": 229.2,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 0.02
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 0.03
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 0.03
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 0.35
-        }
-      ]
-    },
-    {
-      "code": "6903",
-      "name": "巨漢",
-      "market": "tpex",
-      "close": 304.5,
-      "change": -4.5,
-      "capital_yi": 6.67,
-      "trade_val_yi": 0.63,
-      "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 11.76,
-      "prev_contract_liab_yi": 5.06,
-      "avg4_contract_liab_yi": 6.37,
-      "qoq_growth_pct": 132.2,
-      "avg_growth_pct": 84.6,
-      "history_4q": [
-        {
-          "date": "2025-09-30",
-          "value_yi": 4.1
-        },
-        {
-          "date": "2025-12-31",
-          "value_yi": 4.56
-        },
-        {
-          "date": "2026-03-31",
-          "value_yi": 5.06
-        },
-        {
-          "date": "2026-06-30",
-          "value_yi": 11.76
+          "value_yi": 0.13
         }
       ]
     },
@@ -1407,10 +516,10 @@
       "code": "3592",
       "name": "瑞鼎",
       "market": "twse",
-      "close": 225.0,
-      "change": 0.5,
+      "close": 237.5,
+      "change": 12.5,
       "capital_yi": 7.59,
-      "trade_val_yi": 0.58,
+      "trade_val_yi": 4.13,
       "latest_report_date": "2026-06-30",
       "latest_contract_liab_yi": 1.42,
       "prev_contract_liab_yi": 0.32,
@@ -1437,19 +546,184 @@
       ]
     },
     {
-      "code": "8438",
-      "name": "昶昕",
-      "market": "twse",
-      "close": 80.0,
-      "change": 3.4,
-      "capital_yi": 6.99,
-      "trade_val_yi": 0.55,
+      "code": "7717",
+      "name": "萊德光電-KY",
+      "market": "tpex",
+      "close": 604.0,
+      "change": 12.0,
+      "capital_yi": 2.48,
+      "trade_val_yi": 3.78,
       "latest_report_date": "2026-06-30",
-      "latest_contract_liab_yi": 0.78,
-      "prev_contract_liab_yi": 0.23,
-      "avg4_contract_liab_yi": 0.34,
-      "qoq_growth_pct": 242.9,
-      "avg_growth_pct": 129.6,
+      "latest_contract_liab_yi": 0.06,
+      "prev_contract_liab_yi": 0.0,
+      "avg4_contract_liab_yi": 0.02,
+      "qoq_growth_pct": 1392.4,
+      "avg_growth_pct": 238.5,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.0
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.0
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.0
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 0.06
+        }
+      ]
+    },
+    {
+      "code": "4977",
+      "name": "眾達-KY",
+      "market": "twse",
+      "close": 169.0,
+      "change": 0.5,
+      "capital_yi": 9.1,
+      "trade_val_yi": 3.77,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 0.11,
+      "prev_contract_liab_yi": 0.06,
+      "avg4_contract_liab_yi": 0.07,
+      "qoq_growth_pct": 74.5,
+      "avg_growth_pct": 56.7,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.05
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.06
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.06
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 0.11
+        }
+      ]
+    },
+    {
+      "code": "3645",
+      "name": "達邁",
+      "market": "twse",
+      "close": 75.3,
+      "change": 2.6,
+      "capital_yi": 13.68,
+      "trade_val_yi": 3.72,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 0.02,
+      "prev_contract_liab_yi": 0.0,
+      "avg4_contract_liab_yi": 0.01,
+      "qoq_growth_pct": 684.4,
+      "avg_growth_pct": 197.3,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.0
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.0
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.0
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 0.02
+        }
+      ]
+    },
+    {
+      "code": "3518",
+      "name": "柏騰",
+      "market": "twse",
+      "close": 41.1,
+      "change": 3.7,
+      "capital_yi": 10.25,
+      "trade_val_yi": 3.45,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 0.03,
+      "prev_contract_liab_yi": 0.0,
+      "avg4_contract_liab_yi": 0.01,
+      "qoq_growth_pct": 0,
+      "avg_growth_pct": 211.8,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.0
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.0
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.0
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 0.03
+        }
+      ]
+    },
+    {
+      "code": "6425",
+      "name": "易發",
+      "market": "tpex",
+      "close": 79.0,
+      "change": 5.0,
+      "capital_yi": 5.14,
+      "trade_val_yi": 3.38,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 1.94,
+      "prev_contract_liab_yi": 0.66,
+      "avg4_contract_liab_yi": 0.93,
+      "qoq_growth_pct": 192.9,
+      "avg_growth_pct": 107.8,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.54
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.6
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.66
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 1.94
+        }
+      ]
+    },
+    {
+      "code": "6715",
+      "name": "嘉基",
+      "market": "twse",
+      "close": 442.0,
+      "change": -10.0,
+      "capital_yi": 6.83,
+      "trade_val_yi": 3.06,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 0.3,
+      "prev_contract_liab_yi": 0.17,
+      "avg4_contract_liab_yi": 0.19,
+      "qoq_growth_pct": 78.9,
+      "avg_growth_pct": 59.1,
       "history_4q": [
         {
           "date": "2025-09-30",
@@ -1457,7 +731,436 @@
         },
         {
           "date": "2025-12-31",
-          "value_yi": 0.21
+          "value_yi": 0.15
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.17
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 0.3
+        }
+      ]
+    },
+    {
+      "code": "8096",
+      "name": "擎亞",
+      "market": "tpex",
+      "close": 88.3,
+      "change": -0.4,
+      "capital_yi": 14.93,
+      "trade_val_yi": 2.84,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 62.76,
+      "prev_contract_liab_yi": 11.12,
+      "avg4_contract_liab_yi": 23.22,
+      "qoq_growth_pct": 464.6,
+      "avg_growth_pct": 170.3,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 9.0
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 10.0
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 11.12
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 62.76
+        }
+      ]
+    },
+    {
+      "code": "4566",
+      "name": "時碩工業",
+      "market": "twse",
+      "close": 74.1,
+      "change": 0.9,
+      "capital_yi": 11.04,
+      "trade_val_yi": 2.48,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 0.38,
+      "prev_contract_liab_yi": 0.19,
+      "avg4_contract_liab_yi": 0.24,
+      "qoq_growth_pct": 97.2,
+      "avg_growth_pct": 55.8,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.24
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.16
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.19
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 0.38
+        }
+      ]
+    },
+    {
+      "code": "4961",
+      "name": "天鈺",
+      "market": "twse",
+      "close": 181.0,
+      "change": -3.5,
+      "capital_yi": 12.13,
+      "trade_val_yi": 2.46,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 1.82,
+      "prev_contract_liab_yi": 0.63,
+      "avg4_contract_liab_yi": 0.88,
+      "qoq_growth_pct": 187.2,
+      "avg_growth_pct": 105.8,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.51
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.57
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.63
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 1.82
+        }
+      ]
+    },
+    {
+      "code": "6438",
+      "name": "迅得",
+      "market": "twse",
+      "close": 164.0,
+      "change": 2.0,
+      "capital_yi": 8.22,
+      "trade_val_yi": 2.43,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 5.86,
+      "prev_contract_liab_yi": 3.64,
+      "avg4_contract_liab_yi": 4.76,
+      "qoq_growth_pct": 61.3,
+      "avg_growth_pct": 23.2,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 5.7
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 3.84
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 3.64
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 5.86
+        }
+      ]
+    },
+    {
+      "code": "6155",
+      "name": "鈞寶",
+      "market": "twse",
+      "close": 63.3,
+      "change": -0.7,
+      "capital_yi": 8.8,
+      "trade_val_yi": 2.39,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 0.01,
+      "prev_contract_liab_yi": 0.01,
+      "avg4_contract_liab_yi": 0.01,
+      "qoq_growth_pct": 96.2,
+      "avg_growth_pct": 76.9,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.0
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.01
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.01
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 0.01
+        }
+      ]
+    },
+    {
+      "code": "6937",
+      "name": "天虹",
+      "market": "twse",
+      "close": 308.0,
+      "change": 0.0,
+      "capital_yi": 6.77,
+      "trade_val_yi": 2.32,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 0.8,
+      "prev_contract_liab_yi": 0.24,
+      "avg4_contract_liab_yi": 0.37,
+      "qoq_growth_pct": 227.3,
+      "avg_growth_pct": 118.8,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.2
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.22
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.24
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 0.8
+        }
+      ]
+    },
+    {
+      "code": "3441",
+      "name": "聯一光電",
+      "market": "tpex",
+      "close": 184.5,
+      "change": -0.5,
+      "capital_yi": 4.0,
+      "trade_val_yi": 1.94,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 0.03,
+      "prev_contract_liab_yi": 0.02,
+      "avg4_contract_liab_yi": 0.02,
+      "qoq_growth_pct": 97.4,
+      "avg_growth_pct": 68.6,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.01
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.01
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.02
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 0.03
+        }
+      ]
+    },
+    {
+      "code": "6491",
+      "name": "晶碩",
+      "market": "twse",
+      "close": 413.0,
+      "change": 7.0,
+      "capital_yi": 7.8,
+      "trade_val_yi": 1.84,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 2.47,
+      "prev_contract_liab_yi": 1.12,
+      "avg4_contract_liab_yi": 1.38,
+      "qoq_growth_pct": 120.5,
+      "avg_growth_pct": 79.5,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.91
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 1.01
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 1.12
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 2.47
+        }
+      ]
+    },
+    {
+      "code": "6903",
+      "name": "巨漢",
+      "market": "tpex",
+      "close": 315.5,
+      "change": 11.0,
+      "capital_yi": 6.67,
+      "trade_val_yi": 1.72,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 11.76,
+      "prev_contract_liab_yi": 5.06,
+      "avg4_contract_liab_yi": 6.37,
+      "qoq_growth_pct": 132.2,
+      "avg_growth_pct": 84.6,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 4.1
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 4.56
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 5.06
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 11.76
+        }
+      ]
+    },
+    {
+      "code": "4542",
+      "name": "科嶠",
+      "market": "tpex",
+      "close": 344.0,
+      "change": 5.0,
+      "capital_yi": 3.53,
+      "trade_val_yi": 1.54,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 3.82,
+      "prev_contract_liab_yi": 2.46,
+      "avg4_contract_liab_yi": 2.62,
+      "qoq_growth_pct": 55.1,
+      "avg_growth_pct": 45.6,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 1.99
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 2.22
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 2.46
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 3.82
+        }
+      ]
+    },
+    {
+      "code": "8042",
+      "name": "金山電",
+      "market": "tpex",
+      "close": 111.5,
+      "change": 0.0,
+      "capital_yi": 13.15,
+      "trade_val_yi": 1.48,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 0.04,
+      "prev_contract_liab_yi": 0.01,
+      "avg4_contract_liab_yi": 0.01,
+      "qoq_growth_pct": 455.6,
+      "avg_growth_pct": 168.9,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.01
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.01
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.01
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 0.04
+        }
+      ]
+    },
+    {
+      "code": "8271",
+      "name": "宇瞻",
+      "market": "twse",
+      "close": 202.0,
+      "change": 2.5,
+      "capital_yi": 12.96,
+      "trade_val_yi": 1.41,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 2.74,
+      "prev_contract_liab_yi": 0.82,
+      "avg4_contract_liab_yi": 1.24,
+      "qoq_growth_pct": 235.2,
+      "avg_growth_pct": 121.2,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.66
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.74
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.82
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 2.74
+        }
+      ]
+    },
+    {
+      "code": "3290",
+      "name": "東浦",
+      "market": "tpex",
+      "close": 52.2,
+      "change": 4.4,
+      "capital_yi": 9.02,
+      "trade_val_yi": 1.32,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 0.37,
+      "prev_contract_liab_yi": 0.23,
+      "avg4_contract_liab_yi": 0.28,
+      "qoq_growth_pct": 63.0,
+      "avg_growth_pct": 34.2,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.19
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.32
         },
         {
           "date": "2026-03-31",
@@ -1465,7 +1168,172 @@
         },
         {
           "date": "2026-06-30",
-          "value_yi": 0.78
+          "value_yi": 0.37
+        }
+      ]
+    },
+    {
+      "code": "2302",
+      "name": "麗正",
+      "market": "twse",
+      "close": 45.0,
+      "change": -0.3,
+      "capital_yi": 16.63,
+      "trade_val_yi": 1.25,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 0.01,
+      "prev_contract_liab_yi": 0.01,
+      "avg4_contract_liab_yi": 0.01,
+      "qoq_growth_pct": 92.9,
+      "avg_growth_pct": 66.3,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.0
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.0
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.01
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 0.01
+        }
+      ]
+    },
+    {
+      "code": "6206",
+      "name": "飛捷",
+      "market": "twse",
+      "close": 139.5,
+      "change": -3.5,
+      "capital_yi": 14.31,
+      "trade_val_yi": 1.21,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 1.1,
+      "prev_contract_liab_yi": 0.58,
+      "avg4_contract_liab_yi": 0.67,
+      "qoq_growth_pct": 88.2,
+      "avg_growth_pct": 63.9,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.47
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.53
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.58
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 1.1
+        }
+      ]
+    },
+    {
+      "code": "6588",
+      "name": "東典光電",
+      "market": "tpex",
+      "close": 108.0,
+      "change": 0.5,
+      "capital_yi": 3.47,
+      "trade_val_yi": 1.18,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 0.35,
+      "prev_contract_liab_yi": 0.03,
+      "avg4_contract_liab_yi": 0.11,
+      "qoq_growth_pct": 1159.9,
+      "avg_growth_pct": 229.2,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.02
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.03
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.03
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 0.35
+        }
+      ]
+    },
+    {
+      "code": "2465",
+      "name": "麗臺",
+      "market": "twse",
+      "close": 91.2,
+      "change": -0.7,
+      "capital_yi": 9.39,
+      "trade_val_yi": 1.14,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 3.03,
+      "prev_contract_liab_yi": 1.52,
+      "avg4_contract_liab_yi": 1.79,
+      "qoq_growth_pct": 99.7,
+      "avg_growth_pct": 69.7,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 1.23
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 1.37
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 1.52
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 3.03
+        }
+      ]
+    },
+    {
+      "code": "3228",
+      "name": "金麗科",
+      "market": "tpex",
+      "close": 182.0,
+      "change": 2.0,
+      "capital_yi": 7.19,
+      "trade_val_yi": 1.06,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 0.04,
+      "prev_contract_liab_yi": 0.01,
+      "avg4_contract_liab_yi": 0.01,
+      "qoq_growth_pct": 173.5,
+      "avg_growth_pct": 178.0,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.0
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.0
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.01
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 0.04
         }
       ]
     },
@@ -1473,10 +1341,10 @@
       "code": "4556",
       "name": "旭然",
       "market": "tpex",
-      "close": 92.4,
-      "change": 0.3,
+      "close": 101.5,
+      "change": 9.1,
       "capital_yi": 4.23,
-      "trade_val_yi": 0.53,
+      "trade_val_yi": 1.03,
       "latest_report_date": "2026-06-30",
       "latest_contract_liab_yi": 0.21,
       "prev_contract_liab_yi": 0.02,
@@ -1499,6 +1367,237 @@
         {
           "date": "2026-06-30",
           "value_yi": 0.21
+        }
+      ]
+    },
+    {
+      "code": "6245",
+      "name": "立端",
+      "market": "tpex",
+      "close": 87.8,
+      "change": -0.9,
+      "capital_yi": 14.66,
+      "trade_val_yi": 0.86,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 1.99,
+      "prev_contract_liab_yi": 1.18,
+      "avg4_contract_liab_yi": 1.3,
+      "qoq_growth_pct": 68.1,
+      "avg_growth_pct": 53.1,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.96
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 1.07
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 1.18
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 1.99
+        }
+      ]
+    },
+    {
+      "code": "3490",
+      "name": "單井",
+      "market": "tpex",
+      "close": 44.35,
+      "change": -0.75,
+      "capital_yi": 5.5,
+      "trade_val_yi": 0.85,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 0.3,
+      "prev_contract_liab_yi": 0.18,
+      "avg4_contract_liab_yi": 0.2,
+      "qoq_growth_pct": 68.8,
+      "avg_growth_pct": 53.5,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.14
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.16
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.18
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 0.3
+        }
+      ]
+    },
+    {
+      "code": "2025",
+      "name": "千興",
+      "market": "twse",
+      "close": 14.65,
+      "change": 1.3,
+      "capital_yi": 17.27,
+      "trade_val_yi": 0.71,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 0.02,
+      "prev_contract_liab_yi": 0.0,
+      "avg4_contract_liab_yi": 0.01,
+      "qoq_growth_pct": 0,
+      "avg_growth_pct": 160.8,
+      "history_4q": [
+        {
+          "date": "2025-06-30",
+          "value_yi": 0.0
+        },
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.01
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.0
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 0.02
+        }
+      ]
+    },
+    {
+      "code": "5288",
+      "name": "豐祥-KY",
+      "market": "twse",
+      "close": 183.5,
+      "change": -3.0,
+      "capital_yi": 6.99,
+      "trade_val_yi": 0.7,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 1.5,
+      "prev_contract_liab_yi": 1.03,
+      "avg4_contract_liab_yi": 1.0,
+      "qoq_growth_pct": 46.2,
+      "avg_growth_pct": 50.3,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.73
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.73
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 1.03
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 1.5
+        }
+      ]
+    },
+    {
+      "code": "3581",
+      "name": "博磊",
+      "market": "tpex",
+      "close": 117.0,
+      "change": 10.5,
+      "capital_yi": 5.1,
+      "trade_val_yi": 0.63,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 5.6,
+      "prev_contract_liab_yi": 3.2,
+      "avg4_contract_liab_yi": 3.27,
+      "qoq_growth_pct": 74.8,
+      "avg_growth_pct": 71.1,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 2.37
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 1.92
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 3.2
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 5.6
+        }
+      ]
+    },
+    {
+      "code": "6679",
+      "name": "鈺太",
+      "market": "tpex",
+      "close": 206.0,
+      "change": 0.0,
+      "capital_yi": 5.5,
+      "trade_val_yi": 0.56,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 0.04,
+      "prev_contract_liab_yi": 0.01,
+      "avg4_contract_liab_yi": 0.02,
+      "qoq_growth_pct": 227.2,
+      "avg_growth_pct": 77.4,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.02
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.02
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.01
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 0.04
+        }
+      ]
+    },
+    {
+      "code": "3312",
+      "name": "弘憶股",
+      "market": "twse",
+      "close": 52.0,
+      "change": 1.1,
+      "capital_yi": 18.26,
+      "trade_val_yi": 0.53,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 1.77,
+      "prev_contract_liab_yi": 0.9,
+      "avg4_contract_liab_yi": 1.05,
+      "qoq_growth_pct": 96.3,
+      "avg_growth_pct": 68.0,
+      "history_4q": [
+        {
+          "date": "2025-09-30",
+          "value_yi": 0.73
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.81
+        },
+        {
+          "date": "2026-03-31",
+          "value_yi": 0.9
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 1.77
         }
       ]
     }
