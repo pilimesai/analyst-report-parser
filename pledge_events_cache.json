@@ -112746,5 +112746,549 @@
       "creditor": "兆豐票券金融股份有限公司台南分公司",
       "report_date": "115/05/04"
     }
+  ],
+  "1441": [
+    {
+      "identity": "D00010董事本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "88/08/02",
+      "pledge_shares": 1350000,
+      "unpledge_shares": 0,
+      "cum_shares": 50900000,
+      "creditor": "中興票券金融(股)-台中分公司",
+      "report_date": "88/08/04"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "88/08/17",
+      "pledge_shares": 450000,
+      "unpledge_shares": 0,
+      "cum_shares": 51350000,
+      "creditor": "中興票券金融(股)公司台中分公司",
+      "report_date": "88/08/17"
+    },
+    {
+      "identity": "L00010大股東本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "89/08/07",
+      "pledge_shares": 0,
+      "unpledge_shares": 4000000,
+      "cum_shares": 47350000,
+      "creditor": "中國信託商業分行台中分行",
+      "report_date": "89/08/07"
+    },
+    {
+      "identity": "L00010大股東本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "89/11/22",
+      "pledge_shares": 1000000,
+      "unpledge_shares": 0,
+      "cum_shares": 48350000,
+      "creditor": "國際票券金融股份有限公司台中分",
+      "report_date": "89/11/28"
+    },
+    {
+      "identity": "L00010大股東本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "89/12/04",
+      "pledge_shares": 0,
+      "unpledge_shares": 3600000,
+      "cum_shares": 44750000,
+      "creditor": "中華票券金融公司台中分公司",
+      "report_date": "89/12/06"
+    },
+    {
+      "identity": "L00010大股東本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "89/12/29",
+      "pledge_shares": 800000,
+      "unpledge_shares": 0,
+      "cum_shares": 45550000,
+      "creditor": "上海商業儲蓄銀行台中分行",
+      "report_date": "90/01/03"
+    },
+    {
+      "identity": "L00010大股東本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "90/03/26",
+      "pledge_shares": 0,
+      "unpledge_shares": 800000,
+      "cum_shares": 44750000,
+      "creditor": "上海商業儲蓄銀行台中分行",
+      "report_date": "90/03/28"
+    },
+    {
+      "identity": "L00010大股東本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "90/04/03",
+      "pledge_shares": 0,
+      "unpledge_shares": 2900000,
+      "cum_shares": 41850000,
+      "creditor": "上海商業儲蓄銀行台中分行",
+      "report_date": "90/04/03"
+    },
+    {
+      "identity": "L00010大股東本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "90/07/27",
+      "pledge_shares": 800000,
+      "unpledge_shares": 0,
+      "cum_shares": 42650000,
+      "creditor": "國際票券金融股份有限公司台中分",
+      "report_date": "90/07/31"
+    },
+    {
+      "identity": "L00010大股東本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "90/11/28",
+      "pledge_shares": 0,
+      "unpledge_shares": 550000,
+      "cum_shares": 42100000,
+      "creditor": "萬泰票券金融股份有限公司台中分",
+      "report_date": "90/11/30"
+    },
+    {
+      "identity": "L00010大股東本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "90/12/18",
+      "pledge_shares": 0,
+      "unpledge_shares": 550000,
+      "cum_shares": 41550000,
+      "creditor": "萬泰票券金融股份有限公司台中分",
+      "report_date": "90/12/18"
+    },
+    {
+      "identity": "L00010大股東本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "91/01/11",
+      "pledge_shares": 0,
+      "unpledge_shares": 1100000,
+      "cum_shares": 40450000,
+      "creditor": "萬泰票券金融股份有限公司台中分",
+      "report_date": "91/01/11"
+    },
+    {
+      "identity": "L00010大股東本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "91/01/29",
+      "pledge_shares": 0,
+      "unpledge_shares": 1100000,
+      "cum_shares": 393500000,
+      "creditor": "萬泰票券金融股份有限公司台中分",
+      "report_date": "91/01/29"
+    },
+    {
+      "identity": "L00010大股東本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "91/03/13",
+      "pledge_shares": 0,
+      "unpledge_shares": 650000,
+      "cum_shares": 38700000,
+      "creditor": "萬泰票券金融股份有限公司台中分",
+      "report_date": "91/03/13"
+    },
+    {
+      "identity": "L00010大股東本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "91/03/14",
+      "pledge_shares": 0,
+      "unpledge_shares": 450000,
+      "cum_shares": 38250000,
+      "creditor": "萬泰票券金融股份有限公司台中分",
+      "report_date": "91/03/14"
+    },
+    {
+      "identity": "L00010大股東本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "91/04/26",
+      "pledge_shares": 0,
+      "unpledge_shares": 1200000,
+      "cum_shares": 37050000,
+      "creditor": "中國信託商業銀行台中分行",
+      "report_date": "91/04/26"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "陳修忠",
+      "event_date": "92/06/10",
+      "pledge_shares": 1000000,
+      "unpledge_shares": 0,
+      "cum_shares": 6507000,
+      "creditor": "世華聯合商業銀行板橋分行",
+      "report_date": "92/06/10"
+    },
+    {
+      "identity": "E00022監察人配偶",
+      "name": "吳王美",
+      "event_date": "92/11/28",
+      "pledge_shares": 0,
+      "unpledge_shares": 2000000,
+      "cum_shares": 0,
+      "creditor": "世華銀行復興分行",
+      "report_date": "92/12/02"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "陳修忠",
+      "event_date": "93/01/16",
+      "pledge_shares": 0,
+      "unpledge_shares": 1000000,
+      "cum_shares": 5507000,
+      "creditor": "國泰世華商業銀行板橋分行",
+      "report_date": "93/01/16"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "張英夫",
+      "event_date": "93/01/16",
+      "pledge_shares": 0,
+      "unpledge_shares": 766000,
+      "cum_shares": 343000,
+      "creditor": "國泰世華商業銀行板橋分行",
+      "report_date": "93/01/16"
+    },
+    {
+      "identity": "E00010監察人本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "93/01/19",
+      "pledge_shares": 0,
+      "unpledge_shares": 3750000,
+      "cum_shares": 33300000,
+      "creditor": "中國信託商業銀行-台中分行",
+      "report_date": "93/01/19"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "陳修忠",
+      "event_date": "93/02/06",
+      "pledge_shares": 0,
+      "unpledge_shares": 2609000,
+      "cum_shares": 2898000,
+      "creditor": "中國信託商業銀行敦化分行",
+      "report_date": "93/02/06"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "張英夫",
+      "event_date": "93/02/12",
+      "pledge_shares": 0,
+      "unpledge_shares": 343000,
+      "cum_shares": 0,
+      "creditor": "國泰世華商業銀行板橋分行",
+      "report_date": "93/02/12"
+    },
+    {
+      "identity": "E00010監察人本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "93/02/19",
+      "pledge_shares": 0,
+      "unpledge_shares": 6150000,
+      "cum_shares": 27150000,
+      "creditor": "國際票券金融股份有限公司台中分",
+      "report_date": "93/02/19"
+    },
+    {
+      "identity": "E00010監察人本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "93/04/09",
+      "pledge_shares": 12151200,
+      "unpledge_shares": 18300000,
+      "cum_shares": 18027600,
+      "creditor": "中興票券股份有限公司台中分公司",
+      "report_date": "93/04/12"
+    },
+    {
+      "identity": "E00010監察人本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "93/04/16",
+      "pledge_shares": 5876400,
+      "unpledge_shares": 8850000,
+      "cum_shares": 18027600,
+      "creditor": "國際票券股份有限公司台中分公司",
+      "report_date": "93/04/19"
+    },
+    {
+      "identity": "E00010監察人本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "94/10/26",
+      "pledge_shares": 0,
+      "unpledge_shares": 1527200,
+      "cum_shares": 16500400,
+      "creditor": "國際票券金融股份有限公司台中分",
+      "report_date": "94/10/27"
+    },
+    {
+      "identity": "E00010監察人本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "94/11/10",
+      "pledge_shares": 0,
+      "unpledge_shares": 4349200,
+      "cum_shares": 12151200,
+      "creditor": "國際票券金融股份有限公司台中分",
+      "report_date": "94/11/14"
+    },
+    {
+      "identity": "A00020董事長本人",
+      "name": "陳修忠",
+      "event_date": "96/06/15",
+      "pledge_shares": 487000,
+      "unpledge_shares": 0,
+      "cum_shares": 487000,
+      "creditor": "財政部台北市國稅局",
+      "report_date": "96/06/15"
+    },
+    {
+      "identity": "A00022董事長配偶",
+      "name": "嚴麗蓉",
+      "event_date": "96/08/15",
+      "pledge_shares": 66000,
+      "unpledge_shares": 0,
+      "cum_shares": 66000,
+      "creditor": "財政部台北市國稅局",
+      "report_date": "96/08/17"
+    },
+    {
+      "identity": "D00050董事本人",
+      "name": "陳修雄",
+      "event_date": "97/04/02",
+      "pledge_shares": 287000,
+      "unpledge_shares": 0,
+      "cum_shares": 287000,
+      "creditor": "財政部台灣省中區國稅局大智稽徵",
+      "report_date": "97/04/02"
+    },
+    {
+      "identity": "A00022董事長配偶",
+      "name": "嚴麗蓉",
+      "event_date": "98/03/30",
+      "pledge_shares": 610000,
+      "unpledge_shares": 0,
+      "cum_shares": 676000,
+      "creditor": "財政部臺北市國稅局",
+      "report_date": "98/03/31"
+    },
+    {
+      "identity": "D00050董事本人",
+      "name": "永煌投資(股)公司",
+      "event_date": "99/04/01",
+      "pledge_shares": 1500000,
+      "unpledge_shares": 0,
+      "cum_shares": 9143105,
+      "creditor": "新加坡商星展銀行股份有限公司",
+      "report_date": "99/04/02"
+    },
+    {
+      "identity": "D00050董事本人",
+      "name": "永煌投資(股)公司",
+      "event_date": "99/04/27",
+      "pledge_shares": 0,
+      "unpledge_shares": 1500000,
+      "cum_shares": 7643105,
+      "creditor": "新加坡商星展銀行股份有限公司",
+      "report_date": "99/04/28"
+    },
+    {
+      "identity": "A00020董事長本人",
+      "name": "陳修忠",
+      "event_date": "99/06/17",
+      "pledge_shares": 0,
+      "unpledge_shares": 306323,
+      "cum_shares": 0,
+      "creditor": "財政部台北市國稅局",
+      "report_date": "99/06/17"
+    },
+    {
+      "identity": "A00022董事長配偶",
+      "name": "嚴麗蓉",
+      "event_date": "99/09/16",
+      "pledge_shares": 0,
+      "unpledge_shares": 383690,
+      "cum_shares": 41514,
+      "creditor": "財政部臺北市國稅局",
+      "report_date": "99/09/17"
+    },
+    {
+      "identity": "A00022董事長配偶",
+      "name": "嚴麗蓉",
+      "event_date": "99/11/24",
+      "pledge_shares": 0,
+      "unpledge_shares": 33806,
+      "cum_shares": 0,
+      "creditor": "財政部臺北市國稅局",
+      "report_date": "99/11/25"
+    },
+    {
+      "identity": "D00050董事本人",
+      "name": "永煌投資(股)公司",
+      "event_date": "99/12/06",
+      "pledge_shares": 0,
+      "unpledge_shares": 1445502,
+      "cum_shares": 4778659,
+      "creditor": "兆豐票券金融(股)公司台中分公司",
+      "report_date": "99/12/07"
+    },
+    {
+      "identity": "D00050董事本人",
+      "name": "永煌投資(股)公司",
+      "event_date": "99/12/13",
+      "pledge_shares": 0,
+      "unpledge_shares": 4778659,
+      "cum_shares": 0,
+      "creditor": "兆豐票券金融(股)公司台中分公司",
+      "report_date": "99/12/13"
+    },
+    {
+      "identity": "D00050董事本人",
+      "name": "永煌投資(股)公司",
+      "event_date": "100/10/12",
+      "pledge_shares": 1200000,
+      "unpledge_shares": 0,
+      "cum_shares": 1200000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "100/10/13"
+    },
+    {
+      "identity": "D00050董事本人",
+      "name": "永煌投資(股)公司",
+      "event_date": "100/11/22",
+      "pledge_shares": 208000,
+      "unpledge_shares": 0,
+      "cum_shares": 1408000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "100/11/23"
+    },
+    {
+      "identity": "D00050董事本人",
+      "name": "永煌投資(股)公司",
+      "event_date": "101/02/24",
+      "pledge_shares": 3170000,
+      "unpledge_shares": 0,
+      "cum_shares": 4578000,
+      "creditor": "日盛國際商業銀行(股)公司",
+      "report_date": "101/02/24"
+    },
+    {
+      "identity": "D00050董事本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "101/07/13",
+      "pledge_shares": 550000,
+      "unpledge_shares": 0,
+      "cum_shares": 5128000,
+      "creditor": "日盛國際商業銀行股份有限公司",
+      "report_date": "101/07/16"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "106/04/11",
+      "pledge_shares": 0,
+      "unpledge_shares": 3170000,
+      "cum_shares": 1958000,
+      "creditor": "日盛國際商業銀行股份有限公司",
+      "report_date": "106/04/12"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "106/04/11",
+      "pledge_shares": 0,
+      "unpledge_shares": 550000,
+      "cum_shares": 1408000,
+      "creditor": "日盛國際商業銀行股份有限公司",
+      "report_date": "106/04/12"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "106/04/12",
+      "pledge_shares": 0,
+      "unpledge_shares": 1200000,
+      "cum_shares": 208000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "106/04/13"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "106/04/12",
+      "pledge_shares": 0,
+      "unpledge_shares": 208000,
+      "cum_shares": 0,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "106/04/13"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "112/05/29",
+      "pledge_shares": 9394353,
+      "unpledge_shares": 0,
+      "cum_shares": 9394353,
+      "creditor": "瑞興商業銀行南京東路分行",
+      "report_date": "112/05/30"
+    },
+    {
+      "identity": "A00012董事長配偶",
+      "name": "嚴麗蓉",
+      "event_date": "112/05/29",
+      "pledge_shares": 2358587,
+      "unpledge_shares": 0,
+      "cum_shares": 2358587,
+      "creditor": "瑞興商業銀行南京東路分行",
+      "report_date": "112/05/30"
+    },
+    {
+      "identity": "A00012董事長配偶",
+      "name": "嚴麗蓉",
+      "event_date": "112/06/13",
+      "pledge_shares": 0,
+      "unpledge_shares": 363000,
+      "cum_shares": 1995587,
+      "creditor": "瑞興商業銀行南京東路分行",
+      "report_date": "112/06/14"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "永煌投資股份有限公司",
+      "event_date": "114/05/23",
+      "pledge_shares": 0,
+      "unpledge_shares": 5231831,
+      "cum_shares": 0,
+      "creditor": "瑞興商業銀行南京東路分行",
+      "report_date": "114/05/26"
+    },
+    {
+      "identity": "A00012董事長配偶",
+      "name": "嚴麗蓉",
+      "event_date": "114/05/23",
+      "pledge_shares": 0,
+      "unpledge_shares": 1108965,
+      "cum_shares": 0,
+      "creditor": "瑞興商業銀行南京東路分行",
+      "report_date": "114/05/26"
+    }
+  ],
+  "2454": [
+    {
+      "identity": "H00110副總經理本人",
+      "name": "顧大為",
+      "event_date": "111/01/06",
+      "pledge_shares": 80000,
+      "unpledge_shares": 0,
+      "cum_shares": 80000,
+      "creditor": "國泰世華銀行館前分行",
+      "report_date": "111/01/07"
+    },
+    {
+      "identity": "H00110副總經理本人",
+      "name": "顧大為",
+      "event_date": "111/10/28",
+      "pledge_shares": 0,
+      "unpledge_shares": 80000,
+      "cum_shares": 0,
+      "creditor": "國泰世華銀行館前分行",
+      "report_date": "111/10/31"
+    }
   ]
 }
