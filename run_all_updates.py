@@ -78,6 +78,12 @@ SCRIPTS = [
         "file": "update_cb.py",
         "json": "近期發行CB.csv",
         "desc": "近期發行與低於轉換價 CB 名單"
+    },
+    {
+        "name": "量化嚴選標的",
+        "file": "update_quant.py",
+        "json": "quant_results.json",
+        "desc": "多維度量化評分與嚴選股票清單"
     }
 ]
 
