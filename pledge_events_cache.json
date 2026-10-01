@@ -113290,5 +113290,47 @@
       "creditor": "國泰世華銀行館前分行",
       "report_date": "111/10/31"
     }
+  ],
+  "9910": [
+    {
+      "identity": "D00020董事本人",
+      "name": "加州投資股份有限公司",
+      "event_date": "88/09/30",
+      "pledge_shares": 200000,
+      "unpledge_shares": 0,
+      "cum_shares": 765000,
+      "creditor": "大安商銀儲蓄部",
+      "report_date": "88/10/02"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "加州投資股份有限公司",
+      "event_date": "89/01/26",
+      "pledge_shares": 0,
+      "unpledge_shares": 765000,
+      "cum_shares": 0,
+      "creditor": "大安商銀儲蓄部",
+      "report_date": "89/01/28"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "加州投資股份有限公司",
+      "event_date": "89/01/29",
+      "pledge_shares": 765000,
+      "unpledge_shares": 0,
+      "cum_shares": 765000,
+      "creditor": "大安商銀儲蓄部",
+      "report_date": "89/02/01"
+    },
+    {
+      "identity": "D00040董事本人",
+      "name": "加州投資股份有限公司",
+      "event_date": "95/04/28",
+      "pledge_shares": 0,
+      "unpledge_shares": 765000,
+      "cum_shares": 0,
+      "creditor": "台新國際商業銀行敦北分行",
+      "report_date": "95/05/02"
+    }
   ]
 }
