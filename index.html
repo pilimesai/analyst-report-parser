@@ -3508,7 +3508,7 @@
             ];
             for (const u of urls) {
                 try {
-                    const r = await fetch(u);
+                    const r = await fetch(u, { cache: preferCloud ? 'no-store' : 'default' });
                     if (r.ok) {
                         const data = await r.json();
                         if (data && Object.keys(data).length > 0) {
@@ -3530,7 +3530,7 @@
             ];
             for (const u of repoUrls) {
                 try {
-                    const r = await fetch(u);
+                    const r = await fetch(u, { cache: preferCloud ? 'no-store' : 'default' });
                     if (r.ok) {
                         const payload = await r.json();
                         if (payload && Array.isArray(payload.stocks) && payload.stocks.length > 0) {
@@ -3966,6 +3966,21 @@
         // 初始化更新 UI 狀態
         setTimeout(updateCloudCrawlerUI, 150);
 
+        function getDataSourceUrls(filename, preferCloud = false) {
+            const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname) || window.location.protocol === 'file:';
+            const encoded = encodeURIComponent(filename);
+            const ts = Date.now();
+            const rawUrl = `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/${encoded}?v=${ts}`;
+            const localUrl = `./${filename}?v=${ts}`;
+            const cdnUrl = `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/${encoded}?v=${ts}`;
+
+            // 若剛觸發雲端爬蟲更新、或處於本機開發環境，優先連線 GitHub 遠端 Raw 獲取即時盤後數據
+            if (preferCloud || isLocal) {
+                return [rawUrl, localUrl, cdnUrl];
+            }
+            return [localUrl, rawUrl, cdnUrl];
+        }
+
         async function triggerGitHubCloudUpdate(token, btn, statusEl, isFullScan = false) {
             const OWNER = 'pilimesai';
             const REPO = 'analyst-report-parser';
@@ -3993,7 +4008,7 @@
                     body: JSON.stringify({
                         ref: 'main',
                         inputs: {
-                            gh_token: token.trim(),
+                            gh_token: token.trim(),
                             full_scan: isFullScan ? 'true' : 'false'
                         }
                     })
@@ -4011,20 +4026,22 @@
 
                 const startTime = Date.now();
                 let success = false;
-                const maxWaitSec = isFullScan ? 900 : 480;
+                const maxWaitSec = isFullScan ? 1800 : 1500;
 
                 while ((Date.now() - startTime) < maxWaitSec * 1000) {
                     const elapsed = Math.round((Date.now() - startTime) / 1000);
-                    if (statusEl) {
-                        if (isFullScan) {
-                            statusEl.innerHTML = `⚙️ 全市場質押深度巡檢中 (已執行 ${elapsed} 秒，1,800+ 檔地毯式巡檢約需 2~4 分鐘)...`;
-                        } else if (elapsed < 30) {
-                            statusEl.innerHTML = `☁️ 雲端虛擬機排隊與環境初始化中 (已執行 ${elapsed} 秒)...`;
-                        } else if (elapsed < 85) {
-                            statusEl.innerHTML = `🚀 10 大台股模組全並行爬取中（含法說會與可轉債，已執行 ${elapsed} 秒）...`;
-                        } else {
-                            statusEl.innerHTML = `📦 爬蟲已完成，正在推播更新至 GitHub 並載入數據 (已執行 ${elapsed} 秒)...`;
-                        }
+                    const mins = Math.floor(elapsed / 60);
+                    const secs = elapsed % 60;
+                    const timeStr = mins > 0 ? `${mins} 分 ${secs} 秒` : `${secs} 秒`;
+
+                    if (statusEl) {
+                        if (isFullScan) {
+                            statusEl.innerHTML = `⚙️ 全市場質押深度巡檢中 (已執行 ${timeStr}，1,800+ 檔地毯式巡檢約需數分鐘)...`;
+                        } else if (elapsed < 30) {
+                            statusEl.innerHTML = `☁️ 雲端虛擬機排隊與環境初始化中 (已等待 ${timeStr})...`;
+                        } else {
+                            statusEl.innerHTML = `🚀 10 大台股模組全並行爬取與資料庫運算中 (已執行 ${timeStr})...`;
+                        }
                     }
 
                     try {
@@ -4062,31 +4079,47 @@
                     await new Promise(r => setTimeout(r, 4000));
                 }
 
+                // 即使輪詢超時，也先嘗試載入 GitHub 遠端已產出的最新數據
                 if (!success) {
-                    throw new Error('雲端電腦仍在背景處理中（無須重複點擊），稍候 1~2 分鐘後重新整理網頁即可查看最新數據');
+                    try {
+                        await Promise.allSettled([
+                            fetchTopTurnoverFromGithub(true, true),
+                            fetchVolumeSpikeFromGithub(true, true),
+                            fetchSectorStrengthFromGithub(true, true),
+                            fetchContractLiabilitiesFromGithub(true, true),
+                            fetchSectorCapitalFlowFromGithub(true, true),
+                            fetchStockPledgeFromGithub(true, true),
+                            fetchEarningsCallFromGithub(true, true),
+                            fetchCBFromGithub(true, true),
+                            fetchCbBelowConvFromGithub(true, true)
+                        ]);
+                    } catch(e) {}
+                    throw new Error('雲端電腦仍在背景處理中（無須重複點擊），已先為您載入已完成的最新數據，稍候 1~2 分鐘後重新整理網頁即可查看完整資料');
                 }
 
-                if (statusEl) statusEl.innerHTML = '🎉 GitHub 雲端爬取全量完成！正在即時下載最新數據...';
+                if (statusEl) statusEl.innerHTML = '🎉 GitHub 雲端爬取全量完成！正在載入最新數據...';
                 showToast('🎉 GitHub 雲端全量爬取成功！正在載入最新數據...');
 
-                // 重新載入最新數據
-                await fetchTopTurnoverFromGithub(true);
-                await fetchVolumeSpikeFromGithub(true);
-                await fetchSectorStrengthFromGithub(true);
-                await fetchContractLiabilitiesFromGithub(true);
-                await fetchSectorCapitalFlowFromGithub(true);
-                await fetchStockPledgeFromGithub(true);
-                await fetchEarningsCallFromGithub(true);
-                await fetchCBFromGithub(true);
-                await fetchCbBelowConvFromGithub(true);
-                try { await fetchGoalStarActiveFunds(); } catch(e) {}
+                // 重新載入最新數據（並行全量更新，強制優先從 GitHub 遠端 Raw 載入最新 commit）
+                await Promise.allSettled([
+                    fetchTopTurnoverFromGithub(true, true),
+                    fetchVolumeSpikeFromGithub(true, true),
+                    fetchSectorStrengthFromGithub(true, true),
+                    fetchContractLiabilitiesFromGithub(true, true),
+                    fetchSectorCapitalFlowFromGithub(true, true),
+                    fetchStockPledgeFromGithub(true, true),
+                    fetchEarningsCallFromGithub(true, true),
+                    fetchCBFromGithub(true, true),
+                    fetchCbBelowConvFromGithub(true, true),
+                    (async () => { try { await fetchGoalStarActiveFunds(); } catch(e) {} })()
+                ]);
 
-                if (statusEl) statusEl.innerHTML = '✅ 雲端現場抓取全量完成！最新台股盤後數據已同步呈現在畫面上！';
+                if (statusEl) statusEl.innerHTML = '✅ 雲端現場抓取全量完成！今日最新盤後數據已同步呈現在畫面上！';
                 showToast('✅ 雲端現場抓取全量完成！今日最新盤後資料已全面更新！');
 
             } catch (err) {
-                if (statusEl) statusEl.innerHTML = `❌ 雲端爬取失敗: ${err.message}`;
-                showToast(`❌ 雲端抓取失敗: ${err.message}`, true);
+                if (statusEl) statusEl.innerHTML = `❌ 雲端爬取: ${err.message}`;
+                showToast(`❌ 雲端抓取: ${err.message}`, true);
             } finally {
                 if (btn) {
                     btn.disabled = false;
@@ -4107,22 +4140,18 @@
                 return;
             }
 
-            const isFullScan = document.getElementById('pledge-full-scan-toggle')?.checked || false;
+            const isFullScan = document.getElementById('pledge-full-scan-toggle')?.checked || false;
             await triggerGitHubCloudUpdate(token, btn, statusEl, isFullScan);
         }
 
-        async function fetchCBFromGithub(silent = false) {
+        async function fetchCBFromGithub(silent = false, preferCloud = false) {
             try {
                 if (!silent) showToast("正在透過 AI 從資料庫獲取最新預計發行 CB 名單...");
-                const urls = [
-                    `./近期發行CB.csv?v=${new Date().getTime()}`,
-                    `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/%E8%BF%91%E6%9C%9F%E7%99%BC%E8%A1%8CCB.csv?v=${new Date().getTime()}`,
-                    `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/%E8%BF%91%E6%9C%9F%E7%99%BC%E8%A1%8CCB.csv?v=${new Date().getTime()}`
-                ];
+                const urls = getDataSourceUrls("近期發行CB.csv", preferCloud);
                 let text = null;
                 for (const u of urls) {
                     try {
-                        const res = await fetch(u);
+                        const res = await fetch(u, { cache: preferCloud ? 'no-store' : 'default' });
                         if (res.ok) { text = await res.text(); if (text && text.length > 50) break; }
                     } catch(e) {}
                 }
@@ -4135,18 +4164,14 @@
             }
         }
 
-        async function fetchCbBelowConvFromGithub(silent = false) {
+        async function fetchCbBelowConvFromGithub(silent = false, preferCloud = false) {
             try {
                 if (!silent) showToast("正在透過 AI 從資料庫獲取全市場「股價低於CB轉換價」最新名單...");
-                const urls = [
-                    `./目前股價低於CB轉換價.csv?v=${new Date().getTime()}`,
-                    `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/%E7%9B%AE%E5%89%8D%E8%82%A1%E5%83%B9%E4%BD%8E%E6%96%BCCB%E8%BD%89%E6%8F%9B%E5%83%B9.csv?v=${new Date().getTime()}`,
-                    `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/%E7%9B%AE%E5%89%8D%E8%82%A1%E5%83%B9%E4%BD%8E%E6%96%BCCB%E8%BD%89%E6%8F%9B%E5%83%B9.csv?v=${new Date().getTime()}`
-                ];
+                const urls = getDataSourceUrls("目前股價低於CB轉換價.csv", preferCloud);
                 let text = null;
                 for (const u of urls) {
                     try {
-                        const res = await fetch(u);
+                        const res = await fetch(u, { cache: preferCloud ? 'no-store' : 'default' });
                         if (res.ok) { text = await res.text(); if (text && text.length > 50) break; }
                     } catch(e) {}
                 }
@@ -4159,27 +4184,24 @@
             }
         }
 
-        async function calculateAndDisplayCbBelowConv() {
+        async function calculateAndDisplayCbBelowConv(preferCloud = false) {
             // 優先直接透過 GitHub 抓取全市場已篩選好之最新全量資料
-            await fetchCbBelowConvFromGithub();
+            await fetchCbBelowConvFromGithub(false, preferCloud);
         }
 
-        async function fetchEarningsCallFromGithub(silent = false) {
+        async function fetchEarningsCallFromGithub(silent = false, preferCloud = false) {
             try {
                 if (!silent) showToast("正在透過 AI 從資料庫獲取兩週內法說會名單...");
-                const urls = [
-                    `./近期法說會.csv?v=${new Date().getTime()}`,
-                    `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/%E8%BF%91%E6%9C%9F%E6%B3%95%E8%AA%AA%E6%9C%83.csv?v=${new Date().getTime()}`,
-                    `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/%E8%BF%91%E6%9C%9F%E6%B3%95%E8%AA%AA%E6%9C%83.csv?v=${new Date().getTime()}`
-                ];
+                const urls = getDataSourceUrls("近期法說會.csv", preferCloud);
                 let text = null;
                 for (const u of urls) {
                     try {
-                        const res = await fetch(u);
+                        const res = await fetch(u, { cache: preferCloud ? 'no-store' : 'default' });
                         if (res.ok) { text = await res.text(); if (text && text.length > 50) break; }
                     } catch(e) {}
                 }
                 if (!text) throw new Error("無法獲取資料");
+
                 parseAndSyncCsv(text, "AI自動獲取", "法說會", false, !silent);
                 if (!silent) showToast("✅ 法說會名單已更新！");
             } catch (e) {
@@ -6574,7 +6596,7 @@ JSON 欄位：
                     ];
                     for (const u of repoUrls) {
                         try {
-                            const r = await fetch(u);
+                            const r = await fetch(u, { cache: preferCloud ? 'no-store' : 'default' });
                             if (r.ok) {
                                 const payload = await r.json();
                                 if (payload && Array.isArray(payload.stocks) && payload.stocks.length > 0) {
@@ -7183,21 +7205,17 @@ ${text.slice(0, 30000)}`;
             await staticFallbackFn();
         }
 
-        async function fetchTopTurnoverFromGithub(silent = false) {
+        async function fetchTopTurnoverFromGithub(silent = false, preferCloud = false) {
             const fetchBtn = document.getElementById('fetch-turnover-btn');
             const doStatic = async () => {
                 if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
                 if (!silent) showToast('🔥 正在從 GitHub 抓取最新成交值排行...');
                 try {
-                    const urls = [
-                        `./top_turnover.json?v=${Date.now()}`,
-                        `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/top_turnover.json?v=${Date.now()}`,
-                        `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/top_turnover.json?v=${Date.now()}`
-                    ];
+                    const urls = getDataSourceUrls("top_turnover.json", preferCloud);
                     let payload = null;
                     for (const u of urls) {
                         try {
-                            const r = await fetch(u);
+                            const r = await fetch(u, { cache: preferCloud ? 'no-store' : 'default' });
                             if (r.ok) {
                                 const j = await r.json();
                                 if (j && (j.twse || j.tpex)) { payload = j; break; }
@@ -7356,21 +7374,17 @@ ${text.slice(0, 30000)}`;
         let volumeSpikeData = INITIAL_VOLUME_SPIKE_DATA;
         let volumeSpikeMarketFilter = 'all';
 
-        async function fetchVolumeSpikeFromGithub(silent = false) {
+        async function fetchVolumeSpikeFromGithub(silent = false, preferCloud = false) {
             const fetchBtn = document.getElementById('fetch-volspike-btn');
             const doStatic = async () => {
                 if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
                 if (!silent) showToast('⚡ 正在從 GitHub 抓取最新成交量異常名單...');
                 try {
-                    const urls = [
-                        `./volume_spike.json?v=${Date.now()}`,
-                        `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/volume_spike.json?v=${Date.now()}`,
-                        `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/volume_spike.json?v=${Date.now()}`
-                    ];
+                    const urls = getDataSourceUrls("volume_spike.json", preferCloud);
                     let payload = null;
                     for (const u of urls) {
                         try {
-                            const r = await fetch(u);
+                            const r = await fetch(u, { cache: preferCloud ? 'no-store' : 'default' });
                             if (r.ok) {
                                 const j = await r.json();
                                 if (j && (j.stocks || j.twse || j.tpex)) { payload = j; break; }
@@ -7554,21 +7568,17 @@ ${text.slice(0, 30000)}`;
         let sectorCategoryFilter = 'all';
         let sectorSignalFilter = 'all';
 
-        async function fetchSectorStrengthFromGithub(silent = false) {
+        async function fetchSectorStrengthFromGithub(silent = false, preferCloud = false) {
             const btn = document.getElementById('fetch-sector-btn');
             const doStatic = async () => {
                 if (btn) { btn.disabled = true; btn.textContent = '⏳ 載入中...'; }
                 try {
                     if (!silent) showToast('正在抓取族群強弱資料...');
-                    const urls = [
-                        `./sector_strength.json?v=${Date.now()}`,
-                        `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/sector_strength.json?v=${Date.now()}`,
-                        `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/sector_strength.json?v=${Date.now()}`
-                    ];
+                    const urls = getDataSourceUrls("sector_strength.json", preferCloud);
                     let data = null;
                     for (const url of urls) {
                         try {
-                            const res = await fetch(url);
+                            const res = await fetch(url, { cache: preferCloud ? 'no-store' : 'default' });
                             if (res.ok) {
                                 const json = await res.json();
                                 if (json && json.sectors && json.sectors.length > 0) { data = json; break; }
@@ -7755,21 +7765,17 @@ ${text.slice(0, 30000)}`;
         let contractLiabilitiesData = null;
         let contractLiabilitiesMarketFilter = 'all';
 
-        async function fetchContractLiabilitiesFromGithub(silent = false) {
+        async function fetchContractLiabilitiesFromGithub(silent = false, preferCloud = false) {
             const fetchBtn = document.getElementById('fetch-contract-btn');
             const doStatic = async () => {
                 if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
                 if (!silent) showToast('💼 正在抓取最新合約負債新高名單...');
                 try {
-                    const urls = [
-                        `./contract_liabilities.json?v=${Date.now()}`,
-                        `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/contract_liabilities.json?v=${Date.now()}`,
-                        `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/contract_liabilities.json?v=${Date.now()}`
-                    ];
+                    const urls = getDataSourceUrls("contract_liabilities.json", preferCloud);
                     let payload = null;
                     for (const u of urls) {
                         try {
-                            const r = await fetch(u);
+                            const r = await fetch(u, { cache: preferCloud ? 'no-store' : 'default' });
                             if (r.ok) {
                                 const j = await r.json();
                                 if (j && j.stocks && j.stocks.length > 0) { payload = j; break; }
@@ -7959,21 +7965,17 @@ ${text.slice(0, 30000)}`;
         let sectorCapitalFlowTypeFilter = 'all'; // 'all', 'theme', 'official'
         let sectorCapitalFlowDirectionFilter = 'all'; // 'all', 'inflow', 'outflow'
 
-        async function fetchSectorCapitalFlowFromGithub(silent = false) {
+        async function fetchSectorCapitalFlowFromGithub(silent = false, preferCloud = false) {
             const fetchBtn = document.getElementById('fetch-sector-flow-btn');
             const doStatic = async () => {
                 if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
                 if (!silent) showToast('🌊 正在抓取最新資金族群流向資料...');
                 try {
-                    const urls = [
-                        `./sector_capital_flow.json?v=${Date.now()}`,
-                        `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/sector_capital_flow.json?v=${Date.now()}`,
-                        `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/sector_capital_flow.json?v=${Date.now()}`
-                    ];
+                    const urls = getDataSourceUrls("sector_capital_flow.json", preferCloud);
                     let payload = null;
                     for (const u of urls) {
                         try {
-                            const r = await fetch(u);
+                            const r = await fetch(u, { cache: preferCloud ? 'no-store' : 'default' });
                             if (r.ok) {
                                 const j = await r.json();
                                 if (j && (j.themes || j.official)) { payload = j; break; }
@@ -8300,21 +8302,17 @@ ${text.slice(0, 30000)}`;
             if (modal) modal.style.display = show ? 'flex' : 'none';
         }
 
-        async function fetchStockPledgeFromGithub(silent = false) {
+        async function fetchStockPledgeFromGithub(silent = false, preferCloud = false) {
             const fetchBtn = document.getElementById('fetch-stock-pledge-btn');
             const doStatic = async () => {
                 if (fetchBtn) { fetchBtn.disabled = true; fetchBtn.textContent = '⏳ 載入中...'; }
                 if (!silent) showToast('🏛️ 正在抓取最新大股東質設名單...');
                 try {
-                    const urls = [
-                        `./stock_pledge.json?v=${Date.now()}`,
-                        `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/stock_pledge.json?v=${Date.now()}`,
-                        `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/stock_pledge.json?v=${Date.now()}`
-                    ];
+                    const urls = getDataSourceUrls("stock_pledge.json", preferCloud);
                     let payload = null;
                     for (const u of urls) {
                         try {
-                            const r = await fetch(u);
+                            const r = await fetch(u, { cache: preferCloud ? 'no-store' : 'default' });
                             if (r.ok) {
                                 const j = await r.json();
                                 if (j && (j.stocks || j.summary)) { payload = j; break; }
