@@ -3495,17 +3495,13 @@
 
         // 台股股本資料庫非同步載入器 (帶本地快取與背景更新)
         let stockCapitalMap = {};
-        async function loadStockCapitals() {
+        async function loadStockCapitals(preferCloud = false) {
             if (localStorage.getItem('stock_capitals_cache')) {
                 try {
                     stockCapitalMap = JSON.parse(localStorage.getItem('stock_capitals_cache'));
                 } catch (e) { }
             }
-            const urls = [
-                `./stock_capital.json?v=${Date.now()}`,
-                `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/stock_capital.json?v=${Date.now()}`,
-                `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/stock_capital.json?v=${Date.now()}`
-            ];
+            const urls = getDataSourceUrls("stock_capital.json", preferCloud);
             for (const u of urls) {
                 try {
                     const r = await fetch(u, { cache: preferCloud ? 'no-store' : 'default' });
@@ -3522,12 +3518,8 @@
         }
 
         // 背景自動同步主動型 ETF 資料庫 (SWR 不阻斷畫面)
-        async function syncActiveEtfFromCloud() {
-            const repoUrls = [
-                `./active_etf_holdings.json?v=${Date.now()}`,
-                `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/active_etf_holdings.json?v=${Date.now()}`,
-                `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/active_etf_holdings.json?v=${Date.now()}`
-            ];
+        async function syncActiveEtfFromCloud(preferCloud = false) {
+            const repoUrls = getDataSourceUrls("active_etf_holdings.json", preferCloud);
             for (const u of repoUrls) {
                 try {
                     const r = await fetch(u, { cache: preferCloud ? 'no-store' : 'default' });
@@ -4111,7 +4103,7 @@
                     fetchEarningsCallFromGithub(true, true),
                     fetchCBFromGithub(true, true),
                     fetchCbBelowConvFromGithub(true, true),
-                    (async () => { try { await fetchGoalStarActiveFunds(); } catch(e) {} })()
+                    (async () => { try { await fetchGoalStarActiveFunds(true); await loadStockCapitals(true); } catch(e) {} })()
                 ]);
 
                 if (statusEl) statusEl.innerHTML = '✅ 雲端現場抓取全量完成！今日最新盤後數據已同步呈現在畫面上！';
@@ -6566,7 +6558,7 @@ JSON 欄位：
         let activeEtfFundsList = [];
         let activeEtfFilter = 'all';
 
-        async function fetchGoalStarActiveFunds() {
+        async function fetchGoalStarActiveFunds(preferCloud = false) {
             const progressContainer = document.getElementById('etf-progress-container');
             const progressStatus = document.getElementById('etf-progress-status');
             const progressPercent = document.getElementById('etf-progress-percent');
@@ -6589,11 +6581,7 @@ JSON 欄位：
                 let loadedFromRepo = false;
                 const EXCLUDED_ETFS = ['00984A', '00983A', '00989A', '00988A', '00990A', '00997A', '00986A', '00999A', '00984a', '00983a', '00989a', '00988a', '00990a', '00997a', '00986a', '00999a'];
                 try {
-                    const repoUrls = [
-                        `./active_etf_holdings.json?v=${Date.now()}`,
-                        `https://raw.githubusercontent.com/pilimesai/analyst-report-parser/main/active_etf_holdings.json?v=${Date.now()}`,
-                        `https://cdn.jsdelivr.net/gh/pilimesai/analyst-report-parser@main/active_etf_holdings.json?v=${Date.now()}`
-                    ];
+                    const repoUrls = getDataSourceUrls("active_etf_holdings.json", preferCloud);
                     for (const u of repoUrls) {
                         try {
                             const r = await fetch(u, { cache: preferCloud ? 'no-store' : 'default' });
