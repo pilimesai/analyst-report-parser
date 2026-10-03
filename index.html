@@ -2467,6 +2467,7 @@
                     </div>
                     <div class="action-buttons">
                         <button class="btn btn-primary" id="quant-re-run-btn">🚀 執行即時量化運算</button>
+                        <button class="btn" id="sync-quant-sheet-btn">☁️ 同步至 Google Sheet</button>
                         <button class="btn" id="export-quant-btn">📤 導出選股清單</button>
                     </div>
                 </div>
@@ -3765,6 +3766,7 @@
             setTimeout(() => { fetchContractLiabilitiesFromGithub(true); }, 740);
             setTimeout(() => { fetchSectorCapitalFlowFromGithub(true); }, 880);
             setTimeout(() => { fetchStockPledgeFromGithub(true); }, 1020);
+            setTimeout(() => { loadQuantResultsFromCloud(true); }, 1160);
             setTimeout(() => {
                 fetchCBFromGithub(true);
                 fetchCbBelowConvFromGithub(true);
@@ -4103,7 +4105,9 @@
                     fetchEarningsCallFromGithub(true, true),
                     fetchCBFromGithub(true, true),
                     fetchCbBelowConvFromGithub(true, true),
-                    (async () => { try { await fetchGoalStarActiveFunds(true); await loadStockCapitals(true); } catch(e) {} })()
+                    (async () => { try { await fetchGoalStarActiveFunds(true); await loadStockCapitals(true); await
+                            loadQuantResultsFromCloud(true, true); } catch(e) {} })(),
+                    loadQuantResultsFromCloud(true, true)
                 ]);
 
                 if (statusEl) statusEl.innerHTML = '✅ 雲端現場抓取全量完成！今日最新盤後數據已同步呈現在畫面上！';
@@ -6012,6 +6016,7 @@ JSON 欄位：
 
             // 渲染獨立量化結果頁面並切換分頁
             renderQuantResults(liveScores, liveMatches);
+            try { syncQuantResultsToGoogleSheet(liveScores, liveMatches, true); } catch(e) {}
             switchActiveTab('quant-results');
             showToast("⚡ 量化分析快速運算完畢！已切換至「量化選股結果」分頁。");
         }
@@ -6548,6 +6553,111 @@ JSON 欄位：
                 downloadAnchor.click();
                 downloadAnchor.remove();
                 showToast("✅ 量化選股清單已成功匯出成 JSON 檔案！");
+            });
+        }
+
+        // ☁️ 同步量化選股結果至 Google Sheet (分頁：量化嚴選)
+        async function syncQuantResultsToGoogleSheet(scores = {}, matches = {}, silent = false) {
+            const scriptUrl = (scriptUrlInput ? scriptUrlInput.value.trim() : '') || (typeof CONFIG_SCRIPT_URL !== 'undefined' ? CONFIG_SCRIPT_URL : '');
+            if (!scriptUrl) {
+                if (!silent) showToast("⚠️ 請先設定 Google Apps Script Web App 網址以進行同步", true);
+                return;
+            }
+
+            const stockList = Object.keys(scores).map(sid => ({
+                stockId: sid,
+                name: (typeof stockNameMap !== 'undefined' && stockNameMap[sid]) || (typeof stockNamesMap !== 'undefined' && stockNamesMap[sid]) || '',
+                score: scores[sid] || 0,
+                matches: matches[sid] || []
+            })).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
+
+            if (stockList.length === 0) {
+                if (!silent) showToast("⚠️ 目前無量化選股標的可同步", true);
+                return;
+            }
+
+            if (!silent) showToast(`☁️ 正在將 ${stockList.length} 檔量化嚴選標的同步至 Google Sheet...`);
+
+            const nowStr = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
+            const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Taipei' });
+            const headers = ['排名', '股票代號', '股票名稱', '綜合評分', '符合條件數', '符合條件明細', '資料交易日', '更新時間'];
+            const rows = [headers];
+
+            stockList.forEach((item, idx) => {
+                rows.push([
+                    idx + 1,
+                    item.stockId,
+                    item.name,
+                    item.score,
+                    item.matches.length,
+                    item.matches.join(' | '),
+                    todayStr,
+                    nowStr
+                ]);
+            });
+
+            try {
+                const res = await fetch(scriptUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'save_csv',
+                        sheetName: '量化嚴選',
+                        data: rows
+                    })
+                });
+                const resJson = await res.json();
+                if (resJson.status === 'success') {
+                    if (!silent) showToast(`🎉 成功同步 ${stockList.length} 檔量化嚴選標的至 Google Sheet 分頁【量化嚴選】！`);
+                } else {
+                    if (!silent) showToast(`⚠️ 雲端同步失敗: ${resJson.message}`, true);
+                }
+            } catch(err) {
+                if (!silent) showToast(`⚠️ 雲端連線失敗: ${err.message}`, true);
+            }
+        }
+
+        // 📥 從雲端加載量化選股結果 (支援跨裝置/手機/電腦無縫同步)
+        async function loadQuantResultsFromCloud(silent = false, preferCloud = false) {
+            try {
+                if (!silent) showToast("正在獲取最新量化嚴選標的...");
+                const urls = getDataSourceUrls("quant_results.json", preferCloud);
+                let payload = null;
+                for (const u of urls) {
+                    try {
+                        const r = await fetch(u, { cache: preferCloud ? 'no-store' : 'default' });
+                        if (r.ok) {
+                            const j = await r.json();
+                            if (j && j.scores && Object.keys(j.scores).length > 0) {
+                                payload = j;
+                                break;
+                            }
+                        }
+                    } catch(e) {}
+                }
+                if (!payload) return;
+                quantResultsCache = { liveScores: payload.scores, liveMatches: payload.matches };
+                localStorage.setItem('quant_results_cache', JSON.stringify({
+                    liveScores: payload.scores,
+                    liveMatches: payload.matches,
+                    updateTime: payload.updateTime,
+                    tradeDate: payload.tradeDate
+                }));
+                renderQuantResults(payload.scores, payload.matches);
+                if (!silent) showToast(`✅ 成功載入量化選股標的！共 ${payload.passedCount || Object.keys(payload.scores).length} 檔（${payload.tradeDate || ''}）`);
+            } catch(e) {
+                if (!silent) showToast("載入失敗: " + e.message, true);
+            }
+        }
+
+        const syncQuantSheetBtn = document.getElementById('sync-quant-sheet-btn');
+        if (syncQuantSheetBtn) {
+            syncQuantSheetBtn.addEventListener('click', () => {
+                if (!quantResultsCache.liveScores || Object.keys(quantResultsCache.liveScores).length === 0) {
+                    showToast("⚠️ 目前尚未有量化選股結果，請先點擊「🚀 執行即時量化運算」", true);
+                    return;
+                }
+                syncQuantResultsToGoogleSheet(quantResultsCache.liveScores, quantResultsCache.liveMatches, false);
             });
         }
 

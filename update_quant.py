@@ -455,8 +455,56 @@ def main():
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(output_payload, f, ensure_ascii=False, indent=2)
 
+    # 同步至 Google Sheet
+    sync_quant_to_google_sheet(output_payload)
+
     elapsed = time.time() - start_time
     print(f"✅ 成功產出 {out_path} (耗時 {elapsed:.2f} 秒)！")
 
+def sync_quant_to_google_sheet(output_payload):
+    gas_url = "https://script.google.com/macros/s/AKfycbzm7ZXZyAe_8XhARcC8VKw2DDsWtaW_OdrANnA87lTQo2ozlM-2F4XsFFOXIC1HynqM/exec"
+    trade_date = output_payload.get('tradeDate', '')
+    update_time = output_payload.get('updateTime', '')
+    ranked = output_payload.get('rankedList', [])
+    if not ranked:
+        return
+
+    headers = ['排名', '股票代號', '股票名稱', '綜合評分', '符合條件數', '符合條件明細', '資料交易日', '更新時間']
+    rows = [headers]
+    for item in ranked:
+        matches_str = ' | '.join(item.get('matches', []))
+        rows.append([
+            item.get('rank', ''),
+            item.get('stockId', ''),
+            item.get('name', ''),
+            item.get('score', 0),
+            len(item.get('matches', [])),
+            matches_str,
+            str(trade_date),
+            str(update_time)
+        ])
+
+    try:
+        print("☁️ 正在同步量化嚴選結果至 Google Sheet (分頁：量化嚴選)...")
+        req_body = json.dumps({
+            'action': 'save_csv',
+            'sheetName': '量化嚴選',
+            'data': rows
+        }).encode('utf-8')
+        req = urllib.request.Request(
+            gas_url,
+            data=req_body,
+            headers={'Content-Type': 'text/plain; charset=utf-8', 'User-Agent': 'Mozilla/5.0'}
+        )
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            res = json.loads(resp.read().decode('utf-8'))
+            if res.get('status') == 'success':
+                print(f"🎉 成功同步 {len(ranked)} 檔量化嚴選標的至 Google Sheet 分頁【量化嚴選】！")
+            else:
+                print(f"⚠️ Google Sheet 同步回傳訊息: {res}")
+    except Exception as e:
+        print(f"⚠️ Google Sheet 同步遭遇例外 (不影響本機結果產出): {e}")
+
 if __name__ == "__main__":
     main()
+
