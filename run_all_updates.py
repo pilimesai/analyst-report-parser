@@ -84,6 +84,12 @@ SCRIPTS = [
         "file": "update_quant.py",
         "json": "quant_results.json",
         "desc": "多維度量化評分與嚴選股票清單"
+    },
+    {
+        "name": "認購權證買盤排行",
+        "file": "update_call_warrants.py",
+        "json": "call_warrants.json",
+        "desc": "全市場認購權證成交金額彙總至個股排行"
     }
 ]
 

@@ -1,0 +1,45 @@
+name: Update Call Warrants Daily
+
+on:
+  schedule:
+    # 每天台灣時間 19:45 (UTC 11:45) 自動執行 (盤後 OpenAPI 資料就緒)
+    - cron: '45 11 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Fetch and Aggregate Call Warrants
+        run: |
+          python update_call_warrants.py
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add call_warrants.json
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: auto-update call_warrants.json"
+            git pull --rebase origin main
+            git push origin main
+          else
+            echo "No changes to commit."
+          fi
