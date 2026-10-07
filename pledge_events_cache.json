@@ -443396,5 +443396,879 @@
       "creditor": "中國信託商業銀行西台南分行",
       "report_date": "104/02/26"
     }
+  ],
+  "2409": [
+    {
+      "identity": "D00110董事本人",
+      "name": "昱華開發股份有限公司",
+      "event_date": "92/02/10",
+      "pledge_shares": 752000,
+      "unpledge_shares": 0,
+      "cum_shares": 752000,
+      "creditor": "中興票券金融股份有限公司",
+      "report_date": "92/02/11"
+    },
+    {
+      "identity": "D00110董事本人",
+      "name": "昱華開發股份有限公司",
+      "event_date": "92/04/30",
+      "pledge_shares": 0,
+      "unpledge_shares": 752000,
+      "cum_shares": 0,
+      "creditor": "中興票券金融股份有限公司",
+      "report_date": "92/05/02"
+    },
+    {
+      "identity": "H00010副總經理本人",
+      "name": "蘇峰正",
+      "event_date": "93/04/07",
+      "pledge_shares": 0,
+      "unpledge_shares": 1130000,
+      "cum_shares": 0,
+      "creditor": "一銀仁和",
+      "report_date": "93/04/09"
+    },
+    {
+      "identity": "D00050董事本人",
+      "name": "達利貳投資股份有限公司",
+      "event_date": "93/05/18",
+      "pledge_shares": 0,
+      "unpledge_shares": 831682,
+      "cum_shares": 0,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "93/05/21"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "明基電通股份有限公司",
+      "event_date": "95/08/04",
+      "pledge_shares": 193000000,
+      "unpledge_shares": 0,
+      "cum_shares": 193000000,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "95/08/07"
+    },
+    {
+      "identity": "B00010副董事長本人",
+      "name": "明基電通股份有限公司",
+      "event_date": "95/12/27",
+      "pledge_shares": 79500000,
+      "unpledge_shares": 0,
+      "cum_shares": 272500000,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "95/12/28"
+    },
+    {
+      "identity": "B00010副董事長本人",
+      "name": "明基電通股份有限公司",
+      "event_date": "96/01/03",
+      "pledge_shares": 4601000,
+      "unpledge_shares": 0,
+      "cum_shares": 277101000,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "96/01/05"
+    },
+    {
+      "identity": "B00010副董事長本人",
+      "name": "明基電通股份有限公司",
+      "event_date": "96/01/04",
+      "pledge_shares": 152599000,
+      "unpledge_shares": 0,
+      "cum_shares": 429700000,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "96/01/05"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "96/09/14",
+      "pledge_shares": 87037000,
+      "unpledge_shares": 0,
+      "cum_shares": 516737000,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "96/09/17"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "96/10/09",
+      "pledge_shares": 8754000,
+      "unpledge_shares": 0,
+      "cum_shares": 525491000,
+      "creditor": "中華開發工業銀行(股)公司桃園分",
+      "report_date": "96/10/11"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "97/09/01",
+      "pledge_shares": 25835864,
+      "unpledge_shares": 0,
+      "cum_shares": 551326864,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "97/09/02"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "98/09/09",
+      "pledge_shares": 16277186,
+      "unpledge_shares": 0,
+      "cum_shares": 567604050,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "98/09/10"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "98/09/29",
+      "pledge_shares": 262620,
+      "unpledge_shares": 0,
+      "cum_shares": 567866670,
+      "creditor": "中華開發工業銀行(股)公司桃園分",
+      "report_date": "98/09/30"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "98/10/12",
+      "pledge_shares": 0,
+      "unpledge_shares": 352957518,
+      "cum_shares": 214909152,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "98/10/13"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "98/10/13",
+      "pledge_shares": 350470220,
+      "unpledge_shares": 0,
+      "cum_shares": 565379372,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "98/10/14"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "99/03/29",
+      "pledge_shares": 0,
+      "unpledge_shares": 205892532,
+      "cum_shares": 359486840,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "99/03/30"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "99/03/30",
+      "pledge_shares": 248618785,
+      "unpledge_shares": 0,
+      "cum_shares": 608105625,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "99/03/31"
+    },
+    {
+      "identity": "H00070副總經理本人",
+      "name": "吳國隆",
+      "event_date": "99/06/28",
+      "pledge_shares": 0,
+      "unpledge_shares": 150000,
+      "cum_shares": 0,
+      "creditor": "渣打國際商業銀行光復分公司",
+      "report_date": "99/06/29"
+    },
+    {
+      "identity": "B00010副董事長本人",
+      "name": "陳炫彬",
+      "event_date": "99/07/26",
+      "pledge_shares": 2200000,
+      "unpledge_shares": 0,
+      "cum_shares": 2200000,
+      "creditor": "兆豐國際商業銀行竹科新安分公司",
+      "report_date": "99/07/27"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "陳來助",
+      "event_date": "99/07/27",
+      "pledge_shares": 2200000,
+      "unpledge_shares": 0,
+      "cum_shares": 2200000,
+      "creditor": "兆豐國際商業銀行竹科新安分公司",
+      "report_date": "99/07/30"
+    },
+    {
+      "identity": "D00021董事之法人代表人",
+      "name": "熊暉",
+      "event_date": "99/08/10",
+      "pledge_shares": 2500000,
+      "unpledge_shares": 0,
+      "cum_shares": 2500000,
+      "creditor": "兆豐國際商業銀行竹科新安分公司",
+      "report_date": "99/08/11"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "陳來助",
+      "event_date": "99/08/23",
+      "pledge_shares": 0,
+      "unpledge_shares": 1000000,
+      "cum_shares": 1200000,
+      "creditor": "兆豐國際商業銀行竹科新安分公司",
+      "report_date": "99/08/24"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "99/09/08",
+      "pledge_shares": 40637024,
+      "unpledge_shares": 0,
+      "cum_shares": 648742649,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "99/09/09"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "99/09/29",
+      "pledge_shares": 0,
+      "unpledge_shares": 9016620,
+      "cum_shares": 639726029,
+      "creditor": "中華開發工業銀行(股)公司桃園分",
+      "report_date": "99/09/30"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "99/12/23",
+      "pledge_shares": 0,
+      "unpledge_shares": 58410374,
+      "cum_shares": 581315655,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "99/12/24"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "100/09/05",
+      "pledge_shares": 14000000,
+      "unpledge_shares": 0,
+      "cum_shares": 595315655,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "100/09/06"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "陳來助",
+      "event_date": "100/11/11",
+      "pledge_shares": 0,
+      "unpledge_shares": 1200000,
+      "cum_shares": 0,
+      "creditor": "兆豐國際商業銀行(股)公司竹科新",
+      "report_date": "100/11/14"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "101/03/08",
+      "pledge_shares": 0,
+      "unpledge_shares": 324466339,
+      "cum_shares": 270849316,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "101/03/09"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "101/03/09",
+      "pledge_shares": 324466339,
+      "unpledge_shares": 0,
+      "cum_shares": 595315655,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "101/03/12"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "101/04/09",
+      "pledge_shares": 0,
+      "unpledge_shares": 67056815,
+      "cum_shares": 528258840,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "101/04/10"
+    },
+    {
+      "identity": "B00010副董事長本人",
+      "name": "陳炫彬",
+      "event_date": "101/07/30",
+      "pledge_shares": 0,
+      "unpledge_shares": 2200000,
+      "cum_shares": 0,
+      "creditor": "兆豐國際商業銀行(股)公司竹科新",
+      "report_date": "101/07/31"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "101/08/22",
+      "pledge_shares": 67000000,
+      "unpledge_shares": 0,
+      "cum_shares": 595258840,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "101/08/23"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "103/07/18",
+      "pledge_shares": 0,
+      "unpledge_shares": 270849316,
+      "cum_shares": 324409524,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "103/07/21"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "103/07/18",
+      "pledge_shares": 270849316,
+      "unpledge_shares": 0,
+      "cum_shares": 595258840,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "103/07/21"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "103/09/29",
+      "pledge_shares": 0,
+      "unpledge_shares": 105804524,
+      "cum_shares": 489454316,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "103/09/30"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "104/04/07",
+      "pledge_shares": 0,
+      "unpledge_shares": 71564000,
+      "cum_shares": 417890316,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "104/04/08"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "104/06/25",
+      "pledge_shares": 13000000,
+      "unpledge_shares": 0,
+      "cum_shares": 430890316,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "104/06/26"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "104/08/07",
+      "pledge_shares": 39224684,
+      "unpledge_shares": 0,
+      "cum_shares": 470115000,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "104/08/10"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "104/08/10",
+      "pledge_shares": 30000000,
+      "unpledge_shares": 0,
+      "cum_shares": 500115000,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "104/08/11"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "104/08/24",
+      "pledge_shares": 41000000,
+      "unpledge_shares": 0,
+      "cum_shares": 541115000,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "104/08/25"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "104/12/29",
+      "pledge_shares": 0,
+      "unpledge_shares": 211115000,
+      "cum_shares": 330000000,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "104/12/30"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "104/12/30",
+      "pledge_shares": 211115000,
+      "unpledge_shares": 0,
+      "cum_shares": 541115000,
+      "creditor": "臺灣銀行桃園分行股票質權設定專戶",
+      "report_date": "104/12/31"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "105/08/31",
+      "pledge_shares": 0,
+      "unpledge_shares": 30000000,
+      "cum_shares": 511115000,
+      "creditor": "臺灣銀行桃園分行股票質權設定專戶",
+      "report_date": "105/09/01"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "105/09/01",
+      "pledge_shares": 0,
+      "unpledge_shares": 90000000,
+      "cum_shares": 421115000,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "105/09/02"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "106/06/23",
+      "pledge_shares": 130000000,
+      "unpledge_shares": 0,
+      "cum_shares": 551115000,
+      "creditor": "臺灣銀行桃園分行股票質權設定專戶",
+      "report_date": "106/06/26"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "106/08/17",
+      "pledge_shares": 0,
+      "unpledge_shares": 60000000,
+      "cum_shares": 491115000,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "106/08/18"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "106/11/30",
+      "pledge_shares": 0,
+      "unpledge_shares": 180000000,
+      "cum_shares": 311115000,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "106/12/01"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "106/12/05",
+      "pledge_shares": 64224684,
+      "unpledge_shares": 0,
+      "cum_shares": 375339684,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "106/12/06"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "106/12/06",
+      "pledge_shares": 115775316,
+      "unpledge_shares": 0,
+      "cum_shares": 491115000,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "106/12/07"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "107/03/30",
+      "pledge_shares": 0,
+      "unpledge_shares": 40000000,
+      "cum_shares": 451115000,
+      "creditor": "臺灣銀行桃園分行股票質權設定專戶",
+      "report_date": "107/03/31"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "佳世達科技股份有限公司",
+      "event_date": "107/08/17",
+      "pledge_shares": 0,
+      "unpledge_shares": 30000000,
+      "cum_shares": 421115000,
+      "creditor": "臺灣銀行桃園分行股票質權設定專戶",
+      "report_date": "107/08/20"
+    }
+  ],
+  "1457": [
+    {
+      "identity": "D00020董事本人",
+      "name": "陳貞男",
+      "event_date": "88/10/02",
+      "pledge_shares": 50000,
+      "unpledge_shares": 0,
+      "cum_shares": 1050000,
+      "creditor": "安泰商業銀行民生分行",
+      "report_date": "88/10/05"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "詹正田",
+      "event_date": "88/10/13",
+      "pledge_shares": 1000000,
+      "unpledge_shares": 0,
+      "cum_shares": 22900000,
+      "creditor": "第一商業銀行民權分行",
+      "report_date": "88/10/15"
+    },
+    {
+      "identity": "G00010總經理本人",
+      "name": "詹正旺",
+      "event_date": "88/10/20",
+      "pledge_shares": 1000000,
+      "unpledge_shares": 0,
+      "cum_shares": 14670000,
+      "creditor": "中華商業銀行松江分行",
+      "report_date": "88/10/21"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "詹正田",
+      "event_date": "88/10/20",
+      "pledge_shares": 1400000,
+      "unpledge_shares": 0,
+      "cum_shares": 24300000,
+      "creditor": "中華商業銀行松江分行",
+      "report_date": "88/10/21"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "陳貞男",
+      "event_date": "88/11/06",
+      "pledge_shares": 250000,
+      "unpledge_shares": 0,
+      "cum_shares": 1300000,
+      "creditor": "安泰商業銀行民生分行",
+      "report_date": "88/11/09"
+    },
+    {
+      "identity": "G00010總經理本人",
+      "name": "詹正旺",
+      "event_date": "88/11/29",
+      "pledge_shares": 5265000,
+      "unpledge_shares": 0,
+      "cum_shares": 19935000,
+      "creditor": "大安商業銀行忠孝分行",
+      "report_date": "88/11/30"
+    },
+    {
+      "identity": "G00010總經理本人",
+      "name": "詹正旺",
+      "event_date": "88/12/21",
+      "pledge_shares": 830000,
+      "unpledge_shares": 0,
+      "cum_shares": 20765000,
+      "creditor": "世華聯合商業銀行民權分行",
+      "report_date": "88/12/22"
+    },
+    {
+      "identity": "G00010總經理本人",
+      "name": "詹正旺",
+      "event_date": "88/12/21",
+      "pledge_shares": 900000,
+      "unpledge_shares": 0,
+      "cum_shares": 21665000,
+      "creditor": "世華聯合商銀民權分行",
+      "report_date": "88/12/23"
+    },
+    {
+      "identity": "G00010總經理本人",
+      "name": "詹正旺",
+      "event_date": "89/01/05",
+      "pledge_shares": 1000000,
+      "unpledge_shares": 0,
+      "cum_shares": 22665000,
+      "creditor": "世華商銀民權分行",
+      "report_date": "89/01/07"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "詹正田",
+      "event_date": "89/01/26",
+      "pledge_shares": 0,
+      "unpledge_shares": 6900000,
+      "cum_shares": 17400000,
+      "creditor": "大安商銀忠孝分行",
+      "report_date": "89/01/28"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "詹正田",
+      "event_date": "89/02/01",
+      "pledge_shares": 0,
+      "unpledge_shares": 1100000,
+      "cum_shares": 16300000,
+      "creditor": "大安商銀忠孝分行",
+      "report_date": "89/02/02"
+    },
+    {
+      "identity": "D00030董事本人",
+      "name": "程舒茵",
+      "event_date": "89/02/01",
+      "pledge_shares": 0,
+      "unpledge_shares": 4400000,
+      "cum_shares": 0,
+      "creditor": "大安商銀忠孝分行",
+      "report_date": "89/02/02"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "詹正田",
+      "event_date": "89/02/14",
+      "pledge_shares": 4700000,
+      "unpledge_shares": 0,
+      "cum_shares": 11600000,
+      "creditor": "第一商業銀行民權分行",
+      "report_date": "89/02/16"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "詹正田",
+      "event_date": "89/02/18",
+      "pledge_shares": 0,
+      "unpledge_shares": 3800000,
+      "cum_shares": 7800000,
+      "creditor": "中華商業銀行松江分行",
+      "report_date": "89/02/23"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "詹正田",
+      "event_date": "89/03/31",
+      "pledge_shares": 0,
+      "unpledge_shares": 4000000,
+      "cum_shares": 0,
+      "creditor": "台新銀行天母分行",
+      "report_date": "89/04/01"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "詹正田",
+      "event_date": "89/03/31",
+      "pledge_shares": 0,
+      "unpledge_shares": 3800000,
+      "cum_shares": 4000000,
+      "creditor": "台新銀行天母分行",
+      "report_date": "89/04/01"
+    },
+    {
+      "identity": "G00010總經理本人",
+      "name": "詹正旺",
+      "event_date": "89/09/04",
+      "pledge_shares": 6000000,
+      "unpledge_shares": 0,
+      "cum_shares": 28665000,
+      "creditor": "大安商業銀行忠孝分行",
+      "report_date": "89/09/04"
+    },
+    {
+      "identity": "E00020監察人本人",
+      "name": "陳貞男",
+      "event_date": "90/01/16",
+      "pledge_shares": 0,
+      "unpledge_shares": 1300000,
+      "cum_shares": 0,
+      "creditor": "安泰商業銀行股份有限公司",
+      "report_date": "90/01/18"
+    },
+    {
+      "identity": "E00010監察人本人",
+      "name": "鄭朝陽",
+      "event_date": "90/12/26",
+      "pledge_shares": 0,
+      "unpledge_shares": 1100000,
+      "cum_shares": 338000,
+      "creditor": "合作金庫民生分行",
+      "report_date": "90/12/28"
+    },
+    {
+      "identity": "E00010監察人本人",
+      "name": "鄭朝陽",
+      "event_date": "90/12/27",
+      "pledge_shares": 0,
+      "unpledge_shares": 1062000,
+      "cum_shares": 1438000,
+      "creditor": "合作金庫民生分行",
+      "report_date": "90/12/27"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "詹正田",
+      "event_date": "99/10/19",
+      "pledge_shares": 10000000,
+      "unpledge_shares": 0,
+      "cum_shares": 10000000,
+      "creditor": "台灣銀行股份有限公司松江分公司",
+      "report_date": "99/10/20"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "詹正田",
+      "event_date": "99/10/26",
+      "pledge_shares": 5600000,
+      "unpledge_shares": 0,
+      "cum_shares": 15600000,
+      "creditor": "一銀民權",
+      "report_date": "99/10/27"
+    },
+    {
+      "identity": "D00071董事之法人代表人",
+      "name": "詹(糸羽)晴",
+      "event_date": "100/07/21",
+      "pledge_shares": 1000000,
+      "unpledge_shares": 0,
+      "cum_shares": 2000000,
+      "creditor": "一銀民權",
+      "report_date": "100/07/22"
+    },
+    {
+      "identity": "D00071董事之法人代表人",
+      "name": "詹(糸羽)晴",
+      "event_date": "100/07/21",
+      "pledge_shares": 1000000,
+      "unpledge_shares": 0,
+      "cum_shares": 3000000,
+      "creditor": "華南商業銀行(股)臺北南門分公司",
+      "report_date": "100/07/22"
+    },
+    {
+      "identity": "D00071董事之法人代表人",
+      "name": "詹(糸羽)晴",
+      "event_date": "100/11/16",
+      "pledge_shares": 53512,
+      "unpledge_shares": 0,
+      "cum_shares": 3053512,
+      "creditor": "一銀民權",
+      "report_date": "100/11/17"
+    },
+    {
+      "identity": "D00071董事之法人代表人",
+      "name": "詹(糸羽)晴",
+      "event_date": "101/02/24",
+      "pledge_shares": 0,
+      "unpledge_shares": 1000000,
+      "cum_shares": 2053512,
+      "creditor": "華南商業銀行(股)臺北南門分公司",
+      "report_date": "101/02/29"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "詹正田",
+      "event_date": "101/03/16",
+      "pledge_shares": 0,
+      "unpledge_shares": 2000000,
+      "cum_shares": 13600000,
+      "creditor": "台灣銀行股份有限公司松江分公司",
+      "report_date": "101/03/19"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "詹正田",
+      "event_date": "101/03/19",
+      "pledge_shares": 0,
+      "unpledge_shares": 2100000,
+      "cum_shares": 11500000,
+      "creditor": "一銀民權",
+      "report_date": "101/03/20"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "詹?晴",
+      "event_date": "105/06/13",
+      "pledge_shares": 0,
+      "unpledge_shares": 2053512,
+      "cum_shares": 0,
+      "creditor": "一銀民權",
+      "report_date": "105/06/14"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "詹正田",
+      "event_date": "106/03/13",
+      "pledge_shares": 210000,
+      "unpledge_shares": 0,
+      "cum_shares": 11710000,
+      "creditor": "一銀民權",
+      "report_date": "106/03/14"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "詹正田",
+      "event_date": "106/04/11",
+      "pledge_shares": 2200000,
+      "unpledge_shares": 0,
+      "cum_shares": 12739000,
+      "creditor": "台灣銀行(股)公司松江分公司",
+      "report_date": "106/04/12"
+    },
+    {
+      "identity": "L00020大股東本人",
+      "name": "億東纖維股份有限公司",
+      "event_date": "106/09/21",
+      "pledge_shares": 15080000,
+      "unpledge_shares": 0,
+      "cum_shares": 15080000,
+      "creditor": "兆豐國際商銀(股)公司大稻埕分公司",
+      "report_date": "106/09/22"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "詹正田",
+      "event_date": "107/08/23",
+      "pledge_shares": 0,
+      "unpledge_shares": 9400000,
+      "cum_shares": 3339000,
+      "creditor": "台灣銀行股份有限公司松江分公司",
+      "report_date": "107/08/24"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "詹正田",
+      "event_date": "107/09/27",
+      "pledge_shares": 0,
+      "unpledge_shares": 3339000,
+      "cum_shares": 0,
+      "creditor": "一銀民權",
+      "report_date": "107/09/28"
+    },
+    {
+      "identity": "L00020大股東本人",
+      "name": "億東纖維股份有限公司",
+      "event_date": "108/08/14",
+      "pledge_shares": 0,
+      "unpledge_shares": 8080000,
+      "cum_shares": 7000000,
+      "creditor": "兆豐國際商業銀行(股)公司大稻埕分公司",
+      "report_date": "108/08/15"
+    },
+    {
+      "identity": "L00020大股東本人",
+      "name": "億東纖維股份有限公司",
+      "event_date": "109/09/21",
+      "pledge_shares": 0,
+      "unpledge_shares": 7000000,
+      "cum_shares": 0,
+      "creditor": "兆豐國際商業銀行股份有限公司大稻埕分公司",
+      "report_date": "109/09/22"
+    }
   ]
 }
