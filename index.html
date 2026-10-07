@@ -2760,12 +2760,11 @@
                                 <th class="warrant-col-val" style="min-width:130px;">認購權證總金額</th>
                                 <th class="warrant-col-vol">總成交量(股)</th>
                                 <th class="warrant-col-count">權證檔數</th>
-                                <th class="warrant-col-spot">現貨收盤</th>
                                 <th class="warrant-col-detail">其他大額認購權證</th>
                             </tr>
                         </thead>
                         <tbody id="warrants-tbody">
-                            <tr><td colspan="10" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                            <tr><td colspan="9" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
                                 <div style="font-size:1.5rem; margin-bottom:0.5rem;">⚡</div>
                                 <div>尚未載入認購權證買盤資料</div>
                                 <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊上方「🔄 重新載入」按鈕，系統將自動從資料庫抓取最新資料。</div>
@@ -7785,7 +7784,7 @@ ${text.slice(0, 30000)}`;
 
             if (!tbody) return;
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:var(--text-secondary); padding:2rem;">無符合條件的認購權證標的</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:var(--text-secondary); padding:2rem;">無符合條件的認購權證標的</td></tr>`;
                 return;
             }
 
@@ -7810,19 +7809,6 @@ ${text.slice(0, 30000)}`;
                 if (rankNum === 1) rankBadge = `<span style="font-size:1.15rem;">🥇</span>`;
                 else if (rankNum === 2) rankBadge = `<span style="font-size:1.15rem;">🥈</span>`;
                 else if (rankNum === 3) rankBadge = `<span style="font-size:1.15rem;">🥉</span>`;
-
-                // 現貨價格與漲跌
-                let spotHtml = '<span style="color:var(--text-secondary);">—</span>';
-                if (item.close_price) {
-                    const chgStr = String(item.change || '').trim();
-                    let chgHtml = '';
-                    const chgNum = parseFloat(chgStr);
-                    if (!isNaN(chgNum)) {
-                        if (chgNum > 0) chgHtml = `<span style="color:#ef4444; font-size:0.75rem; margin-left:3px;">▲${chgNum.toFixed(2)}</span>`;
-                        else if (chgNum < 0) chgHtml = `<span style="color:#22c55e; font-size:0.75rem; margin-left:3px;">▼${Math.abs(chgNum).toFixed(2)}</span>`;
-                    }
-                    spotHtml = `<span style="font-family:monospace; font-weight:600;">${item.close_price}</span>${chgHtml}`;
-                }
 
                 // 其他大額認購權證明細 (排除榜首後的其他熱門權證)
                 const otherW = (item.top_warrants || []).filter(w => w.name !== singleName).slice(0, 3);
@@ -7864,7 +7850,6 @@ ${text.slice(0, 30000)}`;
                     <td class="warrant-col-count">
                         <span style="padding:2px 6px; background:rgba(167,139,250,0.15); border:1px solid rgba(167,139,250,0.3); border-radius:4px;">${item.call_warrant_count} 檔</span>
                     </td>
-                    <td class="warrant-col-spot">${spotHtml}</td>
                     <td class="warrant-col-detail">
                         <div style="display:flex; flex-wrap:wrap; align-items:center;">
                             ${chipsHtml}
