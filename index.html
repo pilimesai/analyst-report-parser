@@ -5521,7 +5521,8 @@ JSON 欄位：
                 return;
             }
 
-            const sheetsToRender = Object.keys(window.tablesData);
+            // 排除不要自動動態生成分頁的 sheetName (例如 '量化嚴選'，避免重複生成動態分頁)
+            const sheetsToRender = Object.keys(window.tablesData).filter(s => s !== '量化嚴選' && !s.includes('量化嚴選'));
 
             // 定義要顯示的順序或白名單（如果不在此清單中，就接在後面顯示）
             const preferredOrder = [
