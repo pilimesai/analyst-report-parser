@@ -255,7 +255,40 @@ def main():
         })
 
     formatted_trade_date = format_roc_date(trade_date)
-    sorted_stocks = sorted(underlying_stats.values(), key=lambda x: x['total_call_value'], reverse=True)
+
+    # 針對每檔標的股票，先找出其「單一權證最大成交金額」
+    all_processed_stocks = []
+    for st in underlying_stats.values():
+        top_w = sorted(st['warrants'], key=lambda w: w['value'], reverse=True)
+        max_w = top_w[0] if top_w else None
+        max_single_val = max_w['value'] if max_w else 0.0
+
+        all_processed_stocks.append({
+            'code': st['code'],
+            'name': st['name'],
+            'market': st['market'],
+            'total_call_value': round(st['total_call_value']),
+            'total_call_value_yi': round(st['total_call_value'] / 1e8, 2),
+            'total_call_volume': st['total_call_volume'],
+            'call_warrant_count': st['call_warrant_count'],
+            'max_single_warrant_value': round(max_single_val),
+            'max_single_warrant_wan': round(max_single_val / 1e4, 1),
+            'max_single_warrant_name': max_w['name'] if max_w else '',
+            'max_single_warrant_code': max_w['code'] if max_w else '',
+            'max_single_warrant_strike': max_w['strike'] if max_w else '',
+            'top_warrants': [
+                {
+                    'code': w['code'],
+                    'name': w['name'],
+                    'value': round(w['value']),
+                    'volume': w['volume'],
+                    'strike': w['strike']
+                } for w in top_w[:5]
+            ]
+        })
+
+    # 依照【單一權證最大成交金額】由大到小排序（符合用戶核心需求：主力重押單一權證優先）
+    sorted_stocks = sorted(all_processed_stocks, key=lambda x: x['max_single_warrant_value'], reverse=True)
 
     total_market_call_val = sum(s['total_call_value'] for s in sorted_stocks)
     total_market_call_vol = sum(s['total_call_volume'] for s in sorted_stocks)
@@ -264,32 +297,12 @@ def main():
     result_stocks = []
     for rank, st in enumerate(sorted_stocks, 1):
         code = st['code']
-        # 排序該標的旗下認購權證成交金額 Top 5
-        top_warrants = sorted(st['warrants'], key=lambda w: w['value'], reverse=True)[:5]
-
         quote = cached_quotes.get(code, {})
-        result_stocks.append({
-            'rank': rank,
-            'code': code,
-            'name': st['name'],
-            'market': st['market'],
-            'total_call_value': round(st['total_call_value']),
-            'total_call_value_yi': round(st['total_call_value'] / 1e8, 2),
-            'total_call_volume': st['total_call_volume'],
-            'call_warrant_count': st['call_warrant_count'],
-            'close_price': quote.get('close_price', ''),
-            'change': quote.get('change', ''),
-            'stock_trade_value': quote.get('stock_trade_value', 0),
-            'top_warrants': [
-                {
-                    'code': w['code'],
-                    'name': w['name'],
-                    'value': round(w['value']),
-                    'volume': w['volume'],
-                    'strike': w['strike']
-                } for w in top_warrants
-            ]
-        })
+        st['rank'] = rank
+        st['close_price'] = quote.get('close_price', '')
+        st['change'] = quote.get('change', '')
+        st['stock_trade_value'] = quote.get('stock_trade_value', 0)
+        result_stocks.append(st)
 
     payload = {
         'updateTime': datetime.datetime.now(TZ_TW).strftime('%Y-%m-%d %H:%M:%S'),

@@ -2724,6 +2724,12 @@
                     <input type="text" id="warrants-search-input" placeholder="🔍 搜尋標的代號或名稱..." autocomplete="off"
                         style="width:100%; max-width:280px; padding:0.4rem 0.75rem; font-size:0.85rem; border-radius:0.5rem; background:rgba(255,255,255,0.04); border:1px solid var(--card-border); color:#fff;">
 
+                    <!-- 排序模式 -->
+                    <div style="display:flex; gap:0.4rem;" id="warrants-sort-filter">
+                        <button class="filter-chip active" data-sort="single">🔥 單一權證最大金額 (預設)</button>
+                        <button class="filter-chip" data-sort="total">📊 認購總成交金額</button>
+                    </div>
+
                     <!-- 市場篩選 -->
                     <div style="display:flex; gap:0.4rem;" id="warrants-market-filter">
                         <button class="filter-chip active" data-market="all">全部市場</button>
@@ -2734,9 +2740,10 @@
                     <!-- 最低金額篩選 -->
                     <div style="display:flex; gap:0.4rem;" id="warrants-minval-filter">
                         <button class="filter-chip active" data-minval="0">全部金額</button>
-                        <button class="filter-chip" data-minval="30000000">≥ 3,000萬</button>
-                        <button class="filter-chip" data-minval="50000000">≥ 5,000萬</button>
-                        <button class="filter-chip" data-minval="100000000">≥ 1億元</button>
+                        <button class="filter-chip" data-minval="1000000">≥ 100萬</button>
+                        <button class="filter-chip" data-minval="3000000">≥ 300萬</button>
+                        <button class="filter-chip" data-minval="5000000">≥ 500萬</button>
+                        <button class="filter-chip" data-minval="10000000">≥ 1,000萬</button>
                     </div>
                 </div>
 
@@ -2749,15 +2756,16 @@
                                 <th class="warrant-col-market">市場</th>
                                 <th class="warrant-col-code">代號</th>
                                 <th class="warrant-col-name">標的個股</th>
-                                <th class="warrant-col-val">認購權證總金額</th>
+                                <th class="warrant-col-single" style="min-width:185px;">🔥 單一權證最大買盤 (榜首)</th>
+                                <th class="warrant-col-val" style="min-width:130px;">認購權證總金額</th>
                                 <th class="warrant-col-vol">總成交量(股)</th>
                                 <th class="warrant-col-count">權證檔數</th>
                                 <th class="warrant-col-spot">現貨收盤</th>
-                                <th class="warrant-col-detail">熱門大額認購權證 (成交金額Top)</th>
+                                <th class="warrant-col-detail">其他大額認購權證</th>
                             </tr>
                         </thead>
                         <tbody id="warrants-tbody">
-                            <tr><td colspan="9" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                            <tr><td colspan="10" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
                                 <div style="font-size:1.5rem; margin-bottom:0.5rem;">⚡</div>
                                 <div>尚未載入認購權證買盤資料</div>
                                 <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊上方「🔄 重新載入」按鈕，系統將自動從資料庫抓取最新資料。</div>
@@ -7664,6 +7672,7 @@ ${text.slice(0, 30000)}`;
         // ⚡ 認購權證買盤模組 (Call Warrants Module)
         // ==========================================
         let callWarrantsData = null;
+        let callWarrantsSortMode = 'single'; // 'single' (依單一權證最大金額) 或 'total' (依認購總金額)
         let callWarrantsMarketFilter = 'all';
         let callWarrantsMinValueFilter = 0;
 
@@ -7714,7 +7723,7 @@ ${text.slice(0, 30000)}`;
 
             if (!callWarrantsData || !Array.isArray(callWarrantsData.stocks)) {
                 if (badgeWarrants) badgeWarrants.innerText = '0';
-                if (tbody) tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                if (tbody) tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
                     <div style="font-size:1.5rem; margin-bottom:0.5rem;">⚡</div>
                     <div>尚未載入認購權證買盤排行</div>
                     <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🔄 重新載入」按鈕，系統將自動從資料庫抓取最新資料。</div>
@@ -7722,12 +7731,30 @@ ${text.slice(0, 30000)}`;
                 return;
             }
 
-            const stocks = callWarrantsData.stocks || [];
+            const rawStocks = callWarrantsData.stocks || [];
             if (tradeDate) tradeDate.innerText = callWarrantsData.tradeDate || '—';
             if (totalValEl) totalValEl.innerText = `${(callWarrantsData.totalCallValueYi || (callWarrantsData.totalCallValue / 1e8)).toFixed(2)} 億元`;
-            if (top1El && stocks[0]) top1El.innerText = `${stocks[0].code || ''} ${stocks[0].name} (${stocks[0].total_call_value_yi}億)`;
-            if (summaryCountEl) summaryCountEl.innerText = `${stocks.length} 檔標的 / ${(callWarrantsData.totalWarrants || 0).toLocaleString()} 檔權證`;
-            if (badgeWarrants) badgeWarrants.innerText = String(stocks.length);
+            if (summaryCountEl) summaryCountEl.innerText = `${rawStocks.length} 檔標的 / ${(callWarrantsData.totalWarrants || 0).toLocaleString()} 檔權證`;
+            if (badgeWarrants) badgeWarrants.innerText = String(rawStocks.length);
+
+            // 依模式排序 (單一權證最大金額 vs 認購總金額)
+            let stocks = [...rawStocks];
+            if (callWarrantsSortMode === 'total') {
+                stocks.sort((a, b) => (b.total_call_value || 0) - (a.total_call_value || 0));
+            } else {
+                // 預設依單一權證最大金額排序 (讓單檔爆大額買盤的標的如研揚排在前面)
+                stocks.sort((a, b) => (b.max_single_warrant_value || 0) - (a.max_single_warrant_value || 0));
+            }
+
+            // 更新排行榜首 KPI
+            if (top1El && stocks[0]) {
+                if (callWarrantsSortMode === 'total') {
+                    top1El.innerText = `${stocks[0].code || ''} ${stocks[0].name} (總${stocks[0].total_call_value_yi}億)`;
+                } else {
+                    const singleWan = stocks[0].max_single_warrant_wan ? `${stocks[0].max_single_warrant_wan.toFixed(0)}萬` : `${Math.round((stocks[0].max_single_warrant_value || 0) / 1e4)}萬`;
+                    top1El.innerText = `${stocks[0].code || ''} ${stocks[0].name} (${stocks[0].max_single_warrant_name || '單檔'} ${singleWan})`;
+                }
+            }
 
             // 依市場篩選
             let filtered = stocks.filter(s => {
@@ -7736,9 +7763,13 @@ ${text.slice(0, 30000)}`;
                 return true;
             });
 
-            // 依最低金額篩選
+            // 依最低金額篩選 (單一排序時以單檔為準，總額排序時以總額為準)
             if (callWarrantsMinValueFilter > 0) {
-                filtered = filtered.filter(s => (s.total_call_value || 0) >= callWarrantsMinValueFilter);
+                if (callWarrantsSortMode === 'total') {
+                    filtered = filtered.filter(s => (s.total_call_value || 0) >= callWarrantsMinValueFilter);
+                } else {
+                    filtered = filtered.filter(s => (s.max_single_warrant_value || 0) >= callWarrantsMinValueFilter);
+                }
             }
 
             // 搜尋關鍵字
@@ -7747,17 +7778,18 @@ ${text.slice(0, 30000)}`;
             if (q) {
                 filtered = filtered.filter(s =>
                     String(s.code || '').toLowerCase().includes(q) ||
-                    String(s.name || '').toLowerCase().includes(q)
+                    String(s.name || '').toLowerCase().includes(q) ||
+                    String(s.max_single_warrant_name || '').toLowerCase().includes(q)
                 );
             }
 
             if (!tbody) return;
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:var(--text-secondary); padding:2rem;">無符合條件的認購權證標的</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:var(--text-secondary); padding:2rem;">無符合條件的認購權證標的</td></tr>`;
                 return;
             }
 
-            const maxVal = stocks[0] ? (stocks[0].total_call_value || 1) : 1;
+            const maxSingleVal = stocks[0] ? (stocks[0].max_single_warrant_value || 1) : 1;
 
             tbody.innerHTML = filtered.map((item, idx) => {
                 const isTwse = item.market === '上市';
@@ -7765,13 +7797,19 @@ ${text.slice(0, 30000)}`;
                     ? `<span style="font-size:0.68rem; padding:2px 5px; background:rgba(99,102,241,0.2); color:#a5b4fc; border:1px solid rgba(99,102,241,0.3); border-radius:4px; font-weight:600;">上市</span>`
                     : `<span style="font-size:0.68rem; padding:2px 5px; background:rgba(16,185,129,0.2); color:#34d399; border:1px solid rgba(16,185,129,0.3); border-radius:4px; font-weight:600;">上櫃</span>`;
 
-                const valYi = item.total_call_value_yi ? item.total_call_value_yi.toFixed(2) : (item.total_call_value / 1e8).toFixed(2);
-                const barPercent = Math.min(100, Math.max(4, Math.round((item.total_call_value / maxVal) * 100)));
+                const valYi = item.total_call_value_yi ? item.total_call_value_yi.toFixed(2) : ((item.total_call_value || 0) / 1e8).toFixed(2);
+                
+                // 單一最大權證金額與進度條
+                const singleVal = item.max_single_warrant_value || (item.top_warrants && item.top_warrants[0] ? item.top_warrants[0].value : 0);
+                const singleWan = item.max_single_warrant_wan ? item.max_single_warrant_wan.toFixed(1) : (singleVal / 1e4).toFixed(1);
+                const singleName = item.max_single_warrant_name || (item.top_warrants && item.top_warrants[0] ? item.top_warrants[0].name : '—');
+                const singleBarPercent = Math.min(100, Math.max(4, Math.round((singleVal / maxSingleVal) * 100)));
 
-                let rankBadge = `<span style="color:var(--text-secondary); font-size:0.82rem;">${item.rank || (idx + 1)}</span>`;
-                if (item.rank === 1) rankBadge = `<span style="font-size:1.15rem;">🥇</span>`;
-                else if (item.rank === 2) rankBadge = `<span style="font-size:1.15rem;">🥈</span>`;
-                else if (item.rank === 3) rankBadge = `<span style="font-size:1.15rem;">🥉</span>`;
+                const rankNum = idx + 1;
+                let rankBadge = `<span style="color:var(--text-secondary); font-size:0.82rem;">${rankNum}</span>`;
+                if (rankNum === 1) rankBadge = `<span style="font-size:1.15rem;">🥇</span>`;
+                else if (rankNum === 2) rankBadge = `<span style="font-size:1.15rem;">🥈</span>`;
+                else if (rankNum === 3) rankBadge = `<span style="font-size:1.15rem;">🥉</span>`;
 
                 // 現貨價格與漲跌
                 let spotHtml = '<span style="color:var(--text-secondary);">—</span>';
@@ -7786,13 +7824,14 @@ ${text.slice(0, 30000)}`;
                     spotHtml = `<span style="font-family:monospace; font-weight:600;">${item.close_price}</span>${chgHtml}`;
                 }
 
-                // 前幾大熱門認購權證明細
-                const topW = (item.top_warrants || []).slice(0, 3);
-                const chipsHtml = topW.map(w => {
+                // 其他大額認購權證明細 (排除榜首後的其他熱門權證)
+                const otherW = (item.top_warrants || []).filter(w => w.name !== singleName).slice(0, 3);
+                let chipsHtml = otherW.map(w => {
                     const wValStr = w.value >= 1e8 ? `${(w.value/1e8).toFixed(2)}億` : `${Math.round(w.value/1e4)}萬`;
                     const tooltip = `代號: ${w.code} | 成交金額: ${Number(w.value).toLocaleString()}元 | 成交量: ${Number(w.volume).toLocaleString()}股 | 履約價: ${w.strike || '—'}`;
-                    return `<span style="display:inline-block; font-size:0.70rem; padding:1px 6px; background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.25); border-radius:4px; color:#fde047; margin-right:4px; margin-bottom:2px;" title="${tooltip}">${w.name} (${wValStr})</span>`;
+                    return `<span style="display:inline-block; font-size:0.70rem; padding:1px 6px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:4px; color:#cbd5e1; margin-right:4px; margin-bottom:2px;" title="${tooltip}">${w.name} (${wValStr})</span>`;
                 }).join('');
+                if (!chipsHtml) chipsHtml = '<span style="color:var(--text-secondary); font-size:0.75rem;">—</span>';
 
                 const codeStr = item.code || '';
                 const stockLink = codeStr
@@ -7804,12 +7843,19 @@ ${text.slice(0, 30000)}`;
                     <td class="warrant-col-market">${marketBadge}</td>
                     <td class="warrant-col-code">${stockLink}</td>
                     <td class="warrant-col-name" title="${item.name}">${item.name}</td>
-                    <td class="warrant-col-val">
-                        <div style="font-weight:700; color:#fbbf24;">${valYi} 億</div>
-                        <div style="font-size:0.70rem; color:var(--text-secondary); margin-top:1px;">${Number(item.total_call_value).toLocaleString()} 元</div>
-                        <div style="height:3px; background:rgba(251,191,36,0.15); border-radius:2px; margin-top:2px; overflow:hidden;">
-                            <div style="height:100%; width:${barPercent}%; background:linear-gradient(90deg, #f59e0b, #eab308); border-radius:2px;"></div>
+                    <td class="warrant-col-single">
+                        <div style="font-weight:700; color:#fbbf24; font-size:0.92rem;">${singleWan} 萬</div>
+                        <div style="font-size:0.75rem; color:#93c5fd; font-weight:600; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:210px;" title="${singleName} (成交金額: ${Number(singleVal).toLocaleString()}元)">
+                            ${singleName}
                         </div>
+                        <div style="font-size:0.68rem; color:var(--text-secondary); margin-top:1px;">${Number(singleVal).toLocaleString()} 元</div>
+                        <div style="height:3px; background:rgba(251,191,36,0.15); border-radius:2px; margin-top:3px; overflow:hidden;">
+                            <div style="height:100%; width:${singleBarPercent}%; background:linear-gradient(90deg, #f59e0b, #eab308); border-radius:2px;"></div>
+                        </div>
+                    </td>
+                    <td class="warrant-col-val">
+                        <div style="font-weight:600; color:#e2e8f0;">${valYi} 億</div>
+                        <div style="font-size:0.70rem; color:var(--text-secondary); margin-top:1px;">${Number(item.total_call_value).toLocaleString()} 元</div>
                     </td>
                     <td class="warrant-col-vol">
                         <div>${Math.round(item.total_call_volume / 1000).toLocaleString()} <span style="font-size:0.70rem; color:var(--text-secondary);">張</span></div>
@@ -7822,15 +7868,26 @@ ${text.slice(0, 30000)}`;
                     <td class="warrant-col-detail">
                         <div style="display:flex; flex-wrap:wrap; align-items:center;">
                             ${chipsHtml}
-                            ${(item.top_warrants || []).length > 3 ? `<span style="font-size:0.68rem; color:var(--text-secondary); margin-left:2px;">+${item.top_warrants.length - 3}</span>` : ''}
                         </div>
                     </td>
                 </tr>`;
             }).join('');
         }
 
-        // 綁定認購權證市場與金額篩選 Chip
+        // 綁定認購權證市場、排序與金額篩選 Chip
         document.addEventListener('DOMContentLoaded', () => {
+            const sortFilter = document.getElementById('warrants-sort-filter');
+            if (sortFilter) {
+                sortFilter.addEventListener('click', (e) => {
+                    const btn = e.target.closest('button[data-sort]');
+                    if (!btn) return;
+                    sortFilter.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    callWarrantsSortMode = btn.getAttribute('data-sort');
+                    renderCallWarrantsView();
+                });
+            }
+
             const mktFilter = document.getElementById('warrants-market-filter');
             if (mktFilter) {
                 mktFilter.addEventListener('click', (e) => {
