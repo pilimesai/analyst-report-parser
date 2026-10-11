@@ -167,6 +167,7 @@ def main():
     contract_liabilities = load_json("contract_liabilities.json", {})
     stock_pledge = load_json("stock_pledge.json", {})
     stock_capital = load_json("stock_capital.json", {})
+    call_warrants = load_json("call_warrants.json", {})
 
     cb_issued_codes = load_csv_codes("近期發行CB.csv")
     cb_below_codes = load_csv_codes("目前股價低於CB轉換價.csv")
@@ -227,12 +228,20 @@ def main():
         if sc.isdigit():
             contract_liabilities_codes.add(sc)
 
-    # 8. 收集所有候選個股
+    # 8. 彙整認購權證買盤 TOP 10 標的 (入選前10的, 積分+2分)
+    call_warrants_top10_codes = set()
+    for s in call_warrants.get("stocks", [])[:10]:
+        sc = str(s.get("code", "")).strip()
+        if sc.isdigit():
+            call_warrants_top10_codes.add(sc)
+
+    # 9. 收集所有候選個股
     candidate_stocks = set()
     candidate_stocks.update(top_turnover_codes)
     candidate_stocks.update(exclusive_etf_codes)
     candidate_stocks.update(volume_spike_codes)
     candidate_stocks.update(contract_liabilities_codes)
+    candidate_stocks.update(call_warrants_top10_codes)
     candidate_stocks.update(earnings_call_codes)
     candidate_stocks.update(cb_issued_codes)
     candidate_stocks.update(cb_below_codes)
@@ -371,6 +380,9 @@ def main():
         if stock_id in cb_below_codes:
             matched_criteria.append("若已有發行的CB,且股價低於轉換價,並且轉換比例<10%")
 
+        if stock_id in call_warrants_top10_codes:
+            matched_criteria.append("入選認購權證買盤TOP10")
+
         # --- E. 所在族群為多方族群 ---
         if stock_id in bullish_sectors_map:
             sec_names = " / ".join(bullish_sectors_map[stock_id])
@@ -407,6 +419,8 @@ def main():
         if any("主動型ETF獨家持股" in m for m in matched_criteria):
             score += 1
         if any("今日成交值TOP30" in m for m in matched_criteria):
+            score += 1
+        if any("認購權證" in m for m in matched_criteria):
             score += 1
 
         scores[stock_id] = score

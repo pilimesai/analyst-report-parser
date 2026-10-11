@@ -1759,6 +1759,18 @@ if st.session_state.history:
                 except Exception:
                     pass
             
+            # 計算認購權證買盤前10名加分 (入選前10的, 積分+2分)
+            cw_json_path = os.path.join(os.path.dirname(__file__), 'call_warrants.json')
+            if m_code and os.path.exists(cw_json_path):
+                try:
+                    with open(cw_json_path, 'r', encoding='utf-8') as f:
+                        cw_data = json.load(f)
+                        top10_codes = [str(s.get('code', '')).strip() for s in cw_data.get('stocks', [])[:10]]
+                        if m_code.group() in top10_codes:
+                            all_c.add("入選認購權證買盤TOP10")
+                except Exception:
+                    pass
+            
             score = len(all_c)
             if "大戶持股比例成長" in all_c:
                 score += 2  # 大戶選股符合，積分改為 3 分 (額外加 2 分)
@@ -1768,6 +1780,8 @@ if st.session_state.history:
                 score += 1  # 股價低於CB轉換價符合，積分加二 (額外加 1 分)
             if any("大股東質設成本防守" in str(c) for c in all_c):
                 score += 1  # 大股東質設成本20%以內符合，積分加二 (基礎1分 + 額外加 1 分 = 2分)
+            if any("認購權證" in str(c) for c in all_c):
+                score += 1  # 認購權證買盤前10符合，積分加二 (基礎1分 + 額外加 1 分 = 2分)
             group_scores[stock_clean] = score
             group_criteria[stock_clean] = all_c
             
@@ -2990,11 +3004,25 @@ if st.session_state.history:
                         except Exception as e:
                             pass
                             
+                        # 條件 16: 認購權證買盤TOP10 (入選前10的, 積分+2分)
+                        try:
+                            cw_json_path = os.path.join(os.path.dirname(__file__), 'call_warrants.json')
+                            if os.path.exists(cw_json_path):
+                                with open(cw_json_path, 'r', encoding='utf-8') as f:
+                                    cw_data = json.load(f)
+                                    top10_c = [str(s.get('code', '')).strip() for s in cw_data.get('stocks', [])[:10]]
+                                    if stock_id in top10_c:
+                                        matched.append("入選認購權證買盤TOP10")
+                        except Exception as e:
+                            pass
+                            
                         score = len(matched)
                         if "大戶持股比例成長" in matched or any("大戶持股增加" in m for m in matched):
                             score += 2  # 大戶選股符合，積分改為 3 分 (額外加 2 分)
                         if any("兩周內有法說會" in m for m in matched):
                             score += 1  # 法說會符合，積分加二 (額外加 1 分)
+                        if any("認購權證" in m for m in matched):
+                            score += 1  # 認購權證買盤前10符合，積分加二 (基礎1分 + 額外加 1 分 = 2分)
                             
                         return s, score, matched
                     except Exception as e:
