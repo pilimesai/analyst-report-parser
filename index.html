@@ -1404,20 +1404,34 @@
             padding-right: 0.45rem !important;
         }
 
-        /* 認購權證買盤表格專用樣式 */
+        /* 認購權證買盤表格專用樣式 (完美適配比例，確保不溢出、不重疊、字不被遮擋) */
+        #call-warrants-view .cb-table-container {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        #warrants-table {
+            width: 100% !important;
+            min-width: 920px !important;
+            table-layout: fixed !important;
+        }
+
         .warrant-col-rank {
             width: 5%;
+            min-width: 44px;
             text-align: center !important;
             white-space: nowrap !important;
             font-size: 0.82rem;
         }
         .warrant-col-market {
-            width: 6.5%;
+            width: 6%;
+            min-width: 52px;
             text-align: center !important;
             white-space: nowrap !important;
         }
         .warrant-col-code {
-            width: 8%;
+            width: 7.5%;
+            min-width: 65px;
             text-align: center !important;
             font-weight: 700;
             color: #60a5fa;
@@ -1425,7 +1439,8 @@
             font-size: 0.85rem;
         }
         .warrant-col-name {
-            width: 12%;
+            width: 10.5%;
+            min-width: 85px;
             font-weight: 600;
             text-align: left !important;
             white-space: nowrap !important;
@@ -1434,14 +1449,16 @@
             font-size: 0.85rem;
         }
         .warrant-col-expiry {
-            width: 14%;
+            width: 16%;
+            min-width: 145px;
             text-align: center !important;
             white-space: nowrap !important;
             font-size: 0.85rem;
             padding: 0 0.4rem !important;
         }
         .warrant-col-vol {
-            width: 12%;
+            width: 11%;
+            min-width: 95px;
             text-align: right !important;
             font-size: 0.82rem;
             color: #cbd5e1;
@@ -1449,21 +1466,30 @@
             padding-right: 0.45rem !important;
         }
         .warrant-col-detail {
-            width: 42.5%;
+            width: 44%;
+            min-width: 380px;
             text-align: left !important;
             padding-left: 0.45rem !important;
         }
-        th.warrant-col-name, th.warrant-col-detail {
+        th.warrant-col-name {
             text-align: left !important;
-            padding-left: 0.45rem !important;
+            padding-left: 0.4rem !important;
         }
         th.warrant-col-expiry {
             text-align: center !important;
             color: #38bdf8 !important;
+            white-space: nowrap !important;
+            letter-spacing: normal !important;
         }
         th.warrant-col-vol {
             text-align: right !important;
             padding-right: 0.45rem !important;
+        }
+        th.warrant-col-detail {
+            text-align: left !important;
+            padding-left: 0.45rem !important;
+            white-space: normal !important;
+            line-height: 1.35 !important;
         }
 
         /* 今日成交量異常名單表格專用樣式 (完美適配比例，確保不溢出、不重疊、字不被遮擋) */
@@ -2744,7 +2770,10 @@
                                 <th class="warrant-col-name">標的個股</th>
                                 <th class="warrant-col-expiry" title="買超最大金額之認購權證到期日與距到期天數">買超最大權證到期日</th>
                                 <th class="warrant-col-vol">總成交量(股)</th>
-                                <th class="warrant-col-detail">🔥 熱門認購權證買盤 (首檔金標為單一最大買超，決定排名)</th>
+                                <th class="warrant-col-detail">
+                                    <span>🔥 熱門認購權證買盤</span>
+                                    <span style="font-size:0.72rem; font-weight:normal; color:#94a3b8; margin-left:4px;">(首檔金標為單一最大買超，決定排名)</span>
+                                </th>
                             </tr>
                         </thead>
                         <tbody id="warrants-tbody">
