@@ -2705,8 +2705,10 @@
                         <h2>⚡ 全市場當日認購權證買盤 TOP 排行（上市 + 上櫃）</h2>
                         <p style="font-size:0.82rem; color:var(--text-secondary); margin-top:4px; line-height:1.4;">每日盤後全自動彙總上市（TWSE）與上櫃（TPEx）數萬檔認購權證成交數據，依標的個股加總成交金額與成交張數，掌握主力資金重押做多標的。</p>
                     </div>
-                    <div class="action-buttons" style="flex-shrink:0;">
-                        <button class="btn btn-primary" onclick="fetchCallWarrantsFromGithub()" id="fetch-warrants-btn"
+                    <div class="action-buttons" style="flex-shrink:0; display:flex; gap:0.5rem; flex-wrap:wrap;">
+                        <button class="btn btn-secondary" onclick="syncCallWarrantsToGoogleSheet()" id="sync-warrants-sheet-btn"
+                            style="background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399;">☁️ 同步至 Google Sheet</button>
+                        <button class="btn btn-primary" onclick="fetchCallWarrantsFromGithub(false, true)" id="fetch-warrants-btn"
                             style="background: linear-gradient(135deg, #d97706, #b45309);">🔄 重新載入</button>
                     </div>
                 </div>
@@ -7721,11 +7723,19 @@ ${text.slice(0, 30000)}`;
                             const r = await fetch(u, { cache: preferCloud ? 'no-store' : 'default' });
                             if (r.ok) {
                                 const j = await r.json();
-                                if (j && (j.stocks || j.totalCallValue)) { payload = j; break; }
+                                if (j && Array.isArray(j.stocks) && j.stocks.length > 0) { payload = j; break; }
                             }
                         } catch(e) {}
                     }
-                    if (!payload) throw new Error('無法從 GitHub 取得資料');
+                    if (!payload || !payload.stocks || payload.stocks.length === 0) {
+                        // 嘗試從 Google Sheet 備援載入
+                        payload = loadCallWarrantsFromSheetFallback();
+                    }
+                    if (!payload) {
+                        // 若快取無 Google Sheet 資料，嘗試直接向 Google Apps Script 獲取
+                        payload = await fetchWarrantsFromGoogleSheetDirect();
+                    }
+                    if (!payload || !payload.stocks || payload.stocks.length === 0) throw new Error('無法從 GitHub 或 Google Sheet 取得有效資料');
                     callWarrantsData = payload;
                     localStorage.setItem('call_warrants_cache', JSON.stringify({ data: payload, savedAt: new Date().toISOString() }));
                     scheduleTabRender('call-warrants', renderCallWarrantsView);
@@ -7743,6 +7753,126 @@ ${text.slice(0, 30000)}`;
                 localStorage.setItem('call_warrants_cache', JSON.stringify({ data, savedAt: new Date().toISOString() }));
                 scheduleTabRender('call-warrants', renderCallWarrantsView);
             }, doStatic);
+        }
+
+        // 從本地快取的 Google Sheet 表格中解析認購權證買盤
+        function loadCallWarrantsFromSheetFallback() {
+            if (window.tablesData && window.tablesData['認購權證買盤'] && window.tablesData['認購權證買盤'].length > 1) {
+                const sheetRows = window.tablesData['認購權證買盤'];
+                const stocks = [];
+                for (let i = 1; i < sheetRows.length; i++) {
+                    const r = sheetRows[i];
+                    if (!r[1] && !r[2]) continue;
+                    stocks.push({
+                        rank: parseInt(r[0]) || i,
+                        code: String(r[1] || '').trim(),
+                        name: String(r[2] || '').trim(),
+                        market: String(r[3] || '').trim(),
+                        max_single_warrant_name: String(r[4] || '').trim(),
+                        max_single_warrant_wan: parseFloat(r[5]) || 0,
+                        max_single_warrant_value: (parseFloat(r[5]) || 0) * 1e4,
+                        max_single_warrant_expiry: String(r[6] || '').trim(),
+                        total_call_value_yi: parseFloat(r[7]) || 0,
+                        total_call_volume: parseInt(r[8]) || 0,
+                        close_price: r[9] || '',
+                        change: r[10] || '',
+                        top_warrants: []
+                    });
+                }
+                if (stocks.length > 0) {
+                    const tradeDate = sheetRows[1][11] || '';
+                    const updateTime = sheetRows[1][12] || '';
+                    return {
+                        tradeDate,
+                        updateTime,
+                        totalStocks: stocks.length,
+                        totalCallValueYi: stocks.reduce((acc, x) => acc + (x.total_call_value_yi || 0), 0),
+                        totalCallVolume: stocks.reduce((acc, x) => acc + (x.total_call_volume || 0), 0),
+                        stocks
+                    };
+                }
+            }
+            return null;
+        }
+
+        // 直接向 Google Apps Script 獲取認購權證買盤分頁
+        async function fetchWarrantsFromGoogleSheetDirect() {
+            try {
+                const scriptUrl = (scriptUrlInput ? scriptUrlInput.value.trim() : '') || (typeof CONFIG_SCRIPT_URL !== 'undefined' ? CONFIG_SCRIPT_URL : '');
+                if (!scriptUrl) return null;
+                const resp = await fetch(scriptUrl);
+                if (resp.ok) {
+                    const j = await resp.json();
+                    if (j && j.sheetData && j.sheetData['認購權證買盤']) {
+                        if (!window.tablesData) window.tablesData = {};
+                        window.tablesData['認購權證買盤'] = j.sheetData['認購權證買盤'];
+                        return loadCallWarrantsFromSheetFallback();
+                    }
+                }
+            } catch(e) {}
+            return null;
+        }
+
+        // 同步認購權證買盤至 Google Sheet
+        async function syncCallWarrantsToGoogleSheet(silent = false) {
+            if (!callWarrantsData || !callWarrantsData.stocks || callWarrantsData.stocks.length === 0) {
+                if (!silent) showToast("⚠️ 目前尚未載入認購權證買盤資料，無法同步！", true);
+                return;
+            }
+            const scriptUrl = (scriptUrlInput ? scriptUrlInput.value.trim() : '') || (typeof CONFIG_SCRIPT_URL !== 'undefined' ? CONFIG_SCRIPT_URL : '');
+            if (!scriptUrl) {
+                if (!silent) showToast("⚠️ 請先設定 Google Apps Script Web App 網址以進行同步", true);
+                return;
+            }
+            const syncBtn = document.getElementById('sync-warrants-sheet-btn');
+            if (syncBtn) { syncBtn.disabled = true; syncBtn.textContent = '⏳ 同步中...'; }
+            if (!silent) showToast("☁️ 正在將認購權證買盤資料同步至 Google Sheet 分頁【認購權證買盤】...");
+
+            const stocks = callWarrantsData.stocks.slice(0, 100);
+            const tradeDate = callWarrantsData.tradeDate || '';
+            const updateTime = callWarrantsData.updateTime || new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
+            const headers = ['排名', '代號', '名稱', '市場', '買超最大權證名稱', '買超最大金額(萬)', '到期日', '認購總金額(億)', '認購總張數', '現貨收盤價', '現貨漲跌', '資料交易日', '更新時間'];
+            const rows = [headers];
+            stocks.forEach(s => {
+                rows.push([
+                    s.rank || '',
+                    s.code || '',
+                    s.name || '',
+                    s.market || '',
+                    s.max_single_warrant_name || '',
+                    s.max_single_warrant_wan || 0,
+                    s.max_single_warrant_expiry || '',
+                    s.total_call_value_yi || 0,
+                    s.total_call_volume || 0,
+                    s.close_price || '',
+                    s.change || '',
+                    tradeDate,
+                    updateTime
+                ]);
+            });
+
+            try {
+                const res = await fetch(scriptUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'save_csv',
+                        sheetName: '認購權證買盤',
+                        data: rows
+                    })
+                });
+                const resJson = await res.json();
+                if (resJson.status === 'success') {
+                    if (window.tablesData) window.tablesData['認購權證買盤'] = rows;
+                    if (!silent) showToast(`🎉 成功同步 ${stocks.length} 檔認購權證買盤至 Google Sheet 分頁【認購權證買盤】！`);
+                } else {
+                    if (!silent) showToast(`❌ Google Sheet 同步失敗: ${resJson.message}`, true);
+                }
+            } catch (err) {
+                if (!silent) showToast(`❌ 同步發生錯誤: ${err.message}`, true);
+            } finally {
+                if (syncBtn) { syncBtn.disabled = false; syncBtn.textContent = '☁️ 同步至 Google Sheet'; }
+            }
         }
 
         // 解析權證到期日與計算距到期天數

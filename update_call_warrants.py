@@ -16,6 +16,7 @@ import shutil
 import collections
 from zoneinfo import ZoneInfo
 import requests
+import urllib.request
 
 if sys.stdout and hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
@@ -329,6 +330,11 @@ def main():
         st['stock_trade_value'] = quote.get('stock_trade_value', 0)
         result_stocks.append(st)
 
+    if len(result_stocks) == 0:
+        print("\n[WARNING] TWSE/TPEx OpenAPI 回傳 0 筆權證成交明細 (可能為假日或非開盤時間)。")
+        print("為了保護數據完整性，系統保留原有 call_warrants.json 與 Google Sheet 資料，不進行覆蓋。")
+        return
+
     payload = {
         'updateTime': datetime.datetime.now(TZ_TW).strftime('%Y-%m-%d %H:%M:%S'),
         'tradeDate': formatted_trade_date,
@@ -351,6 +357,9 @@ def main():
     for s in result_stocks[:10]:
         print(f"  #{s['rank']} {s['code']} {s['name']} ({s['market']}): {s['total_call_value_yi']} 億元 ({s['call_warrant_count']} 檔權證)")
 
+    # 同步至 Google Sheet 分頁【認購權證買盤】
+    sync_warrants_to_google_sheet(payload)
+
     if push_to_git:
         try:
             print("\n正在自動 Commit & Push 到 GitHub...")
@@ -364,6 +373,57 @@ def main():
                 print("檔案無變更，略過 commit & push。")
         except Exception as e:
             print(f"Git 操作失敗: {e}")
+
+def sync_warrants_to_google_sheet(output_payload):
+    gas_url = "https://script.google.com/macros/s/AKfycbzm7ZXZyAe_8XhARcC8VKw2DDsWtaW_OdrANnA87lTQo2ozlM-2F4XsFFOXIC1HynqM/exec"
+    trade_date = output_payload.get('tradeDate', '')
+    update_time = output_payload.get('updateTime', '')
+    stocks = output_payload.get('stocks', [])
+    if not stocks:
+        return
+
+    headers = [
+        '排名', '代號', '名稱', '市場', '買超最大權證名稱', '買超最大金額(萬)',
+        '到期日', '認購總金額(億)', '認購總張數', '現貨收盤價', '現貨漲跌', '資料交易日', '更新時間'
+    ]
+    rows = [headers]
+    for s in stocks[:100]:
+        rows.append([
+            s.get('rank', ''),
+            s.get('code', ''),
+            s.get('name', ''),
+            s.get('market', ''),
+            s.get('max_single_warrant_name', ''),
+            s.get('max_single_warrant_wan', 0),
+            s.get('max_single_warrant_expiry', ''),
+            s.get('total_call_value_yi', 0),
+            s.get('total_call_volume', 0),
+            s.get('close_price', ''),
+            s.get('change', ''),
+            str(trade_date),
+            str(update_time)
+        ])
+
+    try:
+        print("☁️ 正在同步認購權證買盤至 Google Sheet (分頁：認購權證買盤)...")
+        req_body = json.dumps({
+            'action': 'save_csv',
+            'sheetName': '認購權證買盤',
+            'data': rows
+        }).encode('utf-8')
+        req = urllib.request.Request(
+            gas_url,
+            data=req_body,
+            headers={'Content-Type': 'text/plain; charset=utf-8', 'User-Agent': 'Mozilla/5.0'}
+        )
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            res = json.loads(resp.read().decode('utf-8'))
+            if res.get('status') == 'success':
+                print(f"🎉 成功同步 {len(rows)-1} 檔認購權證買盤至 Google Sheet 分頁【認購權證買盤】！")
+            else:
+                print(f"⚠️ Google Sheet 同步回傳訊息: {res}")
+    except Exception as e:
+        print(f"⚠️ Google Sheet 同步遭遇例外 (不影響本機結果產出): {e}")
 
 if __name__ == '__main__':
     main()
