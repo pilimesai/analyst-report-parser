@@ -72,12 +72,15 @@ def fetch_twse_warrants(session):
         underlying = str(item.get('標的證券/指數', '')).strip()
         w_name = str(item.get('權證簡稱', '')).strip()
         strike = str(item.get('最新履約價格(元)/履約指數', '')).strip()
+        expiry_raw = str(item.get('履約截止日', item.get('到期日', ''))).strip()
+        expiry = format_roc_date(expiry_raw) if expiry_raw else parse_warrant_expiry_month(w_name)
         if w_code:
             twse_meta[w_code] = {
                 'type': w_type,
                 'underlying': underlying,
                 'name': w_name,
                 'strike': strike,
+                'expiry': expiry,
                 'market': '上市'
             }
 
@@ -140,6 +143,24 @@ def parse_int(v):
         return int(float(s))
     except ValueError:
         return 0
+
+MONTH_MAP = {'1':'01','2':'02','3':'03','4':'04','5':'05','6':'06','7':'07','8':'08','9':'09','A':'10','B':'11','C':'12','D':'12'}
+
+def parse_warrant_expiry_month(w_name):
+    """從台灣權證簡稱解析到期年月（例如 聯發科元大64購06 -> 2027/04）"""
+    if not w_name:
+        return ''
+    m = re.search(r'([0-9])([1-9A-Da-d])(?:購|售|牛|熊)', w_name)
+    if not m:
+        return ''
+    y_digit = int(m.group(1))
+    m_char = m.group(2).upper()
+    mm = MONTH_MAP.get(m_char, '01')
+    roc_year = 110 + y_digit
+    if roc_year < 114:
+        roc_year += 10
+    ad_year = roc_year + 1911
+    return f"{ad_year}/{mm}"
 
 def format_roc_date(date_str):
     if not date_str:
@@ -220,7 +241,8 @@ def main():
             'name': meta['name'],
             'value': val,
             'volume': vol,
-            'strike': meta['strike']
+            'strike': meta['strike'],
+            'expiry': meta.get('expiry') or parse_warrant_expiry_month(meta['name'])
         })
 
     # 2. 處理上櫃成交明細
@@ -251,7 +273,8 @@ def main():
             'name': w_name,
             'value': val,
             'volume': vol,
-            'strike': ''
+            'strike': '',
+            'expiry': parse_warrant_expiry_month(w_name)
         })
 
     formatted_trade_date = format_roc_date(trade_date)
@@ -276,13 +299,15 @@ def main():
             'max_single_warrant_name': max_w['name'] if max_w else '',
             'max_single_warrant_code': max_w['code'] if max_w else '',
             'max_single_warrant_strike': max_w['strike'] if max_w else '',
+            'max_single_warrant_expiry': (max_w.get('expiry') or parse_warrant_expiry_month(max_w['name'])) if max_w else '',
             'top_warrants': [
                 {
                     'code': w['code'],
                     'name': w['name'],
                     'value': round(w['value']),
                     'volume': w['volume'],
-                    'strike': w['strike']
+                    'strike': w['strike'],
+                    'expiry': w.get('expiry') or parse_warrant_expiry_month(w['name'])
                 } for w in top_w[:5]
             ]
         })

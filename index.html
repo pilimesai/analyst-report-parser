@@ -1433,34 +1433,23 @@
             padding-left: 0.4rem !important;
             font-size: 0.85rem;
         }
-        .warrant-col-val {
-            width: 16%;
-            text-align: right !important;
-            font-weight: 700;
-            color: #fbbf24;
+        .warrant-col-expiry {
+            width: 14%;
+            text-align: center !important;
             white-space: nowrap !important;
-            padding-right: 0.45rem !important;
             font-size: 0.85rem;
+            padding: 0 0.4rem !important;
         }
         .warrant-col-vol {
-            width: 11%;
+            width: 12%;
             text-align: right !important;
             font-size: 0.82rem;
             color: #cbd5e1;
             white-space: nowrap !important;
             padding-right: 0.45rem !important;
         }
-        .warrant-col-count {
-            width: 7.5%;
-            text-align: right !important;
-            font-size: 0.82rem;
-            color: #a78bfa;
-            font-weight: 600;
-            white-space: nowrap !important;
-            padding-right: 0.45rem !important;
-        }
         .warrant-col-detail {
-            width: 34%;
+            width: 42.5%;
             text-align: left !important;
             padding-left: 0.45rem !important;
         }
@@ -1468,7 +1457,11 @@
             text-align: left !important;
             padding-left: 0.45rem !important;
         }
-        th.warrant-col-val, th.warrant-col-vol, th.warrant-col-count {
+        th.warrant-col-expiry {
+            text-align: center !important;
+            color: #38bdf8 !important;
+        }
+        th.warrant-col-vol {
             text-align: right !important;
             padding-right: 0.45rem !important;
         }
@@ -2749,14 +2742,13 @@
                                 <th class="warrant-col-market">市場</th>
                                 <th class="warrant-col-code">代號</th>
                                 <th class="warrant-col-name">標的個股</th>
-                                <th class="warrant-col-val">認購權證總金額</th>
+                                <th class="warrant-col-expiry" title="買超最大金額之認購權證到期日與距到期天數">買超最大權證到期日</th>
                                 <th class="warrant-col-vol">總成交量(股)</th>
-                                <th class="warrant-col-count">權證檔數</th>
                                 <th class="warrant-col-detail">🔥 熱門認購權證買盤 (首檔金標為單一最大買超，決定排名)</th>
                             </tr>
                         </thead>
                         <tbody id="warrants-tbody">
-                            <tr><td colspan="8" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                            <tr><td colspan="7" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
                                 <div style="font-size:1.5rem; margin-bottom:0.5rem;">⚡</div>
                                 <div>尚未載入認購權證買盤資料</div>
                                 <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊上方「🔄 重新載入」按鈕，系統將自動從資料庫抓取最新資料。</div>
@@ -7704,6 +7696,76 @@ ${text.slice(0, 30000)}`;
             }, doStatic);
         }
 
+        // 解析權證到期日與計算距到期天數
+        function getWarrantExpiryInfo(item, baseDateStr) {
+            let expiryDate = item.max_single_warrant_expiry || '';
+            const wName = item.max_single_warrant_name || (item.top_warrants && item.top_warrants[0] ? item.top_warrants[0].name : '') || '';
+            const singleWan = item.max_single_warrant_wan ? `${item.max_single_warrant_wan.toFixed(0)}萬` : `${Math.round((item.max_single_warrant_value || 0) / 1e4)}萬`;
+
+            // 若後端未提供精確到期日，從權證簡稱解析（台灣權證命名規則：代號末2碼為年份與月份，例如 64 -> 2027/04）
+            if (!expiryDate && wName) {
+                const m = wName.match(/([0-9])([1-9A-Da-d])(?:購|售|牛|熊)/);
+                if (m) {
+                    const yDigit = parseInt(m[1], 10);
+                    const mChar = m[2].toUpperCase();
+                    const monthMap = {'1':'01','2':'02','3':'03','4':'04','5':'05','6':'06','7':'07','8':'08','9':'09','A':'10','B':'11','C':'12','D':'12'};
+                    const mm = monthMap[mChar] || '01';
+                    let rocYear = 110 + yDigit;
+                    if (rocYear < 114) rocYear += 10;
+                    const adYear = rocYear + 1911;
+                    expiryDate = `${adYear}/${mm}`;
+                }
+            }
+
+            if (!expiryDate) {
+                return {
+                    dateStr: '—',
+                    badgeHtml: '<span style="color:var(--text-secondary); font-size:0.70rem;">—</span>',
+                    tooltip: wName ? `${wName} (買超 ${singleWan})` : ''
+                };
+            }
+
+            let baseDate = new Date();
+            if (baseDateStr) {
+                const b = new Date(baseDateStr);
+                if (!isNaN(b.getTime())) baseDate = b;
+            }
+
+            let expTarget;
+            const isFullDate = /^\d{4}[-/]\d{2}[-/]\d{2}$/.test(expiryDate);
+            if (isFullDate) {
+                expTarget = new Date(expiryDate.replace(/-/g, '/'));
+            } else {
+                const parts = expiryDate.split('/');
+                const y = parseInt(parts[0], 10);
+                const m = parseInt(parts[1], 10);
+                expTarget = new Date(y, m, 0); // 該月份最後一天
+            }
+
+            const diffMs = expTarget.getTime() - baseDate.getTime();
+            const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+            let badgeHtml = '';
+            if (diffDays <= 0) {
+                badgeHtml = `<span style="font-size:0.70rem; color:#ef4444; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); border-radius:4px; padding:1px 6px;">已到期</span>`;
+            } else if (diffDays <= 45) {
+                badgeHtml = `<span style="font-size:0.70rem; color:#f87171; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); border-radius:4px; padding:1px 6px;" title="距到期小於45天，時間價值耗損快速">⚠️ 剩 ${diffDays} 天</span>`;
+            } else if (diffDays <= 90) {
+                badgeHtml = `<span style="font-size:0.70rem; color:#fbbf24; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); border-radius:4px; padding:1px 6px;">剩 ${diffDays} 天</span>`;
+            } else {
+                badgeHtml = `<span style="font-size:0.70rem; color:#38bdf8; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.25); border-radius:4px; padding:1px 6px;">剩 ${diffDays} 天</span>`;
+            }
+
+            const tooltip = `${wName || '買超最大權證'}\n買超金額: ${singleWan}\n到期日: ${expiryDate}\n距到期約: ${diffDays > 0 ? diffDays + ' 天' : '已到期'}`;
+
+            return {
+                dateStr: expiryDate,
+                diffDays,
+                badgeHtml,
+                tooltip
+            };
+        }
+
         function renderCallWarrantsView() {
             const tbody = document.getElementById('warrants-tbody');
             const badgeWarrants = document.getElementById('badge-call-warrants');
@@ -7776,7 +7838,7 @@ ${text.slice(0, 30000)}`;
 
             if (!tbody) return;
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-secondary); padding:2rem;">無符合條件的認購權證標的</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-secondary); padding:2rem;">無符合條件的認購權證標的</td></tr>`;
                 return;
             }
 
@@ -7821,24 +7883,24 @@ ${text.slice(0, 30000)}`;
                     ? `<a href="https://tw.stock.yahoo.com/quote/${codeStr}" target="_blank" rel="noopener" style="color:#60a5fa; text-decoration:none; font-family:monospace; font-weight:700;">${codeStr}</a>`
                     : '<span style="color:var(--text-secondary);">—</span>';
 
+                const expiryInfo = getWarrantExpiryInfo(item, callWarrantsData.tradeDate);
+
                 return `<tr>
                     <td class="warrant-col-rank">${rankBadge}</td>
                     <td class="warrant-col-market">${marketBadge}</td>
                     <td class="warrant-col-code">${stockLink}</td>
                     <td class="warrant-col-name" title="${item.name}">${item.name}</td>
-                    <td class="warrant-col-val">
-                        <div style="font-weight:700; color:#fbbf24;">${valYi} 億</div>
-                        <div style="font-size:0.70rem; color:var(--text-secondary); margin-top:1px;">${Number(item.total_call_value).toLocaleString()} 元</div>
-                        <div style="height:3px; background:rgba(251,191,36,0.15); border-radius:2px; margin-top:2px; overflow:hidden;">
-                            <div style="height:100%; width:${barPercent}%; background:linear-gradient(90deg, #f59e0b, #eab308); border-radius:2px;"></div>
+                    <td class="warrant-col-expiry">
+                        <div style="font-weight:700; color:#f8fafc; font-size:0.88rem; font-family:monospace; letter-spacing:0.5px;" title="${expiryInfo.tooltip}">
+                            ${expiryInfo.dateStr}
+                        </div>
+                        <div style="margin-top:2px;">
+                            ${expiryInfo.badgeHtml}
                         </div>
                     </td>
                     <td class="warrant-col-vol">
                         <div>${Math.round(item.total_call_volume / 1000).toLocaleString()} <span style="font-size:0.70rem; color:var(--text-secondary);">張</span></div>
                         <div style="font-size:0.70rem; color:var(--text-secondary);">${Number(item.total_call_volume).toLocaleString()} 股</div>
-                    </td>
-                    <td class="warrant-col-count">
-                        <span style="padding:2px 6px; background:rgba(167,139,250,0.15); border:1px solid rgba(167,139,250,0.3); border-radius:4px;">${item.call_warrant_count} 檔</span>
                     </td>
                     <td class="warrant-col-detail">
                         <div style="display:flex; flex-wrap:wrap; gap:4px; align-items:center;">
