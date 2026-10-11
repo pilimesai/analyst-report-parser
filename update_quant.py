@@ -411,7 +411,11 @@ def main():
         # --- 加權總分計算 ---
         score = len(matched_criteria)
         if any("法說會" in m for m in matched_criteria):
-            score += 1
+            score += 2  # 法說會: 總計 3 分 (基礎 1 + 額外 2)
+        if any("大戶" in m for m in matched_criteria):
+            score += 3  # 大戶持股: 總計 4 分 (基礎 1 + 額外 3)
+        if any("認購權證" in m for m in matched_criteria):
+            score += 2  # 認購權證買盤: 總計 3 分 (基礎 1 + 額外 2)
         if any("低於轉換價" in m for m in matched_criteria):
             score += 1
         if any("大股東質設成本防守" in m for m in matched_criteria):
@@ -419,8 +423,6 @@ def main():
         if any("主動型ETF獨家持股" in m for m in matched_criteria):
             score += 1
         if any("今日成交值TOP30" in m for m in matched_criteria):
-            score += 1
-        if any("認購權證" in m for m in matched_criteria):
             score += 1
 
         scores[stock_id] = score

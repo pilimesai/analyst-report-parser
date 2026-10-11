@@ -1772,16 +1772,16 @@ if st.session_state.history:
                     pass
             
             score = len(all_c)
-            if "大戶持股比例成長" in all_c:
-                score += 2  # 大戶選股符合，積分改為 3 分 (額外加 2 分)
-            if "兩周內有法說會" in all_c:
-                score += 1  # 法說會符合，積分加二 (額外加 1 分)
+            if "大戶持股比例成長" in all_c or any("大戶" in str(c) for c in all_c):
+                score += 3  # 大戶選股: 總計 4 分 (基礎 1 + 額外 3 分)
+            if "兩周內有法說會" in all_c or any("法說會" in str(c) for c in all_c):
+                score += 2  # 法說會: 總計 3 分 (基礎 1 + 額外 2 分)
+            if any("認購權證" in str(c) for c in all_c):
+                score += 2  # 認購權證買盤: 總計 3 分 (基礎 1 + 額外 2 分)
             if any("低於轉換價" in str(c) for c in all_c):
                 score += 1  # 股價低於CB轉換價符合，積分加二 (額外加 1 分)
             if any("大股東質設成本防守" in str(c) for c in all_c):
                 score += 1  # 大股東質設成本20%以內符合，積分加二 (基礎1分 + 額外加 1 分 = 2分)
-            if any("認購權證" in str(c) for c in all_c):
-                score += 1  # 認購權證買盤前10符合，積分加二 (基礎1分 + 額外加 1 分 = 2分)
             group_scores[stock_clean] = score
             group_criteria[stock_clean] = all_c
             
@@ -3017,12 +3017,12 @@ if st.session_state.history:
                             pass
                             
                         score = len(matched)
-                        if "大戶持股比例成長" in matched or any("大戶持股增加" in m for m in matched):
-                            score += 2  # 大戶選股符合，積分改為 3 分 (額外加 2 分)
-                        if any("兩周內有法說會" in m for m in matched):
-                            score += 1  # 法說會符合，積分加二 (額外加 1 分)
+                        if "大戶持股比例成長" in matched or any("大戶" in m for m in matched):
+                            score += 3  # 大戶選股: 總計 4 分 (基礎 1 + 額外 3 分)
+                        if any("兩周內有法說會" in m for m in matched) or any("法說會" in m for m in matched):
+                            score += 2  # 法說會: 總計 3 分 (基礎 1 + 額外 2 分)
                         if any("認購權證" in m for m in matched):
-                            score += 1  # 認購權證買盤前10符合，積分加二 (基礎1分 + 額外加 1 分 = 2分)
+                            score += 2  # 認購權證買盤: 總計 3 分 (基礎 1 + 額外 2 分)
                             
                         return s, score, matched
                     except Exception as e:
