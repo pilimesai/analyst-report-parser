@@ -2594,7 +2594,7 @@
                 <!-- Full Scored Quant Ranking Table Section -->
                 <div style="margin-top:1.75rem;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:0.5rem;">
-                        <h3 style="font-size:1.05rem; font-weight:600; color:var(--text-primary);">📋 量化篩選總排名清單</h3>
+                        <h3 style="font-size:1.05rem; font-weight:600; color:var(--text-primary);">📋 量化篩選總排名清單 (TOP 20)</h3>
                         <input type="text" id="quant-search-input" placeholder="🔍 搜尋選股標的或條件..." style="width:240px; padding:0.4rem 0.75rem; font-size:0.82rem;" autocomplete="off">
                     </div>
                     <div class="table-responsive">
@@ -6641,11 +6641,12 @@ JSON 欄位：
             }).sort((a, b) => b.score - a.score);
 
             const passedStocks = scoredStocks.filter(x => x.score > 0);
+            const top20Stocks = passedStocks.slice(0, 20);
             const maxScore = scoredStocks.length > 0 ? scoredStocks[0].score : 0;
 
-            if (badgeQuant) badgeQuant.innerText = String(passedStocks.length);
+            if (badgeQuant) badgeQuant.innerText = String(top20Stocks.length);
             if (statTotal) statTotal.innerText = String(scoredStocks.length);
-            if (statPassed) statPassed.innerText = String(passedStocks.length);
+            if (statPassed) statPassed.innerText = `${top20Stocks.length} 檔 (TOP 20)`;
             if (statMax) statMax.innerText = `${maxScore} 分`;
 
             // Render Top Champions Showcase Cards
@@ -6653,7 +6654,7 @@ JSON 欄位：
                 champsGrid.innerHTML = '';
                 if (maxScore > 0) {
                     champsSection.style.display = 'block';
-                    const champs = scoredStocks.filter(x => x.score === maxScore);
+                    const champs = top20Stocks.filter(x => x.score === maxScore);
                     champsGrid.innerHTML = champs.map(champ => {
                         const matchesHtml = champ.matches.map(m => `<span class="match-tag">⚡ ${m}</span>`).join('');
                         return `<div class="champ-card">
@@ -6671,8 +6672,8 @@ JSON 欄位：
                 }
             }
 
-            // Render Scored Rankings Table
-            renderQuantTableRows(scoredStocks);
+            // Render Scored Rankings Table (只列前 20 檔)
+            renderQuantTableRows(top20Stocks);
         }
 
         function renderQuantTableRows(stocksToRender) {
@@ -6758,7 +6759,8 @@ JSON 欄位：
                             reportSummary: reportSummary
                         };
                     }).sort((a, b) => b.score - a.score);
-                    renderQuantTableRows(scoredStocks);
+                    const top20Stocks = scoredStocks.filter(x => x.score > 0).slice(0, 20);
+                    renderQuantTableRows(top20Stocks);
                 }
             }, 120));
         }
@@ -6776,7 +6778,7 @@ JSON 欄位：
                     name: stockNameMap[sid] || '',
                     score: quantResultsCache.liveScores[sid] || 0,
                     matches: quantResultsCache.liveMatches[sid] || []
-                })).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
+                })).filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, 20);
 
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportList, null, 2));
                 const downloadAnchor = document.createElement('a');
@@ -6785,7 +6787,7 @@ JSON 欄位：
                 document.body.appendChild(downloadAnchor);
                 downloadAnchor.click();
                 downloadAnchor.remove();
-                showToast("✅ 量化選股清單已成功匯出成 JSON 檔案！");
+                showToast("✅ 量化選股清單 (TOP 20) 已成功匯出成 JSON 檔案！");
             });
         }
 
@@ -6802,14 +6804,14 @@ JSON 欄位：
                 name: (typeof stockNameMap !== 'undefined' && stockNameMap[sid]) || (typeof stockNamesMap !== 'undefined' && stockNamesMap[sid]) || '',
                 score: scores[sid] || 0,
                 matches: matches[sid] || []
-            })).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
+            })).filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, 20);
 
             if (stockList.length === 0) {
                 if (!silent) showToast("⚠️ 目前無量化選股標的可同步", true);
                 return;
             }
 
-            if (!silent) showToast(`☁️ 正在將 ${stockList.length} 檔量化嚴選標的同步至 Google Sheet...`);
+            if (!silent) showToast(`☁️ 正在將 ${stockList.length} 檔量化嚴選標的 (TOP 20) 同步至 Google Sheet...`);
 
             const nowStr = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
             const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Taipei' });

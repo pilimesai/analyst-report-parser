@@ -3054,6 +3054,7 @@ if st.session_state.history:
                 
                 scored_auto = [(s, live_scores[s], live_matches[s]) for s in valid_stocks if live_scores[s] > 0]
                 scored_auto.sort(key=lambda x: x[1], reverse=True)
+                scored_auto = scored_auto[:20]  # 量化選股只要列前 20 檔
                 
                 if not scored_auto:
                     st.warning("⚠️ 根據即時量化運算結果，目前表格中的股票都沒有符合條件。")

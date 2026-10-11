@@ -436,35 +436,37 @@ def main():
                 "matches": matched_criteria
             })
 
-    # 排序
+    # 排序並取前 20 名
     ranked_list.sort(key=lambda x: x["score"], reverse=True)
     for rank, item in enumerate(ranked_list, 1):
         item["rank"] = rank
 
-    max_score = ranked_list[0]["score"] if ranked_list else 0
-    passed_count = len(ranked_list)
+    top20_list = ranked_list[:20]
+
+    max_score = top20_list[0]["score"] if top20_list else 0
+    passed_count = len(top20_list)
 
     print(f"--------------------------------------------------")
     print(f"📊 量化選股運算結果摘要：")
     print(f"  - 評估候選個股數: {len(candidate_stocks)}")
-    print(f"  - 符合條件嚴選標的數: {passed_count}")
+    print(f"  - 符合條件嚴選標的數 (TOP 20): {passed_count}")
     print(f"  - 最高分: {max_score} 分")
-    if ranked_list:
-        print(f"  - 第一名標的: {ranked_list[0]['stockId']} {ranked_list[0]['name']} ({ranked_list[0]['score']} 分)")
-        for top_item in ranked_list[:5]:
+    if top20_list:
+        print(f"  - 第一名標的: {top20_list[0]['stockId']} {top20_list[0]['name']} ({top20_list[0]['score']} 分)")
+        for top_item in top20_list[:5]:
             print(f"    #{top_item['rank']} {top_item['stockId']} {top_item['name']}: {top_item['score']}分 -> {top_item['matches']}")
     print(f"--------------------------------------------------")
 
-    # 輸出 quant_results.json
+    # 輸出 quant_results.json (只列前 20 檔)
     output_payload = {
         "updateTime": now_dt.strftime('%Y-%m-%d %H:%M:%S'),
         "tradeDate": trade_date,
         "totalCandidates": len(candidate_stocks),
         "passedCount": passed_count,
         "maxScore": max_score,
-        "scores": scores,
-        "matches": matches,
-        "rankedList": ranked_list
+        "scores": {item["stockId"]: item["score"] for item in top20_list},
+        "matches": {item["stockId"]: item["matches"] for item in top20_list},
+        "rankedList": top20_list
     }
 
     out_path = os.path.join(REPO_DIR, "quant_results.json")
