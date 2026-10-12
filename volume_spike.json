@@ -1,7 +1,7 @@
 {
-  "updateTime": "2026-10-13T05:13:08.299825+08:00",
+  "updateTime": "2026-10-13T05:21:16.976179+08:00",
   "tradeDate": "2026-10-12",
-  "totalCount": 4,
+  "totalCount": 8,
   "conditions": [
     "[日] 成交量大於 2000 張 (>= 2000 張)",
     "[日] 成交金額大於 0.5 億 (>= 5000 萬元)",
@@ -68,7 +68,7 @@
       "ma10w_vol_lots": 1175,
       "vol_multiple": 4.43,
       "vol_week_multiple": 20.63,
-      "rank": 3
+      "rank": 4
     },
     {
       "market": "twse",
@@ -88,10 +88,91 @@
       "ma10w_vol_lots": 1234,
       "vol_multiple": 3.28,
       "vol_week_multiple": 11.87,
-      "rank": 4
+      "rank": 6
     }
   ],
-  "tpex": [],
+  "tpex": [
+    {
+      "market": "tpex",
+      "code": "5340",
+      "name": "建榮",
+      "volume_shares": 12378000,
+      "volume_lots": 12378,
+      "trade_value": 1206410900,
+      "trade_value_yi": 12.06,
+      "open_price": 92.7,
+      "close_price": 95.0,
+      "change": 0.6,
+      "transaction": 8193,
+      "date": "2026-10-12",
+      "today_vol_lots": 14367,
+      "ma10_vol_lots": 2946,
+      "ma10w_vol_lots": 3017,
+      "vol_multiple": 4.88,
+      "vol_week_multiple": 4.76,
+      "rank": 3
+    },
+    {
+      "market": "tpex",
+      "code": "3685",
+      "name": "元創精密",
+      "volume_shares": 3794000,
+      "volume_lots": 3794,
+      "trade_value": 145536400,
+      "trade_value_yi": 1.46,
+      "open_price": 37.9,
+      "close_price": 38.8,
+      "change": 0.9,
+      "transaction": 935,
+      "date": "2026-10-12",
+      "today_vol_lots": 2485,
+      "ma10_vol_lots": 660,
+      "ma10w_vol_lots": 654,
+      "vol_multiple": 3.76,
+      "vol_week_multiple": 3.8,
+      "rank": 5
+    },
+    {
+      "market": "tpex",
+      "code": "8042",
+      "name": "金山電",
+      "volume_shares": 34513000,
+      "volume_lots": 34513,
+      "trade_value": 5032352500,
+      "trade_value_yi": 50.32,
+      "open_price": 137.5,
+      "close_price": 144.0,
+      "change": 5.5,
+      "transaction": 22957,
+      "date": "2026-10-12",
+      "today_vol_lots": 19583,
+      "ma10_vol_lots": 6198,
+      "ma10w_vol_lots": 4994,
+      "vol_multiple": 3.16,
+      "vol_week_multiple": 3.92,
+      "rank": 7
+    },
+    {
+      "market": "tpex",
+      "code": "4973",
+      "name": "廣穎電通",
+      "volume_shares": 7943000,
+      "volume_lots": 7943,
+      "trade_value": 1239405000,
+      "trade_value_yi": 12.39,
+      "open_price": 153.0,
+      "close_price": 158.0,
+      "change": 9.0,
+      "transaction": 5238,
+      "date": "2026-10-12",
+      "today_vol_lots": 1408,
+      "ma10_vol_lots": 446,
+      "ma10w_vol_lots": 1353,
+      "vol_multiple": 3.15,
+      "vol_week_multiple": 1.04,
+      "rank": 8
+    }
+  ],
   "stocks": [
     {
       "market": "twse",
@@ -134,6 +215,26 @@
       "rank": 2
     },
     {
+      "market": "tpex",
+      "code": "5340",
+      "name": "建榮",
+      "volume_shares": 12378000,
+      "volume_lots": 12378,
+      "trade_value": 1206410900,
+      "trade_value_yi": 12.06,
+      "open_price": 92.7,
+      "close_price": 95.0,
+      "change": 0.6,
+      "transaction": 8193,
+      "date": "2026-10-12",
+      "today_vol_lots": 14367,
+      "ma10_vol_lots": 2946,
+      "ma10w_vol_lots": 3017,
+      "vol_multiple": 4.88,
+      "vol_week_multiple": 4.76,
+      "rank": 3
+    },
+    {
       "market": "twse",
       "code": "2241",
       "name": "艾姆勒",
@@ -151,7 +252,27 @@
       "ma10w_vol_lots": 1175,
       "vol_multiple": 4.43,
       "vol_week_multiple": 20.63,
-      "rank": 3
+      "rank": 4
+    },
+    {
+      "market": "tpex",
+      "code": "3685",
+      "name": "元創精密",
+      "volume_shares": 3794000,
+      "volume_lots": 3794,
+      "trade_value": 145536400,
+      "trade_value_yi": 1.46,
+      "open_price": 37.9,
+      "close_price": 38.8,
+      "change": 0.9,
+      "transaction": 935,
+      "date": "2026-10-12",
+      "today_vol_lots": 2485,
+      "ma10_vol_lots": 660,
+      "ma10w_vol_lots": 654,
+      "vol_multiple": 3.76,
+      "vol_week_multiple": 3.8,
+      "rank": 5
     },
     {
       "market": "twse",
@@ -171,7 +292,47 @@
       "ma10w_vol_lots": 1234,
       "vol_multiple": 3.28,
       "vol_week_multiple": 11.87,
-      "rank": 4
+      "rank": 6
+    },
+    {
+      "market": "tpex",
+      "code": "8042",
+      "name": "金山電",
+      "volume_shares": 34513000,
+      "volume_lots": 34513,
+      "trade_value": 5032352500,
+      "trade_value_yi": 50.32,
+      "open_price": 137.5,
+      "close_price": 144.0,
+      "change": 5.5,
+      "transaction": 22957,
+      "date": "2026-10-12",
+      "today_vol_lots": 19583,
+      "ma10_vol_lots": 6198,
+      "ma10w_vol_lots": 4994,
+      "vol_multiple": 3.16,
+      "vol_week_multiple": 3.92,
+      "rank": 7
+    },
+    {
+      "market": "tpex",
+      "code": "4973",
+      "name": "廣穎電通",
+      "volume_shares": 7943000,
+      "volume_lots": 7943,
+      "trade_value": 1239405000,
+      "trade_value_yi": 12.39,
+      "open_price": 153.0,
+      "close_price": 158.0,
+      "change": 9.0,
+      "transaction": 5238,
+      "date": "2026-10-12",
+      "today_vol_lots": 1408,
+      "ma10_vol_lots": 446,
+      "ma10w_vol_lots": 1353,
+      "vol_multiple": 3.15,
+      "vol_week_multiple": 1.04,
+      "rank": 8
     }
   ]
 }
