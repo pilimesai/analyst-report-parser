@@ -1,9 +1,11 @@
 """
 update_call_warrants.py
 全市場認購權證（Call Warrants）成交金額彙總至標的個股排行
-資料來源：
-  - 上市：TWSE OpenAPI (t187ap37_L 基本資料 + t187ap42_L 每日成交)
-  - 上櫃：TPEx OpenAPI (mopsfin_t187ap42_O 每日成交)
+資料來源（優先使用盤後即時端點，OpenAPI 次日凌晨才更新，僅作為備援）：
+  - 上市：TWSE MI_INDEX type=0999 (當日認購權證收盤行情，含標的代號)
+          備援 TWSE OpenAPI (t187ap37_L 基本資料 + t187ap42_L 每日成交)
+  - 上櫃：TPEx stk_wn1430_result.php se=AL (當日上櫃全部證券含權證)
+          備援 TPEx OpenAPI (mopsfin_t187ap42_O 每日成交)
 輸出：call_warrants.json -> push 到 GitHub
 """
 import sys
@@ -60,10 +62,117 @@ def load_cached_quotes():
             pass
     return quotes
 
-def fetch_twse_warrants(session):
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
+UA_HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', 'Accept': 'application/json, */*'}
+
+def recent_weekdays(n=6):
+    today = datetime.datetime.now(TZ_TW).date()
+    days = []
+    delta = 0
+    while len(days) < n and delta < 14:
+        d = today - datetime.timedelta(days=delta)
+        if d.weekday() < 5:
+            days.append(d)
+        delta += 1
+    return days
+
+def _field_idx(fields, *names):
+    clean = [re.sub(r'<[^>]+>', '', str(f)).strip() for f in fields]
+    for n in names:
+        if n in clean:
+            return clean.index(n)
+    return -1
+
+def fetch_twse_warrants_mi_index(session, target_date=None):
+    """TWSE 官網 MI_INDEX type=0999 (認購權證，不含牛證)：盤後約 15:00 即可取得當日資料"""
+    dates = [target_date] if target_date else recent_weekdays()
+    for d in dates:
+        d_str = d.strftime('%Y%m%d')
+        url = f'https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date={d_str}&type=0999&response=json'
+        try:
+            print(f"Fetching TWSE call warrants via MI_INDEX ({d_str})...")
+            jd = session.get(url, headers=UA_HEADERS, timeout=40).json()
+        except Exception as e:
+            print(f"TWSE MI_INDEX {d_str} error: {e}")
+            continue
+        if jd.get('stat') != 'OK':
+            continue
+        for tbl in jd.get('tables', []):
+            fields = tbl.get('fields') or []
+            rows = tbl.get('data') or []
+            i_und_code = _field_idx(fields, '標的代號')
+            if i_und_code < 0 or not rows:
+                continue
+            i_code = _field_idx(fields, '證券代號')
+            i_name = _field_idx(fields, '證券名稱')
+            i_vol = _field_idx(fields, '成交股數')
+            i_val = _field_idx(fields, '成交金額')
+            i_und_name = _field_idx(fields, '標的名稱')
+            trades = []
+            for r in rows:
+                trades.append({
+                    'code': str(r[i_code]).strip(),
+                    'name': str(r[i_name]).strip(),
+                    'value': parse_val(r[i_val]),
+                    'volume': parse_int(r[i_vol]),
+                    'underlying_code': str(r[i_und_code]).strip(),
+                    'underlying_name': str(r[i_und_name]).strip() if i_und_name >= 0 else '',
+                })
+            print(f"TWSE MI_INDEX: {len(trades)} 檔認購權證 ({d_str})")
+            return d, trades
+    return None, []
+
+def fetch_tpex_warrants_wn1430(target_date):
+    """TPEx 官網上櫃收盤行情 se=AL (含權證)：盤後即可取得當日資料，GitHub Actions 可正常連線"""
+    roc = f'{target_date.year - 1911}/{target_date.month:02d}/{target_date.day:02d}'
+    url = f'https://www.tpex.org.tw/web/stock/aftertrading/otc_quotes_no1430/stk_wn1430_result.php?l=zh-tw&d={roc}&se=AL&_=1'
+    print(f"Fetching TPEx warrants via stk_wn1430 ({roc})...")
+    raw = None
+    curl_bin = shutil.which("curl") or shutil.which("curl.exe") or "curl"
+    try:
+        res = subprocess.run([curl_bin, '-s', '--http1.1', url, '-H', f"User-Agent: {UA_HEADERS['User-Agent']}"],
+                             capture_output=True, timeout=60)
+        if res.returncode == 0 and res.stdout:
+            raw = res.stdout.decode('utf-8', errors='ignore')
+    except Exception as e:
+        print(f"TPEx wn1430 curl warning: {e}")
+    if not raw:
+        try:
+            raw = requests.get(url, headers=UA_HEADERS, timeout=60).text
+        except Exception as e:
+            print(f"TPEx wn1430 requests warning: {e}")
+            return []
+    try:
+        jd = json.loads(raw)
+    except Exception as e:
+        print(f"TPEx wn1430 JSON parse error: {e}")
+        return []
+    tables = jd.get('tables') or []
+    if not tables:
+        return []
+    fields = tables[0].get('fields') or []
+    rows = tables[0].get('data') or []
+    i_code = _field_idx(fields, '代號')
+    i_name = _field_idx(fields, '名稱')
+    i_vol = _field_idx(fields, '成交股數')
+    i_val = _field_idx(fields, '成交金額(元)', '成交金額')
+    if min(i_code, i_name, i_vol, i_val) < 0:
+        print(f"TPEx wn1430 欄位格式異常: {fields}")
+        return []
+    trades = []
+    for r in rows:
+        trades.append({
+            'code': str(r[i_code]).strip(),
+            'name': str(r[i_name]).strip(),
+            'value': parse_val(r[i_val]),
+            'volume': parse_int(r[i_vol]),
+        })
+    print(f"TPEx wn1430: {len(trades)} 筆上櫃證券 ({roc})")
+    return trades
+
+def fetch_twse_warrant_meta(session):
+    """TWSE 權證基本資料（履約價、到期日），僅作為輔助欄位"""
     print("Fetching TWSE warrant basic info (t187ap37_L)...")
-    r_basic = session.get('https://openapi.twse.com.tw/v1/opendata/t187ap37_L', headers=headers, timeout=30)
+    r_basic = session.get('https://openapi.twse.com.tw/v1/opendata/t187ap37_L', headers=UA_HEADERS, timeout=40)
     basic_data = r_basic.json()
 
     twse_meta = {}
@@ -84,9 +193,13 @@ def fetch_twse_warrants(session):
                 'expiry': expiry,
                 'market': '上市'
             }
+    return twse_meta
 
+def fetch_twse_warrants(session):
+    """備援：TWSE OpenAPI (每日成交 t187ap42_L 通常於次日凌晨才更新)"""
+    twse_meta = fetch_twse_warrant_meta(session)
     print("Fetching TWSE warrant trades (t187ap42_L)...")
-    r_trades = session.get('https://openapi.twse.com.tw/v1/opendata/t187ap42_L', headers=headers, timeout=30)
+    r_trades = session.get('https://openapi.twse.com.tw/v1/opendata/t187ap42_L', headers=UA_HEADERS, timeout=30)
     trades_data = r_trades.json()
 
     return twse_meta, trades_data
@@ -190,17 +303,37 @@ def main():
     cached_quotes = load_cached_quotes()
     session = requests.Session()
 
+    # ---- 優先：盤後即時端點 (TWSE MI_INDEX + TPEx stk_wn1430) ----
+    twse_meta, twse_trades, tpex_trades = {}, [], []
+    twse_norm, tpex_norm = [], []
+    live_date = None
     try:
-        twse_meta, twse_trades = fetch_twse_warrants(session)
+        live_date, twse_norm = fetch_twse_warrants_mi_index(session)
     except Exception as e:
-        print(f"Error fetching TWSE warrants: {e}")
-        twse_meta, twse_trades = {}, []
+        print(f"Error fetching TWSE MI_INDEX warrants: {e}")
+    if live_date:
+        try:
+            tpex_norm = fetch_tpex_warrants_wn1430(live_date)
+        except Exception as e:
+            print(f"Error fetching TPEx wn1430 warrants: {e}")
+        try:
+            twse_meta = fetch_twse_warrant_meta(session)
+        except Exception as e:
+            print(f"Warning fetching TWSE warrant meta (略過履約價/到期日): {e}")
 
-    try:
-        tpex_trades = fetch_tpex_warrants(session)
-    except Exception as e:
-        print(f"Error fetching TPEx warrants: {e}")
-        tpex_trades = []
+    # ---- 備援：OpenAPI (次日凌晨才會有前一交易日資料) ----
+    if not twse_norm:
+        try:
+            twse_meta, twse_trades = fetch_twse_warrants(session)
+        except Exception as e:
+            print(f"Error fetching TWSE warrants: {e}")
+            twse_meta, twse_trades = {}, []
+    if not tpex_norm:
+        try:
+            tpex_trades = fetch_tpex_warrants(session)
+        except Exception as e:
+            print(f"Error fetching TPEx warrants: {e}")
+            tpex_trades = []
 
     underlying_stats = collections.defaultdict(lambda: {
         'code': '',
@@ -212,9 +345,59 @@ def main():
         'warrants': []
     })
 
-    trade_date = None
+    trade_date = f"{live_date.year - 1911:03d}{live_date.month:02d}{live_date.day:02d}" if live_date else None
 
-    # 1. 處理上市成交明細
+    # 0a. 上市（MI_INDEX 即時資料，已含標的代號/名稱）
+    for w in twse_norm:
+        if w['value'] <= 0:
+            continue
+        meta = twse_meta.get(w['code'], {})
+        und_code = w.get('underlying_code', '')
+        und_name = w.get('underlying_name') or stock_names.get(und_code) or meta.get('underlying', '')
+        if not und_name:
+            continue
+        st = underlying_stats[und_name]
+        st['name'] = und_name
+        st['code'] = und_code or st['code']
+        st['market'] = '上市'
+        st['total_call_value'] += w['value']
+        st['total_call_volume'] += w['volume']
+        st['call_warrant_count'] += 1
+        st['warrants'].append({
+            'code': w['code'],
+            'name': w['name'],
+            'value': w['value'],
+            'volume': w['volume'],
+            'strike': meta.get('strike', ''),
+            'expiry': meta.get('expiry') or parse_warrant_expiry_month(w['name'])
+        })
+
+    # 0b. 上櫃（stk_wn1430 即時資料，依權證名稱解析標的與認購）
+    for w in tpex_norm:
+        if w['value'] <= 0:
+            continue
+        und_name, is_call = extract_tpex_underlying(w['name'])
+        if not is_call or not und_name:
+            continue
+        und_code = name_to_code.get(und_name) or name_to_code.get(und_name.replace('*', '')) or ''
+        st = underlying_stats[und_name]
+        st['name'] = und_name
+        if not st['code']:
+            st['code'] = und_code
+            st['market'] = '上櫃'
+        st['total_call_value'] += w['value']
+        st['total_call_volume'] += w['volume']
+        st['call_warrant_count'] += 1
+        st['warrants'].append({
+            'code': w['code'],
+            'name': w['name'],
+            'value': w['value'],
+            'volume': w['volume'],
+            'strike': '',
+            'expiry': parse_warrant_expiry_month(w['name'])
+        })
+
+    # 1. 處理上市成交明細 (OpenAPI 備援)
     for item in twse_trades:
         w_code = str(item.get('權證代號', '')).strip()
         trade_date = item.get('交易日期', item.get('日期', trade_date))
@@ -246,7 +429,7 @@ def main():
             'expiry': meta.get('expiry') or parse_warrant_expiry_month(meta['name'])
         })
 
-    # 2. 處理上櫃成交明細
+    # 2. 處理上櫃成交明細 (OpenAPI 備援)
     for item in tpex_trades:
         w_code = str(item.get('權證代號', '')).strip()
         w_name = str(item.get('權證名稱', '')).strip()
