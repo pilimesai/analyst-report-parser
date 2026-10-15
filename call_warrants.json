@@ -1,5 +1,5 @@
 {
-  "updateTime": "2026-10-15 23:45:29",
+  "updateTime": "2026-10-16 01:14:44",
   "tradeDate": "2026-10-15",
   "totalStocks": 777,
   "totalCallValue": 5331525510,
@@ -491,9 +491,9 @@
         }
       ],
       "rank": 8,
-      "close_price": "1,735.00",
-      "change": "+80.00",
-      "stock_trade_value": 15930700000
+      "close_price": "1,625.00",
+      "change": "-110.00",
+      "stock_trade_value": 22560840000
     },
     {
       "code": "2383",
@@ -796,9 +796,9 @@
         }
       ],
       "rank": 13,
-      "close_price": "158.00",
-      "change": "+14.00",
-      "stock_trade_value": 4989087000
+      "close_price": "148.00",
+      "change": "-10.00",
+      "stock_trade_value": 4833101500
     },
     {
       "code": "6531",
@@ -1101,9 +1101,9 @@
         }
       ],
       "rank": 18,
-      "close_price": "134.00",
-      "change": "+4.00",
-      "stock_trade_value": 18077848000
+      "close_price": "127.50",
+      "change": "-6.50",
+      "stock_trade_value": 7584668000
     },
     {
       "code": "2327",
@@ -1345,9 +1345,9 @@
         }
       ],
       "rank": 22,
-      "close_price": "232.00",
-      "change": "+11.00",
-      "stock_trade_value": 8217887000
+      "close_price": "214.50",
+      "change": "-17.50",
+      "stock_trade_value": 8062557000
     },
     {
       "code": "6770",
@@ -1589,9 +1589,9 @@
         }
       ],
       "rank": 26,
-      "close_price": "166.00",
-      "change": "-0.50",
-      "stock_trade_value": 7550876500
+      "close_price": "151.50",
+      "change": "-14.50",
+      "stock_trade_value": 2606373500
     },
     {
       "code": "5483",
@@ -1650,9 +1650,9 @@
         }
       ],
       "rank": 27,
-      "close_price": "208.50",
-      "change": "+1.50",
-      "stock_trade_value": 2037326000
+      "close_price": "195.50",
+      "change": "-13.00",
+      "stock_trade_value": 2073571500
     },
     {
       "code": "6146",
@@ -2138,9 +2138,9 @@
         }
       ],
       "rank": 35,
-      "close_price": "1,020.00",
-      "change": "+5.00",
-      "stock_trade_value": 10381233000
+      "close_price": "923.00",
+      "change": "-97.00",
+      "stock_trade_value": 16123037000
     },
     {
       "code": "6278",
@@ -2260,9 +2260,9 @@
         }
       ],
       "rank": 37,
-      "close_price": "278.00",
-      "change": "+9.50",
-      "stock_trade_value": 9104587000
+      "close_price": "268.00",
+      "change": "-10.00",
+      "stock_trade_value": 5822160500
     },
     {
       "code": "8299",
@@ -2321,9 +2321,9 @@
         }
       ],
       "rank": 38,
-      "close_price": "1,965.00",
-      "change": "0.00",
-      "stock_trade_value": 3085695000
+      "close_price": "1,830.00",
+      "change": "-135.00",
+      "stock_trade_value": 9020000000
     },
     {
       "code": "00632R",
@@ -2687,9 +2687,9 @@
         }
       ],
       "rank": 44,
-      "close_price": "17,500.00",
-      "change": "+150.00",
-      "stock_trade_value": 5885725000
+      "close_price": "15,945.00",
+      "change": "-1,555.00",
+      "stock_trade_value": 9505130000
     },
     {
       "code": "6672",
@@ -3944,9 +3944,9 @@
         }
       ],
       "rank": 65,
-      "close_price": "499.00",
-      "change": "+33.50",
-      "stock_trade_value": 7123437500
+      "close_price": "452.50",
+      "change": "-46.50",
+      "stock_trade_value": 5625115500
     },
     {
       "code": "5515",
@@ -4347,9 +4347,9 @@
         }
       ],
       "rank": 72,
-      "close_price": "557.00",
-      "change": "+1.00",
-      "stock_trade_value": 6560506000
+      "close_price": "502.00",
+      "change": "-55.00",
+      "stock_trade_value": 8211831000
     },
     {
       "code": "2882",
@@ -4469,9 +4469,9 @@
         }
       ],
       "rank": 74,
-      "close_price": "",
-      "change": "",
-      "stock_trade_value": 0
+      "close_price": "75.80",
+      "change": "-2.70",
+      "stock_trade_value": 4163826400
     },
     {
       "code": "4977",
@@ -4774,9 +4774,9 @@
         }
       ],
       "rank": 79,
-      "close_price": "216.50",
-      "change": "+19.50",
-      "stock_trade_value": 4308543500
+      "close_price": "195.00",
+      "change": "-21.50",
+      "stock_trade_value": 8621619500
     },
     {
       "code": "8028",
@@ -4896,9 +4896,9 @@
         }
       ],
       "rank": 81,
-      "close_price": "",
-      "change": "",
-      "stock_trade_value": 0
+      "close_price": "231.00",
+      "change": "-7.00",
+      "stock_trade_value": 1883915500
     },
     {
       "code": "3147",
@@ -6015,9 +6015,9 @@
         }
       ],
       "rank": 100,
-      "close_price": "1,540.00",
-      "change": "-60.00",
-      "stock_trade_value": 5046385000
+      "close_price": "1,390.00",
+      "change": "-150.00",
+      "stock_trade_value": 4444270000
     },
     {
       "code": "1605",
@@ -7142,9 +7142,9 @@
         }
       ],
       "rank": 119,
-      "close_price": "",
-      "change": "",
-      "stock_trade_value": 0
+      "close_price": "140.50",
+      "change": "-10.00",
+      "stock_trade_value": 2102427500
     },
     {
       "code": "3324",
@@ -7203,9 +7203,9 @@
         }
       ],
       "rank": 120,
-      "close_price": "1,490.00",
-      "change": "+15.00",
-      "stock_trade_value": 3398925000
+      "close_price": "1,410.00",
+      "change": "-80.00",
+      "stock_trade_value": 2944525000
     },
     {
       "code": "2340",
@@ -7508,9 +7508,9 @@
         }
       ],
       "rank": 125,
-      "close_price": "3,225.00",
-      "change": "-50.00",
-      "stock_trade_value": 2146295000
+      "close_price": "2,905.00",
+      "change": "-320.00",
+      "stock_trade_value": 2074115000
     },
     {
       "code": "1560",
@@ -7935,9 +7935,9 @@
         }
       ],
       "rank": 132,
-      "close_price": "5,885.00",
-      "change": "-55.00",
-      "stock_trade_value": 5463055000
+      "close_price": "5,300.00",
+      "change": "-585.00",
+      "stock_trade_value": 5272950000
     },
     {
       "code": "8150",
@@ -9078,9 +9078,9 @@
         }
       ],
       "rank": 151,
-      "close_price": "83.90",
-      "change": "+2.90",
-      "stock_trade_value": 2051266300
+      "close_price": "",
+      "change": "",
+      "stock_trade_value": 0
     },
     {
       "code": "2353",
@@ -9200,9 +9200,9 @@
         }
       ],
       "rank": 153,
-      "close_price": "141.00",
-      "change": "+1.00",
-      "stock_trade_value": 3276181500
+      "close_price": "130.00",
+      "change": "-11.00",
+      "stock_trade_value": 2020355500
     },
     {
       "code": "2027",
@@ -10205,9 +10205,9 @@
         }
       ],
       "rank": 170,
-      "close_price": "288.50",
-      "change": "-2.50",
-      "stock_trade_value": 1937088500
+      "close_price": "",
+      "change": "",
+      "stock_trade_value": 0
     },
     {
       "code": "2476",
@@ -10876,9 +10876,9 @@
         }
       ],
       "rank": 181,
-      "close_price": "2,875.00",
-      "change": "+65.00",
-      "stock_trade_value": 2598860000
+      "close_price": "2,655.00",
+      "change": "-220.00",
+      "stock_trade_value": 3154515000
     },
     {
       "code": "2357",
@@ -12560,9 +12560,9 @@
         }
       ],
       "rank": 209,
-      "close_price": "292.00",
-      "change": "+26.50",
-      "stock_trade_value": 3791694000
+      "close_price": "275.50",
+      "change": "-16.50",
+      "stock_trade_value": 1930570000
     },
     {
       "code": "9904",
@@ -12796,9 +12796,9 @@
         }
       ],
       "rank": 213,
-      "close_price": "588.00",
-      "change": "+53.00",
-      "stock_trade_value": 5692699000
+      "close_price": "542.00",
+      "change": "-46.00",
+      "stock_trade_value": 4992301000
     },
     {
       "code": "00664R",
@@ -15928,9 +15928,9 @@
         }
       ],
       "rank": 265,
-      "close_price": "138.00",
-      "change": "-11.00",
-      "stock_trade_value": 2002843500
+      "close_price": "",
+      "change": "",
+      "stock_trade_value": 0
     },
     {
       "code": "3715",
@@ -16112,8 +16112,8 @@
       ],
       "rank": 268,
       "close_price": "811.00",
-      "change": "+14.00",
-      "stock_trade_value": 1804937000
+      "change": "0.00",
+      "stock_trade_value": 2178744000
     },
     {
       "code": "2323",
@@ -18556,9 +18556,9 @@
         }
       ],
       "rank": 309,
-      "close_price": "176.00",
-      "change": "+1.00",
-      "stock_trade_value": 1436470000
+      "close_price": "161.50",
+      "change": "-14.50",
+      "stock_trade_value": 3116242500
     },
     {
       "code": "",
@@ -29071,9 +29071,9 @@
         }
       ],
       "rank": 492,
-      "close_price": "119.00",
-      "change": "+3.00",
-      "stock_trade_value": 3177348500
+      "close_price": "110.00",
+      "change": "-9.00",
+      "stock_trade_value": 3413237000
     },
     {
       "code": "00715L",
