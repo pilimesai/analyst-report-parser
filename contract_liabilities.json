@@ -1,5 +1,5 @@
 {
-  "updateTime": "2026-10-16T21:28:45.709499+08:00",
+  "updateTime": "2026-10-17T10:45:59.632967+08:00",
   "tradeDate": "2026-10-16",
   "totalScanned": 308,
   "totalMatched": 44,
@@ -353,7 +353,7 @@
       "market": "twse",
       "close": 451.5,
       "change": 41.0,
-      "capital_yi": 4.25,
+      "capital_yi": 4.26,
       "trade_val_yi": 9.13,
       "latest_report_date": "2026-06-30",
       "latest_contract_liab_yi": 8.27,
