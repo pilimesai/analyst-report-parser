@@ -3209,12 +3209,11 @@
                                 <th class="pledge-col-shareholder">大股東身份 / 姓名</th>
                                 <th class="pledge-col-shares">本次質設張數</th>
                                 <th class="pledge-col-cum-shares">累計質設張數</th>
-                                <th class="pledge-col-creditor">質權金融機構</th>
                                 <th class="pledge-col-status">防守狀態</th>
                             </tr>
                         </thead>
                         <tbody id="stock-pledge-tbody">
-                            <tr><td colspan="11" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                            <tr><td colspan="10" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
                                 <div style="font-size:1.5rem; margin-bottom:0.5rem;">🏛️</div>
                                 <div>尚未載入大股東質設資料</div>
                                 <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🔄 重新載入」或「⚡ 一鍵抓取所有資料」</div>
@@ -3905,7 +3904,7 @@
                         callWarrantsData = savedWarrants.data;
                         const badgeWarrants = document.getElementById('badge-call-warrants');
                         if (badgeWarrants && callWarrantsData.stocks) {
-                            badgeWarrants.innerText = String(callWarrantsData.stocks.length);
+                            badgeWarrants.innerText = String(Math.min(callWarrantsData.stocks.length, 30));
                         }
                         scheduleTabRender('call-warrants', renderCallWarrantsView);
                     }
@@ -7967,7 +7966,7 @@ ${text.slice(0, 30000)}`;
             if (tradeDate) tradeDate.innerText = callWarrantsData.tradeDate || '—';
             if (totalValEl) totalValEl.innerText = `${(callWarrantsData.totalCallValueYi || (callWarrantsData.totalCallValue / 1e8)).toFixed(2)} 億元`;
             if (summaryCountEl) summaryCountEl.innerText = `${rawStocks.length} 檔標的 / ${(callWarrantsData.totalWarrants || 0).toLocaleString()} 檔權證`;
-            if (badgeWarrants) badgeWarrants.innerText = String(rawStocks.length);
+            if (badgeWarrants) badgeWarrants.innerText = String(Math.min(rawStocks.length, 30));
 
             // 依模式排序 (單一權證最大金額 vs 認購總金額)
             let stocks = [...rawStocks];
@@ -8014,6 +8013,9 @@ ${text.slice(0, 30000)}`;
                     String(s.max_single_warrant_name || '').toLowerCase().includes(q)
                 );
             }
+
+            // 只顯示前 30 名
+            filtered = filtered.slice(0, 30);
 
             if (!tbody) return;
             if (filtered.length === 0) {
@@ -9122,7 +9124,7 @@ ${text.slice(0, 30000)}`;
 
             if (!stockPledgeData) {
                 if (badge) badge.innerText = '0';
-                if (tbody) tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                if (tbody) tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
                     <div style="font-size:1.5rem; margin-bottom:0.5rem;">🏛️</div>
                     <div>尚未載入大股東質設資料</div>
                     <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🔄 重新載入」或「⚡ 一鍵抓取所有資料」</div>
@@ -9233,7 +9235,7 @@ ${text.slice(0, 30000)}`;
 
             if (!tbody) return;
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--text-secondary); padding:2rem;">無符合篩選或搜尋條件的質設資料</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:var(--text-secondary); padding:2rem;">無符合篩選或搜尋條件的質設資料</td></tr>`;
                 return;
             }
 
@@ -9316,7 +9318,6 @@ ${text.slice(0, 30000)}`;
                     <td class="pledge-col-shareholder">${shareholderHtml}</td>
                     <td class="pledge-col-shares" style="font-weight:600; color:#e2e8f0; font-size:0.84rem; white-space:nowrap;">${pledgeLots.toLocaleString()} 張</td>
                     <td class="pledge-col-cum-shares" style="font-weight:700; color:#fbbf24; font-size:0.84rem; white-space:nowrap;">${cumLots.toLocaleString()} 張</td>
-                    <td class="pledge-col-creditor" style="font-size:0.8rem; color:#94a3b8; white-space:nowrap;" title="${item.creditor || ''}">${item.creditor || '金融機構'}</td>
                     <td class="pledge-col-status">${statusBadge}</td>
                 </tr>`;
             }).join('');
