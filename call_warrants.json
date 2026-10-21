@@ -1,5 +1,5 @@
 {
-  "updateTime": "2026-10-22 00:06:52",
+  "updateTime": "2026-10-22 01:28:18",
   "tradeDate": "2026-10-21",
   "totalStocks": 764,
   "totalCallValue": 4660531100,
@@ -36825,35 +36825,6 @@
       "stock_trade_value": 0
     },
     {
-      "code": "",
-      "name": "美達",
-      "market": "上櫃",
-      "total_call_value": 11400,
-      "total_call_value_yi": 0.0,
-      "total_call_volume": 20000,
-      "call_warrant_count": 1,
-      "max_single_warrant_value": 11400,
-      "max_single_warrant_wan": 1.1,
-      "max_single_warrant_name": "美達國票62購01",
-      "max_single_warrant_code": "711951",
-      "max_single_warrant_strike": "",
-      "max_single_warrant_expiry": "2027/02",
-      "top_warrants": [
-        {
-          "code": "711951",
-          "name": "美達國票62購01",
-          "value": 11400,
-          "volume": 20000,
-          "strike": "",
-          "expiry": "2027/02"
-        }
-      ],
-      "rank": 670,
-      "close_price": "",
-      "change": "",
-      "stock_trade_value": 0
-    },
-    {
       "code": "6530",
       "name": "創威",
       "market": "上櫃",
@@ -36883,6 +36854,35 @@
           "volume": 2000,
           "strike": "",
           "expiry": "2027/04"
+        }
+      ],
+      "rank": 670,
+      "close_price": "",
+      "change": "",
+      "stock_trade_value": 0
+    },
+    {
+      "code": "",
+      "name": "美達",
+      "market": "上櫃",
+      "total_call_value": 11400,
+      "total_call_value_yi": 0.0,
+      "total_call_volume": 20000,
+      "call_warrant_count": 1,
+      "max_single_warrant_value": 11400,
+      "max_single_warrant_wan": 1.1,
+      "max_single_warrant_name": "美達國票62購01",
+      "max_single_warrant_code": "711951",
+      "max_single_warrant_strike": "",
+      "max_single_warrant_expiry": "2027/02",
+      "top_warrants": [
+        {
+          "code": "711951",
+          "name": "美達國票62購01",
+          "value": 11400,
+          "volume": 20000,
+          "strike": "",
+          "expiry": "2027/02"
         }
       ],
       "rank": 671,
@@ -39545,35 +39545,6 @@
       "stock_trade_value": 0
     },
     {
-      "code": "",
-      "name": "矽科",
-      "market": "上櫃",
-      "total_call_value": 900,
-      "total_call_value_yi": 0.0,
-      "total_call_volume": 30000,
-      "call_warrant_count": 1,
-      "max_single_warrant_value": 900,
-      "max_single_warrant_wan": 0.1,
-      "max_single_warrant_name": "矽科國票61購01",
-      "max_single_warrant_code": "710206",
-      "max_single_warrant_strike": "",
-      "max_single_warrant_expiry": "2027/01",
-      "top_warrants": [
-        {
-          "code": "710206",
-          "name": "矽科國票61購01",
-          "value": 900,
-          "volume": 30000,
-          "strike": "",
-          "expiry": "2027/01"
-        }
-      ],
-      "rank": 750,
-      "close_price": "",
-      "change": "",
-      "stock_trade_value": 0
-    },
-    {
       "code": "6104",
       "name": "創惟",
       "market": "上櫃",
@@ -39611,6 +39582,35 @@
           "volume": 10000,
           "strike": "",
           "expiry": "2026/12"
+        }
+      ],
+      "rank": 750,
+      "close_price": "",
+      "change": "",
+      "stock_trade_value": 0
+    },
+    {
+      "code": "",
+      "name": "矽科",
+      "market": "上櫃",
+      "total_call_value": 900,
+      "total_call_value_yi": 0.0,
+      "total_call_volume": 30000,
+      "call_warrant_count": 1,
+      "max_single_warrant_value": 900,
+      "max_single_warrant_wan": 0.1,
+      "max_single_warrant_name": "矽科國票61購01",
+      "max_single_warrant_code": "710206",
+      "max_single_warrant_strike": "",
+      "max_single_warrant_expiry": "2027/01",
+      "top_warrants": [
+        {
+          "code": "710206",
+          "name": "矽科國票61購01",
+          "value": 900,
+          "volume": 30000,
+          "strike": "",
+          "expiry": "2027/01"
         }
       ],
       "rank": 751,
