@@ -3,10 +3,6 @@ name: Run All Updates On Demand
 on:
   workflow_dispatch:
     inputs:
-      gh_token:
-        description: 'GitHub Personal Access Token'
-        required: false
-        default: ''
       full_scan:
         description: '是否執行全市場質押深度巡檢 (Full Market Deep Scan)'
         required: false
@@ -28,14 +24,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ inputs.gh_token != '' && inputs.gh_token || secrets.GITHUB_TOKEN }}
+          # Token 改從 repo Secrets 讀取（可選 GH_PAT），不再經由 workflow input 傳入以免外洩
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
           fetch-depth: 1
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'
 
       - name: Install dependencies
         run: |
@@ -52,7 +48,7 @@ jobs:
 
       - name: Commit and push changes
         env:
-          PUSH_TOKEN: ${{ inputs.gh_token != '' && inputs.gh_token || secrets.GITHUB_TOKEN }}
+          PUSH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"

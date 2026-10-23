@@ -3767,6 +3767,8 @@
                                 localStorage.setItem('cached_tables_data', JSON.stringify(window.tablesData));
                                 renderPersistentTables();
                             }
+                            // 從 Google Sheet「量化嚴選」分頁還原量化選股 (跨裝置/無痕模式同步，只套用較新的版本)
+                            try { applyQuantFromSheetRows(resJson.sheetData['量化嚴選']); } catch (e) { console.warn('量化嚴選分頁解析失敗:', e); }
                         }
                     }
                 }
@@ -4204,7 +4206,6 @@
                     body: JSON.stringify({
                         ref: 'main',
                         inputs: {
-                            gh_token: token.trim(),
                             full_scan: isFullScan ? 'true' : 'false'
                         }
                     })
@@ -4212,7 +4213,19 @@
 
                 if (!dispatchRes.ok) {
                     const errTxt = await dispatchRes.text();
-                    throw new Error(`GitHub Token 驗證失敗 (${dispatchRes.status})，請確認 Token 權限（需勾選 repo 與 workflow 權限）: ${errTxt.slice(0, 100)}`);
+                    if (dispatchRes.status === 401) {
+                        // 401 Bad credentials = Token 本身無效（過期 / 被撤銷 / 貼錯），非權限不足
+                        localStorage.removeItem('github_token');
+                        const sideInp = document.getElementById('github-token');
+                        if (sideInp) sideInp.value = '';
+                        updateCloudCrawlerUI();
+                        setTimeout(() => toggleGhTokenModal(true), 300);
+                        throw new Error('GitHub Token 已失效 (401 Bad credentials)：Token 可能已過期、被撤銷或貼錯，請至 GitHub 重新產生後貼上');
+                    }
+                    if (dispatchRes.status === 403 || dispatchRes.status === 404) {
+                        throw new Error(`GitHub Token 權限不足 (${dispatchRes.status})，請確認已勾選 repo 與 workflow 權限: ${errTxt.slice(0, 100)}`);
+                    }
+                    throw new Error(`GitHub 雲端觸發失敗 (${dispatchRes.status}): ${errTxt.slice(0, 100)}`);
                 }
 
                 showToast('🚀 GitHub 雲端電腦已啟動！正在全量爬取台股盤後數據...');
@@ -4223,31 +4236,29 @@
                 const startTime = Date.now();
                 let success = false;
                 const maxWaitSec = isFullScan ? 1800 : 1500;
+                const ghHeaders = {
+                    'Authorization': `Bearer ${token.trim()}`,
+                    'Accept': 'application/vnd.github+json',
+                    'X-GitHub-Api-Version': '2022-11-28'
+                };
+                // 各步驟對應的使用者友善說明
+                const STEP_LABELS = {
+                    'Set up job': '☁️ 雲端虛擬機初始化中',
+                    'Checkout repository': '📥 下載程式碼中',
+                    'Set up Python': '🐍 設定 Python 環境中',
+                    'Install dependencies': '📦 安裝爬蟲套件與瀏覽器中',
+                    'Run All Market Crawlers': isFullScan
+                        ? '⚙️ 全市場質押深度巡檢中 (1,800+ 檔約需數分鐘)'
+                        : '🚀 10 大台股模組全並行爬取與資料庫運算中',
+                    'Commit and push changes': '💾 寫入最新數據至資料庫中'
+                };
+                const PUSH_STEP = 'Commit and push changes';
+                const CRAWL_STEP = 'Run All Market Crawlers';
+                let stageText = '☁️ 等待 GitHub 建立執行任務';
 
                 while ((Date.now() - startTime) < maxWaitSec * 1000) {
-                    const elapsed = Math.round((Date.now() - startTime) / 1000);
-                    const mins = Math.floor(elapsed / 60);
-                    const secs = elapsed % 60;
-                    const timeStr = mins > 0 ? `${mins} 分 ${secs} 秒` : `${secs} 秒`;
-
-                    if (statusEl) {
-                        if (isFullScan) {
-                            statusEl.innerHTML = `⚙️ 全市場質押深度巡檢中 (已執行 ${timeStr}，1,800+ 檔地毯式巡檢約需數分鐘)...`;
-                        } else if (elapsed < 30) {
-                            statusEl.innerHTML = `☁️ 雲端虛擬機排隊與環境初始化中 (已等待 ${timeStr})...`;
-                        } else {
-                            statusEl.innerHTML = `🚀 10 大台股模組全並行爬取與資料庫運算中 (已執行 ${timeStr})...`;
-                        }
-                    }
-
                     try {
-                        const runsRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/runs?per_page=5`, {
-                            headers: {
-                                'Authorization': `Bearer ${token.trim()}`,
-                                'Accept': 'application/vnd.github+json',
-                                'X-GitHub-Api-Version': '2022-11-28'
-                            }
-                        });
+                        const runsRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/runs?per_page=5`, { headers: ghHeaders });
                         if (runsRes.ok) {
                             const runsData = await runsRes.json();
                             const runs = runsData.workflow_runs || [];
@@ -4266,11 +4277,56 @@
                                         throw new Error(`雲端爬蟲執行結束，但回報狀態: ${currentRun.conclusion}（請確認 GitHub 儲存庫 Actions 權限是否設為 Read and write）`);
                                     }
                                 }
+
+                                if (currentRun.status === 'queued' || currentRun.status === 'waiting' || currentRun.status === 'pending') {
+                                    stageText = '⏳ 排隊等待 GitHub 分配雲端機器 (尚未開始爬取，GitHub 繁忙時可能較久)';
+                                } else {
+                                    // 讀取步驟層級狀態，反映真實進度
+                                    const jobsRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/actions/runs/${currentRun.id}/jobs`, { headers: ghHeaders });
+                                    if (jobsRes.ok) {
+                                        const jobsData = await jobsRes.json();
+                                        const job = (jobsData.jobs || [])[0];
+                                        if (job) {
+                                            if (job.status === 'queued') {
+                                                stageText = '⏳ 排隊等待 GitHub 分配雲端機器 (尚未開始爬取，GitHub 繁忙時可能較久)';
+                                            } else {
+                                                const steps = job.steps || [];
+                                                const crawlStep = steps.find(s => s.name === CRAWL_STEP);
+                                                const pushStep = steps.find(s => s.name === PUSH_STEP);
+
+                                                if (crawlStep && crawlStep.status === 'completed' && crawlStep.conclusion !== 'success' && crawlStep.conclusion !== 'skipped') {
+                                                    throw new Error(`雲端爬蟲執行結束，但回報狀態: ${crawlStep.conclusion}（爬蟲腳本執行失敗，請查看 GitHub Actions 日誌）`);
+                                                }
+                                                // 資料已推送 → 立即視為完成，不必等待 GitHub 收尾步驟 (快取儲存等可能卡住)
+                                                if (pushStep && pushStep.status === 'completed') {
+                                                    if (pushStep.conclusion === 'success') {
+                                                        success = true;
+                                                        break;
+                                                    }
+                                                    throw new Error(`雲端爬蟲執行結束，但回報狀態: ${pushStep.conclusion}（推送資料失敗，請確認 GitHub 儲存庫 Actions 權限是否設為 Read and write）`);
+                                                }
+
+                                                const active = steps.find(s => s.status === 'in_progress');
+                                                if (active) {
+                                                    stageText = STEP_LABELS[active.name] || `⚙️ 執行中：${active.name}`;
+                                                } else {
+                                                    stageText = '☁️ 雲端虛擬機初始化中';
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     } catch(pollErr) {
                         if (pollErr.message && pollErr.message.includes('回報狀態')) throw pollErr;
                     }
+
+                    const elapsed = Math.round((Date.now() - startTime) / 1000);
+                    const mins = Math.floor(elapsed / 60);
+                    const secs = elapsed % 60;
+                    const timeStr = mins > 0 ? `${mins} 分 ${secs} 秒` : `${secs} 秒`;
+                    if (statusEl) statusEl.innerHTML = `${stageText} (已經過 ${timeStr})...`;
 
                     await new Promise(r => setTimeout(r, 4000));
                 }
@@ -6241,7 +6297,7 @@ JSON 欄位：
 
             // 儲存至本地快取
             localStorage.setItem('reports_history', JSON.stringify(reportsData));
-            localStorage.setItem('quant_results_cache', JSON.stringify({ liveScores, liveMatches }));
+            localStorage.setItem('quant_results_cache', JSON.stringify({ liveScores, liveMatches, updateTime: new Date().toISOString(), source: 'local' }));
             updateProgress(100, "✅ 量化分析運算完畢！");
 
             setTimeout(() => {
@@ -6853,6 +6909,81 @@ JSON 欄位：
             }
         }
 
+        // 🕒 將各來源的量化更新時間統一轉為毫秒 (無時區的字串一律視為台北時間)
+        function parseQuantTime(val) {
+            if (val === null || val === undefined || val === '') return 0;
+            if (typeof val === 'number') return val;
+            const s = String(val).trim();
+            // ISO 含時區 (例如 Google Sheet 日期儲存格回傳的 2026-10-19T16:22:26.000Z)
+            if (/T.*(Z|[+-]\d{2}:?\d{2})$/.test(s)) {
+                const t = Date.parse(s);
+                return isNaN(t) ? 0 : t;
+            }
+            // 2026-10-17 10:45:50 / 2026/10/20 上午12:22:26 / 2026/10/20 下午 3:05:00
+            const m = s.match(/(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})(?:[ T]*(上午|下午|AM|PM)?\s*(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)?)?/i);
+            if (!m) return 0;
+            let hh = parseInt(m[5] || '0', 10);
+            const ampm = (m[4] || m[8] || '').toUpperCase();
+            if ((ampm === '下午' || ampm === 'PM') && hh < 12) hh += 12;
+            if ((ampm === '上午' || ampm === 'AM') && hh === 12) hh = 0;
+            const pad = n => String(n).padStart(2, '0');
+            const iso = `${m[1]}-${pad(m[2])}-${pad(m[3])}T${pad(hh)}:${pad(m[6] || 0)}:${pad(m[7] || 0)}+08:00`;
+            const t = Date.parse(iso);
+            return isNaN(t) ? 0 : t;
+        }
+
+        function getCachedQuantTime() {
+            try {
+                const c = JSON.parse(localStorage.getItem('quant_results_cache') || 'null');
+                return c ? parseQuantTime(c.updateTime) : 0;
+            } catch (e) { return 0; }
+        }
+
+        // 只有在來源資料比目前快取更新時才套用 (避免舊的雲端資料覆蓋最新的本機運算結果)
+        function applyQuantPayloadIfNewer(scores, matches, updateTime, tradeDate, source) {
+            if (!scores || Object.keys(scores).length === 0) return false;
+            const incoming = parseQuantTime(updateTime);
+            const current = getCachedQuantTime();
+            const hasCurrent = quantResultsCache && quantResultsCache.liveScores && Object.keys(quantResultsCache.liveScores).length > 0;
+            if (hasCurrent && current && incoming <= current) return false;
+            localStorage.setItem('quant_results_cache', JSON.stringify({
+                liveScores: scores,
+                liveMatches: matches || {},
+                updateTime: incoming ? new Date(incoming).toISOString() : (updateTime || ''),
+                tradeDate: tradeDate || '',
+                source
+            }));
+            renderQuantResults(scores, matches || {});
+            return true;
+        }
+
+        // 📄 解析 Google Sheet「量化嚴選」分頁 (由 syncQuantResultsToGoogleSheet 寫入)
+        function applyQuantFromSheetRows(rows) {
+            if (!Array.isArray(rows) || rows.length < 2) return false;
+            const header = rows[0].map(h => String(h).trim());
+            const idx = name => header.indexOf(name);
+            const iId = idx('股票代號'), iName = idx('股票名稱'), iScore = idx('綜合評分');
+            const iMatch = idx('符合條件明細'), iTrade = idx('資料交易日'), iTime = idx('更新時間');
+            if (iId < 0 || iScore < 0) return false;
+
+            const scores = {}, matches = {};
+            let updateTime = '', tradeDate = '';
+            rows.slice(1).forEach(r => {
+                let sid = String(r[iId] ?? '').trim();
+                if (!sid) return;
+                if (/^\d{1,3}$/.test(sid)) sid = sid.padStart(4, '0'); // 試算表會吃掉前導 0 (如 0050)
+                const score = parseFloat(r[iScore]) || 0;
+                if (score <= 0) return;
+                scores[sid] = score;
+                const detail = iMatch >= 0 ? String(r[iMatch] ?? '') : '';
+                matches[sid] = detail ? detail.split('|').map(x => x.trim()).filter(Boolean) : [];
+                if (iName >= 0 && r[iName] && typeof stockNameMap !== 'undefined' && !stockNameMap[sid]) stockNameMap[sid] = String(r[iName]);
+                if (!updateTime && iTime >= 0) updateTime = r[iTime];
+                if (!tradeDate && iTrade >= 0) tradeDate = String(r[iTrade] ?? '').slice(0, 10);
+            });
+            return applyQuantPayloadIfNewer(scores, matches, updateTime, tradeDate, 'sheet');
+        }
+
         // 📥 從雲端加載量化選股結果 (支援跨裝置/手機/電腦無縫同步)
         async function loadQuantResultsFromCloud(silent = false, preferCloud = false) {
             try {
@@ -6872,15 +7003,11 @@ JSON 欄位：
                     } catch(e) {}
                 }
                 if (!payload) return;
-                quantResultsCache = { liveScores: payload.scores, liveMatches: payload.matches };
-                localStorage.setItem('quant_results_cache', JSON.stringify({
-                    liveScores: payload.scores,
-                    liveMatches: payload.matches,
-                    updateTime: payload.updateTime,
-                    tradeDate: payload.tradeDate
-                }));
-                renderQuantResults(payload.scores, payload.matches);
-                if (!silent) showToast(`✅ 成功載入量化選股標的！共 ${payload.passedCount || Object.keys(payload.scores).length} 檔（${payload.tradeDate || ''}）`);
+                const applied = applyQuantPayloadIfNewer(payload.scores, payload.matches, payload.updateTime, payload.tradeDate, 'github');
+                if (!silent) {
+                    if (applied) showToast(`✅ 成功載入量化選股標的！共 ${payload.passedCount || Object.keys(payload.scores).length} 檔（${payload.tradeDate || ''}）`);
+                    else showToast("ℹ️ 目前顯示的量化選股已是最新版本（比雲端排程結果更新）");
+                }
             } catch(e) {
                 if (!silent) showToast("載入失敗: " + e.message, true);
             }
