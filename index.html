@@ -756,12 +756,14 @@
         }
 
         .rep-col-broker {
-            white-space: nowrap !important;
+            white-space: normal !important;
+            word-break: break-word;
+            line-height: 1.25;
             text-align: center !important;
             color: #e2e8f0;
-            width: 56px;
-            min-width: 48px;
-            max-width: 62px;
+            width: 72px;
+            min-width: 60px;
+            max-width: 90px;
             padding: 0.35rem 0.15rem !important;
             font-size: 0.76rem;
             letter-spacing: -0.2px;
@@ -2114,13 +2116,15 @@
             }
 
             .rep-col-broker {
-                width: 50px !important;
-                min-width: 46px !important;
-                max-width: 56px !important;
+                width: 60px !important;
+                min-width: 54px !important;
+                max-width: 78px !important;
                 font-size: 0.72rem !important;
                 letter-spacing: -0.3px;
-                padding: 0.3rem 0.1rem !important;
-                white-space: nowrap !important;
+                padding: 0.25rem 0.1rem !important;
+                white-space: normal !important;
+                word-break: break-word;
+                line-height: 1.2;
             }
 
             .rep-col-rating {
@@ -5131,12 +5135,21 @@ JSON 欄位：
                     ? String(row.eps).trim().replace(/\s*([\/／;；])\s*/g, '<br>')
                     : (row.eps || 'N/A');
 
+                // Brokerage display: replace comma/slash/semicolon with line break to prevent horizontal text overlap
+                const brokerDisplay = (row.brokerage && row.brokerage !== 'N/A')
+                    ? String(row.brokerage).trim().replace(/\s*([,，\/／;；、])\s*/g, '<br>')
+                    : (row.brokerage || 'N/A');
+
+                const tpDisplay = (row.target_price && row.target_price !== 'N/A')
+                    ? String(row.target_price).trim().replace(/\s*([,，\/／;；])\s*/g, '<br>')
+                    : (row.target_price || 'N/A');
+
                 return `<tr>
                     <td class="rep-col-date">${row.date || 'N/A'}</td>
                     <td class="rep-col-stock"><strong>${row.stock || 'N/A'}</strong></td>
-                    <td class="rep-col-broker">${row.brokerage || 'N/A'}</td>
+                    <td class="rep-col-broker">${brokerDisplay}</td>
                     <td class="rep-col-rating"><span class="rating-badge ${ratingClass}">${(row.rating || 'N/A').toString().trim()}</span></td>
-                    <td class="rep-col-tp">${row.target_price || 'N/A'}</td>
+                    <td class="rep-col-tp">${tpDisplay}</td>
                     <td class="rep-col-eps">${epsDisplay}</td>
                     <td class="rep-col-summary">${row.summary || 'N/A'}</td>
                     <td class="rep-col-criteria" id="criteria-${index}">${(row.matched_criteria && row.matched_criteria.length > 0) ? row.matched_criteria.join(' / ') : '進行量化運算以比對...'}</td>
