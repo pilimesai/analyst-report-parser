@@ -416,6 +416,120 @@ def fetch_mops_stock_pledge_history(code):
     unique_evts.sort(key=parse_key, reverse=False)
     return unique_evts
 
+def is_within_3_years(d_str, cutoff_date=None):
+    if not cutoff_date:
+        today = datetime.date.today()
+        cutoff_date = datetime.date(today.year - 3, today.month, today.day)
+    try:
+        parts = [int(p) for p in str(d_str).split('/')]
+        if len(parts) == 3:
+            ad_date = datetime.date(parts[0] + 1911, parts[1], parts[2])
+            return ad_date >= cutoff_date
+    except Exception:
+        pass
+    return False
+
+def compute_shareholder_active_lots(ev_list):
+    """模擬先進先出 (FIFO)，計算大股東歷次設質中目前仍未解質之有效批次"""
+    lots = []
+    for ev in ev_list:
+        p_shares = ev.get('pledge_shares', 0)
+        u_shares = ev.get('unpledge_shares', 0)
+        cum = ev.get('cum_shares', 0)
+        if u_shares > 0:
+            if cum == 0:
+                lots.clear()
+            else:
+                rem = u_shares
+                while rem > 0 and lots:
+                    if lots[0]['shares'] <= rem:
+                        rem -= lots[0]['shares']
+                        lots.pop(0)
+                    else:
+                        lots[0]['shares'] -= rem
+                        rem = 0
+        if p_shares > 0:
+            lots.append({
+                'date': ev['event_date'],
+                'shares': p_shares,
+                'creditor': ev.get('creditor')
+            })
+    return lots
+
+def fetch_missing_prices_batch(needed_pairs, quotes, price_cache, cutoff_date):
+    """
+    批次補齊近三年設質日收盤價：
+    1. 針對未快取者，使用 yfinance 批次並行拉取 3 年歷史日收盤價（支援上市+上櫃）
+    2. 若 yfinance 無法獲取，回退至 TWSE/TPEx STOCK_DAY 線上查詢
+    """
+    needed_by_code = {}
+    for code, date_str in needed_pairs:
+        if f"{code}_{date_str}" not in price_cache:
+            needed_by_code.setdefault(code, set()).add(date_str)
+
+    if not needed_by_code:
+        return
+
+    print(f"共有 {len(needed_by_code)} 檔個股需補齊歷史質設日收盤價...")
+
+    # 使用 yfinance 批次分組抓取 (每組 40 檔)
+    try:
+        import yfinance as yf
+        code_list = list(needed_by_code.keys())
+        batch_size = 40
+        start_date_str = (cutoff_date - datetime.timedelta(days=10)).isoformat()
+
+        for i in range(0, len(code_list), batch_size):
+            batch_codes = code_list[i:i + batch_size]
+            ticker_map = {}
+            for c in batch_codes:
+                mkt = quotes.get(c, {}).get('market', 'twse')
+                ticker = f"{c}.TW" if mkt == 'twse' else f"{c}.TWO"
+                ticker_map[ticker] = c
+
+            try:
+                tickers = list(ticker_map.keys())
+                df = yf.download(tickers, start=start_date_str, auto_adjust=False, progress=False)
+                if df is not None and not df.empty:
+                    close_df = df['Close'] if 'Close' in df else df
+                    for ticker, c in ticker_map.items():
+                        if ticker in close_df:
+                            series = close_df[ticker].dropna()
+                            if not series.empty:
+                                for date_str in needed_by_code[c]:
+                                    parts = date_str.split('/')
+                                    if len(parts) == 3:
+                                        ad_date_str = f"{int(parts[0]) + 1911}-{int(parts[1]):02d}-{int(parts[2]):02d}"
+                                        sub = series.loc[:ad_date_str]
+                                        if not sub.empty:
+                                            price = round(float(sub.iloc[-1]), 2)
+                                            if price > 0:
+                                                price_cache[f"{c}_{date_str}"] = price
+            except Exception as ex:
+                print(f"yfinance batch fetch warning ({batch_codes[:3]}...): {ex}")
+    except Exception as e:
+        print(f"yfinance unavailable or error: {e}")
+
+    # 對於少數 yfinance 未能命中的日期，回退至 TWSE STOCK_DAY 逐一補齊
+    still_missing = [
+        (c, d) for (c, d) in needed_pairs if f"{c}_{d}" not in price_cache
+    ]
+    if still_missing:
+        print(f"剩餘 {len(still_missing)} 筆改由 TWSE/TPEx STOCK_DAY 查詢補齊...")
+        with ThreadPoolExecutor(max_workers=6) as executor:
+            future_map = {
+                executor.submit(get_closing_price_for_date, c, d, price_cache, quotes.get(c, {}).get('close')): (c, d)
+                for (c, d) in still_missing
+            }
+            for f in as_completed(future_map):
+                c, d = future_map[f]
+                try:
+                    p = f.result()
+                    if p:
+                        price_cache[f"{c}_{d}"] = p
+                except Exception:
+                    pass
+
 def get_closing_price_for_date(code, roc_date, price_cache, current_price=None):
     """
     透過 TWSE/TPEx STOCK_DAY 查詢某特定日期的收盤價
@@ -438,8 +552,8 @@ def get_closing_price_for_date(code, roc_date, price_cache, current_price=None):
         return current_price
 
     current_roc_year = datetime.date.today().year - 1911
-    # 僅對近 2 年以內之最新設質進行線上精準對齊，歷史久遠者使用現價或既有快取
-    if roc_year < (current_roc_year - 2):
+    # 僅對近 3 年以內之設質進行線上精準對齊，歷史久遠者使用現價或既有快取
+    if roc_year < (current_roc_year - 3):
         return current_price
 
     date_str = f"{ad_year}{month:02d}01"
@@ -476,6 +590,7 @@ def analyze_stock_pledges(candidate_stocks, quotes, full_scan=False):
     對每個候選個股查詢歷史異動，依大股東個別分析最新狀態：
     - 若大股東最新為設質且累計質設>0 -> 納入名單
     - 若大股東最新為解質或累計歸零 -> 剔除
+    - 計算近 3 年全體未解質部位之「加權平均質設價」
     """
     price_cache = load_price_cache()
     active_stocks = []
@@ -555,7 +670,12 @@ def analyze_stock_pledges(candidate_stocks, quotes, full_scan=False):
 
     print(f"成功取得 {len(events_map)} 檔個股之完整質押異動記錄。")
 
+    today = datetime.date.today()
+    cutoff_date = datetime.date(today.year - 3, today.month, today.day)
+
     raw_active = []
+    stock_3y_lots = {}
+
     for code, events in events_map.items():
         q = quotes.get(code)
         if not q or not q.get('close'):
@@ -603,6 +723,11 @@ def analyze_stock_pledges(candidate_stocks, quotes, full_scan=False):
                     'cum_shares_lots': round(latest_ev['cum_shares'] / 1000, 1),
                     'creditor': latest_ev['creditor'] or '金融機構'
                 })
+                # 追蹤該大股東近 3 年未解質之有效批次
+                lots = compute_shareholder_active_lots(ev_list)
+                for l in lots:
+                    if is_within_3_years(l['date'], cutoff_date):
+                        stock_3y_lots.setdefault(code, []).append(l)
             elif is_unpledged:
                 excluded_stocks.append({
                     'code': code,
@@ -617,35 +742,24 @@ def analyze_stock_pledges(candidate_stocks, quotes, full_scan=False):
                     'reason': '同一大股東最新異動為解質，依規定剔除於名單之外'
                 })
 
-    print(f"發現 {len(raw_active)} 筆有效質設紀錄，正在對齊質設日收盤價...")
+    print(f"發現 {len(raw_active)} 筆有效質設紀錄，正在對齊近 3 年質設日收盤價...")
 
-    # 批次查詢收盤價（優先查詢近 2 年最新設質；久遠設質直接以現價作為防守基準，避免大量外部請求壅塞）
-    current_roc_year = datetime.date.today().year - 1911
-    needed_prices = set(
-        (item['code'], item['pledge_date'])
-        for item in raw_active
-        if item['pledge_date'] and (int(item['pledge_date'].split('/')[0]) >= current_roc_year - 2) and f"{item['code']}_{item['pledge_date']}" not in price_cache
-    )
-    print(f"需查詢最新質設收盤價：{len(needed_prices)} 筆 (已有快取 {len(price_cache)} 筆)")
+    # 批次查詢收盤價（包含最新質設日以及近 3 年有效分批質設日）
+    needed_prices = set()
+    for item in raw_active:
+        if item['pledge_date'] and is_within_3_years(item['pledge_date'], cutoff_date):
+            needed_prices.add((item['code'], item['pledge_date']))
+    for code, lots in stock_3y_lots.items():
+        for l in lots:
+            needed_prices.add((code, l['date']))
 
-    # 限制並發數避免被 TWSE 限速
-    with ThreadPoolExecutor(max_workers=8) as executor:
-        future_map = {
-            executor.submit(get_closing_price_for_date, c, p_date, price_cache, quotes.get(c, {}).get('close')): (c, p_date)
-            for (c, p_date) in needed_prices
-        }
-        for f in as_completed(future_map):
-            c, p_date = future_map[f]
-            try:
-                p = f.result()
-                if p:
-                    price_cache[f"{c}_{p_date}"] = p
-            except Exception:
-                pass
+    uncached_count = sum(1 for (c, d) in needed_prices if f"{c}_{d}" not in price_cache)
+    print(f"質設日期總對齊點：{len(needed_prices)} 筆 (已有快取 {len(price_cache)} 筆，待補齊 {uncached_count} 筆)")
 
+    fetch_missing_prices_batch(needed_prices, quotes, price_cache, cutoff_date)
     save_price_cache(price_cache)
 
-    # 封裝 active_stocks 並計算相對於質設價的溢跌幅
+    # 封裝 active_stocks 並計算「最新質設價」與「3年加權平均質設價」
     for item in raw_active:
         code = item['code']
         pledge_date = item['pledge_date']
@@ -655,8 +769,19 @@ def analyze_stock_pledges(candidate_stocks, quotes, full_scan=False):
         diff_pct = round(((current_close - pledge_price) / pledge_price) * 100, 2) if pledge_price > 0 else 0.0
         status_label = "above_pledge" if diff_pct >= 0 else "below_pledge"
 
+        # 近 3 年加權平均質設價計算
+        lots_3y = stock_3y_lots.get(code, [])
+        tot_shares_3y = sum(l['shares'] for l in lots_3y)
+        tot_val_3y = sum(l['shares'] * (price_cache.get(f"{code}_{l['date']}") or pledge_price) for l in lots_3y)
+        avg_pledge_price = round(tot_val_3y / tot_shares_3y, 2) if tot_shares_3y > 0 else pledge_price
+        avg_diff_pct = round(((current_close - avg_pledge_price) / avg_pledge_price) * 100, 2) if avg_pledge_price > 0 else 0.0
+
         item['pledge_price'] = pledge_price
         item['diff_pct'] = diff_pct
+        item['avg_pledge_price'] = avg_pledge_price
+        item['avg_diff_pct'] = avg_diff_pct
+        item['pledge_count_3y'] = len(lots_3y) if lots_3y else 1
+        item['pledge_shares_3y_lots'] = round(tot_shares_3y / 1000, 1) if tot_shares_3y > 0 else item['pledge_shares_lots']
         item['status'] = status_label
         active_stocks.append(item)
 
@@ -680,21 +805,7 @@ def analyze_stock_pledges(candidate_stocks, quotes, full_scan=False):
             seen.add(s['code'])
             unique_active.append(s)
 
-    # 依使用者需求：超過三年前質設的就不列入
-    today = datetime.date.today()
-    cutoff_date = datetime.date(today.year - 3, today.month, today.day)
-
-    def is_within_3_years(d_str):
-        try:
-            parts = [int(p) for p in str(d_str).split('/')]
-            if len(parts) == 3:
-                ad_date = datetime.date(parts[0] + 1911, parts[1], parts[2])
-                return ad_date >= cutoff_date
-        except Exception:
-            pass
-        return False
-
-    filtered_active = [s for s in unique_active if is_within_3_years(s.get('pledge_date', ''))]
+    filtered_active = [s for s in unique_active if is_within_3_years(s.get('pledge_date', ''), cutoff_date)]
 
     # 排除股依最新解質日降序排序
     excluded_stocks.sort(key=lambda x: parse_roc_date_key(x.get('unpledge_date', '')), reverse=True)
@@ -716,6 +827,9 @@ def main():
     above_count = sum(1 for s in active_stocks if s['diff_pct'] >= 0)
     above_ratio = round((above_count / total_active * 100), 1) if total_active > 0 else 0.0
 
+    avg_above_count = sum(1 for s in active_stocks if s.get('avg_diff_pct', s.get('diff_pct', 0)) >= 0)
+    avg_above_ratio = round((avg_above_count / total_active * 100), 1) if total_active > 0 else 0.0
+
     top_gain = max(active_stocks, key=lambda x: x['diff_pct']) if active_stocks else None
     top_loss = min(active_stocks, key=lambda x: x['diff_pct']) if active_stocks else None
 
@@ -731,11 +845,15 @@ def main():
             'above_pledge_count': above_count,
             'below_pledge_count': total_active - above_count,
             'above_pledge_ratio': above_ratio,
+            'avg_above_pledge_count': avg_above_count,
+            'avg_below_pledge_count': total_active - avg_above_count,
+            'avg_above_pledge_ratio': avg_above_ratio,
             'top_gain_stock': {
                 'code': top_gain['code'],
                 'name': top_gain['name'],
                 'diff_pct': top_gain['diff_pct'],
                 'pledge_price': top_gain['pledge_price'],
+                'avg_pledge_price': top_gain.get('avg_pledge_price', top_gain['pledge_price']),
                 'current_price': top_gain['current_price']
             } if top_gain else None,
             'top_loss_stock': {
@@ -743,6 +861,7 @@ def main():
                 'name': top_loss['name'],
                 'diff_pct': top_loss['diff_pct'],
                 'pledge_price': top_loss['pledge_price'],
+                'avg_pledge_price': top_loss.get('avg_pledge_price', top_loss['pledge_price']),
                 'current_price': top_loss['current_price']
             } if top_loss else None
         },

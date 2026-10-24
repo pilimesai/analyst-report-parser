@@ -1884,7 +1884,8 @@
         .pledge-col-rank { width: 50px; min-width: 50px; text-align: center !important; font-size: 0.82rem; }
         .pledge-col-stock { min-width: 170px; text-align: left !important; padding-left: 0.75rem !important; }
         .pledge-col-price { min-width: 110px; text-align: right !important; padding-right: 0.75rem !important; }
-        .pledge-col-pledge-price { min-width: 120px; text-align: right !important; padding-right: 0.75rem !important; font-weight: 700; color: #cbd5e1; }
+        .pledge-col-pledge-price { min-width: 110px; text-align: right !important; padding-right: 0.75rem !important; font-weight: 700; color: #cbd5e1; }
+        .pledge-col-avg-price { min-width: 120px; text-align: right !important; padding-right: 0.75rem !important; font-weight: 700; color: #cbd5e1; }
         .pledge-col-diff { min-width: 140px; text-align: center !important; }
         .pledge-col-date { min-width: 115px; text-align: center !important; font-size: 0.82rem; color: #a5b4fc; font-weight: 600; }
         .pledge-col-shareholder { min-width: 260px; max-width: 340px; text-align: left !important; padding-left: 0.75rem !important; }
@@ -1894,7 +1895,7 @@
         .pledge-col-status { min-width: 145px; text-align: center !important; }
 
         th.pledge-col-stock, th.pledge-col-shareholder, th.pledge-col-creditor { text-align: left !important; padding-left: 0.75rem !important; }
-        th.pledge-col-price, th.pledge-col-pledge-price, th.pledge-col-shares, th.pledge-col-cum-shares { text-align: right !important; padding-right: 0.75rem !important; }
+        th.pledge-col-price, th.pledge-col-pledge-price, th.pledge-col-avg-price, th.pledge-col-shares, th.pledge-col-cum-shares { text-align: right !important; padding-right: 0.75rem !important; }
         th.pledge-col-rank, th.pledge-col-diff, th.pledge-col-date, th.pledge-col-status { text-align: center !important; }
 
         @media (max-width: 900px) {
@@ -3203,7 +3204,8 @@
                                 <th class="pledge-col-rank">排名</th>
                                 <th class="pledge-col-stock">股票代號 / 名稱</th>
                                 <th class="pledge-col-price">最新現價</th>
-                                <th class="pledge-col-pledge-price">質設日成本價</th>
+                                <th class="pledge-col-pledge-price">最新質設價</th>
+                                <th class="pledge-col-avg-price">3年加權均價</th>
                                 <th class="pledge-col-diff">相對於質設價</th>
                                 <th class="pledge-col-date">最新質設日期</th>
                                 <th class="pledge-col-shareholder">大股東身份 / 姓名</th>
@@ -3213,7 +3215,7 @@
                             </tr>
                         </thead>
                         <tbody id="stock-pledge-tbody">
-                            <tr><td colspan="10" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                            <tr><td colspan="11" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
                                 <div style="font-size:1.5rem; margin-bottom:0.5rem;">🏛️</div>
                                 <div>尚未載入大股東質設資料</div>
                                 <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🔄 重新載入」或「⚡ 一鍵抓取所有資料」</div>
@@ -9251,7 +9253,7 @@ ${text.slice(0, 30000)}`;
 
             if (!stockPledgeData) {
                 if (badge) badge.innerText = '0';
-                if (tbody) tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
+                if (tbody) tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--text-secondary); padding:2.5rem 1rem;">
                     <div style="font-size:1.5rem; margin-bottom:0.5rem;">🏛️</div>
                     <div>尚未載入大股東質設資料</div>
                     <div style="font-size:0.8rem; margin-top:0.35rem; color:#64748b;">請點擊「🔄 重新載入」或「⚡ 一鍵抓取所有資料」</div>
@@ -9362,7 +9364,7 @@ ${text.slice(0, 30000)}`;
 
             if (!tbody) return;
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:var(--text-secondary); padding:2rem;">無符合篩選或搜尋條件的質設資料</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--text-secondary); padding:2rem;">無符合篩選或搜尋條件的質設資料</td></tr>`;
                 return;
             }
 
@@ -9392,31 +9394,54 @@ ${text.slice(0, 30000)}`;
                     </div>
                 `;
 
-                // Pledge price
+                // Latest pledge price
                 const pledgePrice = Number(item.pledge_price) || curPrice;
-                const pledgePriceHtml = `<span style="font-weight:600; color:#e2e8f0; font-size:0.85rem; white-space:nowrap;">${pledgePrice.toFixed(2)}</span>`;
+                const pledgePriceHtml = `<span style="font-weight:700; color:#e2e8f0; font-size:0.86rem; white-space:nowrap;">${pledgePrice.toFixed(2)}</span>`;
 
-                // Diff from pledge price
+                // 3-Year Weighted Average pledge price
+                const avgPledgePrice = Number(item.avg_pledge_price) || pledgePrice;
+                const pledgeCount = Number(item.pledge_count_3y) || 1;
+                const countBadge = pledgeCount > 1
+                    ? `<span style="font-size:0.68rem; padding:1px 5px; background:rgba(99,102,241,0.18); border:1px solid rgba(99,102,241,0.35); border-radius:4px; color:#c7d2fe; margin-top:2px; font-weight:600;">共 ${pledgeCount} 筆</span>`
+                    : `<span style="font-size:0.68rem; color:#64748b; margin-top:2px;">單筆</span>`;
+                const avgPledgePriceHtml = `
+                    <div style="display:flex; flex-direction:column; align-items:flex-end; white-space:nowrap;">
+                        <span style="font-weight:700; color:#fbbf24; font-size:0.86rem;">${avgPledgePrice.toFixed(2)}</span>
+                        ${countBadge}
+                    </div>
+                `;
+
+                // Diff from latest pledge price & average pledge price
                 const diffPct = Number(item.diff_pct) || 0;
                 const isAbove = diffPct >= 0;
                 const diffSign = isAbove ? '+' : '';
                 const diffColor = isAbove ? '#10b981' : '#ef4444';
-                const diffBg = isAbove ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)';
-                const diffBorder = isAbove ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)';
+
+                const avgDiffPct = Number(item.avg_diff_pct !== undefined ? item.avg_diff_pct : diffPct);
+                const isAvgAbove = avgDiffPct >= 0;
+                const avgDiffSign = isAvgAbove ? '+' : '';
+                const avgDiffColor = isAvgAbove ? '#10b981' : '#ef4444';
+
                 const diffHtml = `
-                    <div style="display:inline-flex; align-items:center; gap:4px; padding:2px 8px; background:${diffBg}; border:1px solid ${diffBorder}; border-radius:6px; font-weight:700; color:${diffColor}; font-size:0.82rem; white-space:nowrap;">
-                        <span>${isAbove ? '▲' : '▼'}</span>
-                        <span>${diffSign}${diffPct.toFixed(2)}%</span>
+                    <div style="display:flex; flex-direction:column; gap:3px; align-items:center;">
+                        <div style="display:inline-flex; align-items:center; gap:3px; padding:1px 6px; background:${isAbove ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)'}; border:1px solid ${isAbove ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}; border-radius:4px; font-weight:700; color:${diffColor}; font-size:0.75rem; white-space:nowrap;">
+                            <span style="font-size:0.65rem; color:#94a3b8; font-weight:normal;">最新:</span>
+                            <span>${isAbove ? '▲' : '▼'}${diffSign}${diffPct.toFixed(2)}%</span>
+                        </div>
+                        <div style="display:inline-flex; align-items:center; gap:3px; padding:1px 6px; background:${isAvgAbove ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)'}; border:1px solid ${isAvgAbove ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}; border-radius:4px; font-weight:700; color:${avgDiffColor}; font-size:0.75rem; white-space:nowrap;">
+                            <span style="font-size:0.65rem; color:#fbbf24; font-weight:normal;">均價:</span>
+                            <span>${isAvgAbove ? '▲' : '▼'}${avgDiffSign}${avgDiffPct.toFixed(2)}%</span>
+                        </div>
                     </div>
                 `;
 
-                // Status Badge
+                // Status Badge (based on weighted average defense or latest)
                 let statusBadge = '';
-                if (diffPct >= 15) {
+                if (avgDiffPct >= 15) {
                     statusBadge = `<span style="font-size:0.7rem; padding:2px 7px; background:rgba(16,185,129,0.2); border:1px solid rgba(16,185,129,0.4); color:#6ee7b7; border-radius:9999px; font-weight:600; white-space:nowrap;">🚀 大幅溢價防守</span>`;
-                } else if (diffPct >= 0) {
+                } else if (avgDiffPct >= 0) {
                     statusBadge = `<span style="font-size:0.7rem; padding:2px 7px; background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.35); color:#93c5fd; border-radius:9999px; font-weight:600; white-space:nowrap;">🛡️ 質設成本上方</span>`;
-                } else if (diffPct > -10) {
+                } else if (avgDiffPct > -10) {
                     statusBadge = `<span style="font-size:0.7rem; padding:2px 7px; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.35); color:#fcd34d; border-radius:9999px; font-weight:600; white-space:nowrap;">⚠️ 成本線微幅跌破</span>`;
                 } else {
                     statusBadge = `<span style="font-size:0.7rem; padding:2px 7px; background:rgba(239,68,68,0.2); border:1px solid rgba(239,68,68,0.4); color:#fca5a5; border-radius:9999px; font-weight:600; white-space:nowrap;">🚨 破底斷頭警戒</span>`;
@@ -9440,6 +9465,7 @@ ${text.slice(0, 30000)}`;
                     <td class="pledge-col-stock">${stockHtml}</td>
                     <td class="pledge-col-price">${priceHtml}</td>
                     <td class="pledge-col-pledge-price">${pledgePriceHtml}</td>
+                    <td class="pledge-col-avg-price">${avgPledgePriceHtml}</td>
                     <td class="pledge-col-diff">${diffHtml}</td>
                     <td class="pledge-col-date" style="font-size:0.82rem; color:#a5b4fc; font-weight:600; white-space:nowrap;">${item.pledge_date || '—'}</td>
                     <td class="pledge-col-shareholder">${shareholderHtml}</td>
