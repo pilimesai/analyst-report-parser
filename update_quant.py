@@ -388,15 +388,17 @@ def main():
             sec_names = " / ".join(bullish_sectors_map[stock_id])
             matched_criteria.append(f"所在族群為多方 ({sec_names})")
 
-        # --- F. 大股東質設成本防守 ---
+        # --- F. 大股東質設成本防守 (跌破加權質押成本在 20% 以內) ---
         if stock_id in pledge_map:
             p_info = pledge_map[stock_id]
-            diff_pct = p_info.get("diff_pct")
-            pledge_price = float(p_info.get("pledge_price") or 0)
-            if diff_pct is not None and pledge_price > 0 and abs(float(diff_pct)) <= 20:
-                diff_val = float(diff_pct)
-                sign_str = "+" if diff_val >= 0 else ""
-                matched_criteria.append(f"大股東質設成本防守 (現價在成本20%以內, 距成本{sign_str}{diff_val:.1f}%)")
+            avg_diff_pct = p_info.get("avg_diff_pct")
+            if avg_diff_pct is None:
+                avg_diff_pct = p_info.get("diff_pct")
+            avg_price = float(p_info.get("avg_pledge_price") or p_info.get("pledge_price") or 0)
+            if avg_diff_pct is not None and avg_price > 0:
+                diff_val = float(avg_diff_pct)
+                if -20.0 <= diff_val <= 0.0:
+                    matched_criteria.append(f"大股東質設成本防守 (跌破加權成本20%以內, 距加權成本{diff_val:.1f}%)")
 
         # --- G. 股本評估 (<20億且有籌碼或題材) ---
         cap_val = stock_capital.get(stock_id)

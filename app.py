@@ -1743,7 +1743,7 @@ if st.session_state.history:
             if m_code and m_code.group() in top_turnover_stocks:
                 all_c.add("入選今日成交值TOP30")
 
-            # 計算大股東質設成本防守加分 (只要股價在質設成本20%以內，選股積分+2分)
+            # 計算大股東質設成本防守加分 (跌破加權質押成本在20%以內，選股積分+2分)
             pledge_json_path = os.path.join(os.path.dirname(__file__), 'stock_pledge.json')
             if m_code and os.path.exists(pledge_json_path):
                 try:
@@ -1751,11 +1751,13 @@ if st.session_state.history:
                         sp_data = json.load(f)
                         for sp in sp_data.get('stocks', []):
                             if str(sp.get('code', '')).strip() == m_code.group():
-                                diff_pct = float(sp.get('diff_pct', 999))
-                                pledge_price = sp.get('pledge_price')
-                                if abs(diff_pct) <= 20:
-                                    sign_str = '+' if diff_pct >= 0 else ''
-                                    all_c.add(f"大股東質設成本防守 (現價在成本20%以內, 距成本{sign_str}{diff_pct}%)")
+                                avg_diff_pct = sp.get('avg_diff_pct')
+                                if avg_diff_pct is None:
+                                    avg_diff_pct = sp.get('diff_pct', 999)
+                                diff_val = float(avg_diff_pct)
+                                avg_price = float(sp.get('avg_pledge_price') or sp.get('pledge_price') or 0)
+                                if avg_price > 0 and -20.0 <= diff_val <= 0.0:
+                                    all_c.add(f"大股東質設成本防守 (跌破加權成本20%以內, 距加權成本{diff_val:.1f}%)")
                 except Exception:
                     pass
             
