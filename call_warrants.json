@@ -1,5 +1,5 @@
 {
-  "updateTime": "2026-10-24 00:30:22",
+  "updateTime": "2026-10-27 01:39:47",
   "tradeDate": "2026-10-22",
   "totalStocks": 751,
   "totalCallValue": 4132058520,
@@ -2062,7 +2062,7 @@
       "max_single_warrant_name": "南亞科中信5A購01",
       "max_single_warrant_code": "065057",
       "max_single_warrant_strike": "299.0400",
-      "max_single_warrant_expiry": "2026-10-27",
+      "max_single_warrant_expiry": "2026-10-28",
       "top_warrants": [
         {
           "code": "065057",
@@ -2070,7 +2070,7 @@
           "value": 3432980,
           "volume": 1268000,
           "strike": "299.0400",
-          "expiry": "2026-10-27"
+          "expiry": "2026-10-28"
         },
         {
           "code": "065252",
@@ -2078,7 +2078,7 @@
           "value": 1796000,
           "volume": 129000,
           "strike": "279.1000",
-          "expiry": "2026-10-28"
+          "expiry": "2026-10-29"
         },
         {
           "code": "072022",
@@ -2367,7 +2367,7 @@
       "max_single_warrant_name": "聯詠凱基5A購02",
       "max_single_warrant_code": "057069",
       "max_single_warrant_strike": "536.2400",
-      "max_single_warrant_expiry": "2026-10-27",
+      "max_single_warrant_expiry": "2026-10-28",
       "top_warrants": [
         {
           "code": "057069",
@@ -2375,7 +2375,7 @@
           "value": 3379850,
           "volume": 514000,
           "strike": "536.2400",
-          "expiry": "2026-10-27"
+          "expiry": "2026-10-28"
         },
         {
           "code": "077603",
@@ -7475,7 +7475,7 @@
           "value": 700000,
           "volume": 40000,
           "strike": "32.8000",
-          "expiry": "2026-10-27"
+          "expiry": "2026-10-28"
         },
         {
           "code": "087179",
@@ -15709,7 +15709,7 @@
           "value": 257000,
           "volume": 20000,
           "strike": "31.2000",
-          "expiry": "2026-10-28"
+          "expiry": "2026-10-29"
         },
         {
           "code": "062245",
@@ -15725,7 +15725,7 @@
           "value": 42800,
           "volume": 2000,
           "strike": "40.0000",
-          "expiry": "2026-10-27"
+          "expiry": "2026-10-28"
         }
       ],
       "rank": 262,
@@ -29283,7 +29283,7 @@
           "value": 1880,
           "volume": 4000,
           "strike": "38.1400",
-          "expiry": "2026-10-27"
+          "expiry": "2026-10-28"
         }
       ],
       "rank": 500,
