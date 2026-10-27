@@ -1,5 +1,5 @@
 {
-  "updateTime": "2026-10-28 00:51:23",
+  "updateTime": "2026-10-28 02:09:10",
   "tradeDate": "2026-10-27",
   "totalStocks": 747,
   "totalCallValue": 3354017010,
@@ -29592,12 +29592,12 @@
           "expiry": "2028/04"
         },
         {
-          "code": "713703",
-          "name": "萬泰科凱基63購01",
+          "code": "708221",
+          "name": "萬泰科台新5B購01",
           "value": 5000,
-          "volume": 5000,
+          "volume": 100000,
           "strike": "",
-          "expiry": "2027/03"
+          "expiry": "2026/11"
         }
       ],
       "rank": 510,
@@ -34226,6 +34226,35 @@
       "stock_trade_value": 0
     },
     {
+      "code": "",
+      "name": "雍智",
+      "market": "上櫃",
+      "total_call_value": 33200,
+      "total_call_value_yi": 0.0,
+      "total_call_volume": 10000,
+      "call_warrant_count": 1,
+      "max_single_warrant_value": 33200,
+      "max_single_warrant_wan": 3.3,
+      "max_single_warrant_name": "雍智統一6A購02",
+      "max_single_warrant_code": "700684",
+      "max_single_warrant_strike": "",
+      "max_single_warrant_expiry": "2027/10",
+      "top_warrants": [
+        {
+          "code": "700684",
+          "name": "雍智統一6A購02",
+          "value": 33200,
+          "volume": 10000,
+          "strike": "",
+          "expiry": "2027/10"
+        }
+      ],
+      "rank": 611,
+      "close_price": "",
+      "change": "",
+      "stock_trade_value": 0
+    },
+    {
       "code": "6163",
       "name": "華電網",
       "market": "上櫃",
@@ -34279,35 +34308,6 @@
           "volume": 25000,
           "strike": "",
           "expiry": "2026/12"
-        }
-      ],
-      "rank": 611,
-      "close_price": "",
-      "change": "",
-      "stock_trade_value": 0
-    },
-    {
-      "code": "",
-      "name": "雍智",
-      "market": "上櫃",
-      "total_call_value": 33200,
-      "total_call_value_yi": 0.0,
-      "total_call_volume": 10000,
-      "call_warrant_count": 1,
-      "max_single_warrant_value": 33200,
-      "max_single_warrant_wan": 3.3,
-      "max_single_warrant_name": "雍智統一6A購02",
-      "max_single_warrant_code": "700684",
-      "max_single_warrant_strike": "",
-      "max_single_warrant_expiry": "2027/10",
-      "top_warrants": [
-        {
-          "code": "700684",
-          "name": "雍智統一6A購02",
-          "value": 33200,
-          "volume": 10000,
-          "strike": "",
-          "expiry": "2027/10"
         }
       ],
       "rank": 612,
@@ -35522,43 +35522,6 @@
       "stock_trade_value": 0
     },
     {
-      "code": "7402",
-      "name": "邑錡",
-      "market": "上櫃",
-      "total_call_value": 29200,
-      "total_call_value_yi": 0.0,
-      "total_call_volume": 185000,
-      "call_warrant_count": 2,
-      "max_single_warrant_value": 19200,
-      "max_single_warrant_wan": 1.9,
-      "max_single_warrant_name": "邑錡統一65購01",
-      "max_single_warrant_code": "708917",
-      "max_single_warrant_strike": "",
-      "max_single_warrant_expiry": "2027/05",
-      "top_warrants": [
-        {
-          "code": "708917",
-          "name": "邑錡統一65購01",
-          "value": 19200,
-          "volume": 60000,
-          "strike": "",
-          "expiry": "2027/05"
-        },
-        {
-          "code": "710855",
-          "name": "邑錡國票61購01",
-          "value": 10000,
-          "volume": 125000,
-          "strike": "",
-          "expiry": "2027/01"
-        }
-      ],
-      "rank": 643,
-      "close_price": "",
-      "change": "",
-      "stock_trade_value": 0
-    },
-    {
       "code": "",
       "name": "能率亞",
       "market": "上櫃",
@@ -35612,6 +35575,43 @@
           "volume": 1000,
           "strike": "",
           "expiry": "2028/01"
+        }
+      ],
+      "rank": 643,
+      "close_price": "",
+      "change": "",
+      "stock_trade_value": 0
+    },
+    {
+      "code": "7402",
+      "name": "邑錡",
+      "market": "上櫃",
+      "total_call_value": 29200,
+      "total_call_value_yi": 0.0,
+      "total_call_volume": 185000,
+      "call_warrant_count": 2,
+      "max_single_warrant_value": 19200,
+      "max_single_warrant_wan": 1.9,
+      "max_single_warrant_name": "邑錡統一65購01",
+      "max_single_warrant_code": "708917",
+      "max_single_warrant_strike": "",
+      "max_single_warrant_expiry": "2027/05",
+      "top_warrants": [
+        {
+          "code": "708917",
+          "name": "邑錡統一65購01",
+          "value": 19200,
+          "volume": 60000,
+          "strike": "",
+          "expiry": "2027/05"
+        },
+        {
+          "code": "710855",
+          "name": "邑錡國票61購01",
+          "value": 10000,
+          "volume": 125000,
+          "strike": "",
+          "expiry": "2027/01"
         }
       ],
       "rank": 644,
@@ -37250,6 +37250,35 @@
       "stock_trade_value": 0
     },
     {
+      "code": "6894",
+      "name": "衛司特",
+      "market": "上櫃",
+      "total_call_value": 8000,
+      "total_call_value_yi": 0.0,
+      "total_call_volume": 100000,
+      "call_warrant_count": 1,
+      "max_single_warrant_value": 8000,
+      "max_single_warrant_wan": 0.8,
+      "max_single_warrant_name": "衛司特國票5B購02",
+      "max_single_warrant_code": "707383",
+      "max_single_warrant_strike": "",
+      "max_single_warrant_expiry": "2026/11",
+      "top_warrants": [
+        {
+          "code": "707383",
+          "name": "衛司特國票5B購02",
+          "value": 8000,
+          "volume": 100000,
+          "strike": "",
+          "expiry": "2026/11"
+        }
+      ],
+      "rank": 683,
+      "close_price": "",
+      "change": "",
+      "stock_trade_value": 0
+    },
+    {
       "code": "3221",
       "name": "台嘉碩",
       "market": "上櫃",
@@ -37287,35 +37316,6 @@
           "volume": 1000,
           "strike": "",
           "expiry": "2027/03"
-        }
-      ],
-      "rank": 683,
-      "close_price": "",
-      "change": "",
-      "stock_trade_value": 0
-    },
-    {
-      "code": "6894",
-      "name": "衛司特",
-      "market": "上櫃",
-      "total_call_value": 8000,
-      "total_call_value_yi": 0.0,
-      "total_call_volume": 100000,
-      "call_warrant_count": 1,
-      "max_single_warrant_value": 8000,
-      "max_single_warrant_wan": 0.8,
-      "max_single_warrant_name": "衛司特國票5B購02",
-      "max_single_warrant_code": "707383",
-      "max_single_warrant_strike": "",
-      "max_single_warrant_expiry": "2026/11",
-      "top_warrants": [
-        {
-          "code": "707383",
-          "name": "衛司特國票5B購02",
-          "value": 8000,
-          "volume": 100000,
-          "strike": "",
-          "expiry": "2026/11"
         }
       ],
       "rank": 684,
