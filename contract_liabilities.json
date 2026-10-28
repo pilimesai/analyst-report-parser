@@ -1,8 +1,8 @@
 {
-  "updateTime": "2026-10-28T23:16:02.098430+08:00",
+  "updateTime": "2026-10-28T23:21:45.143193+08:00",
   "tradeDate": "2026-10-28",
-  "totalScanned": 293,
-  "totalMatched": 39,
+  "totalScanned": 295,
+  "totalMatched": 40,
   "criteria": [
     "[日] 股本(億)小於 20 億",
     "[季] 合約負債大於近 4 季平均",
@@ -11,7 +11,7 @@
     "[日] 成交金額(元)大於 0.5 億元"
   ],
   "summary": {
-    "avg_qoq_growth_pct": 224.1,
+    "avg_qoq_growth_pct": 263.3,
     "max_contract_liab_code": "3443",
     "max_contract_liab_name": "創意",
     "max_contract_liab_yi": 132.15
@@ -617,7 +617,7 @@
       "market": "twse",
       "close": 480.5,
       "change": 43.5,
-      "capital_yi": 6.83,
+      "capital_yi": 7.43,
       "trade_val_yi": 3.43,
       "latest_report_date": "2026-06-30",
       "latest_contract_liab_yi": 0.3,
@@ -740,6 +740,39 @@
         {
           "date": "2026-06-30",
           "value_yi": 1.82
+        }
+      ]
+    },
+    {
+      "code": "7710",
+      "name": "東擎科技",
+      "market": "twse",
+      "close": 138.0,
+      "change": 9.5,
+      "capital_yi": 6.39,
+      "trade_val_yi": 1.6,
+      "latest_report_date": "2026-06-30",
+      "latest_contract_liab_yi": 2.02,
+      "prev_contract_liab_yi": 0.11,
+      "avg4_contract_liab_yi": 0.62,
+      "qoq_growth_pct": 1793.2,
+      "avg_growth_pct": 223.1,
+      "history_4q": [
+        {
+          "date": "2024-12-31",
+          "value_yi": 0.13
+        },
+        {
+          "date": "2025-06-30",
+          "value_yi": 0.24
+        },
+        {
+          "date": "2025-12-31",
+          "value_yi": 0.11
+        },
+        {
+          "date": "2026-06-30",
+          "value_yi": 2.02
         }
       ]
     },
