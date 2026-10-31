@@ -2690,40 +2690,38 @@ if st.session_state.history:
         if 'gross_margin_stocks' not in st.session_state:
             st.session_state['gross_margin_stocks'] = load_gross_margin_stocks()
 
-        bp_file = st.file_uploader("上傳大戶選股積分 Excel 或 CSV（系統將自動掃描內容中的股票代號）", type=['xlsx', 'xls', 'csv'], key="bp_uploader")
+        bp_file = st.file_uploader("上傳大戶選股積分/持股 Excel 或 CSV（自動解析代碼、名稱與大戶持股比）", type=['xlsx', 'xls', 'csv'], key="bp_uploader")
 
         if bp_file:
             try:
+                import io as _io
+                from major_holder_parser import parse_major_holder_content, save_to_database
                 bp_file.seek(0)
-                if bp_file.name.endswith('.csv'):
-                    try:
-                        _bp_df = pd.read_csv(bp_file, encoding='utf-8-sig', dtype=str)
-                    except:
-                        bp_file.seek(0)
-                        _bp_df = pd.read_csv(bp_file, encoding='cp950', dtype=str)
-                else:
-                    _bp_df = pd.read_excel(bp_file, dtype=str)
+                parsed_bp_df, bp_date = parse_major_holder_content(bp_file)
 
-                import re as _re
-                new_bp_stocks = set()
-                # 簡單暴力掃描所有欄位抓取四位數台股代號
-                for c in _bp_df.columns:
-                    for v in _bp_df[c].dropna().astype(str):
-                        v_str = v.strip()
-                        m = _re.search(r'(?<!\d)(\d{4})(?!\d)', v_str)
-                        if m:
-                            code_int = int(m.group(1))
-                            if 1100 <= code_int <= 9999 and str(code_int)[:2] != '20':
-                                new_bp_stocks.add(m.group(1))
-
-                if new_bp_stocks:
+                if not parsed_bp_df.empty:
+                    new_bp_stocks = set(parsed_bp_df['股票代號'].tolist())
                     old_count = len(st.session_state.get('big_player_stocks', []))
                     st.session_state['big_player_stocks'] = list(new_bp_stocks)
                     save_big_player_stocks(list(new_bp_stocks))
-                    st.success(f"✅ 成功以新資料取代舊資料！已清除舊有 {old_count} 筆，新增 {len(new_bp_stocks)} 檔大戶選股積分股票！")
-                    st.rerun()
+                    save_to_database(parsed_bp_df)
+                    st.success(f"✅ 成功解析！已更新 {len(new_bp_stocks)} 檔大戶持股資料（資料日期：{bp_date or '最新'}）並儲存至資料庫！")
+                    
+                    # 顯示完整解析結果
+                    st.dataframe(parsed_bp_df, use_container_width=True, hide_index=True)
+                    
+                    # 提供 Excel 下載
+                    _excel_buffer = _io.BytesIO()
+                    with pd.ExcelWriter(_excel_buffer, engine='openpyxl') as _writer:
+                        parsed_bp_df.to_excel(_writer, index=False, sheet_name='大戶持股清單')
+                    st.download_button(
+                        label="📥 下載解析後的 Excel 檔 (.xlsx)",
+                        data=_excel_buffer.getvalue(),
+                        file_name=f"大戶持股_{bp_date or datetime.date.today().strftime('%Y%m%d')}.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
                 else:
-                    st.warning("⚠️ 檔案中未發現有效股票代號")
+                    st.warning("⚠️ 檔案中未發現有效股票代號或格式無法辨識")
             except Exception as e:
                 st.warning(f"⚠️ 大戶選股積分清單解析失敗：{e}")
 
