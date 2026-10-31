@@ -1,5 +1,5 @@
 {
-  "updateTime": "2026-10-30T23:17:11.383674+08:00",
+  "updateTime": "2026-10-31T21:23:44.829076+08:00",
   "tradeDate": "2026-10-30",
   "prevTradeDate": "2026-10-29",
   "market": {
@@ -2376,6 +2376,55 @@
       ]
     },
     {
+      "sector_name": "居家生活業",
+      "sector_type": "official",
+      "stock_count": 37,
+      "active_count": 34,
+      "trade_val_yi": 7.47,
+      "prev_trade_val_yi": 4.21,
+      "val_diff_yi": 3.26,
+      "growth_pct": 77.33,
+      "share0_pct": 0.07,
+      "share1_pct": 0.04,
+      "flow_pp": 0.03,
+      "avg_pct_chg": -0.84,
+      "advances": 6,
+      "declines": 25,
+      "unchanged": 3,
+      "signal": "⚖️ 資金平穩",
+      "signal_type": "neutral",
+      "top3_concentration": 88.2,
+      "top_stocks": [
+        {
+          "code": "5904",
+          "name": "寶雅",
+          "market": "tpex",
+          "close": 72.5,
+          "change": -0.3,
+          "pct_change": -0.41,
+          "trade_val_yi": 4.89
+        },
+        {
+          "code": "7867",
+          "name": "特力屋",
+          "market": "twse",
+          "close": 44.2,
+          "change": 0.0,
+          "pct_change": 0.0,
+          "trade_val_yi": 1.05
+        },
+        {
+          "code": "8464",
+          "name": "億豐",
+          "market": "twse",
+          "close": 370.0,
+          "change": -3.0,
+          "pct_change": -0.8,
+          "trade_val_yi": 0.65
+        }
+      ]
+    },
+    {
       "sector_name": "綠能環保",
       "sector_type": "official",
       "stock_count": 46,
@@ -2715,55 +2764,6 @@
           "change": -0.28,
           "pct_change": -2.81,
           "trade_val_yi": 0.27
-        }
-      ]
-    },
-    {
-      "sector_name": "居家生活業",
-      "sector_type": "official",
-      "stock_count": 36,
-      "active_count": 33,
-      "trade_val_yi": 6.42,
-      "prev_trade_val_yi": 4.21,
-      "val_diff_yi": 2.21,
-      "growth_pct": 52.5,
-      "share0_pct": 0.06,
-      "share1_pct": 0.04,
-      "flow_pp": 0.02,
-      "avg_pct_chg": -0.86,
-      "advances": 6,
-      "declines": 25,
-      "unchanged": 2,
-      "signal": "⚖️ 資金平穩",
-      "signal_type": "neutral",
-      "top3_concentration": 92.4,
-      "top_stocks": [
-        {
-          "code": "5904",
-          "name": "寶雅",
-          "market": "tpex",
-          "close": 72.5,
-          "change": -0.3,
-          "pct_change": -0.41,
-          "trade_val_yi": 4.89
-        },
-        {
-          "code": "8464",
-          "name": "億豐",
-          "market": "twse",
-          "close": 370.0,
-          "change": -3.0,
-          "pct_change": -0.8,
-          "trade_val_yi": 0.65
-        },
-        {
-          "code": "9911",
-          "name": "櫻花",
-          "market": "twse",
-          "close": 78.4,
-          "change": -0.8,
-          "pct_change": -1.01,
-          "trade_val_yi": 0.39
         }
       ]
     },
@@ -4583,6 +4583,55 @@
       ]
     },
     {
+      "sector_name": "居家生活業",
+      "sector_type": "official",
+      "stock_count": 37,
+      "active_count": 34,
+      "trade_val_yi": 7.47,
+      "prev_trade_val_yi": 4.21,
+      "val_diff_yi": 3.26,
+      "growth_pct": 77.33,
+      "share0_pct": 0.07,
+      "share1_pct": 0.04,
+      "flow_pp": 0.03,
+      "avg_pct_chg": -0.84,
+      "advances": 6,
+      "declines": 25,
+      "unchanged": 3,
+      "signal": "⚖️ 資金平穩",
+      "signal_type": "neutral",
+      "top3_concentration": 88.2,
+      "top_stocks": [
+        {
+          "code": "5904",
+          "name": "寶雅",
+          "market": "tpex",
+          "close": 72.5,
+          "change": -0.3,
+          "pct_change": -0.41,
+          "trade_val_yi": 4.89
+        },
+        {
+          "code": "7867",
+          "name": "特力屋",
+          "market": "twse",
+          "close": 44.2,
+          "change": 0.0,
+          "pct_change": 0.0,
+          "trade_val_yi": 1.05
+        },
+        {
+          "code": "8464",
+          "name": "億豐",
+          "market": "twse",
+          "close": 370.0,
+          "change": -3.0,
+          "pct_change": -0.8,
+          "trade_val_yi": 0.65
+        }
+      ]
+    },
+    {
       "sector_name": "綠能環保",
       "sector_type": "official",
       "stock_count": 46,
@@ -4971,55 +5020,6 @@
           "change": -0.28,
           "pct_change": -2.81,
           "trade_val_yi": 0.27
-        }
-      ]
-    },
-    {
-      "sector_name": "居家生活業",
-      "sector_type": "official",
-      "stock_count": 36,
-      "active_count": 33,
-      "trade_val_yi": 6.42,
-      "prev_trade_val_yi": 4.21,
-      "val_diff_yi": 2.21,
-      "growth_pct": 52.5,
-      "share0_pct": 0.06,
-      "share1_pct": 0.04,
-      "flow_pp": 0.02,
-      "avg_pct_chg": -0.86,
-      "advances": 6,
-      "declines": 25,
-      "unchanged": 2,
-      "signal": "⚖️ 資金平穩",
-      "signal_type": "neutral",
-      "top3_concentration": 92.4,
-      "top_stocks": [
-        {
-          "code": "5904",
-          "name": "寶雅",
-          "market": "tpex",
-          "close": 72.5,
-          "change": -0.3,
-          "pct_change": -0.41,
-          "trade_val_yi": 4.89
-        },
-        {
-          "code": "8464",
-          "name": "億豐",
-          "market": "twse",
-          "close": 370.0,
-          "change": -3.0,
-          "pct_change": -0.8,
-          "trade_val_yi": 0.65
-        },
-        {
-          "code": "9911",
-          "name": "櫻花",
-          "market": "twse",
-          "close": 78.4,
-          "change": -0.8,
-          "pct_change": -1.01,
-          "trade_val_yi": 0.39
         }
       ]
     },
