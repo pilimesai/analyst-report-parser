@@ -4600,8 +4600,9 @@
                     // 保留過濾後的標題與資料
                     for (let i = headerIdx; i < csvRows.length; i++) {
                         const row = csvRows[i];
+                        const isDahu = (sheetName === '大戶持股' || sheetName.includes('大戶'));
                         if (i === headerIdx) {
-                            if (sheetName === '營收條件' || sheetName === '合約負債條件') {
+                            if (sheetName === '營收條件' || sheetName === '合約負債條件' || isDahu) {
                                 newCsvRows.push(['股號', '公司名']);
                             } else if (sheetName === '法說會') {
                                 newCsvRows.push(['股號', '公司名', '日期']);
@@ -4611,12 +4612,24 @@
                             continue;
                         }
                         
-                        const cCode = row[codeColIdx] || '';
-                        const cName = row[nameColIdx] || '';
-                        // 若無代碼或太短則略過
-                        if (!cCode) continue;
+                        let cCode = String(row[codeColIdx] || '').replace(/\.TW|\.TWO/gi, '').trim();
+                        let cName = String(row[nameColIdx] || '').trim();
+                        
+                        // 若無4碼數字代號則略過
+                        const mCode = cCode.match(/\b\d{4}\b/);
+                        if (!mCode) continue;
+                        cCode = mCode[0];
 
-                        if (sheetName === '營收條件' || sheetName === '合約負債條件') {
+                        // 若公司名為亂碼或無中文，嘗試從前端 stockMap/stockNamesMap 補齊
+                        if (!/[\u4e00-\u9fff]/.test(cName)) {
+                            const mapped = (typeof stockNameMap !== 'undefined' && stockNameMap[cCode]) || 
+                                           (typeof stockNamesMap !== 'undefined' && stockNamesMap[cCode]) || 
+                                           (typeof window.stockNamesMap !== 'undefined' && window.stockNamesMap[cCode]);
+                            if (mapped) cName = mapped;
+                        }
+
+                        if (sheetName === '營收條件' || sheetName === '合約負債條件' || isDahu) {
+                            // 大戶持股只保留股號與公司名，其他資料都不用
                             newCsvRows.push([cCode, cName]);
                         } else if (sheetName === '法說會') {
                             const cDate = row[dateColIdx] || '';

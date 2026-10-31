@@ -3,9 +3,9 @@
 功能：
 1. 支援上傳/輸入 CSV、Excel 或是文字內容。
 2. 自動處理各種編碼 (UTF-8, UTF-8-SIG, CP950/Big5)。
-3. 自動跳過前綴標題與日期行，定位表格標頭。
-4. 自動提取：股票代碼、公司名稱（遇亂碼自動由 stock_names.json 補齊）、大戶持股比例 (%)、收盤價、成交量等。
-5. 支援輸出為 Excel (.xlsx)、SQLite 資料庫或 JSON 快取。
+3. 只從檔案撈出【股票代號】與【公司名稱】，其餘資料全部自動捨去。
+4. 若公司名稱遇亂碼或空白，自動由 stock_names.json 對照表補齊正確繁體中文名稱。
+5. 支援輸出為乾淨的 Excel (.xlsx)、SQLite 資料庫或 JSON。
 """
 
 import os
@@ -42,18 +42,12 @@ def is_garbled(text):
     # 檢查是否有正常的繁簡中文
     has_chinese = bool(re.search(r"[\u4e00-\u9fff]", t))
     if not has_chinese:
-        # 若無中文，且不是正規KY公司名稱 (如 世芯-KY)，則判定為亂碼殘留
-        if "KY" not in t.upper() or len(t) <= 2:
-            return True
+        return True
     return False
 
 def parse_major_holder_content(content_or_file):
     """
-    解析大戶資料，傳入可以是：
-    - 檔案路徑 (str)
-    - 檔案物件 (io.BytesIO, UploadedFile)
-    - 純文字字串 (str)
-
+    解析大戶資料，只撈出【股票代號】與【公司名稱】。
     回傳：(DataFrame, data_date_str)
     """
     raw_lines = []
@@ -84,9 +78,9 @@ def parse_major_holder_content(content_or_file):
                 continue
 
     if not raw_lines:
-        return pd.DataFrame(), None
+        return pd.DataFrame(columns=["股票代號", "公司名稱"]), None
 
-    # 2. 擷取資料日期 (例如 "資料日期：2026年 10月 30日" 或亂碼時的 "2026~ 10 30")
+    # 2. 擷取資料日期 (例如 "資料日期：2026年 10月 30日" 或 "2026~ 10 30")
     for line in raw_lines[:10]:
         m_date = re.search(r"(\d{4})\s*[年~/\-\s]\s*(\d{1,2})\s*[月/\-\s]\s*(\d{1,2})", line)
         if m_date:
@@ -133,18 +127,14 @@ def parse_major_holder_content(content_or_file):
         df = pd.DataFrame(rows, columns=header)
 
     if df.empty:
-        return pd.DataFrame(), data_date
+        return pd.DataFrame(columns=["股票代號", "公司名稱"]), data_date
 
     # 清理欄位名稱
     df.columns = [str(c).strip().strip('"\'') for c in df.columns]
 
-    # 4. 定位關鍵欄位
+    # 4. 定位關鍵欄位 (代號、名稱)
     code_col = None
     name_col = None
-    major_holder_col = None
-    price_col = None
-    change_col = None
-    volume_col = None
 
     for col in df.columns:
         c_clean = col.replace(" ", "").replace("\t", "")
@@ -152,16 +142,8 @@ def parse_major_holder_content(content_or_file):
             code_col = col
         elif any(k in c_clean for k in ["商品", "公司", "名稱", "股票名稱", "Name"]):
             name_col = col
-        elif any(k in c_clean for k in ["大戶持股", "大戶比例", "大戶持股比例", "大戶"]):
-            major_holder_col = col
-        elif any(k in c_clean for k in ["收盤", "成交價", "現價", "Close"]):
-            price_col = col
-        elif any(k in c_clean for k in ["漲跌%", "漲幅", "漲跌幅", "幅度"]):
-            change_col = col
-        elif any(k in c_clean for k in ["總量", "成交量", "成交張數", "Volume"]):
-            volume_col = col
 
-    # 如果欄位亂碼導致找不到，依據第一列資料內容規則推估
+    # 若標題亂碼，依據第一列資料推估
     sample_row = df.iloc[0] if len(df) > 0 else None
     if sample_row is not None:
         for idx, col in enumerate(df.columns):
@@ -170,26 +152,23 @@ def parse_major_holder_content(content_or_file):
                 code_col = col
             elif not name_col and idx == 2:
                 name_col = col
-            elif not major_holder_col and (idx == 6 or ("%" in val and idx >= 4)):
-                major_holder_col = col
-            elif not price_col and idx == 3:
-                price_col = col
-            elif not change_col and idx == 4:
-                change_col = col
-            elif not volume_col and idx == 5:
-                volume_col = col
 
-    # 5. 格式化提取標準欄位
+    # 5. 格式化提取【股票代號】與【公司名稱】
     stock_names_map = load_stock_names_map()
     records = []
+    seen_codes = set()
 
     for _, row in df.iterrows():
-        # 提取股票代號
+        # 提取股票代號 (去除 .TW 等後綴，只留4碼數字)
         code_val = str(row[code_col]).strip().strip('"\'') if code_col else ""
         m_code = re.search(r'(?<!\d)(\d{4})(?!\d)', code_val)
         if not m_code:
             continue
         stock_id = m_code.group(1)
+
+        if stock_id in seen_codes:
+            continue
+        seen_codes.add(stock_id)
 
         # 提取公司名稱 (若原欄位為亂碼、缺中文或空值，由對照表自動補齊)
         raw_name = str(row[name_col]).strip().strip('"\'') if name_col else ""
@@ -205,97 +184,50 @@ def parse_major_holder_content(content_or_file):
             company_name = mapped_name
         else:
             company_name = raw_name if raw_name else stock_id
-        # 提取大戶持股比例
-        raw_mh = str(row[major_holder_col]).strip().strip('"\'%') if major_holder_col else ""
-        try:
-            major_holder_pct = float(raw_mh)
-        except ValueError:
-            major_holder_pct = None
 
-        # 提取收盤價
-        close_price = None
-        if price_col:
-            try:
-                close_price = float(str(row[price_col]).strip().strip('"\'').replace(",", ""))
-            except ValueError:
-                pass
-
-        # 提取漲跌%
-        change_pct = None
-        if change_col:
-            try:
-                change_pct = float(str(row[change_col]).strip().strip('"\'%'))
-            except ValueError:
-                pass
-
-        # 提取總量
-        volume = None
-        if volume_col:
-            try:
-                volume = int(float(str(row[volume_col]).strip().strip('"\'').replace(",", "")))
-            except ValueError:
-                pass
-
+        # 只保留【股票代號】與【公司名稱】，其餘資訊全部不收
         records.append({
             "股票代號": stock_id,
-            "公司名稱": company_name,
-            "大戶持股比例(%)": major_holder_pct,
-            "收盤價": close_price,
-            "漲跌幅(%)": change_pct,
-            "成交量": volume,
-            "資料日期": data_date or datetime.today().strftime("%Y-%m-%d")
+            "公司名稱": company_name
         })
 
     result_df = pd.DataFrame(records)
     return result_df, data_date
 
 
-def export_to_excel(df, output_path="大戶持股分析.xlsx"):
-    """將解析後的 DataFrame 輸出為格式化美觀的 Excel 檔案"""
+def export_to_excel(df, output_path="大戶名單.xlsx"):
+    """將解析後的代號與公司名稱輸出為格式化的 Excel 檔案"""
     with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
-        df.to_excel(writer, index=False, sheet_name="大戶持股清單")
-        ws = writer.sheets["大戶持股清單"]
-        # 設定欄寬
+        df.to_excel(writer, index=False, sheet_name="大戶名單")
+        ws = writer.sheets["大戶名單"]
         for col in ws.columns:
             max_len = max(len(str(cell.value or '')) for cell in col)
             col_letter = col[0].column_letter
-            ws.column_dimensions[col_letter].width = max(max_len + 4, 14)
+            ws.column_dimensions[col_letter].width = max(max_len + 6, 16)
     return output_path
 
 
 def save_to_database(df, db_path="major_holders.db", table_name="major_holders"):
-    """將大戶資料儲存至 SQLite 資料庫"""
+    """將大戶名單儲存至 SQLite 資料庫（只存股票代號與公司名稱）"""
     if df.empty:
         return 0
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     cursor.execute(f"""
         CREATE TABLE IF NOT EXISTS {table_name} (
-            stock_id TEXT,
+            stock_id TEXT PRIMARY KEY,
             company_name TEXT,
-            major_holder_pct REAL,
-            close_price REAL,
-            change_pct REAL,
-            volume INTEGER,
-            data_date TEXT,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (stock_id, data_date)
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
     inserted = 0
     for _, r in df.iterrows():
         cursor.execute(f"""
-            INSERT OR REPLACE INTO {table_name} 
-            (stock_id, company_name, major_holder_pct, close_price, change_pct, volume, data_date)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT OR REPLACE INTO {table_name} (stock_id, company_name)
+            VALUES (?, ?)
         """, (
             str(r["股票代號"]),
-            str(r["公司名稱"]),
-            r["大戶持股比例(%)"],
-            r["收盤價"],
-            r["漲跌幅(%)"],
-            r["成交量"],
-            str(r["資料日期"])
+            str(r["公司名稱"])
         ))
         inserted += 1
     conn.commit()
@@ -304,7 +236,7 @@ def save_to_database(df, db_path="major_holders.db", table_name="major_holders")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="大戶持股資料解析工具")
+    parser = argparse.ArgumentParser(description="大戶持股名單解析工具（只提取股票代號與公司名稱）")
     parser.add_argument("input_file", help="輸入的 CSV 檔案路徑")
     parser.add_argument("--excel", "-e", help="輸出 Excel 檔案路徑", default=None)
     parser.add_argument("--db", "-d", help="儲存至 SQLite 資料庫路徑", default="major_holders.db")
@@ -315,7 +247,7 @@ def main():
         return
 
     df, date_str = parse_major_holder_content(args.input_file)
-    print(f"=== 解析完成！共 {len(df)} 筆資料（資料日期：{date_str or '未指定'}）===")
+    print(f"=== 解析完成！共撈出 {len(df)} 檔股票（代碼與名稱）===")
     print(df.to_string(index=False))
 
     if args.excel:

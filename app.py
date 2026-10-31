@@ -2690,7 +2690,7 @@ if st.session_state.history:
         if 'gross_margin_stocks' not in st.session_state:
             st.session_state['gross_margin_stocks'] = load_gross_margin_stocks()
 
-        bp_file = st.file_uploader("上傳大戶選股積分/持股 Excel 或 CSV（自動解析代碼、名稱與大戶持股比）", type=['xlsx', 'xls', 'csv'], key="bp_uploader")
+        bp_file = st.file_uploader("上傳大戶選股積分/持股 Excel 或 CSV（只提取股票代號與公司名稱）", type=['xlsx', 'xls', 'csv'], key="bp_uploader")
 
         if bp_file:
             try:
@@ -2713,11 +2713,11 @@ if st.session_state.history:
                     # 提供 Excel 下載
                     _excel_buffer = _io.BytesIO()
                     with pd.ExcelWriter(_excel_buffer, engine='openpyxl') as _writer:
-                        parsed_bp_df.to_excel(_writer, index=False, sheet_name='大戶持股清單')
+                        parsed_bp_df.to_excel(_writer, index=False, sheet_name='大戶名單')
                     st.download_button(
                         label="📥 下載解析後的 Excel 檔 (.xlsx)",
                         data=_excel_buffer.getvalue(),
-                        file_name=f"大戶持股_{bp_date or datetime.date.today().strftime('%Y%m%d')}.xlsx",
+                        file_name=f"大戶名單_{bp_date or datetime.date.today().strftime('%Y%m%d')}.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     )
                 else:
