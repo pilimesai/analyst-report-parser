@@ -49,9 +49,27 @@ function doPost(e) {
       }
       targetSheet.clear();
       
-      // Write the 2D array in bulk
-      if (csvData && csvData.length > 0 && csvData[0].length > 0) {
-        targetSheet.getRange(1, 1, csvData.length, csvData[0].length).setValues(csvData);
+      // Write the 2D array in bulk (含自動補齊欄位防呆機制)
+      if (csvData && csvData.length > 0) {
+        var maxCols = 0;
+        for (var r = 0; r < csvData.length; r++) {
+          if (csvData[r] && csvData[r].length > maxCols) {
+            maxCols = csvData[r].length;
+          }
+        }
+
+        if (maxCols > 0) {
+          var normalizedData = [];
+          for (var i = 0; i < csvData.length; i++) {
+            var row = csvData[i] || [];
+            var newRow = [];
+            for (var c = 0; c < maxCols; c++) {
+              newRow.push(c < row.length ? (row[c] !== null && row[c] !== undefined ? row[c] : "") : "");
+            }
+            normalizedData.push(newRow);
+          }
+          targetSheet.getRange(1, 1, normalizedData.length, maxCols).setValues(normalizedData);
+        }
       }
       
       return ContentService.createTextOutput(JSON.stringify({
