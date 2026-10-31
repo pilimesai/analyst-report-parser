@@ -41,8 +41,10 @@ def is_garbled(text):
         return True
     # 檢查是否有正常的繁簡中文
     has_chinese = bool(re.search(r"[\u4e00-\u9fff]", t))
-    if not has_chinese and not t.replace(".", "").isalnum():
-        return True
+    if not has_chinese:
+        # 若無中文，且不是正規KY公司名稱 (如 世芯-KY)，則判定為亂碼殘留
+        if "KY" not in t.upper() or len(t) <= 2:
+            return True
     return False
 
 def parse_major_holder_content(content_or_file):
@@ -84,16 +86,11 @@ def parse_major_holder_content(content_or_file):
     if not raw_lines:
         return pd.DataFrame(), None
 
-    # 2. 擷取資料日期 (例如 "資料日期：2026年 10月 30日")
+    # 2. 擷取資料日期 (例如 "資料日期：2026年 10月 30日" 或亂碼時的 "2026~ 10 30")
     for line in raw_lines[:10]:
-        m_date = re.search(r"(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日", line)
+        m_date = re.search(r"(\d{4})\s*[年~/\-\s]\s*(\d{1,2})\s*[月/\-\s]\s*(\d{1,2})", line)
         if m_date:
             y, m, d = m_date.groups()
-            data_date = f"{y}-{int(m):02d}-{int(d):02d}"
-            break
-        m_date2 = re.search(r"(\d{4})[/-](\d{1,2})[/-](\d{1,2})", line)
-        if m_date2:
-            y, m, d = m_date2.groups()
             data_date = f"{y}-{int(m):02d}-{int(d):02d}"
             break
 
@@ -194,13 +191,20 @@ def parse_major_holder_content(content_or_file):
             continue
         stock_id = m_code.group(1)
 
-        # 提取公司名稱 (若原欄位為亂碼或空值，由對照表自動補齊)
+        # 提取公司名稱 (若原欄位為亂碼、缺中文或空值，由對照表自動補齊)
         raw_name = str(row[name_col]).strip().strip('"\'') if name_col else ""
+        mapped_name = stock_names_map.get(stock_id, "")
+        need_replace = False
         if is_garbled(raw_name) or not raw_name:
-            company_name = stock_names_map.get(stock_id, raw_name if (raw_name and not is_garbled(raw_name)) else stock_id)
-        else:
-            company_name = raw_name
+            need_replace = True
+        elif mapped_name and any('\u4e00' <= ch <= '\u9fff' for ch in mapped_name):
+            if not any('\u4e00' <= ch <= '\u9fff' for ch in raw_name):
+                need_replace = True
 
+        if need_replace and mapped_name:
+            company_name = mapped_name
+        else:
+            company_name = raw_name if raw_name else stock_id
         # 提取大戶持股比例
         raw_mh = str(row[major_holder_col]).strip().strip('"\'%') if major_holder_col else ""
         try:
