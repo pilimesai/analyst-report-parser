@@ -12,3 +12,6 @@ tmp.txt
 *.log
 node_modules/
 dist/
+*.db
+*.sqlite
+*.sqlite3
