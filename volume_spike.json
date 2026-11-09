@@ -1,7 +1,7 @@
 {
-  "updateTime": "2026-11-10T06:14:49.747643+08:00",
+  "updateTime": "2026-11-10T06:35:59.387129+08:00",
   "tradeDate": "2026-11-09",
-  "totalCount": 10,
+  "totalCount": 11,
   "conditions": [
     "[日] 成交量大於 2000 張 (>= 2000 張)",
     "[日] 成交金額大於 0.5 億 (>= 5000 萬元)",
@@ -72,6 +72,26 @@
     },
     {
       "market": "twse",
+      "code": "2467",
+      "name": "志聖",
+      "volume_shares": 4355847,
+      "volume_lots": 4355,
+      "trade_value": 1340659420,
+      "trade_value_yi": 13.41,
+      "open_price": 293.0,
+      "close_price": 308.5,
+      "change": 4.0,
+      "transaction": 4984,
+      "date": "2026-11-09",
+      "today_vol_lots": 4288,
+      "ma10_vol_lots": 984,
+      "ma10w_vol_lots": 941,
+      "vol_multiple": 4.36,
+      "vol_week_multiple": 4.55,
+      "rank": 5
+    },
+    {
+      "market": "twse",
       "code": "3010",
       "name": "華立",
       "volume_shares": 2269547,
@@ -88,7 +108,7 @@
       "ma10w_vol_lots": 584,
       "vol_multiple": 3.97,
       "vol_week_multiple": 3.85,
-      "rank": 5
+      "rank": 6
     },
     {
       "market": "twse",
@@ -108,7 +128,7 @@
       "ma10w_vol_lots": 4444,
       "vol_multiple": 3.5,
       "vol_week_multiple": 2.47,
-      "rank": 6
+      "rank": 7
     },
     {
       "market": "twse",
@@ -128,7 +148,7 @@
       "ma10w_vol_lots": 2875,
       "vol_multiple": 3.37,
       "vol_week_multiple": 5.66,
-      "rank": 7
+      "rank": 8
     },
     {
       "market": "twse",
@@ -148,7 +168,7 @@
       "ma10w_vol_lots": 35364,
       "vol_multiple": 3.17,
       "vol_week_multiple": 5.17,
-      "rank": 8
+      "rank": 9
     },
     {
       "market": "twse",
@@ -168,7 +188,7 @@
       "ma10w_vol_lots": 22929,
       "vol_multiple": 3.01,
       "vol_week_multiple": 1.89,
-      "rank": 10
+      "rank": 11
     }
   ],
   "tpex": [
@@ -210,7 +230,7 @@
       "ma10w_vol_lots": 3484,
       "vol_multiple": 3.02,
       "vol_week_multiple": 4.53,
-      "rank": 9
+      "rank": 10
     }
   ],
   "stocks": [
@@ -296,6 +316,26 @@
     },
     {
       "market": "twse",
+      "code": "2467",
+      "name": "志聖",
+      "volume_shares": 4355847,
+      "volume_lots": 4355,
+      "trade_value": 1340659420,
+      "trade_value_yi": 13.41,
+      "open_price": 293.0,
+      "close_price": 308.5,
+      "change": 4.0,
+      "transaction": 4984,
+      "date": "2026-11-09",
+      "today_vol_lots": 4288,
+      "ma10_vol_lots": 984,
+      "ma10w_vol_lots": 941,
+      "vol_multiple": 4.36,
+      "vol_week_multiple": 4.55,
+      "rank": 5
+    },
+    {
+      "market": "twse",
       "code": "3010",
       "name": "華立",
       "volume_shares": 2269547,
@@ -312,7 +352,7 @@
       "ma10w_vol_lots": 584,
       "vol_multiple": 3.97,
       "vol_week_multiple": 3.85,
-      "rank": 5
+      "rank": 6
     },
     {
       "market": "twse",
@@ -332,7 +372,7 @@
       "ma10w_vol_lots": 4444,
       "vol_multiple": 3.5,
       "vol_week_multiple": 2.47,
-      "rank": 6
+      "rank": 7
     },
     {
       "market": "twse",
@@ -352,7 +392,7 @@
       "ma10w_vol_lots": 2875,
       "vol_multiple": 3.37,
       "vol_week_multiple": 5.66,
-      "rank": 7
+      "rank": 8
     },
     {
       "market": "twse",
@@ -372,7 +412,7 @@
       "ma10w_vol_lots": 35364,
       "vol_multiple": 3.17,
       "vol_week_multiple": 5.17,
-      "rank": 8
+      "rank": 9
     },
     {
       "market": "tpex",
@@ -392,7 +432,7 @@
       "ma10w_vol_lots": 3484,
       "vol_multiple": 3.02,
       "vol_week_multiple": 4.53,
-      "rank": 9
+      "rank": 10
     },
     {
       "market": "twse",
@@ -412,7 +452,7 @@
       "ma10w_vol_lots": 22929,
       "vol_multiple": 3.01,
       "vol_week_multiple": 1.89,
-      "rank": 10
+      "rank": 11
     }
   ]
 }
