@@ -580418,5 +580418,1869 @@
       "creditor": "元大商業銀行股份有限公司",
       "report_date": "101/02/10"
     }
+  ],
+  "2733": [
+    {
+      "identity": "E00010監察人本人",
+      "name": "林春億",
+      "event_date": "105/06/02",
+      "pledge_shares": 150000,
+      "unpledge_shares": 0,
+      "cum_shares": 150000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "105/06/03"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "孫國華",
+      "event_date": "107/03/26",
+      "pledge_shares": 1260000,
+      "unpledge_shares": 0,
+      "cum_shares": 1260000,
+      "creditor": "卓毅創業投資股份有限公司",
+      "report_date": "107/03/28"
+    }
+  ],
+  "2899": [
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "98/08/04",
+      "pledge_shares": 44000000,
+      "unpledge_shares": 0,
+      "cum_shares": 44000000,
+      "creditor": "遠東國際商業銀行營業部",
+      "report_date": "98/08/05"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "98/08/11",
+      "pledge_shares": 44000000,
+      "unpledge_shares": 0,
+      "cum_shares": 88000000,
+      "creditor": "第一商業銀行南京東路分行",
+      "report_date": "98/08/12"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "98/09/11",
+      "pledge_shares": 110000000,
+      "unpledge_shares": 0,
+      "cum_shares": 198000000,
+      "creditor": "第一商業銀行南京東路分行",
+      "report_date": "98/09/11"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "98/10/22",
+      "pledge_shares": 57200000,
+      "unpledge_shares": 0,
+      "cum_shares": 255200000,
+      "creditor": "第一商業銀行南京東路分行",
+      "report_date": "98/10/23"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "98/10/22",
+      "pledge_shares": 29000000,
+      "unpledge_shares": 0,
+      "cum_shares": 284200000,
+      "creditor": "遠東國際商業銀行營業部",
+      "report_date": "98/10/23"
+    },
+    {
+      "identity": "D00240董事本人",
+      "name": "頂立開發實業股份有限公司",
+      "event_date": "98/10/23",
+      "pledge_shares": 55000000,
+      "unpledge_shares": 0,
+      "cum_shares": 77000000,
+      "creditor": "中國國際商業銀行總管理處國外部",
+      "report_date": "98/10/23"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "98/12/08",
+      "pledge_shares": 44000000,
+      "unpledge_shares": 0,
+      "cum_shares": 328200000,
+      "creditor": "台新國際商業銀行南京東路分行",
+      "report_date": "98/12/09"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "98/12/08",
+      "pledge_shares": 44000000,
+      "unpledge_shares": 0,
+      "cum_shares": 372200000,
+      "creditor": "遠東國際商業銀行營業部",
+      "report_date": "98/12/09"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "99/02/25",
+      "pledge_shares": 0,
+      "unpledge_shares": 44000000,
+      "cum_shares": 328200000,
+      "creditor": "台新國際商業銀行南京東路分行",
+      "report_date": "99/02/26"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "99/06/10",
+      "pledge_shares": 44000000,
+      "unpledge_shares": 0,
+      "cum_shares": 372200000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "99/06/10"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "99/10/06",
+      "pledge_shares": 0,
+      "unpledge_shares": 75000000,
+      "cum_shares": 297200000,
+      "creditor": "遠東國際商業銀行營業部",
+      "report_date": "99/10/07"
+    },
+    {
+      "identity": "E00100監察人本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "99/10/06",
+      "pledge_shares": 0,
+      "unpledge_shares": 23000000,
+      "cum_shares": 54000000,
+      "creditor": "遠東國際商業銀行營業部",
+      "report_date": "99/10/07"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "99/11/30",
+      "pledge_shares": 5000000,
+      "unpledge_shares": 0,
+      "cum_shares": 302200000,
+      "creditor": "台新國際商業銀行建北分行",
+      "report_date": "99/12/01"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "99/11/30",
+      "pledge_shares": 83000000,
+      "unpledge_shares": 0,
+      "cum_shares": 385200000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "99/12/01"
+    },
+    {
+      "identity": "D00240董事本人",
+      "name": "頂立開發實業股份有限公司",
+      "event_date": "100/05/05",
+      "pledge_shares": 5000000,
+      "unpledge_shares": 0,
+      "cum_shares": 82000000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "100/05/06"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "100/05/05",
+      "pledge_shares": 0,
+      "unpledge_shares": 20000000,
+      "cum_shares": 365200000,
+      "creditor": "遠東國際商業銀行營業部",
+      "report_date": "100/05/06"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "100/05/11",
+      "pledge_shares": 0,
+      "unpledge_shares": 30000000,
+      "cum_shares": 335200000,
+      "creditor": "第一商業銀行南京東路分行",
+      "report_date": "100/05/12"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "100/05/11",
+      "pledge_shares": 0,
+      "unpledge_shares": 5000000,
+      "cum_shares": 330200000,
+      "creditor": "台新國際商業銀行建北分行",
+      "report_date": "100/05/12"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "100/05/13",
+      "pledge_shares": 55000000,
+      "unpledge_shares": 0,
+      "cum_shares": 385200000,
+      "creditor": "兆豐票券金融(股)公司三重分公司",
+      "report_date": "100/05/16"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "100/07/18",
+      "pledge_shares": 0,
+      "unpledge_shares": 22000000,
+      "cum_shares": 363200000,
+      "creditor": "遠東國際商業銀行營業部",
+      "report_date": "100/07/18"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "100/07/22",
+      "pledge_shares": 22000000,
+      "unpledge_shares": 0,
+      "cum_shares": 385200000,
+      "creditor": "第一商業銀行南京東路分行",
+      "report_date": "100/07/25"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "100/08/25",
+      "pledge_shares": 0,
+      "unpledge_shares": 45200000,
+      "cum_shares": 340000000,
+      "creditor": "第一商業銀行南京東路分行",
+      "report_date": "100/08/26"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "100/09/21",
+      "pledge_shares": 0,
+      "unpledge_shares": 20000000,
+      "cum_shares": 320000000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "100/09/22"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "100/09/22",
+      "pledge_shares": 45000000,
+      "unpledge_shares": 0,
+      "cum_shares": 365000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "100/09/22"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "100/09/23",
+      "pledge_shares": 6000000,
+      "unpledge_shares": 0,
+      "cum_shares": 371000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "100/09/26"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "100/10/12",
+      "pledge_shares": 0,
+      "unpledge_shares": 82000000,
+      "cum_shares": 289000000,
+      "creditor": "第一商業銀行南京東路分行",
+      "report_date": "100/10/13"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "100/10/13",
+      "pledge_shares": 78000000,
+      "unpledge_shares": 0,
+      "cum_shares": 367000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "100/10/14"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "100/10/19",
+      "pledge_shares": 0,
+      "unpledge_shares": 76000000,
+      "cum_shares": 291000000,
+      "creditor": "第一商業銀行南京東路分行",
+      "report_date": "100/10/20"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "100/10/21",
+      "pledge_shares": 44000000,
+      "unpledge_shares": 0,
+      "cum_shares": 335000000,
+      "creditor": "國際票券金融(股)公司板橋分公司",
+      "report_date": "100/10/24"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "100/11/01",
+      "pledge_shares": 50000000,
+      "unpledge_shares": 0,
+      "cum_shares": 385000000,
+      "creditor": "台新國際商業銀行-建北分行",
+      "report_date": "100/11/01"
+    },
+    {
+      "identity": "E00100監察人本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "100/11/03",
+      "pledge_shares": 24400000,
+      "unpledge_shares": 0,
+      "cum_shares": 78400000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "100/11/04"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "100/11/09",
+      "pledge_shares": 0,
+      "unpledge_shares": 2000000,
+      "cum_shares": 383000000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "100/11/10"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "100/11/09",
+      "pledge_shares": 0,
+      "unpledge_shares": 9000000,
+      "cum_shares": 374000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "100/11/10"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "100/11/11",
+      "pledge_shares": 11000000,
+      "unpledge_shares": 0,
+      "cum_shares": 385000000,
+      "creditor": "台新國際商業銀行-建北分行",
+      "report_date": "100/11/14"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/04/06",
+      "pledge_shares": 0,
+      "unpledge_shares": 61000000,
+      "cum_shares": 324000000,
+      "creditor": "台新國際商業銀行-建北分行",
+      "report_date": "101/04/09"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/04/25",
+      "pledge_shares": 0,
+      "unpledge_shares": 39000000,
+      "cum_shares": 285000000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "101/04/26"
+    },
+    {
+      "identity": "D00240董事本人",
+      "name": "頂立開發實業股份有限公司",
+      "event_date": "101/04/25",
+      "pledge_shares": 0,
+      "unpledge_shares": 41000000,
+      "cum_shares": 41000000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "101/04/26"
+    },
+    {
+      "identity": "E00100監察人本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "101/04/26",
+      "pledge_shares": 0,
+      "unpledge_shares": 15000000,
+      "cum_shares": 63400000,
+      "creditor": "遠東國際商業銀行營業部",
+      "report_date": "101/04/27"
+    },
+    {
+      "identity": "E00100監察人本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "101/04/26",
+      "pledge_shares": 0,
+      "unpledge_shares": 24400000,
+      "cum_shares": 39000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "101/04/27"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/04/26",
+      "pledge_shares": 0,
+      "unpledge_shares": 76000000,
+      "cum_shares": 209000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "101/04/27"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/04/26",
+      "pledge_shares": 0,
+      "unpledge_shares": 55000000,
+      "cum_shares": 154000000,
+      "creditor": "兆豐票券金融(股)公司三重分公司",
+      "report_date": "101/04/27"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/05/03",
+      "pledge_shares": 55000000,
+      "unpledge_shares": 0,
+      "cum_shares": 209000000,
+      "creditor": "兆豐票券金融(股)三重分公司",
+      "report_date": "101/05/04"
+    },
+    {
+      "identity": "E00100監察人本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "101/05/03",
+      "pledge_shares": 17000000,
+      "unpledge_shares": 0,
+      "cum_shares": 56000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "101/05/04"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/05/04",
+      "pledge_shares": 24000000,
+      "unpledge_shares": 0,
+      "cum_shares": 233000000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "101/05/07"
+    },
+    {
+      "identity": "D00240董事本人",
+      "name": "頂立開發實業股份有限公司",
+      "event_date": "101/05/04",
+      "pledge_shares": 41000000,
+      "unpledge_shares": 0,
+      "cum_shares": 82000000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "101/05/07"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/06/05",
+      "pledge_shares": 33000000,
+      "unpledge_shares": 0,
+      "cum_shares": 266000000,
+      "creditor": "元大商業銀行松江分行",
+      "report_date": "101/06/05"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/06/06",
+      "pledge_shares": 22000000,
+      "unpledge_shares": 0,
+      "cum_shares": 288000000,
+      "creditor": "台新國際商業銀行建北分行",
+      "report_date": "101/06/06"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/06/26",
+      "pledge_shares": 15000000,
+      "unpledge_shares": 0,
+      "cum_shares": 303000000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "101/06/26"
+    },
+    {
+      "identity": "D00240董事本人",
+      "name": "頂立開發實業股份有限公司",
+      "event_date": "101/08/10",
+      "pledge_shares": 0,
+      "unpledge_shares": 5000000,
+      "cum_shares": 77000000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "101/08/13"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/08/20",
+      "pledge_shares": 0,
+      "unpledge_shares": 22000000,
+      "cum_shares": 281000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "101/08/21"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/08/22",
+      "pledge_shares": 0,
+      "unpledge_shares": 105000000,
+      "cum_shares": 176000000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "101/08/23"
+    },
+    {
+      "identity": "D00240董事本人",
+      "name": "頂立開發實業股份有限公司",
+      "event_date": "101/08/22",
+      "pledge_shares": 0,
+      "unpledge_shares": 36000000,
+      "cum_shares": 41000000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "101/08/23"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/08/23",
+      "pledge_shares": 0,
+      "unpledge_shares": 22000000,
+      "cum_shares": 154000000,
+      "creditor": "台新國際商業銀行建北分行",
+      "report_date": "101/08/24"
+    },
+    {
+      "identity": "E00100監察人本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "101/08/24",
+      "pledge_shares": 0,
+      "unpledge_shares": 30000000,
+      "cum_shares": 26000000,
+      "creditor": "遠東國際商業銀行營業部",
+      "report_date": "101/08/27"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/08/31",
+      "pledge_shares": 22000000,
+      "unpledge_shares": 0,
+      "cum_shares": 176000000,
+      "creditor": "台新國際商業銀行-建北分行",
+      "report_date": "101/09/03"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/08/31",
+      "pledge_shares": 104000000,
+      "unpledge_shares": 0,
+      "cum_shares": 280000000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "101/09/03"
+    },
+    {
+      "identity": "D00240董事本人",
+      "name": "頂立開發實業股份有限公司",
+      "event_date": "101/08/31",
+      "pledge_shares": 36000000,
+      "unpledge_shares": 0,
+      "cum_shares": 77000000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "101/09/03"
+    },
+    {
+      "identity": "E00100監察人本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "101/08/31",
+      "pledge_shares": 30000000,
+      "unpledge_shares": 0,
+      "cum_shares": 56000000,
+      "creditor": "台灣新光商業銀行股份有限公司",
+      "report_date": "101/09/03"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/10/11",
+      "pledge_shares": 44000000,
+      "unpledge_shares": 0,
+      "cum_shares": 324000000,
+      "creditor": "中華票券金融公司",
+      "report_date": "101/10/12"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/10/31",
+      "pledge_shares": 0,
+      "unpledge_shares": 22000000,
+      "cum_shares": 302000000,
+      "creditor": "國際票券金融(股)公司板橋分公司",
+      "report_date": "101/11/01"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/11/02",
+      "pledge_shares": 0,
+      "unpledge_shares": 104000000,
+      "cum_shares": 198000000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "101/11/05"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/11/02",
+      "pledge_shares": 0,
+      "unpledge_shares": 22000000,
+      "cum_shares": 176000000,
+      "creditor": "台新國際商業銀行－建北分行",
+      "report_date": "101/11/05"
+    },
+    {
+      "identity": "D00240董事本人",
+      "name": "頂立開發實業股份有限公司",
+      "event_date": "101/11/02",
+      "pledge_shares": 0,
+      "unpledge_shares": 36000000,
+      "cum_shares": 41000000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "101/11/05"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/11/05",
+      "pledge_shares": 0,
+      "unpledge_shares": 22000000,
+      "cum_shares": 154000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "101/11/06"
+    },
+    {
+      "identity": "E00100監察人本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "101/11/05",
+      "pledge_shares": 0,
+      "unpledge_shares": 9000000,
+      "cum_shares": 47000000,
+      "creditor": "遠東國際商業銀行營業部",
+      "report_date": "101/11/06"
+    },
+    {
+      "identity": "E00100監察人本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "101/11/05",
+      "pledge_shares": 0,
+      "unpledge_shares": 8000000,
+      "cum_shares": 39000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "101/11/06"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/11/09",
+      "pledge_shares": 22000000,
+      "unpledge_shares": 0,
+      "cum_shares": 176000000,
+      "creditor": "台新國際商業銀行-建北分行",
+      "report_date": "101/11/12"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "101/11/09",
+      "pledge_shares": 104000000,
+      "unpledge_shares": 0,
+      "cum_shares": 280000000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "101/11/12"
+    },
+    {
+      "identity": "D00240董事本人",
+      "name": "頂立開發實業股份有限公司",
+      "event_date": "101/11/09",
+      "pledge_shares": 36000000,
+      "unpledge_shares": 0,
+      "cum_shares": 77000000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "101/11/12"
+    },
+    {
+      "identity": "E00100監察人本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "101/11/12",
+      "pledge_shares": 17000000,
+      "unpledge_shares": 0,
+      "cum_shares": 56000000,
+      "creditor": "台灣新光商業銀行股份有限公司",
+      "report_date": "101/11/13"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "102/01/04",
+      "pledge_shares": 22000000,
+      "unpledge_shares": 0,
+      "cum_shares": 302000000,
+      "creditor": "國際票券金融(股)公司板橋分公司",
+      "report_date": "102/01/07"
+    },
+    {
+      "identity": "B00030副董事長本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "102/01/23",
+      "pledge_shares": 4000000,
+      "unpledge_shares": 0,
+      "cum_shares": 60000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "102/01/24"
+    },
+    {
+      "identity": "B00020副董事長本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "102/01/23",
+      "pledge_shares": 22000000,
+      "unpledge_shares": 0,
+      "cum_shares": 324000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "102/01/24"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "102/02/21",
+      "pledge_shares": 39000000,
+      "unpledge_shares": 0,
+      "cum_shares": 363000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "102/02/22"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "102/02/25",
+      "pledge_shares": 22000000,
+      "unpledge_shares": 0,
+      "cum_shares": 385000000,
+      "creditor": "元大商業銀行松江分行",
+      "report_date": "102/02/26"
+    },
+    {
+      "identity": "B00030副董事長本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "102/06/13",
+      "pledge_shares": 11000000,
+      "unpledge_shares": 0,
+      "cum_shares": 71000000,
+      "creditor": "元大商業銀行松江分行",
+      "report_date": "102/06/13"
+    },
+    {
+      "identity": "B00030副董事長本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "102/06/17",
+      "pledge_shares": 0,
+      "unpledge_shares": 11000000,
+      "cum_shares": 60000000,
+      "creditor": "元大商業銀行松江分行",
+      "report_date": "102/06/17"
+    },
+    {
+      "identity": "B00030副董事長本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "102/06/18",
+      "pledge_shares": 11000000,
+      "unpledge_shares": 0,
+      "cum_shares": 71000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "102/06/19"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "102/06/28",
+      "pledge_shares": 0,
+      "unpledge_shares": 22000000,
+      "cum_shares": 363000000,
+      "creditor": "元大商業銀行松江分行",
+      "report_date": "102/07/01"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "102/07/16",
+      "pledge_shares": 22000000,
+      "unpledge_shares": 0,
+      "cum_shares": 385000000,
+      "creditor": "萬通票券金融(股)公司總公司",
+      "report_date": "102/07/17"
+    },
+    {
+      "identity": "B00030副董事長本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "102/08/16",
+      "pledge_shares": 0,
+      "unpledge_shares": 4000000,
+      "cum_shares": 67000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "102/08/16"
+    },
+    {
+      "identity": "B00030副董事長本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "102/08/16",
+      "pledge_shares": 0,
+      "unpledge_shares": 9000000,
+      "cum_shares": 58000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "102/08/16"
+    },
+    {
+      "identity": "B00030副董事長本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "102/08/19",
+      "pledge_shares": 5000000,
+      "unpledge_shares": 0,
+      "cum_shares": 63000000,
+      "creditor": "萬通票券金融(股)公司總公司",
+      "report_date": "102/08/19"
+    },
+    {
+      "identity": "B00030副董事長本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "102/08/20",
+      "pledge_shares": 6000000,
+      "unpledge_shares": 0,
+      "cum_shares": 69000000,
+      "creditor": "元大商業銀行松江分行",
+      "report_date": "102/08/20"
+    },
+    {
+      "identity": "B00030副董事長本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "102/08/30",
+      "pledge_shares": 0,
+      "unpledge_shares": 11000000,
+      "cum_shares": 58000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "102/09/02"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "102/09/25",
+      "pledge_shares": 0,
+      "unpledge_shares": 22000000,
+      "cum_shares": 363000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "102/09/26"
+    },
+    {
+      "identity": "B00030副董事長本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "102/10/03",
+      "pledge_shares": 11000000,
+      "unpledge_shares": 0,
+      "cum_shares": 69000000,
+      "creditor": "中華票券金融公司",
+      "report_date": "102/10/04"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "102/11/21",
+      "pledge_shares": 22000000,
+      "unpledge_shares": 0,
+      "cum_shares": 385000000,
+      "creditor": "萬通票券金融股份有限公司總公司",
+      "report_date": "102/11/25"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "103/02/13",
+      "pledge_shares": 0,
+      "unpledge_shares": 2700000,
+      "cum_shares": 35800000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "103/02/14"
+    },
+    {
+      "identity": "B00030副董事長本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "103/04/22",
+      "pledge_shares": 0,
+      "unpledge_shares": 6000000,
+      "cum_shares": 63000000,
+      "creditor": "元大商業銀行松江分行",
+      "report_date": "103/04/22"
+    },
+    {
+      "identity": "B00030副董事長本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "103/04/23",
+      "pledge_shares": 0,
+      "unpledge_shares": 24000000,
+      "cum_shares": 39000000,
+      "creditor": "台灣新光商業銀行股份有限公司",
+      "report_date": "103/04/24"
+    },
+    {
+      "identity": "B00030副董事長本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "103/05/06",
+      "pledge_shares": 11000000,
+      "unpledge_shares": 0,
+      "cum_shares": 50000000,
+      "creditor": "中華票券金融公司",
+      "report_date": "103/05/06"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "103/10/17",
+      "pledge_shares": 0,
+      "unpledge_shares": 39000000,
+      "cum_shares": 319000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "103/10/17"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "103/10/20",
+      "pledge_shares": 22000000,
+      "unpledge_shares": 0,
+      "cum_shares": 341000000,
+      "creditor": "中華票券金融公司",
+      "report_date": "103/10/21"
+    },
+    {
+      "identity": "B00030副董事長本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "103/10/20",
+      "pledge_shares": 11000000,
+      "unpledge_shares": 0,
+      "cum_shares": 61000000,
+      "creditor": "中華票券金融公司",
+      "report_date": "103/10/21"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "103/11/06",
+      "pledge_shares": 17000000,
+      "unpledge_shares": 0,
+      "cum_shares": 358000000,
+      "creditor": "兆豐票券金融(股)公司三重分公司",
+      "report_date": "103/11/07"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "103/12/12",
+      "pledge_shares": 0,
+      "unpledge_shares": 22000000,
+      "cum_shares": 336000000,
+      "creditor": "台新國際商業銀行-建北分行",
+      "report_date": "103/12/12"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "104/03/11",
+      "pledge_shares": 1000000,
+      "unpledge_shares": 0,
+      "cum_shares": 337000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "104/03/12"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "104/03/12",
+      "pledge_shares": 0,
+      "unpledge_shares": 14000000,
+      "cum_shares": 323000000,
+      "creditor": "萬通票券金融(股)公司總公司",
+      "report_date": "104/03/13"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "104/04/09",
+      "pledge_shares": 28000000,
+      "unpledge_shares": 0,
+      "cum_shares": 351000000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "104/04/10"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "104/04/16",
+      "pledge_shares": 0,
+      "unpledge_shares": 11000000,
+      "cum_shares": 50000000,
+      "creditor": "中華票券金融公司",
+      "report_date": "104/04/17"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "104/04/16",
+      "pledge_shares": 0,
+      "unpledge_shares": 11000000,
+      "cum_shares": 39000000,
+      "creditor": "中華票券金融公司",
+      "report_date": "104/04/17"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "104/04/17",
+      "pledge_shares": 28000000,
+      "unpledge_shares": 0,
+      "cum_shares": 379000000,
+      "creditor": "台新國際商業銀行-建北分行",
+      "report_date": "104/04/20"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "104/05/04",
+      "pledge_shares": 6800000,
+      "unpledge_shares": 0,
+      "cum_shares": 385800000,
+      "creditor": "台新國際商業銀行",
+      "report_date": "104/05/05"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "104/05/06",
+      "pledge_shares": 22000000,
+      "unpledge_shares": 0,
+      "cum_shares": 61000000,
+      "creditor": "中華票券金融公司",
+      "report_date": "104/05/07"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "104/05/06",
+      "pledge_shares": 16000000,
+      "unpledge_shares": 0,
+      "cum_shares": 77000000,
+      "creditor": "萬通票券金融(股)公司總公司",
+      "report_date": "104/05/07"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "104/10/15",
+      "pledge_shares": 0,
+      "unpledge_shares": 5000000,
+      "cum_shares": 72000000,
+      "creditor": "萬通票券金融股份有限公司總公司",
+      "report_date": "104/10/16"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "104/10/29",
+      "pledge_shares": 0,
+      "unpledge_shares": 11000000,
+      "cum_shares": 61000000,
+      "creditor": "中華票券金融公司",
+      "report_date": "104/10/30"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "104/10/29",
+      "pledge_shares": 0,
+      "unpledge_shares": 22000000,
+      "cum_shares": 39000000,
+      "creditor": "中華票券金融公司",
+      "report_date": "104/10/30"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "104/11/09",
+      "pledge_shares": 0,
+      "unpledge_shares": 23000000,
+      "cum_shares": 362800000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "104/11/10"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "104/12/25",
+      "pledge_shares": 0,
+      "unpledge_shares": 11000000,
+      "cum_shares": 351800000,
+      "creditor": "元大商業銀行松江分行",
+      "report_date": "104/12/28"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/01/13",
+      "pledge_shares": 10000000,
+      "unpledge_shares": 0,
+      "cum_shares": 361800000,
+      "creditor": "大中票券金融股份有限公司",
+      "report_date": "105/01/14"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "105/01/19",
+      "pledge_shares": 10000000,
+      "unpledge_shares": 0,
+      "cum_shares": 49000000,
+      "creditor": "大中票券金融股份有限公司",
+      "report_date": "105/01/20"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/02/25",
+      "pledge_shares": 0,
+      "unpledge_shares": 10000000,
+      "cum_shares": 351800000,
+      "creditor": "兆豐票券金融股份有限公司三重分公司",
+      "report_date": "105/02/25"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "105/04/06",
+      "pledge_shares": 0,
+      "unpledge_shares": 10000000,
+      "cum_shares": 39000000,
+      "creditor": "大中票券金融股份有限公司",
+      "report_date": "105/04/07"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/05/18",
+      "pledge_shares": 0,
+      "unpledge_shares": 44000000,
+      "cum_shares": 307800000,
+      "creditor": "國際票券金融(股)公司板橋分公司",
+      "report_date": "105/05/19"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/05/18",
+      "pledge_shares": 0,
+      "unpledge_shares": 44000000,
+      "cum_shares": 263800000,
+      "creditor": "萬通票券金融(股)公司總公司",
+      "report_date": "105/05/19"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/05/18",
+      "pledge_shares": 0,
+      "unpledge_shares": 48000000,
+      "cum_shares": 215800000,
+      "creditor": "兆豐票券金融(股)公司三重分公司",
+      "report_date": "105/05/19"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/05/19",
+      "pledge_shares": 33000000,
+      "unpledge_shares": 0,
+      "cum_shares": 248800000,
+      "creditor": "元大商業銀行松江分行",
+      "report_date": "105/05/20"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/05/19",
+      "pledge_shares": 24000000,
+      "unpledge_shares": 0,
+      "cum_shares": 272800000,
+      "creditor": "台新國際商業銀行",
+      "report_date": "105/05/20"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/05/19",
+      "pledge_shares": 52000000,
+      "unpledge_shares": 0,
+      "cum_shares": 324800000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "105/05/20"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "105/05/25",
+      "pledge_shares": 12000000,
+      "unpledge_shares": 0,
+      "cum_shares": 51000000,
+      "creditor": "台灣新光商業銀行股份有限公司",
+      "report_date": "105/05/26"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "105/06/02",
+      "pledge_shares": 0,
+      "unpledge_shares": 16000000,
+      "cum_shares": 35000000,
+      "creditor": "萬通票券金融(股)公司總公司",
+      "report_date": "105/06/03"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/06/02",
+      "pledge_shares": 25000000,
+      "unpledge_shares": 0,
+      "cum_shares": 349800000,
+      "creditor": "臺灣工業銀行股份有限公司",
+      "report_date": "105/06/03"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/06/04",
+      "pledge_shares": 0,
+      "unpledge_shares": 6000000,
+      "cum_shares": 343800000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "105/06/06"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/06/06",
+      "pledge_shares": 0,
+      "unpledge_shares": 1000000,
+      "cum_shares": 342800000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "105/06/06"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/06/16",
+      "pledge_shares": 0,
+      "unpledge_shares": 10000000,
+      "cum_shares": 332800000,
+      "creditor": "大中票券金融股份有限公司",
+      "report_date": "105/06/17"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/09/05",
+      "pledge_shares": 20000000,
+      "unpledge_shares": 0,
+      "cum_shares": 352800000,
+      "creditor": "萬通票券金融(股)公司總公司",
+      "report_date": "105/09/06"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/09/06",
+      "pledge_shares": 11000000,
+      "unpledge_shares": 0,
+      "cum_shares": 363800000,
+      "creditor": "國際票券金融(股)公司板橋分公司",
+      "report_date": "105/09/07"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "105/09/14",
+      "pledge_shares": 1000000,
+      "unpledge_shares": 0,
+      "cum_shares": 36000000,
+      "creditor": "台灣新光商業銀行股份有限公司",
+      "report_date": "105/09/14"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/10/05",
+      "pledge_shares": 0,
+      "unpledge_shares": 22000000,
+      "cum_shares": 341800000,
+      "creditor": "元大商業銀行松江分行",
+      "report_date": "105/10/06"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/10/17",
+      "pledge_shares": 5000000,
+      "unpledge_shares": 0,
+      "cum_shares": 346800000,
+      "creditor": "中華票券金融公司",
+      "report_date": "105/10/18"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/11/23",
+      "pledge_shares": 0,
+      "unpledge_shares": 8000000,
+      "cum_shares": 338800000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "105/11/24"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/12/06",
+      "pledge_shares": 0,
+      "unpledge_shares": 33000000,
+      "cum_shares": 305800000,
+      "creditor": "元大商業銀行松江分行",
+      "report_date": "105/12/07"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/12/16",
+      "pledge_shares": 45000000,
+      "unpledge_shares": 0,
+      "cum_shares": 350800000,
+      "creditor": "台新國際商業銀行",
+      "report_date": "105/12/19"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "105/12/28",
+      "pledge_shares": 33400000,
+      "unpledge_shares": 0,
+      "cum_shares": 69400000,
+      "creditor": "大中票券金融股份有限公司",
+      "report_date": "105/12/28"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/12/28",
+      "pledge_shares": 0,
+      "unpledge_shares": 1000000,
+      "cum_shares": 349800000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "105/12/28"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "105/12/28",
+      "pledge_shares": 0,
+      "unpledge_shares": 80000000,
+      "cum_shares": 269800000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "105/12/28"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "105/12/30",
+      "pledge_shares": 0,
+      "unpledge_shares": 36000000,
+      "cum_shares": 33400000,
+      "creditor": "台灣新光商業銀行股份有限公司",
+      "report_date": "105/12/30"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/01/05",
+      "pledge_shares": 20000000,
+      "unpledge_shares": 0,
+      "cum_shares": 289800000,
+      "creditor": "大中票券金融股份有限公司",
+      "report_date": "106/01/06"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/01/18",
+      "pledge_shares": 0,
+      "unpledge_shares": 20000000,
+      "cum_shares": 269800000,
+      "creditor": "萬通票券金融(股)公司總公司",
+      "report_date": "106/01/18"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/02/14",
+      "pledge_shares": 68000000,
+      "unpledge_shares": 0,
+      "cum_shares": 337800000,
+      "creditor": "台灣新光商業銀行股份有限公司",
+      "report_date": "106/02/16"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/02/21",
+      "pledge_shares": 0,
+      "unpledge_shares": 55000000,
+      "cum_shares": 282800000,
+      "creditor": "中華票券金融公司",
+      "report_date": "106/02/22"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/03/22",
+      "pledge_shares": 22000000,
+      "unpledge_shares": 0,
+      "cum_shares": 304800000,
+      "creditor": "中華票券金融公司",
+      "report_date": "106/03/23"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/04/13",
+      "pledge_shares": 16000000,
+      "unpledge_shares": 0,
+      "cum_shares": 320800000,
+      "creditor": "中華票券金融公司",
+      "report_date": "106/04/14"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/04/14",
+      "pledge_shares": 15000000,
+      "unpledge_shares": 0,
+      "cum_shares": 335800000,
+      "creditor": "國際票券金融股份有限公司板橋分公司",
+      "report_date": "106/04/14"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/04/20",
+      "pledge_shares": 3000000,
+      "unpledge_shares": 0,
+      "cum_shares": 338800000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "106/04/20"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/04/24",
+      "pledge_shares": 42000000,
+      "unpledge_shares": 0,
+      "cum_shares": 380800000,
+      "creditor": "元大商業銀行松江分行",
+      "report_date": "106/04/24"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/05/08",
+      "pledge_shares": 0,
+      "unpledge_shares": 16000000,
+      "cum_shares": 364800000,
+      "creditor": "中華票券金融公司",
+      "report_date": "106/05/09"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/05/10",
+      "pledge_shares": 0,
+      "unpledge_shares": 3000000,
+      "cum_shares": 361800000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "106/05/11"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/06/16",
+      "pledge_shares": 9027000,
+      "unpledge_shares": 0,
+      "cum_shares": 370827000,
+      "creditor": "國際票券金融(股)公司板橋分公司",
+      "report_date": "106/06/18"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/06/26",
+      "pledge_shares": 0,
+      "unpledge_shares": 33800000,
+      "cum_shares": 337027000,
+      "creditor": "台新國際商業銀行",
+      "report_date": "106/06/27"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/06/27",
+      "pledge_shares": 48000000,
+      "unpledge_shares": 0,
+      "cum_shares": 385027000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "106/06/27"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/07/26",
+      "pledge_shares": 0,
+      "unpledge_shares": 19000000,
+      "cum_shares": 366027000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "106/07/27"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/07/28",
+      "pledge_shares": 0,
+      "unpledge_shares": 39000000,
+      "cum_shares": 327027000,
+      "creditor": "兆豐國際商業銀行總管理處國外部",
+      "report_date": "106/07/31"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/07/31",
+      "pledge_shares": 31500000,
+      "unpledge_shares": 0,
+      "cum_shares": 358527000,
+      "creditor": "台新國際商業銀行",
+      "report_date": "106/08/01"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/08/17",
+      "pledge_shares": 25000000,
+      "unpledge_shares": 0,
+      "cum_shares": 383527000,
+      "creditor": "中華票券金融公司",
+      "report_date": "106/08/18"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/08/24",
+      "pledge_shares": 0,
+      "unpledge_shares": 29000000,
+      "cum_shares": 354527000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "106/08/25"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/09/20",
+      "pledge_shares": 19100000,
+      "unpledge_shares": 0,
+      "cum_shares": 373627000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "106/09/21"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "106/09/22",
+      "pledge_shares": 12000000,
+      "unpledge_shares": 0,
+      "cum_shares": 385627000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "106/09/22"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "106/10/16",
+      "pledge_shares": 20000000,
+      "unpledge_shares": 0,
+      "cum_shares": 53400000,
+      "creditor": "萬通票券金融(股)公司總公司",
+      "report_date": "106/10/17"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "107/01/05",
+      "pledge_shares": 18000000,
+      "unpledge_shares": 0,
+      "cum_shares": 71400000,
+      "creditor": "中華票券金融公司",
+      "report_date": "107/01/08"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "107/01/18",
+      "pledge_shares": 0,
+      "unpledge_shares": 19400000,
+      "cum_shares": 52000000,
+      "creditor": "大中票券金融股份有限公司",
+      "report_date": "107/01/19"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "107/03/02",
+      "pledge_shares": 0,
+      "unpledge_shares": 34000000,
+      "cum_shares": 351627000,
+      "creditor": "台灣新光商業銀行股份有限公司",
+      "report_date": "107/03/02"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "107/04/09",
+      "pledge_shares": 34000000,
+      "unpledge_shares": 0,
+      "cum_shares": 385627000,
+      "creditor": "台灣新光商業銀行股份有限公司",
+      "report_date": "107/04/10"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "107/04/13",
+      "pledge_shares": 0,
+      "unpledge_shares": 18000000,
+      "cum_shares": 34000000,
+      "creditor": "萬通票券金融股份有限公司總公司",
+      "report_date": "107/04/13"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "107/05/02",
+      "pledge_shares": 7000000,
+      "unpledge_shares": 0,
+      "cum_shares": 41000000,
+      "creditor": "中華票券金融公司",
+      "report_date": "107/05/03"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "107/05/02",
+      "pledge_shares": 11000000,
+      "unpledge_shares": 0,
+      "cum_shares": 52000000,
+      "creditor": "大中票券金融股份有限公司",
+      "report_date": "107/05/03"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "107/05/29",
+      "pledge_shares": 9000000,
+      "unpledge_shares": 0,
+      "cum_shares": 61000000,
+      "creditor": "大中票券金融股份有限公司",
+      "report_date": "107/05/29"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "107/05/30",
+      "pledge_shares": 0,
+      "unpledge_shares": 18000000,
+      "cum_shares": 43000000,
+      "creditor": "中華票券金融公司",
+      "report_date": "107/05/30"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "107/06/14",
+      "pledge_shares": 18000000,
+      "unpledge_shares": 0,
+      "cum_shares": 61000000,
+      "creditor": "萬通票券金融(股)公司總公司",
+      "report_date": "107/06/15"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "107/07/17",
+      "pledge_shares": 0,
+      "unpledge_shares": 31100000,
+      "cum_shares": 354527000,
+      "creditor": "遠東國際商業銀行",
+      "report_date": "107/07/18"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "107/07/24",
+      "pledge_shares": 0,
+      "unpledge_shares": 35027000,
+      "cum_shares": 319500000,
+      "creditor": "國際票券金融(股)公司板橋分公司",
+      "report_date": "107/07/25"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "107/07/25",
+      "pledge_shares": 0,
+      "unpledge_shares": 20000000,
+      "cum_shares": 299500000,
+      "creditor": "大中票券金融股份有限公司",
+      "report_date": "107/07/26"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "107/07/25",
+      "pledge_shares": 0,
+      "unpledge_shares": 68000000,
+      "cum_shares": 231500000,
+      "creditor": "台灣新光商業銀行股份有限公司",
+      "report_date": "107/07/26"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "107/07/25",
+      "pledge_shares": 0,
+      "unpledge_shares": 42000000,
+      "cum_shares": 189500000,
+      "creditor": "元大商業銀行松江分行",
+      "report_date": "107/07/26"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "107/07/25",
+      "pledge_shares": 0,
+      "unpledge_shares": 63000000,
+      "cum_shares": 126500000,
+      "creditor": "中華票券金融公司",
+      "report_date": "107/07/26"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "107/07/25",
+      "pledge_shares": 0,
+      "unpledge_shares": 25000000,
+      "cum_shares": 101500000,
+      "creditor": "王道商業銀行股份有限公司",
+      "report_date": "107/07/26"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "107/07/25",
+      "pledge_shares": 0,
+      "unpledge_shares": 28000000,
+      "cum_shares": 73500000,
+      "creditor": "台新國際商業銀行-建北分行",
+      "report_date": "107/07/26"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "頂基開發股份有限公司",
+      "event_date": "107/07/25",
+      "pledge_shares": 0,
+      "unpledge_shares": 73500000,
+      "cum_shares": 0,
+      "creditor": "台新國際商業銀行",
+      "report_date": "107/07/26"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "107/07/25",
+      "pledge_shares": 0,
+      "unpledge_shares": 20000000,
+      "cum_shares": 41000000,
+      "creditor": "萬通票券金融(股)公司總公司",
+      "report_date": "107/07/26"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "107/07/25",
+      "pledge_shares": 0,
+      "unpledge_shares": 34000000,
+      "cum_shares": 7000000,
+      "creditor": "大中票券金融股份有限公司",
+      "report_date": "107/07/26"
+    },
+    {
+      "identity": "D00260董事本人",
+      "name": "頂固開發股份有限公司",
+      "event_date": "107/07/25",
+      "pledge_shares": 0,
+      "unpledge_shares": 7000000,
+      "cum_shares": 0,
+      "creditor": "中華票券金融公司",
+      "report_date": "107/07/26"
+    },
+    {
+      "identity": "L00070大股東本人",
+      "name": "成美創投股份有限公司",
+      "event_date": "115/10/28",
+      "pledge_shares": 253930486,
+      "unpledge_shares": 0,
+      "cum_shares": 253930486,
+      "creditor": "台新國際商業銀行",
+      "report_date": "115/10/29"
+    }
   ]
 }
