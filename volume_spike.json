@@ -1,5 +1,5 @@
 {
-  "updateTime": "2026-11-23T18:46:47.194605+08:00",
+  "updateTime": "2026-11-24T07:46:31.398813+08:00",
   "tradeDate": "2026-11-23",
   "totalCount": 4,
   "conditions": [
@@ -23,11 +23,11 @@
       "change": -6.3,
       "transaction": 2238,
       "date": "2026-11-23",
-      "today_vol_lots": 6669,
+      "today_vol_lots": 6651,
       "ma10_vol_lots": 1132,
       "ma10w_vol_lots": 1089,
-      "vol_multiple": 5.89,
-      "vol_week_multiple": 6.12,
+      "vol_multiple": 5.87,
+      "vol_week_multiple": 6.11,
       "rank": 1
     },
     {
@@ -43,11 +43,11 @@
       "change": 4.05,
       "transaction": 3195,
       "date": "2026-11-23",
-      "today_vol_lots": 4715,
+      "today_vol_lots": 4701,
       "ma10_vol_lots": 1074,
       "ma10w_vol_lots": 245,
-      "vol_multiple": 4.39,
-      "vol_week_multiple": 19.24,
+      "vol_multiple": 4.38,
+      "vol_week_multiple": 19.18,
       "rank": 2
     },
     {
@@ -63,11 +63,11 @@
       "change": -280.0,
       "transaction": 26446,
       "date": "2026-11-23",
-      "today_vol_lots": 8623,
+      "today_vol_lots": 8398,
       "ma10_vol_lots": 2799,
       "ma10w_vol_lots": 1833,
-      "vol_multiple": 3.08,
-      "vol_week_multiple": 4.7,
+      "vol_multiple": 3.0,
+      "vol_week_multiple": 4.58,
       "rank": 4
     }
   ],
@@ -85,11 +85,11 @@
       "change": 2.35,
       "transaction": 4348,
       "date": "2026-11-23",
-      "today_vol_lots": 7466,
+      "today_vol_lots": 7444,
       "ma10_vol_lots": 2238,
       "ma10w_vol_lots": 922,
-      "vol_multiple": 3.34,
-      "vol_week_multiple": 8.09,
+      "vol_multiple": 3.33,
+      "vol_week_multiple": 8.07,
       "rank": 3
     }
   ],
@@ -107,11 +107,11 @@
       "change": -6.3,
       "transaction": 2238,
       "date": "2026-11-23",
-      "today_vol_lots": 6669,
+      "today_vol_lots": 6651,
       "ma10_vol_lots": 1132,
       "ma10w_vol_lots": 1089,
-      "vol_multiple": 5.89,
-      "vol_week_multiple": 6.12,
+      "vol_multiple": 5.87,
+      "vol_week_multiple": 6.11,
       "rank": 1
     },
     {
@@ -127,11 +127,11 @@
       "change": 4.05,
       "transaction": 3195,
       "date": "2026-11-23",
-      "today_vol_lots": 4715,
+      "today_vol_lots": 4701,
       "ma10_vol_lots": 1074,
       "ma10w_vol_lots": 245,
-      "vol_multiple": 4.39,
-      "vol_week_multiple": 19.24,
+      "vol_multiple": 4.38,
+      "vol_week_multiple": 19.18,
       "rank": 2
     },
     {
@@ -147,11 +147,11 @@
       "change": 2.35,
       "transaction": 4348,
       "date": "2026-11-23",
-      "today_vol_lots": 7466,
+      "today_vol_lots": 7444,
       "ma10_vol_lots": 2238,
       "ma10w_vol_lots": 922,
-      "vol_multiple": 3.34,
-      "vol_week_multiple": 8.09,
+      "vol_multiple": 3.33,
+      "vol_week_multiple": 8.07,
       "rank": 3
     },
     {
@@ -167,11 +167,11 @@
       "change": -280.0,
       "transaction": 26446,
       "date": "2026-11-23",
-      "today_vol_lots": 8623,
+      "today_vol_lots": 8398,
       "ma10_vol_lots": 2799,
       "ma10w_vol_lots": 1833,
-      "vol_multiple": 3.08,
-      "vol_week_multiple": 4.7,
+      "vol_multiple": 3.0,
+      "vol_week_multiple": 4.58,
       "rank": 4
     }
   ]
