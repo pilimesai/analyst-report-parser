@@ -709,6 +709,76 @@
       "cum_shares": 9750000,
       "creditor": "國際票券金融股份有限公司",
       "report_date": "115/11/03"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "陳志昌",
+      "event_date": "115/11/09",
+      "pledge_shares": 22000,
+      "unpledge_shares": 0,
+      "cum_shares": 600000,
+      "creditor": "永豐商業銀行（股）台北分行",
+      "report_date": "115/11/10"
+    },
+    {
+      "identity": "D00030董事本人",
+      "name": "祥鼎投資股份有限公司",
+      "event_date": "115/11/09",
+      "pledge_shares": 500000,
+      "unpledge_shares": 0,
+      "cum_shares": 16200000,
+      "creditor": "永豐商業銀行（股）台北分行",
+      "report_date": "115/11/10"
+    },
+    {
+      "identity": "D00050董事本人",
+      "name": "賴俊成",
+      "event_date": "115/11/09",
+      "pledge_shares": 50000,
+      "unpledge_shares": 0,
+      "cum_shares": 4359000,
+      "creditor": "永豐商業銀行（股）台北分行",
+      "report_date": "115/11/10"
+    },
+    {
+      "identity": "A00015董事長之代表人配偶",
+      "name": "陳杏雪",
+      "event_date": "115/11/09",
+      "pledge_shares": 30000,
+      "unpledge_shares": 0,
+      "cum_shares": 2104000,
+      "creditor": "永豐商業銀行（股）台北分行",
+      "report_date": "115/11/10"
+    },
+    {
+      "identity": "A00011董事長之法人代表人",
+      "name": "賴文祥",
+      "event_date": "115/11/09",
+      "pledge_shares": 100000,
+      "unpledge_shares": 0,
+      "cum_shares": 4833000,
+      "creditor": "永豐商業銀行（股）台北分行",
+      "report_date": "115/11/10"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "向鋒投資股份有限公司",
+      "event_date": "115/11/13",
+      "pledge_shares": 500000,
+      "unpledge_shares": 0,
+      "cum_shares": 10250000,
+      "creditor": "國際票券金融股份有限公司",
+      "report_date": "115/11/16"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "向鋒投資股份有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 2500000,
+      "unpledge_shares": 0,
+      "cum_shares": 12750000,
+      "creditor": "國際票券金融股份有限公司",
+      "report_date": "115/11/23"
     }
   ],
   "7823": [
@@ -1035,6 +1105,36 @@
       "cum_shares": 444208,
       "creditor": "台新國際商業銀行股份有限公司建北分公司",
       "report_date": "115/10/15"
+    },
+    {
+      "identity": "A00020董事長本人",
+      "name": "立康企管顧問股份有限公司",
+      "event_date": "115/11/10",
+      "pledge_shares": 3842369,
+      "unpledge_shares": 0,
+      "cum_shares": 12352369,
+      "creditor": "中華票券金融股份有限公司板橋分公司",
+      "report_date": "115/11/11"
+    },
+    {
+      "identity": "A00021董事長之法人代表人",
+      "name": "蔡鎮隆",
+      "event_date": "115/11/11",
+      "pledge_shares": 638513,
+      "unpledge_shares": 0,
+      "cum_shares": 638513,
+      "creditor": "中華票券金融股份有限公司板橋分公司",
+      "report_date": "115/11/12"
+    },
+    {
+      "identity": "G00024總經理利用他人名義持有者",
+      "name": "悅思創藝有限公司",
+      "event_date": "115/11/13",
+      "pledge_shares": 0,
+      "unpledge_shares": 6666000,
+      "cum_shares": 12098000,
+      "creditor": "中華票券金融股份有限公司板橋分公司",
+      "report_date": "115/11/16"
     }
   ],
   "6464": [
@@ -5413,6 +5513,16 @@
       "cum_shares": 5715000,
       "creditor": "台北富邦商業銀行安和分行",
       "report_date": "115/10/07"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "詠江投資股份有限公司",
+      "event_date": "115/11/09",
+      "pledge_shares": 97000,
+      "unpledge_shares": 0,
+      "cum_shares": 5812000,
+      "creditor": "永豐商業銀行(股)台北分行",
+      "report_date": "115/11/10"
     }
   ],
   "3028": [
@@ -6007,6 +6117,16 @@
       "cum_shares": 63000000,
       "creditor": "兆豐國際商業銀行股份有限公司內湖分公司",
       "report_date": "115/09/22"
+    },
+    {
+      "identity": "L00010大股東本人",
+      "name": "大聯大控股股份有限公司",
+      "event_date": "115/11/17",
+      "pledge_shares": 28000000,
+      "unpledge_shares": 0,
+      "cum_shares": 91000000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "115/11/18"
     }
   ],
   "7740": [
@@ -6109,6 +6229,66 @@
       "cum_shares": 1926000,
       "creditor": "上海商業儲蓄銀行股份有限公司竹北分公司",
       "report_date": "115/11/11"
+    },
+    {
+      "identity": "A00011董事長之法人代表人",
+      "name": "林聖澤",
+      "event_date": "115/11/13",
+      "pledge_shares": 200000,
+      "unpledge_shares": 0,
+      "cum_shares": 2126000,
+      "creditor": "上海商業儲蓄銀行股份有限公司竹北分公司",
+      "report_date": "115/11/16"
+    },
+    {
+      "identity": "A00011董事長之法人代表人",
+      "name": "林聖澤",
+      "event_date": "115/11/19",
+      "pledge_shares": 250000,
+      "unpledge_shares": 0,
+      "cum_shares": 2376000,
+      "creditor": "上海商業儲蓄銀行股份有限公司竹北分公司",
+      "report_date": "115/11/20"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "元源控股股份有限公司",
+      "event_date": "115/11/19",
+      "pledge_shares": 400000,
+      "unpledge_shares": 0,
+      "cum_shares": 1750000,
+      "creditor": "新光商業銀行股份有限公司營業部",
+      "report_date": "115/11/20"
+    },
+    {
+      "identity": "A00011董事長之法人代表人",
+      "name": "林聖澤",
+      "event_date": "115/11/20",
+      "pledge_shares": 0,
+      "unpledge_shares": 51000,
+      "cum_shares": 2325000,
+      "creditor": "新光商業銀行股份有限公司營業部",
+      "report_date": "115/11/23"
+    },
+    {
+      "identity": "A00011董事長之法人代表人",
+      "name": "林聖澤",
+      "event_date": "115/11/20",
+      "pledge_shares": 0,
+      "unpledge_shares": 250000,
+      "cum_shares": 2075000,
+      "creditor": "新光商業銀行股份有限公司營業部",
+      "report_date": "115/11/23"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "元源控股股份有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 200000,
+      "unpledge_shares": 0,
+      "cum_shares": 1950000,
+      "creditor": "新光商業銀行股份有限公司營業部",
+      "report_date": "115/11/23"
     }
   ],
   "6830": [
@@ -10549,6 +10729,26 @@
       "cum_shares": 1404000,
       "creditor": "台中商業銀行股份有限公司板橋分公司",
       "report_date": "115/10/08"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "鉅泰資本股份有限公司",
+      "event_date": "115/11/06",
+      "pledge_shares": 576000,
+      "unpledge_shares": 0,
+      "cum_shares": 1980000,
+      "creditor": "台中商業銀行股份有限公司板橋分公司",
+      "report_date": "115/11/09"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "鉅泰資本股份有限公司",
+      "event_date": "115/11/19",
+      "pledge_shares": 472000,
+      "unpledge_shares": 0,
+      "cum_shares": 2452000,
+      "creditor": "台中商業銀行股份有限公司板橋分公司",
+      "report_date": "115/11/20"
     }
   ],
   "7584": [
@@ -11985,6 +12185,36 @@
       "cum_shares": 200000,
       "creditor": "元大商業銀行股份有限公司",
       "report_date": "115/11/09"
+    },
+    {
+      "identity": "H00032副總經理配偶",
+      "name": "孫清雪",
+      "event_date": "115/11/18",
+      "pledge_shares": 14000,
+      "unpledge_shares": 0,
+      "cum_shares": 309000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "115/11/19"
+    },
+    {
+      "identity": "H00030副總經理本人",
+      "name": "張輝哲",
+      "event_date": "115/11/18",
+      "pledge_shares": 23000,
+      "unpledge_shares": 0,
+      "cum_shares": 223000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "115/11/19"
+    },
+    {
+      "identity": "H00060副總經理本人",
+      "name": "潘毓豪",
+      "event_date": "115/11/19",
+      "pledge_shares": 30000,
+      "unpledge_shares": 0,
+      "cum_shares": 230000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "115/11/20"
     }
   ],
   "2236": [
@@ -12367,6 +12597,16 @@
       "cum_shares": 16070000,
       "creditor": "吳譽文",
       "report_date": "115/10/12"
+    },
+    {
+      "identity": "D00024董事利用他人名義持有者",
+      "name": "YIDA INVESTMENTS PTE. LTD.",
+      "event_date": "115/11/19",
+      "pledge_shares": 400000,
+      "unpledge_shares": 0,
+      "cum_shares": 16470000,
+      "creditor": "吳譽文",
+      "report_date": "115/11/20"
     }
   ],
   "6589": [
@@ -15407,6 +15647,16 @@
       "cum_shares": 31340000,
       "creditor": "彰化商業銀行股份有限公司北高雄分行",
       "report_date": "115/11/09"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "正展投資顧問股份有限公司",
+      "event_date": "115/11/19",
+      "pledge_shares": 0,
+      "unpledge_shares": 500000,
+      "cum_shares": 30840000,
+      "creditor": "臺灣新光商業銀行股份有限公司屏東分公司",
+      "report_date": "115/11/20"
     }
   ],
   "2030": [
@@ -17993,6 +18243,46 @@
       "cum_shares": 0,
       "creditor": "元大證券金融股份有限公司",
       "report_date": "115/10/15"
+    },
+    {
+      "identity": "D00030董事本人",
+      "name": "儷榮科技股份有限公司",
+      "event_date": "115/11/10",
+      "pledge_shares": 600000,
+      "unpledge_shares": 0,
+      "cum_shares": 36680000,
+      "creditor": "華南商業銀行龍江分行",
+      "report_date": "115/11/11"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "歐室食品股份有限公司",
+      "event_date": "115/11/10",
+      "pledge_shares": 300000,
+      "unpledge_shares": 0,
+      "cum_shares": 1080000,
+      "creditor": "華南商業銀行龍江分行",
+      "report_date": "115/11/11"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "佳軒科技股份有限公司",
+      "event_date": "115/11/10",
+      "pledge_shares": 500000,
+      "unpledge_shares": 0,
+      "cum_shares": 8000000,
+      "creditor": "華南商業銀行龍江分行",
+      "report_date": "115/11/11"
+    },
+    {
+      "identity": "G00010總經理本人",
+      "name": "許瑞寶",
+      "event_date": "115/11/20",
+      "pledge_shares": 0,
+      "unpledge_shares": 1800000,
+      "cum_shares": 1600000,
+      "creditor": "台新綜合證券股份有限公司不限用途款項借貸業務質權人帳戶",
+      "report_date": "115/11/23"
     }
   ],
   "8349": [
@@ -19149,6 +19439,66 @@
       "cum_shares": 192000,
       "creditor": "第一商業銀行股份有限公司安和分公司",
       "report_date": "115/09/16"
+    },
+    {
+      "identity": "J00070協理本人",
+      "name": "林宏恩",
+      "event_date": "115/11/11",
+      "pledge_shares": 20000,
+      "unpledge_shares": 0,
+      "cum_shares": 62000,
+      "creditor": "一銀松江分行",
+      "report_date": "115/11/12"
+    },
+    {
+      "identity": "H00064副總經理利用他人名義持有者",
+      "name": "阿睿創新股份有限公司",
+      "event_date": "115/11/18",
+      "pledge_shares": 100000,
+      "unpledge_shares": 0,
+      "cum_shares": 500000,
+      "creditor": "第一商業銀行股份有限公司安和分公司",
+      "report_date": "115/11/19"
+    },
+    {
+      "identity": "H00020副總經理本人",
+      "name": "陳冠穎",
+      "event_date": "115/11/19",
+      "pledge_shares": 24000,
+      "unpledge_shares": 0,
+      "cum_shares": 156000,
+      "creditor": "第一商業銀行股份有限公司安和分公司",
+      "report_date": "115/11/20"
+    },
+    {
+      "identity": "D00060董事本人",
+      "name": "周志銘",
+      "event_date": "115/11/19",
+      "pledge_shares": 200000,
+      "unpledge_shares": 0,
+      "cum_shares": 712000,
+      "creditor": "第一商業銀行股份有限公司安和分公司",
+      "report_date": "115/11/20"
+    },
+    {
+      "identity": "H00060副總經理本人",
+      "name": "陳鏡廉",
+      "event_date": "115/11/19",
+      "pledge_shares": 180000,
+      "unpledge_shares": 0,
+      "cum_shares": 180000,
+      "creditor": "第一商業銀行股份有限公司安和分公司",
+      "report_date": "115/11/20"
+    },
+    {
+      "identity": "J00040協理本人",
+      "name": "蕭雅婷",
+      "event_date": "115/11/20",
+      "pledge_shares": 50000,
+      "unpledge_shares": 0,
+      "cum_shares": 190000,
+      "creditor": "第一商業銀行股份有限公司安和分公司",
+      "report_date": "115/11/23"
     }
   ],
   "1504": [
@@ -22037,6 +22387,46 @@
       "cum_shares": 4665000,
       "creditor": "聯邦商業銀行營業部",
       "report_date": "115/09/14"
+    },
+    {
+      "identity": "D00044董事利用他人名義持有者",
+      "name": "Ｒｉｃｈ  Ｃｌｉｍｅｓ  Ｌｔｄ．",
+      "event_date": "115/10/27",
+      "pledge_shares": 0,
+      "unpledge_shares": 430000,
+      "cum_shares": 4235000,
+      "creditor": "台中商業銀行股份有限公司竹北分公司",
+      "report_date": "115/10/28"
+    },
+    {
+      "identity": "D00044董事利用他人名義持有者",
+      "name": "Ｒｉｃｈ  Ｃｌｉｍｅｓ  Ｌｔｄ．",
+      "event_date": "115/11/05",
+      "pledge_shares": 200000,
+      "unpledge_shares": 0,
+      "cum_shares": 4435000,
+      "creditor": "台新國際商業銀行股份有限公司建北分公司",
+      "report_date": "115/11/06"
+    },
+    {
+      "identity": "D00044董事利用他人名義持有者",
+      "name": "Ｒｉｃｈ  Ｃｌｉｍｅｓ  Ｌｔｄ．",
+      "event_date": "115/11/06",
+      "pledge_shares": 0,
+      "unpledge_shares": 190000,
+      "cum_shares": 4245000,
+      "creditor": "第一商業銀行中山分行",
+      "report_date": "115/11/09"
+    },
+    {
+      "identity": "D00044董事利用他人名義持有者",
+      "name": "Ｒｉｃｈ  Ｃｌｉｍｅｓ  Ｌｔｄ．",
+      "event_date": "115/11/10",
+      "pledge_shares": 410000,
+      "unpledge_shares": 0,
+      "cum_shares": 4655000,
+      "creditor": "聯邦商業銀行營業部",
+      "report_date": "115/11/11"
     }
   ],
   "2108": [
@@ -23365,6 +23755,16 @@
       "cum_shares": 15271254,
       "creditor": "京城商業銀行松山分行",
       "report_date": "115/10/29"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "太登太陽能股份有限公司",
+      "event_date": "115/11/03",
+      "pledge_shares": 1000000,
+      "unpledge_shares": 0,
+      "cum_shares": 16271254,
+      "creditor": "京城商業銀行松山分行",
+      "report_date": "115/11/04"
     }
   ],
   "5274": [
@@ -27325,6 +27725,16 @@
       "cum_shares": 1137500,
       "creditor": "元大商業銀行股份有限公司",
       "report_date": "115/09/09"
+    },
+    {
+      "identity": "D00060董事本人",
+      "name": "正億企管顧問股份有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 200000,
+      "unpledge_shares": 1037500,
+      "cum_shares": 3312500,
+      "creditor": "中華票券金融股份有限公司台中分公司",
+      "report_date": "115/11/23"
     }
   ],
   "9917": [
@@ -31197,6 +31607,16 @@
       "cum_shares": 8135000,
       "creditor": "元大證券金融股份有限公司",
       "report_date": "115/09/08"
+    },
+    {
+      "identity": "B00010副董事長本人",
+      "name": "源信投資有限公司",
+      "event_date": "115/11/19",
+      "pledge_shares": 250000,
+      "unpledge_shares": 0,
+      "cum_shares": 8385000,
+      "creditor": "國際票券金融股份有限公司",
+      "report_date": "115/11/20"
     }
   ],
   "2504": [
@@ -32719,6 +33139,16 @@
       "cum_shares": 108000,
       "creditor": "第一金證不限用途質權人專戶",
       "report_date": "115/11/02"
+    },
+    {
+      "identity": "G00014總經理利用他人名義持有者",
+      "name": "邑寶投資有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 50000,
+      "unpledge_shares": 0,
+      "cum_shares": 393000,
+      "creditor": "第一金證不限用途質權人專戶",
+      "report_date": "115/11/23"
     }
   ],
   "3703": [
@@ -44023,6 +44453,16 @@
       "cum_shares": 0,
       "creditor": "國泰世華銀行",
       "report_date": "115/10/12"
+    },
+    {
+      "identity": "J00040協理本人",
+      "name": "林俊弘",
+      "event_date": "115/11/06",
+      "pledge_shares": 10000,
+      "unpledge_shares": 0,
+      "cum_shares": 71000,
+      "creditor": "凱基證券股份有限公司不限用途款項借貸擔保品設質專戶",
+      "report_date": "115/11/09"
     }
   ],
   "3455": [
@@ -50567,6 +51007,16 @@
       "cum_shares": 69057000,
       "creditor": "合作金庫票券金融股份有限公司",
       "report_date": "115/11/12"
+    },
+    {
+      "identity": "L00020大股東本人",
+      "name": "南冠輪胎股份有限公司",
+      "event_date": "115/11/13",
+      "pledge_shares": 4000000,
+      "unpledge_shares": 0,
+      "cum_shares": 73057000,
+      "creditor": "上海商業儲蓄銀行股份有限公司城中分公司",
+      "report_date": "115/11/16"
     }
   ],
   "2543": [
@@ -52029,6 +52479,56 @@
       "cum_shares": 11000000,
       "creditor": "新光商業銀行股份有限公司營業部",
       "report_date": "115/11/12"
+    },
+    {
+      "identity": "A00015董事長之代表人配偶",
+      "name": "江盧秀娥",
+      "event_date": "115/11/16",
+      "pledge_shares": 1100000,
+      "unpledge_shares": 0,
+      "cum_shares": 12100000,
+      "creditor": "統一證券（股）公司借貸款項擔保品專戶",
+      "report_date": "115/11/17"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "豐鑫開發投資股份有限公司",
+      "event_date": "115/11/17",
+      "pledge_shares": 3000000,
+      "unpledge_shares": 0,
+      "cum_shares": 149860000,
+      "creditor": "聯邦銀行股份有限公司松江分行",
+      "report_date": "115/11/18"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "豐鑫開發投資股份有限公司",
+      "event_date": "115/11/18",
+      "pledge_shares": 2000000,
+      "unpledge_shares": 0,
+      "cum_shares": 151860000,
+      "creditor": "板信商業銀行中正分行",
+      "report_date": "115/11/19"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "豐鑫開發投資股份有限公司",
+      "event_date": "115/11/19",
+      "pledge_shares": 4000000,
+      "unpledge_shares": 0,
+      "cum_shares": 155860000,
+      "creditor": "上海商業儲蓄銀行股份有限公司敦北分公司",
+      "report_date": "115/11/20"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "豐鑫開發投資股份有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 6230000,
+      "unpledge_shares": 0,
+      "cum_shares": 162090000,
+      "creditor": "彰化商業銀行中山北路分行",
+      "report_date": "115/11/23"
     }
   ],
   "4979": [
@@ -55771,6 +56271,16 @@
       "cum_shares": 59760195,
       "creditor": "台中商業銀行股份有限公司新店分公司",
       "report_date": "115/10/22"
+    },
+    {
+      "identity": "L00040大股東本人",
+      "name": "上億投資股份有限公司",
+      "event_date": "115/11/17",
+      "pledge_shares": 6200000,
+      "unpledge_shares": 0,
+      "cum_shares": 60346386,
+      "creditor": "一銀敦化分行",
+      "report_date": "115/11/18"
     }
   ],
   "8147": [
@@ -56233,6 +56743,16 @@
       "cum_shares": 250000,
       "creditor": "國泰世華銀行",
       "report_date": "115/11/04"
+    },
+    {
+      "identity": "H00030副總經理本人",
+      "name": "蘇侯安",
+      "event_date": "115/11/18",
+      "pledge_shares": 40000,
+      "unpledge_shares": 0,
+      "cum_shares": 405000,
+      "creditor": "第一商業銀行汐止分行",
+      "report_date": "115/11/19"
     }
   ],
   "7728": [
@@ -56365,6 +56885,26 @@
       "cum_shares": 18000,
       "creditor": "中信商銀東高雄分行設質專戶",
       "report_date": "115/10/16"
+    },
+    {
+      "identity": "Q00010財務部門主管本人",
+      "name": "黃沛健",
+      "event_date": "115/11/20",
+      "pledge_shares": 10000,
+      "unpledge_shares": 0,
+      "cum_shares": 28000,
+      "creditor": "中信商銀東高雄分行設質專戶",
+      "report_date": "115/11/23"
+    },
+    {
+      "identity": "D00030董事本人",
+      "name": "余維斌",
+      "event_date": "115/11/20",
+      "pledge_shares": 50000,
+      "unpledge_shares": 0,
+      "cum_shares": 170000,
+      "creditor": "兆豐國際商業銀行股份有限公司竹科竹村分公司",
+      "report_date": "115/11/23"
     }
   ],
   "6182": [
@@ -56619,6 +57159,16 @@
       "cum_shares": 38680000,
       "creditor": "京城商業銀行股份有限公司台北分公司",
       "report_date": "115/08/25"
+    },
+    {
+      "identity": "A00011董事長之法人代表人",
+      "name": "陳銘鴻",
+      "event_date": "115/11/18",
+      "pledge_shares": 500000,
+      "unpledge_shares": 0,
+      "cum_shares": 5559000,
+      "creditor": "台中商業銀行股份有限公司南崁分公司",
+      "report_date": "115/11/19"
     }
   ],
   "7723": [
@@ -57995,6 +58545,36 @@
       "cum_shares": 1280000,
       "creditor": "台新國際商業銀行股份有限公司建北分公司",
       "report_date": "115/11/02"
+    },
+    {
+      "identity": "H00010副總經理本人",
+      "name": "許逸民",
+      "event_date": "115/11/06",
+      "pledge_shares": 47000,
+      "unpledge_shares": 0,
+      "cum_shares": 1327000,
+      "creditor": "台新國際商業銀行股份有限公司建北分公司",
+      "report_date": "115/11/09"
+    },
+    {
+      "identity": "D00090董事本人",
+      "name": "厚德資本股份有限公司",
+      "event_date": "115/11/18",
+      "pledge_shares": 300000,
+      "unpledge_shares": 0,
+      "cum_shares": 1700000,
+      "creditor": "玉山商業銀行股份有限公司",
+      "report_date": "115/11/19"
+    },
+    {
+      "identity": "H00014副總經理利用他人名義持有者",
+      "name": "恩桉投資股份有限公司",
+      "event_date": "115/11/18",
+      "pledge_shares": 500000,
+      "unpledge_shares": 0,
+      "cum_shares": 500000,
+      "creditor": "台北富邦商業銀行股份有限公司桃園分公司",
+      "report_date": "115/11/19"
     }
   ],
   "6968": [
@@ -63095,6 +63675,26 @@
       "cum_shares": 1210000,
       "creditor": "王道商業銀行股份有限公司",
       "report_date": "115/08/21"
+    },
+    {
+      "identity": "A00040董事長本人",
+      "name": "宸茂投資股份有限公司",
+      "event_date": "115/11/13",
+      "pledge_shares": 80000,
+      "unpledge_shares": 0,
+      "cum_shares": 1290000,
+      "creditor": "上海銀行",
+      "report_date": "115/11/16"
+    },
+    {
+      "identity": "D00011董事之法人代表人",
+      "name": "陳懋常",
+      "event_date": "115/11/20",
+      "pledge_shares": 0,
+      "unpledge_shares": 200000,
+      "cum_shares": 598750,
+      "creditor": "聯邦商業銀行（股）公司健行分公司",
+      "report_date": "115/11/23"
     }
   ],
   "6919": [
@@ -63207,6 +63807,16 @@
       "cum_shares": 1200000,
       "creditor": "華南銀行長安分行",
       "report_date": "115/08/21"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "徐坴暉",
+      "event_date": "115/11/05",
+      "pledge_shares": 5000000,
+      "unpledge_shares": 0,
+      "cum_shares": 19300000,
+      "creditor": "華南銀行長安分行",
+      "report_date": "115/11/06"
     }
   ],
   "2373": [
@@ -69335,6 +69945,26 @@
       "cum_shares": 4500000,
       "creditor": "統一證券(股)公司借貸款項擔保品專戶",
       "report_date": "115/10/29"
+    },
+    {
+      "identity": "L00024大股東利用他人名義持有者",
+      "name": "廣沅投資股份有限公司",
+      "event_date": "115/10/30",
+      "pledge_shares": 0,
+      "unpledge_shares": 900000,
+      "cum_shares": 3600000,
+      "creditor": "中國信託商業銀行敦北分行",
+      "report_date": "115/11/02"
+    },
+    {
+      "identity": "L00014大股東利用他人名義持有者",
+      "name": "如毅控股股份有限公司",
+      "event_date": "115/11/06",
+      "pledge_shares": 500000,
+      "unpledge_shares": 0,
+      "cum_shares": 10450000,
+      "creditor": "永豐金證券股份有限公司",
+      "report_date": "115/11/09"
     }
   ],
   "5439": [
@@ -72183,6 +72813,16 @@
       "cum_shares": 20500000,
       "creditor": "兆豐票券金融股份有限公司台南分公司",
       "report_date": "115/10/29"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "大緯投資企業股份有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 300000,
+      "unpledge_shares": 0,
+      "cum_shares": 20800000,
+      "creditor": "國泰世華銀行",
+      "report_date": "115/11/23"
     }
   ],
   "2313": [
@@ -79589,6 +80229,26 @@
       "cum_shares": 1726000,
       "creditor": "上海商業儲蓄銀行(股)公司北新竹分公司",
       "report_date": "115/08/10"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "亨泰國際投資控股有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 1100000,
+      "unpledge_shares": 0,
+      "cum_shares": 4570000,
+      "creditor": "兆豐國際商業銀行股份有限公司竹北分公司",
+      "report_date": "115/11/23"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "亨泰國際投資控股有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 200000,
+      "unpledge_shares": 0,
+      "cum_shares": 4770000,
+      "creditor": "陽信商業銀行股份有限公司南京分公司",
+      "report_date": "115/11/23"
     }
   ],
   "8415": [
@@ -80815,6 +81475,36 @@
       "cum_shares": 210000,
       "creditor": "元大商業銀行股份有限公司",
       "report_date": "115/08/10"
+    },
+    {
+      "identity": "D00040董事本人",
+      "name": "和科投資有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 80000,
+      "unpledge_shares": 0,
+      "cum_shares": 400000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "115/11/23"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "信科投資有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 80000,
+      "unpledge_shares": 0,
+      "cum_shares": 400000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "115/11/23"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "豐鈿投資有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 80000,
+      "unpledge_shares": 0,
+      "cum_shares": 400000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "115/11/23"
     }
   ],
   "2027": [
@@ -84079,6 +84769,16 @@
       "cum_shares": 27350000,
       "creditor": "台新國際商業銀行股份有限公司建北分公司",
       "report_date": "115/11/06"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "林中民",
+      "event_date": "115/11/18",
+      "pledge_shares": 2000000,
+      "unpledge_shares": 0,
+      "cum_shares": 29350000,
+      "creditor": "新光商業銀行股份有限公司營業部",
+      "report_date": "115/11/19"
     }
   ],
   "8101": [
@@ -90063,6 +90763,16 @@
       "cum_shares": 8932000,
       "creditor": "彰化商業銀行股份有限公司新明分公司",
       "report_date": "115/08/05"
+    },
+    {
+      "identity": "L00020大股東本人",
+      "name": "光聚晶電聯合股份有限公司",
+      "event_date": "115/11/13",
+      "pledge_shares": 800000,
+      "unpledge_shares": 0,
+      "cum_shares": 9732000,
+      "creditor": "彰化商業銀行股份有限公司新明分公司",
+      "report_date": "115/11/16"
     }
   ],
   "8404": [
@@ -92783,6 +93493,36 @@
       "cum_shares": 10681000,
       "creditor": "元大商業銀行股份有限公司",
       "report_date": "115/08/03"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "周萬順",
+      "event_date": "115/11/19",
+      "pledge_shares": 500000,
+      "unpledge_shares": 0,
+      "cum_shares": 11181000,
+      "creditor": "第一商業銀行大稻埕分行",
+      "report_date": "115/11/20"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "周萬順",
+      "event_date": "115/11/19",
+      "pledge_shares": 500000,
+      "unpledge_shares": 0,
+      "cum_shares": 11681000,
+      "creditor": "華南商業銀行西門分行",
+      "report_date": "115/11/20"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "周萬順",
+      "event_date": "115/11/20",
+      "pledge_shares": 1300000,
+      "unpledge_shares": 0,
+      "cum_shares": 12981000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "115/11/23"
     }
   ],
   "3105": [
@@ -95621,14 +96361,104 @@
   ],
   "6877": [
     {
-      "identity": "董事長",
+      "identity": "A00024董事長利用他人名義持有者",
+      "name": "百密得股份有限公司",
+      "event_date": "113/04/17",
+      "pledge_shares": 300000,
+      "unpledge_shares": 0,
+      "cum_shares": 300000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "113/04/18"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "百密得股份有限公司",
+      "event_date": "114/03/18",
+      "pledge_shares": 220000,
+      "unpledge_shares": 0,
+      "cum_shares": 520000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "114/03/19"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "百密得股份有限公司",
+      "event_date": "114/04/11",
+      "pledge_shares": 150000,
+      "unpledge_shares": 0,
+      "cum_shares": 670000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "114/04/14"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "百密得股份有限公司",
+      "event_date": "114/06/19",
+      "pledge_shares": 0,
+      "unpledge_shares": 150000,
+      "cum_shares": 520000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "114/06/20"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "百密得股份有限公司",
+      "event_date": "114/06/19",
+      "pledge_shares": 150000,
+      "unpledge_shares": 0,
+      "cum_shares": 670000,
+      "creditor": "中信商銀東高雄分行設質專戶",
+      "report_date": "114/06/20"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "百密得股份有限公司",
+      "event_date": "115/06/02",
+      "pledge_shares": 0,
+      "unpledge_shares": 150000,
+      "cum_shares": 520000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "115/06/03"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "百密得股份有限公司",
+      "event_date": "115/06/02",
+      "pledge_shares": 90000,
+      "unpledge_shares": 0,
+      "cum_shares": 610000,
+      "creditor": "中信商銀東高雄分行設質專戶",
+      "report_date": "115/06/03"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "百密得股份有限公司",
+      "event_date": "115/07/31",
+      "pledge_shares": 40000,
+      "unpledge_shares": 0,
+      "cum_shares": 650000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "115/08/03"
+    },
+    {
+      "identity": "A00010董事長本人",
       "name": "百密得股份有限公司",
       "event_date": "115/07/31",
       "pledge_shares": 100000,
       "unpledge_shares": 0,
       "cum_shares": 750000,
       "creditor": "中信商銀東高雄分行設質專戶",
-      "report_date": "115/07/31"
+      "report_date": "115/08/03"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "百密得股份有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 90000,
+      "unpledge_shares": 0,
+      "cum_shares": 840000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "115/11/23"
     }
   ],
   "2528": [
@@ -99893,6 +100723,16 @@
       "cum_shares": 5500000,
       "creditor": "台新國際商業銀行股份有限公司苓雅分公司",
       "report_date": "115/11/10"
+    },
+    {
+      "identity": "D00021董事之法人代表人",
+      "name": "李志明",
+      "event_date": "115/11/19",
+      "pledge_shares": 0,
+      "unpledge_shares": 250000,
+      "cum_shares": 0,
+      "creditor": "台灣土地銀行信義分行設質專戶",
+      "report_date": "115/11/20"
     }
   ],
   "4991": [
@@ -100649,6 +101489,16 @@
       "cum_shares": 4810000,
       "creditor": "合作金庫票券金融股份有限公司",
       "report_date": "115/07/30"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "嘉績百貨企業股份有限公司",
+      "event_date": "115/11/06",
+      "pledge_shares": 150000,
+      "unpledge_shares": 0,
+      "cum_shares": 6592000,
+      "creditor": "中華票券金融股份有限公司台南分公司",
+      "report_date": "115/11/09"
     }
   ],
   "3529": [
@@ -101021,6 +101871,16 @@
       "cum_shares": 500000,
       "creditor": "永豐金證券股份有限公司",
       "report_date": "115/07/30"
+    },
+    {
+      "identity": "D00110董事本人",
+      "name": "陳莉菁",
+      "event_date": "115/11/20",
+      "pledge_shares": 44000,
+      "unpledge_shares": 0,
+      "cum_shares": 544000,
+      "creditor": "永豐金證券股份有限公司",
+      "report_date": "115/11/23"
     }
   ],
   "6691": [
@@ -102559,6 +103419,26 @@
       "cum_shares": 6500000,
       "creditor": "兆豐票券金融股份有限公司台南分公司",
       "report_date": "115/10/29"
+    },
+    {
+      "identity": "A00030董事長本人",
+      "name": "大緯投資企業股份有限公司",
+      "event_date": "115/11/19",
+      "pledge_shares": 500000,
+      "unpledge_shares": 0,
+      "cum_shares": 7000000,
+      "creditor": "兆豐票券金融股份有限公司台南分公司",
+      "report_date": "115/11/20"
+    },
+    {
+      "identity": "A00030董事長本人",
+      "name": "大緯投資企業股份有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 1000000,
+      "unpledge_shares": 0,
+      "cum_shares": 8000000,
+      "creditor": "第一商業銀行股份有限公司赤崁分公司",
+      "report_date": "115/11/23"
     }
   ],
   "2464": [
@@ -103937,6 +104817,16 @@
       "cum_shares": 2000000,
       "creditor": "合作金庫票券金融股份有限公司",
       "report_date": "115/07/22"
+    },
+    {
+      "identity": "H00074副總經理利用他人名義持有者",
+      "name": "善耘廣投資股份有限公司",
+      "event_date": "115/11/05",
+      "pledge_shares": 0,
+      "unpledge_shares": 85000,
+      "cum_shares": 415000,
+      "creditor": "元大證券金融股份有限公司",
+      "report_date": "115/11/06"
     }
   ],
   "2545": [
@@ -120335,6 +121225,16 @@
       "cum_shares": 1700000,
       "creditor": "安泰商業銀行股份有限公司",
       "report_date": "115/08/17"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "許明哲",
+      "event_date": "115/11/19",
+      "pledge_shares": 430000,
+      "unpledge_shares": 0,
+      "cum_shares": 2130000,
+      "creditor": "兆豐國際商業銀行股份有限公司台南科學園區分公司",
+      "report_date": "115/11/20"
     }
   ],
   "5284": [
@@ -120347,6 +121247,16 @@
       "cum_shares": 1000000,
       "creditor": "兆豐國際商業銀行股份有限公司南京東路分行",
       "report_date": "115/07/13"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "ＰＯＷＥＬＬ  ＧＲＯＵＰ  ＣＯ。，ＬＴＤ。",
+      "event_date": "115/11/13",
+      "pledge_shares": 1000000,
+      "unpledge_shares": 0,
+      "cum_shares": 2000000,
+      "creditor": "兆豐國際商業銀行股份有限公司南京東路分行",
+      "report_date": "115/11/16"
     }
   ],
   "8016": [
@@ -121307,6 +122217,26 @@
       "cum_shares": 13888000,
       "creditor": "聯邦商業銀行股份有限公司龜山分公司",
       "report_date": "115/07/06"
+    },
+    {
+      "identity": "D00070董事本人",
+      "name": "丁凌全",
+      "event_date": "115/11/06",
+      "pledge_shares": 0,
+      "unpledge_shares": 2043000,
+      "cum_shares": 11845000,
+      "creditor": "國票綜合證券股份有限公司",
+      "report_date": "115/11/09"
+    },
+    {
+      "identity": "D00070董事本人",
+      "name": "丁凌全",
+      "event_date": "115/11/06",
+      "pledge_shares": 2043000,
+      "unpledge_shares": 0,
+      "cum_shares": 13888000,
+      "creditor": "台新國際商業銀行股份有限公司建北分公司",
+      "report_date": "115/11/09"
     }
   ],
   "6770": [
@@ -121861,6 +122791,16 @@
       "cum_shares": 3050000,
       "creditor": "臺灣新光商業銀行股份有限公司南屯分公司",
       "report_date": "115/07/02"
+    },
+    {
+      "identity": "A00014董事長利用他人名義持有者",
+      "name": "百昱投資股份有限公司",
+      "event_date": "115/11/06",
+      "pledge_shares": 1300000,
+      "unpledge_shares": 0,
+      "cum_shares": 3300000,
+      "creditor": "凱基商業銀行股份有限公司台中分公司",
+      "report_date": "115/11/09"
     }
   ],
   "2020": [
@@ -129773,6 +130713,16 @@
       "cum_shares": 2300000,
       "creditor": "中信商銀新竹分行",
       "report_date": "115/06/26"
+    },
+    {
+      "identity": "A00014董事長利用他人名義持有者",
+      "name": "巧鎰投資股份有限公司",
+      "event_date": "115/11/13",
+      "pledge_shares": 0,
+      "unpledge_shares": 300000,
+      "cum_shares": 2000000,
+      "creditor": "中信商銀新竹分行",
+      "report_date": "115/11/16"
     }
   ],
   "1437": [
@@ -135387,6 +136337,16 @@
       "cum_shares": 0,
       "creditor": "台新綜合證券股份有限公司不限用途款項借貸業務質權人帳戶",
       "report_date": "115/09/22"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "仟鑽股份有限公司",
+      "event_date": "115/11/17",
+      "pledge_shares": 183000,
+      "unpledge_shares": 0,
+      "cum_shares": 12517000,
+      "creditor": "華南商業銀行股份有限公司大里分公司",
+      "report_date": "115/11/18"
     }
   ],
   "8403": [
@@ -141695,14 +142655,64 @@
   ],
   "6894": [
     {
-      "identity": "協理",
+      "identity": "D00010董事本人",
+      "name": "碧豐國際投資股份有限公司",
+      "event_date": "113/09/10",
+      "pledge_shares": 1200000,
+      "unpledge_shares": 0,
+      "cum_shares": 1200000,
+      "creditor": "京城商業銀行大里分行",
+      "report_date": "113/09/11"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "碧豐國際投資股份有限公司",
+      "event_date": "113/10/18",
+      "pledge_shares": 0,
+      "unpledge_shares": 10000,
+      "cum_shares": 1190000,
+      "creditor": "京城商業銀行大里分行",
+      "report_date": "113/10/21"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "碧豐國際投資股份有限公司",
+      "event_date": "114/10/03",
+      "pledge_shares": 0,
+      "unpledge_shares": 1190000,
+      "cum_shares": 0,
+      "creditor": "京城商業銀行大里分行",
+      "report_date": "114/10/07"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "碧豐國際投資股份有限公司",
+      "event_date": "114/10/03",
+      "pledge_shares": 1190000,
+      "unpledge_shares": 0,
+      "cum_shares": 1190000,
+      "creditor": "京城商業銀行股份有限公司大里分公司",
+      "report_date": "114/10/07"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "碧豐國際投資股份有限公司",
+      "event_date": "115/01/26",
+      "pledge_shares": 977000,
+      "unpledge_shares": 0,
+      "cum_shares": 2167000,
+      "creditor": "京城商業銀行股份有限公司大里分公司",
+      "report_date": "115/01/27"
+    },
+    {
+      "identity": "J00030協理本人",
       "name": "洪瓊瑤",
       "event_date": "115/06/09",
       "pledge_shares": 60000,
       "unpledge_shares": 0,
       "cum_shares": 60000,
       "creditor": "國泰世華銀行",
-      "report_date": "115/06/09"
+      "report_date": "115/06/10"
     }
   ],
   "8341": [
@@ -154291,6 +155301,16 @@
       "cum_shares": 13100000,
       "creditor": "遠東國際商業銀行股份有限公司",
       "report_date": "115/11/13"
+    },
+    {
+      "identity": "A00027董事長法人代表人利用他人名義持有者",
+      "name": "豪成投資股份有限公司",
+      "event_date": "115/11/16",
+      "pledge_shares": 1000000,
+      "unpledge_shares": 0,
+      "cum_shares": 7000000,
+      "creditor": "王道商業銀行股份有限公司",
+      "report_date": "115/11/17"
     }
   ],
   "6903": [
@@ -156177,6 +157197,36 @@
       "cum_shares": 12500000,
       "creditor": "合作金庫票券金融股份有限公司",
       "report_date": "115/11/09"
+    },
+    {
+      "identity": "D00030董事本人",
+      "name": "金茂投資股份有限公司",
+      "event_date": "115/11/18",
+      "pledge_shares": 3000000,
+      "unpledge_shares": 0,
+      "cum_shares": 15500000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "115/11/19"
+    },
+    {
+      "identity": "D00030董事本人",
+      "name": "金茂投資股份有限公司",
+      "event_date": "115/11/18",
+      "pledge_shares": 3000000,
+      "unpledge_shares": 0,
+      "cum_shares": 18500000,
+      "creditor": "第一金證不限用途質權人專戶",
+      "report_date": "115/11/19"
+    },
+    {
+      "identity": "D00030董事本人",
+      "name": "金茂投資股份有限公司",
+      "event_date": "115/11/18",
+      "pledge_shares": 1000000,
+      "unpledge_shares": 0,
+      "cum_shares": 19500000,
+      "creditor": "華南商業銀行(股)公司五甲分公司",
+      "report_date": "115/11/19"
     }
   ],
   "2031": [
@@ -161911,6 +162961,36 @@
       "cum_shares": 158000,
       "creditor": "中信商銀城中分行設質專戶",
       "report_date": "115/05/06"
+    },
+    {
+      "identity": "D00060董事本人",
+      "name": "黃翔麟",
+      "event_date": "115/11/06",
+      "pledge_shares": 500000,
+      "unpledge_shares": 0,
+      "cum_shares": 2650000,
+      "creditor": "兆豐國際商業銀行股份有限公司敦南分公司",
+      "report_date": "115/11/09"
+    },
+    {
+      "identity": "D00060董事本人",
+      "name": "黃翔麟",
+      "event_date": "115/11/19",
+      "pledge_shares": 100000,
+      "unpledge_shares": 0,
+      "cum_shares": 2750000,
+      "creditor": "元大證券股份有限公司",
+      "report_date": "115/11/20"
+    },
+    {
+      "identity": "D00060董事本人",
+      "name": "黃翔麟",
+      "event_date": "115/11/20",
+      "pledge_shares": 141000,
+      "unpledge_shares": 0,
+      "cum_shares": 2891000,
+      "creditor": "兆豐國際商業銀行股份有限公司敦南分公司",
+      "report_date": "115/11/23"
     }
   ],
   "4113": [
@@ -162663,6 +163743,16 @@
       "cum_shares": 18900000,
       "creditor": "國際票券金融股份有限公司",
       "report_date": "115/10/13"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "聯上投資股份有限公司",
+      "event_date": "115/11/16",
+      "pledge_shares": 1000000,
+      "unpledge_shares": 0,
+      "cum_shares": 11400000,
+      "creditor": "合作金庫票券金融股份有限公司",
+      "report_date": "115/11/17"
     }
   ],
   "8045": [
@@ -178575,6 +179665,36 @@
       "cum_shares": 3780000,
       "creditor": "統一證券(股)公司借貸款項擔保品專戶",
       "report_date": "115/11/04"
+    },
+    {
+      "identity": "D00037董事法人代表人利用他人名義持有者",
+      "name": "銀星投資有限公司",
+      "event_date": "115/11/13",
+      "pledge_shares": 0,
+      "unpledge_shares": 1317000,
+      "cum_shares": 0,
+      "creditor": "統一證券(股)公司借貸款項擔保品專戶",
+      "report_date": "115/11/16"
+    },
+    {
+      "identity": "A00012董事長配偶",
+      "name": "許庭",
+      "event_date": "115/11/16",
+      "pledge_shares": 100000,
+      "unpledge_shares": 0,
+      "cum_shares": 1468000,
+      "creditor": "群益金鼎證券不限用途款項借貸質權人專戶",
+      "report_date": "115/11/17"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "吳柏樺",
+      "event_date": "115/11/16",
+      "pledge_shares": 100000,
+      "unpledge_shares": 0,
+      "cum_shares": 958000,
+      "creditor": "群益金鼎證券不限用途款項借貸質權人專戶",
+      "report_date": "115/11/17"
     }
   ],
   "1718": [
@@ -179983,14 +181103,34 @@
   ],
   "6895": [
     {
-      "identity": "62董事配偶",
+      "identity": "D00060董事本人",
+      "name": "陳漢穎",
+      "event_date": "114/12/18",
+      "pledge_shares": 500000,
+      "unpledge_shares": 0,
+      "cum_shares": 500000,
+      "creditor": "元大證券金融股份有限公司",
+      "report_date": "114/12/19"
+    },
+    {
+      "identity": "J00010協理本人",
+      "name": "杜玉凌",
+      "event_date": "114/12/22",
+      "pledge_shares": 56000,
+      "unpledge_shares": 0,
+      "cum_shares": 56000,
+      "creditor": "元大證券金融股份有限公司",
+      "report_date": "114/12/23"
+    },
+    {
+      "identity": "D00062董事配偶",
       "name": "胡琇莉",
       "event_date": "115/03/25",
       "pledge_shares": 300000,
       "unpledge_shares": 0,
       "cum_shares": 300000,
       "creditor": "元大證券金融股份有限公司",
-      "report_date": "115/03/25"
+      "report_date": "115/03/26"
     }
   ],
   "5278": [
@@ -181423,6 +182563,16 @@
       "cum_shares": 3250000,
       "creditor": "統一證券股份有限公司借貸款項擔保品專戶",
       "report_date": "115/11/06"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "勵龍國際貿易有限公司",
+      "event_date": "115/11/19",
+      "pledge_shares": 2000000,
+      "unpledge_shares": 0,
+      "cum_shares": 5800000,
+      "creditor": "安泰商業銀行股份有限公司",
+      "report_date": "115/11/20"
     }
   ],
   "6585": [
@@ -181697,6 +182847,66 @@
       "cum_shares": 14327743,
       "creditor": "國泰世華銀行",
       "report_date": "115/11/12"
+    },
+    {
+      "identity": "L00020大股東本人",
+      "name": "海杏投資股份有限公司",
+      "event_date": "115/11/13",
+      "pledge_shares": 0,
+      "unpledge_shares": 998000,
+      "cum_shares": 13329743,
+      "creditor": "台新國際商業銀行股份有限公司建北分公司",
+      "report_date": "115/11/16"
+    },
+    {
+      "identity": "L00020大股東本人",
+      "name": "海杏投資股份有限公司",
+      "event_date": "115/11/18",
+      "pledge_shares": 0,
+      "unpledge_shares": 1400000,
+      "cum_shares": 11929743,
+      "creditor": "玉山商業銀行股份有限公司",
+      "report_date": "115/11/19"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "朕昇股份有限公司",
+      "event_date": "115/11/18",
+      "pledge_shares": 1500000,
+      "unpledge_shares": 0,
+      "cum_shares": 1990000,
+      "creditor": "台新國際商業銀行股份有限公司建北分公司",
+      "report_date": "115/11/19"
+    },
+    {
+      "identity": "H00010副總經理本人",
+      "name": "童寶煒",
+      "event_date": "115/11/18",
+      "pledge_shares": 40000,
+      "unpledge_shares": 0,
+      "cum_shares": 110000,
+      "creditor": "上海商業儲蓄銀行股份有限公司新莊分公司",
+      "report_date": "115/11/19"
+    },
+    {
+      "identity": "L00020大股東本人",
+      "name": "海杏投資股份有限公司",
+      "event_date": "115/11/19",
+      "pledge_shares": 2500000,
+      "unpledge_shares": 0,
+      "cum_shares": 14429743,
+      "creditor": "上海商業儲蓄銀行股份有限公司新莊分公司",
+      "report_date": "115/11/20"
+    },
+    {
+      "identity": "L00020大股東本人",
+      "name": "海杏投資股份有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 1800000,
+      "unpledge_shares": 0,
+      "cum_shares": 16229743,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "115/11/23"
     }
   ],
   "6441": [
@@ -188767,6 +189977,16 @@
       "cum_shares": 2930000,
       "creditor": "台新國際商業銀行台南分行",
       "report_date": "115/07/29"
+    },
+    {
+      "identity": "A00020董事長本人",
+      "name": "呂萬賢",
+      "event_date": "115/11/19",
+      "pledge_shares": 200000,
+      "unpledge_shares": 0,
+      "cum_shares": 3130000,
+      "creditor": "華南商業銀行新市分行",
+      "report_date": "115/11/20"
     }
   ],
   "6762": [
@@ -192223,6 +193443,16 @@
       "cum_shares": 0,
       "creditor": "國泰世華銀行",
       "report_date": "115/09/02"
+    },
+    {
+      "identity": "H00030副總經理本人",
+      "name": "葉智隆",
+      "event_date": "115/11/19",
+      "pledge_shares": 0,
+      "unpledge_shares": 45000,
+      "cum_shares": 0,
+      "creditor": "國泰世華銀行",
+      "report_date": "115/11/20"
     }
   ],
   "4972": [
@@ -192659,6 +193889,16 @@
       "cum_shares": 2000000,
       "creditor": "中信商銀台中分行設質專戶",
       "report_date": "115/01/08"
+    },
+    {
+      "identity": "A00014董事長利用他人名義持有者",
+      "name": "漢畿投資股份有限公司",
+      "event_date": "115/11/10",
+      "pledge_shares": 450000,
+      "unpledge_shares": 0,
+      "cum_shares": 2450000,
+      "creditor": "中信商銀台中分行設質專戶",
+      "report_date": "115/11/11"
     }
   ],
   "6617": [
@@ -206221,6 +207461,16 @@
       "cum_shares": 167841000,
       "creditor": "台新國際商業銀行股份有限公司建北分公司",
       "report_date": "115/07/31"
+    },
+    {
+      "identity": "D00060董事本人",
+      "name": "孚盛投資有限公司",
+      "event_date": "115/11/11",
+      "pledge_shares": 0,
+      "unpledge_shares": 3000000,
+      "cum_shares": 109000000,
+      "creditor": "中信商銀桃園分行設質專戶",
+      "report_date": "115/11/12"
     }
   ],
   "4720": [
@@ -208853,6 +210103,16 @@
       "cum_shares": 0,
       "creditor": "致和證券股份有限公司",
       "report_date": "115/08/17"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "嘉績百貨企業股份有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 800000,
+      "unpledge_shares": 0,
+      "cum_shares": 12500000,
+      "creditor": "兆豐國際商業銀行股份有限公司台南分公司",
+      "report_date": "115/11/23"
     }
   ],
   "8908": [
@@ -210835,6 +212095,16 @@
       "cum_shares": 99760000,
       "creditor": "元大證券金融股份有限公司",
       "report_date": "115/07/13"
+    },
+    {
+      "identity": "L00020大股東本人",
+      "name": "興泰投資股份有限公司",
+      "event_date": "115/11/05",
+      "pledge_shares": 3500000,
+      "unpledge_shares": 0,
+      "cum_shares": 103260000,
+      "creditor": "第一商業銀行股份有限公司竹溪分公司",
+      "report_date": "115/11/06"
     }
   ],
   "4716": [
@@ -221673,6 +222943,16 @@
       "cum_shares": 2031000,
       "creditor": "永豐金證券股份有限公司",
       "report_date": "115/10/20"
+    },
+    {
+      "identity": "A00014董事長利用他人名義持有者",
+      "name": "力勤投資有限公司",
+      "event_date": "115/11/06",
+      "pledge_shares": 0,
+      "unpledge_shares": 965000,
+      "cum_shares": 5320000,
+      "creditor": "兆豐國際商業銀行股份有限公司金控總部分",
+      "report_date": "115/11/09"
     }
   ],
   "2065": [
@@ -225921,6 +227201,26 @@
       "cum_shares": 125092000,
       "creditor": "全國農業金庫股份有限公司",
       "report_date": "115/11/12"
+    },
+    {
+      "identity": "L00010大股東本人",
+      "name": "龍邦國際興業股份有限公司",
+      "event_date": "115/11/18",
+      "pledge_shares": 10000000,
+      "unpledge_shares": 0,
+      "cum_shares": 135092000,
+      "creditor": "台中商業銀行股份有限公司松山分公司",
+      "report_date": "115/11/19"
+    },
+    {
+      "identity": "L00010大股東本人",
+      "name": "龍邦國際興業股份有限公司",
+      "event_date": "115/11/18",
+      "pledge_shares": 8000000,
+      "unpledge_shares": 0,
+      "cum_shares": 143092000,
+      "creditor": "聯邦商業銀行股份有限公司民權分公司",
+      "report_date": "115/11/19"
     }
   ],
   "3653": [
@@ -229489,6 +230789,16 @@
       "cum_shares": 1275000,
       "creditor": "元大證券股份有限公司",
       "report_date": "114/07/22"
+    },
+    {
+      "identity": "H00262副總經理配偶",
+      "name": "廖韻淳",
+      "event_date": "115/11/12",
+      "pledge_shares": 772667,
+      "unpledge_shares": 0,
+      "cum_shares": 772667,
+      "creditor": "台新國際商業銀行股份有限公司建北分公司",
+      "report_date": "115/11/13"
     }
   ],
   "5011": [
@@ -233039,6 +234349,16 @@
       "cum_shares": 1060000,
       "creditor": "中國信託商業銀行敦北分行",
       "report_date": "115/11/05"
+    },
+    {
+      "identity": "A00030董事長本人",
+      "name": "永德投資股份有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 2000000,
+      "unpledge_shares": 0,
+      "cum_shares": 27900000,
+      "creditor": "中國信託商業銀行敦北分行",
+      "report_date": "115/11/23"
     }
   ],
   "6024": [
@@ -237787,6 +239107,16 @@
       "cum_shares": 100000,
       "creditor": "台北富邦商業銀行股份有限公司桃園分公司",
       "report_date": "114/05/28"
+    },
+    {
+      "identity": "H00060副總經理本人",
+      "name": "李豐光",
+      "event_date": "115/11/16",
+      "pledge_shares": 300000,
+      "unpledge_shares": 0,
+      "cum_shares": 300000,
+      "creditor": "台北富邦商業銀行股份有限公司桃園分公司",
+      "report_date": "115/11/17"
     }
   ],
   "3522": [
@@ -237979,6 +239309,16 @@
       "cum_shares": 1700000,
       "creditor": "台中商業銀行股份有限公司安平分公司",
       "report_date": "114/05/23"
+    },
+    {
+      "identity": "B00010副董事長本人",
+      "name": "李日東",
+      "event_date": "115/11/18",
+      "pledge_shares": 200000,
+      "unpledge_shares": 0,
+      "cum_shares": 1900000,
+      "creditor": "台中商業銀行股份有限公司安平分公司",
+      "report_date": "115/11/19"
     }
   ],
   "8155": [
@@ -243667,6 +245007,16 @@
       "cum_shares": 9154000,
       "creditor": "統一證券(股)公司借貸款項擔保品專戶",
       "report_date": "114/04/15"
+    },
+    {
+      "identity": "B00014副董事長利用他人名義持有者",
+      "name": "九融投資有限公司",
+      "event_date": "115/11/05",
+      "pledge_shares": 2000000,
+      "unpledge_shares": 0,
+      "cum_shares": 11154000,
+      "creditor": "華南商業銀行中華路分行",
+      "report_date": "115/11/06"
     }
   ],
   "4164": [
@@ -246715,6 +248065,26 @@
       "cum_shares": 6400000,
       "creditor": "中租迪和股份有限公司",
       "report_date": "115/10/30"
+    },
+    {
+      "identity": "A00022董事長配偶",
+      "name": "尤山泉",
+      "event_date": "115/11/12",
+      "pledge_shares": 1100000,
+      "unpledge_shares": 0,
+      "cum_shares": 1100000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "115/11/13"
+    },
+    {
+      "identity": "A00022董事長配偶",
+      "name": "尤山泉",
+      "event_date": "115/11/20",
+      "pledge_shares": 300000,
+      "unpledge_shares": 0,
+      "cum_shares": 1400000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "115/11/23"
     }
   ],
   "4155": [
@@ -247039,6 +248409,16 @@
       "cum_shares": 1800000,
       "creditor": "統一證券(股)公司借貸款項擔保品專戶",
       "report_date": "114/04/10"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "邑融股份有限公司",
+      "event_date": "115/11/17",
+      "pledge_shares": 200000,
+      "unpledge_shares": 0,
+      "cum_shares": 2000000,
+      "creditor": "統一證券(股)公司借貸款項擔保品專戶",
+      "report_date": "115/11/18"
     }
   ],
   "5288": [
@@ -249807,6 +251187,26 @@
       "cum_shares": 5000000,
       "creditor": "兆豐票券金融股份有限公司板橋分公司",
       "report_date": "114/04/09"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "班友投資股份有限公司",
+      "event_date": "115/11/16",
+      "pledge_shares": 500000,
+      "unpledge_shares": 0,
+      "cum_shares": 5500000,
+      "creditor": "兆豐票券金融股份有限公司板橋分公司",
+      "report_date": "115/11/17"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "班友投資股份有限公司",
+      "event_date": "115/11/19",
+      "pledge_shares": 700000,
+      "unpledge_shares": 0,
+      "cum_shares": 6200000,
+      "creditor": "兆豐票券金融股份有限公司板橋分公司",
+      "report_date": "115/11/20"
     }
   ],
   "5263": [
@@ -250481,6 +251881,36 @@
       "cum_shares": 2212000,
       "creditor": "兆豐國際商業銀行股份有限公司南投分公司",
       "report_date": "115/11/10"
+    },
+    {
+      "identity": "D00071董事之法人代表人",
+      "name": "蔡孝德",
+      "event_date": "115/11/20",
+      "pledge_shares": 100000,
+      "unpledge_shares": 0,
+      "cum_shares": 1249000,
+      "creditor": "兆豐國際商業銀行股份有限公司南投分公司",
+      "report_date": "115/11/23"
+    },
+    {
+      "identity": "D00071董事之法人代表人",
+      "name": "蔡孝德",
+      "event_date": "115/11/20",
+      "pledge_shares": 184000,
+      "unpledge_shares": 0,
+      "cum_shares": 1433000,
+      "creditor": "兆豐國際商業銀行股份有限公司南投分公司",
+      "report_date": "115/11/23"
+    },
+    {
+      "identity": "B00010副董事長本人",
+      "name": "蔡孝毅",
+      "event_date": "115/11/20",
+      "pledge_shares": 560000,
+      "unpledge_shares": 0,
+      "cum_shares": 1634000,
+      "creditor": "兆豐國際商業銀行股份有限公司南投分公司",
+      "report_date": "115/11/23"
     }
   ],
   "1587": [
@@ -259763,6 +261193,16 @@
       "cum_shares": 124000,
       "creditor": "元大證券金融股份有限公司",
       "report_date": "115/08/06"
+    },
+    {
+      "identity": "D00020董事本人",
+      "name": "延華投資有限公司",
+      "event_date": "115/11/17",
+      "pledge_shares": 0,
+      "unpledge_shares": 590000,
+      "cum_shares": 0,
+      "creditor": "元大證券股份有限公司",
+      "report_date": "115/11/18"
     }
   ],
   "4171": [
@@ -266765,6 +268205,26 @@
       "cum_shares": 2590000,
       "creditor": "第一商業銀行中崙分行",
       "report_date": "115/11/06"
+    },
+    {
+      "identity": "H00084副總經理利用他人名義持有者",
+      "name": "豐復投資股份有限公司",
+      "event_date": "115/11/06",
+      "pledge_shares": 0,
+      "unpledge_shares": 777000,
+      "cum_shares": 2590000,
+      "creditor": "聯邦商業銀行股份有限公司內湖分公司",
+      "report_date": "115/11/09"
+    },
+    {
+      "identity": "H00084副總經理利用他人名義持有者",
+      "name": "豐復投資股份有限公司",
+      "event_date": "115/11/06",
+      "pledge_shares": 777000,
+      "unpledge_shares": 0,
+      "cum_shares": 2590000,
+      "creditor": "第一商業銀行中崙分行",
+      "report_date": "115/11/09"
     }
   ],
   "6153": [
@@ -272203,6 +273663,26 @@
       "cum_shares": 80000,
       "creditor": "葉世瑋",
       "report_date": "115/11/04"
+    },
+    {
+      "identity": "D00060董事本人",
+      "name": "和海投資有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 200000,
+      "unpledge_shares": 0,
+      "cum_shares": 1603000,
+      "creditor": "葉世瑋",
+      "report_date": "115/11/23"
+    },
+    {
+      "identity": "D00050董事本人",
+      "name": "所羅門科技企管顧問有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 100000,
+      "unpledge_shares": 0,
+      "cum_shares": 100000,
+      "creditor": "葉世瑋",
+      "report_date": "115/11/23"
     }
   ],
   "5321": [
@@ -273115,6 +274595,16 @@
       "cum_shares": 0,
       "creditor": "日盛全能源股份有限公司",
       "report_date": "115/08/10"
+    },
+    {
+      "identity": "L00030大股東本人",
+      "name": "藤美資本管理顧問股份有限公司",
+      "event_date": "115/11/18",
+      "pledge_shares": 0,
+      "unpledge_shares": 519000,
+      "cum_shares": 7833000,
+      "creditor": "統一證券(股)公司借貸款項擔保品專戶",
+      "report_date": "115/11/19"
     }
   ],
   "6531": [
@@ -273861,6 +275351,26 @@
       "cum_shares": 4850000,
       "creditor": "台灣銀行忠孝分行",
       "report_date": "115/07/21"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "正邦投資股份有限公司",
+      "event_date": "115/11/16",
+      "pledge_shares": 3500000,
+      "unpledge_shares": 0,
+      "cum_shares": 8350000,
+      "creditor": "台灣銀行忠孝分行",
+      "report_date": "115/11/17"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "正邦投資股份有限公司",
+      "event_date": "115/11/19",
+      "pledge_shares": 0,
+      "unpledge_shares": 4350000,
+      "cum_shares": 4000000,
+      "creditor": "台新綜合證券股份有限公司不限用途款項借貸業務質權人帳戶",
+      "report_date": "115/11/20"
     }
   ],
   "3645": [
@@ -292059,6 +293569,16 @@
       "cum_shares": 2298048,
       "creditor": "凱基證券股份有限公司不限用途款項借貸擔保品設質專戶",
       "report_date": "115/07/09"
+    },
+    {
+      "identity": "D00040董事本人",
+      "name": "王滋林",
+      "event_date": "115/11/20",
+      "pledge_shares": 40000,
+      "unpledge_shares": 0,
+      "cum_shares": 2338048,
+      "creditor": "凱基證券股份有限公司不限用途款項借貸擔保品設質專戶",
+      "report_date": "115/11/23"
     }
   ],
   "1110": [
@@ -313817,6 +315337,16 @@
       "cum_shares": 0,
       "creditor": "華南銀行中山分行",
       "report_date": "115/11/10"
+    },
+    {
+      "identity": "D00010董事本人",
+      "name": "神通電腦股份有限公司",
+      "event_date": "115/11/13",
+      "pledge_shares": 0,
+      "unpledge_shares": 23000000,
+      "cum_shares": 0,
+      "creditor": "兆豐國際商業銀行股份有限公司忠孝分公司",
+      "report_date": "115/11/16"
     }
   ],
   "2324": [
@@ -348859,6 +350389,16 @@
       "cum_shares": 0,
       "creditor": "兆豐國際商業銀行股份有限公司金控總部分",
       "report_date": "104/09/08"
+    },
+    {
+      "identity": "D00060董事本人",
+      "name": "神通電腦股份有限公司",
+      "event_date": "115/11/13",
+      "pledge_shares": 0,
+      "unpledge_shares": 1500000,
+      "cum_shares": 0,
+      "creditor": "兆豐國際商業銀行股份有限公司忠孝分公司",
+      "report_date": "115/11/16"
     }
   ],
   "3702": [
@@ -412055,6 +413595,16 @@
       "cum_shares": 0,
       "creditor": "元大證券金融股份有限公司",
       "report_date": "113/02/23"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "干文元",
+      "event_date": "115/11/19",
+      "pledge_shares": 2500000,
+      "unpledge_shares": 0,
+      "cum_shares": 2500000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "115/11/20"
     }
   ],
   "1732": [
@@ -480285,6 +481835,16 @@
       "cum_shares": 400000,
       "creditor": "台北富邦商業銀行安和分行",
       "report_date": "115/10/29"
+    },
+    {
+      "identity": "D00030董事本人",
+      "name": "鄭和彬",
+      "event_date": "115/11/11",
+      "pledge_shares": 200000,
+      "unpledge_shares": 0,
+      "cum_shares": 600000,
+      "creditor": "台北富邦商業銀行安和分行",
+      "report_date": "115/11/12"
     }
   ],
   "3339": [
@@ -502457,6 +504017,46 @@
       "cum_shares": 2006000,
       "creditor": "新光證券質權帳戶",
       "report_date": "115/11/09"
+    },
+    {
+      "identity": "B00011副董事長之法人代表人",
+      "name": "彭朋煌",
+      "event_date": "115/11/19",
+      "pledge_shares": 300000,
+      "unpledge_shares": 0,
+      "cum_shares": 1898000,
+      "creditor": "新光證券質權帳戶",
+      "report_date": "115/11/20"
+    },
+    {
+      "identity": "B00010副董事長本人",
+      "name": "東易企管顧問有限公司",
+      "event_date": "115/11/19",
+      "pledge_shares": 400000,
+      "unpledge_shares": 0,
+      "cum_shares": 685000,
+      "creditor": "新光證券質權帳戶",
+      "report_date": "115/11/20"
+    },
+    {
+      "identity": "B00010副董事長本人",
+      "name": "東易企管顧問有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 400000,
+      "unpledge_shares": 0,
+      "cum_shares": 1085000,
+      "creditor": "新光證券質權帳戶",
+      "report_date": "115/11/23"
+    },
+    {
+      "identity": "B00011副董事長之法人代表人",
+      "name": "彭朋煌",
+      "event_date": "115/11/20",
+      "pledge_shares": 700000,
+      "unpledge_shares": 0,
+      "cum_shares": 2598000,
+      "creditor": "新光證券質權帳戶",
+      "report_date": "115/11/23"
     }
   ],
   "6015": [
@@ -512345,6 +513945,26 @@
       "cum_shares": 0,
       "creditor": "國票綜合證券股份有限公司",
       "report_date": "114/04/08"
+    },
+    {
+      "identity": "A00012董事長配偶",
+      "name": "白宜榛",
+      "event_date": "115/11/06",
+      "pledge_shares": 60000,
+      "unpledge_shares": 0,
+      "cum_shares": 60000,
+      "creditor": "台新國際商業銀行股份有限公司建北分公司",
+      "report_date": "115/11/09"
+    },
+    {
+      "identity": "J00040協理本人",
+      "name": "方治緯",
+      "event_date": "115/11/17",
+      "pledge_shares": 200000,
+      "unpledge_shares": 0,
+      "cum_shares": 200000,
+      "creditor": "台新國際商業銀行股份有限公司建北分公司",
+      "report_date": "115/11/18"
     }
   ],
   "7767": [
@@ -512357,6 +513977,16 @@
       "cum_shares": 280000,
       "creditor": "台新綜合證券股份有限公司不限用途款項借貸業務質權人帳戶",
       "report_date": "115/05/12"
+    },
+    {
+      "identity": "J00010協理本人",
+      "name": "林彥良",
+      "event_date": "115/11/20",
+      "pledge_shares": 0,
+      "unpledge_shares": 280000,
+      "cum_shares": 0,
+      "creditor": "台新綜合證券股份有限公司不限用途款項借貸業務質權人帳戶",
+      "report_date": "115/11/23"
     }
   ],
   "7757": [
@@ -512399,6 +514029,16 @@
       "cum_shares": 2800000,
       "creditor": "台新國際商業銀行股份有限公司建北分公司",
       "report_date": "115/08/11"
+    },
+    {
+      "identity": "D00030董事本人",
+      "name": "許麒麟",
+      "event_date": "115/11/20",
+      "pledge_shares": 487500,
+      "unpledge_shares": 0,
+      "cum_shares": 980000,
+      "creditor": "台北富邦商業銀行安和分行",
+      "report_date": "115/11/23"
     }
   ],
   "7777": [
@@ -512411,6 +514051,16 @@
       "cum_shares": 1000000,
       "creditor": "測試用",
       "report_date": "90/10/12"
+    },
+    {
+      "identity": "D00060董事本人",
+      "name": "台昇國際股份有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 13992550,
+      "unpledge_shares": 13992550,
+      "cum_shares": 0,
+      "creditor": "中信商銀城東分行設質專戶",
+      "report_date": "115/11/23"
     }
   ],
   "8040": [
@@ -514495,6 +516145,26 @@
       "cum_shares": 135000,
       "creditor": "元大商業銀行股份有限公司",
       "report_date": "115/09/14"
+    },
+    {
+      "identity": "H00070副總經理本人",
+      "name": "陳樂群",
+      "event_date": "115/11/18",
+      "pledge_shares": 10000,
+      "unpledge_shares": 0,
+      "cum_shares": 145000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "115/11/19"
+    },
+    {
+      "identity": "H00070副總經理本人",
+      "name": "陳樂群",
+      "event_date": "115/11/20",
+      "pledge_shares": 10000,
+      "unpledge_shares": 0,
+      "cum_shares": 155000,
+      "creditor": "元大商業銀行股份有限公司",
+      "report_date": "115/11/23"
     }
   ],
   "8076": [
@@ -536133,6 +537803,16 @@
       "cum_shares": 0,
       "creditor": "中信商銀敦南分行設質專戶",
       "report_date": "112/06/09"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "陳靖仁",
+      "event_date": "115/11/10",
+      "pledge_shares": 380000,
+      "unpledge_shares": 0,
+      "cum_shares": 380000,
+      "creditor": "安泰商業銀行股份有限公司",
+      "report_date": "115/11/11"
     }
   ],
   "4989": [
@@ -568327,6 +570007,76 @@
       "cum_shares": 230000,
       "creditor": "國際票券金融股份有限公司",
       "report_date": "115/11/10"
+    },
+    {
+      "identity": "A00011董事長之法人代表人",
+      "name": "余維斌",
+      "event_date": "115/11/17",
+      "pledge_shares": 45000,
+      "unpledge_shares": 0,
+      "cum_shares": 275000,
+      "creditor": "國際票券金融股份有限公司",
+      "report_date": "115/11/18"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "漢勝投資股份有限公司",
+      "event_date": "115/11/17",
+      "pledge_shares": 100000,
+      "unpledge_shares": 0,
+      "cum_shares": 3220000,
+      "creditor": "元大證券金融股份有限公司",
+      "report_date": "115/11/18"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "漢勝投資股份有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 100000,
+      "unpledge_shares": 0,
+      "cum_shares": 3320000,
+      "creditor": "國際票券金融股份有限公司",
+      "report_date": "115/11/23"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "漢勝投資股份有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 100000,
+      "unpledge_shares": 0,
+      "cum_shares": 3420000,
+      "creditor": "元大證券金融股份有限公司",
+      "report_date": "115/11/23"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "漢勝投資股份有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 100000,
+      "unpledge_shares": 0,
+      "cum_shares": 3520000,
+      "creditor": "兆豐國際商業銀行(股)公司竹科竹村分公司",
+      "report_date": "115/11/23"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "漢勝投資股份有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 150000,
+      "unpledge_shares": 0,
+      "cum_shares": 3670000,
+      "creditor": "兆豐票券金融(股)公司桃園分公司",
+      "report_date": "115/11/23"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "漢勝投資股份有限公司",
+      "event_date": "115/11/20",
+      "pledge_shares": 100000,
+      "unpledge_shares": 0,
+      "cum_shares": 3770000,
+      "creditor": "臺灣新光商業銀行(股)公司新竹分公司",
+      "report_date": "115/11/23"
     }
   ],
   "3303": [
@@ -570189,6 +571939,16 @@
       "cum_shares": 0,
       "creditor": "國際票券金融股份有限公司",
       "report_date": "112/04/27"
+    },
+    {
+      "identity": "A00011董事長之法人代表人",
+      "name": "蔡鎮隆",
+      "event_date": "115/11/11",
+      "pledge_shares": 807000,
+      "unpledge_shares": 0,
+      "cum_shares": 807000,
+      "creditor": "中華票券金融股份有限公司板橋分公司",
+      "report_date": "115/11/13"
     }
   ],
   "3587": [
@@ -580353,6 +582113,16 @@
       "cum_shares": 2302200,
       "creditor": "中信商銀東高雄分行設質專戶",
       "report_date": "115/11/13"
+    },
+    {
+      "identity": "A00014董事長利用他人名義持有者",
+      "name": "伽倫投資股份有限公司",
+      "event_date": "115/11/19",
+      "pledge_shares": 1000000,
+      "unpledge_shares": 0,
+      "cum_shares": 3302200,
+      "creditor": "中信商銀東高雄分行設質專戶",
+      "report_date": "115/11/20"
     }
   ],
   "6028": [
@@ -582281,6 +584051,152 @@
       "cum_shares": 253930486,
       "creditor": "台新國際商業銀行",
       "report_date": "115/10/29"
+    }
+  ],
+  "6426": [
+    {
+      "identity": "A00010董事長本人",
+      "name": "勝霖投資有限公司",
+      "event_date": "107/11/02",
+      "pledge_shares": 1100000,
+      "unpledge_shares": 0,
+      "cum_shares": 1100000,
+      "creditor": "中信商銀西台南分行設質專戶",
+      "report_date": "107/11/06"
+    },
+    {
+      "identity": "A00010董事長本人",
+      "name": "勝霖投資有限公司",
+      "event_date": "113/12/03",
+      "pledge_shares": 0,
+      "unpledge_shares": 1100000,
+      "cum_shares": 0,
+      "creditor": "中信商銀西台南分行設質專戶",
+      "report_date": "113/12/04"
+    }
+  ],
+  "2719": [
+    {
+      "identity": "L00010大股東本人",
+      "name": "慶欣欣鋼鐵股份有限公司",
+      "event_date": "112/03/06",
+      "pledge_shares": 20000000,
+      "unpledge_shares": 0,
+      "cum_shares": 20000000,
+      "creditor": "安泰商業銀行股份有限公司",
+      "report_date": "112/03/07"
+    }
+  ],
+  "5703": [
+    {
+      "identity": "L00020大股東本人",
+      "name": "傲士英投資股份有限公司",
+      "event_date": "104/11/25",
+      "pledge_shares": 3511000,
+      "unpledge_shares": 0,
+      "cum_shares": 6511000,
+      "creditor": "台新國際商業銀行忠孝分行",
+      "report_date": "104/11/26"
+    },
+    {
+      "identity": "D00061董事之法人代表人",
+      "name": "李彩蓮",
+      "event_date": "106/06/07",
+      "pledge_shares": 10000,
+      "unpledge_shares": 0,
+      "cum_shares": 10000,
+      "creditor": "瑞興商業銀行南京東路分行",
+      "report_date": "106/06/08"
+    },
+    {
+      "identity": "D00060董事本人",
+      "name": "崇嶽投資有限公司",
+      "event_date": "106/06/09",
+      "pledge_shares": 2324724,
+      "unpledge_shares": 0,
+      "cum_shares": 2324724,
+      "creditor": "瑞興商業銀行南京東路分行",
+      "report_date": "106/06/12"
+    },
+    {
+      "identity": "D00061董事之法人代表人",
+      "name": "李彩蓮",
+      "event_date": "106/06/12",
+      "pledge_shares": 503164,
+      "unpledge_shares": 0,
+      "cum_shares": 513164,
+      "creditor": "瑞興商業銀行南京東路分行",
+      "report_date": "106/06/13"
+    },
+    {
+      "identity": "D00061董事之法人代表人",
+      "name": "李彩蓮",
+      "event_date": "106/09/12",
+      "pledge_shares": 0,
+      "unpledge_shares": 513164,
+      "cum_shares": 0,
+      "creditor": "瑞興商業銀行南京東路分行",
+      "report_date": "106/09/13"
+    },
+    {
+      "identity": "D00060董事本人",
+      "name": "崇嶽投資有限公司",
+      "event_date": "106/09/12",
+      "pledge_shares": 0,
+      "unpledge_shares": 2324724,
+      "cum_shares": 0,
+      "creditor": "瑞興商業銀行南京東路分行",
+      "report_date": "106/09/13"
+    },
+    {
+      "identity": "D00060董事本人",
+      "name": "崇嶽投資有限公司",
+      "event_date": "107/04/25",
+      "pledge_shares": 3000000,
+      "unpledge_shares": 0,
+      "cum_shares": 3000000,
+      "creditor": "瑞興商業銀行南京東路分行",
+      "report_date": "107/04/26"
+    },
+    {
+      "identity": "A00020董事長本人",
+      "name": "傲士英投資股份有限公司",
+      "event_date": "108/10/03",
+      "pledge_shares": 0,
+      "unpledge_shares": 3511000,
+      "cum_shares": 3000000,
+      "creditor": "台新國際商業銀行忠孝分行",
+      "report_date": "108/10/07"
+    },
+    {
+      "identity": "A00020董事長本人",
+      "name": "傲士英投資股份有限公司",
+      "event_date": "109/10/16",
+      "pledge_shares": 0,
+      "unpledge_shares": 3000000,
+      "cum_shares": 0,
+      "creditor": "國泰世華商業銀行光華分行",
+      "report_date": "109/10/19"
+    },
+    {
+      "identity": "D00060董事本人",
+      "name": "崇嶽投資有限公司",
+      "event_date": "111/07/15",
+      "pledge_shares": 2400000,
+      "unpledge_shares": 0,
+      "cum_shares": 5400000,
+      "creditor": "瑞興商業銀行南京東路分行",
+      "report_date": "111/07/18"
+    },
+    {
+      "identity": "D00060董事本人",
+      "name": "崇嶽投資有限公司",
+      "event_date": "111/12/30",
+      "pledge_shares": 0,
+      "unpledge_shares": 1200000,
+      "cum_shares": 4200000,
+      "creditor": "瑞興商業銀行南京東路分行",
+      "report_date": "112/01/03"
     }
   ]
 }
