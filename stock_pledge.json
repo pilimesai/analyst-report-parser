@@ -1,14 +1,14 @@
 {
-  "updateTime": "2026-11-24T04:30:42.523311+08:00",
+  "updateTime": "2026-11-24T08:10:18.294718+08:00",
   "tradeDate": "2026-11-23",
   "summary": {
     "total_active_stocks": 548,
     "above_pledge_count": 91,
     "below_pledge_count": 457,
     "above_pledge_ratio": 16.6,
-    "avg_above_pledge_count": 94,
-    "avg_below_pledge_count": 454,
-    "avg_above_pledge_ratio": 17.2,
+    "avg_above_pledge_count": 93,
+    "avg_below_pledge_count": 455,
+    "avg_above_pledge_ratio": 17.0,
     "top_gain_stock": {
       "code": "2466",
       "name": "冠西電",
@@ -2045,10 +2045,10 @@
       "creditor": "臺灣新光商業銀行（股）公司東台南分公司",
       "pledge_price": 30.55,
       "diff_pct": -20.46,
-      "avg_pledge_price": 23.88,
-      "avg_diff_pct": 1.76,
-      "pledge_count_3y": 21,
-      "pledge_shares_3y_lots": 23050.0,
+      "avg_pledge_price": 24.76,
+      "avg_diff_pct": -1.86,
+      "pledge_count_3y": 20,
+      "pledge_shares_3y_lots": 21450.0,
       "status": "below_pledge"
     },
     {
