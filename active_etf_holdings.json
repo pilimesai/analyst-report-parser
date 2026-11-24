@@ -1,5 +1,5 @@
 {
-  "updateTime": "2026-11-24 08:15:15",
+  "updateTime": "2026-11-25 06:41:43",
   "totalFunds": 14,
   "funds": [
     {
@@ -110,11 +110,11 @@
         {
           "fundSymbol": "00982A",
           "fundName": "主動群益台灣強棒",
-          "ratio": 6.21
+          "ratio": 6.23
         }
       ],
-      "totalRatio": 6.21,
-      "maxRatio": 6.21
+      "totalRatio": 6.23,
+      "maxRatio": 6.23
     },
     {
       "symbol": "8358",
@@ -124,25 +124,11 @@
         {
           "fundSymbol": "00987A",
           "fundName": "主動台新優勢成長",
-          "ratio": 3.13
+          "ratio": 2.85
         }
       ],
-      "totalRatio": 3.13,
-      "maxRatio": 3.13
-    },
-    {
-      "symbol": "1477",
-      "name": "聚陽",
-      "industry": "成衣製造",
-      "funds": [
-        {
-          "fundSymbol": "00401A",
-          "fundName": "主動摩根台灣鑫收",
-          "ratio": 2.62
-        }
-      ],
-      "totalRatio": 2.62,
-      "maxRatio": 2.62
+      "totalRatio": 2.85,
+      "maxRatio": 2.85
     },
     {
       "symbol": "6672",
@@ -152,53 +138,11 @@
         {
           "fundSymbol": "00982A",
           "fundName": "主動群益台灣強棒",
-          "ratio": 2.51
+          "ratio": 2.52
         }
       ],
-      "totalRatio": 2.51,
-      "maxRatio": 2.51
-    },
-    {
-      "symbol": "2886",
-      "name": "兆豐金",
-      "industry": "銀行業",
-      "funds": [
-        {
-          "fundSymbol": "00401A",
-          "fundName": "主動摩根台灣鑫收",
-          "ratio": 2.5
-        }
-      ],
-      "totalRatio": 2.5,
-      "maxRatio": 2.5
-    },
-    {
-      "symbol": "1476",
-      "name": "儒鴻",
-      "industry": "成衣製造",
-      "funds": [
-        {
-          "fundSymbol": "00401A",
-          "fundName": "主動摩根台灣鑫收",
-          "ratio": 2.49
-        }
-      ],
-      "totalRatio": 2.49,
-      "maxRatio": 2.49
-    },
-    {
-      "symbol": "4991",
-      "name": "環宇-KY",
-      "industry": "半導體設備與材料",
-      "funds": [
-        {
-          "fundSymbol": "00987A",
-          "fundName": "主動台新優勢成長",
-          "ratio": 2.44
-        }
-      ],
-      "totalRatio": 2.44,
-      "maxRatio": 2.44
+      "totalRatio": 2.52,
+      "maxRatio": 2.52
     },
     {
       "symbol": "6770",
@@ -208,11 +152,11 @@
         {
           "fundSymbol": "00996A",
           "fundName": "主動兆豐台灣豐收",
-          "ratio": 2.43
+          "ratio": 2.45
         }
       ],
-      "totalRatio": 2.43,
-      "maxRatio": 2.43
+      "totalRatio": 2.45,
+      "maxRatio": 2.45
     },
     {
       "symbol": "6683",
@@ -222,11 +166,53 @@
         {
           "fundSymbol": "00996A",
           "fundName": "主動兆豐台灣豐收",
-          "ratio": 2.35
+          "ratio": 2.37
         }
       ],
-      "totalRatio": 2.35,
-      "maxRatio": 2.35
+      "totalRatio": 2.37,
+      "maxRatio": 2.37
+    },
+    {
+      "symbol": "2886",
+      "name": "兆豐金",
+      "industry": "銀行業",
+      "funds": [
+        {
+          "fundSymbol": "00401A",
+          "fundName": "主動摩根台灣鑫收",
+          "ratio": 2.34
+        }
+      ],
+      "totalRatio": 2.34,
+      "maxRatio": 2.34
+    },
+    {
+      "symbol": "1477",
+      "name": "聚陽",
+      "industry": "成衣製造",
+      "funds": [
+        {
+          "fundSymbol": "00401A",
+          "fundName": "主動摩根台灣鑫收",
+          "ratio": 2.26
+        }
+      ],
+      "totalRatio": 2.26,
+      "maxRatio": 2.26
+    },
+    {
+      "symbol": "4991",
+      "name": "環宇-KY",
+      "industry": "半導體設備與材料",
+      "funds": [
+        {
+          "fundSymbol": "00987A",
+          "fundName": "主動台新優勢成長",
+          "ratio": 2.22
+        }
+      ],
+      "totalRatio": 2.22,
+      "maxRatio": 2.22
     },
     {
       "symbol": "6239",
@@ -243,18 +229,18 @@
       "maxRatio": 2.21
     },
     {
-      "symbol": "2603",
-      "name": "長榮",
-      "industry": "航運業",
+      "symbol": "1476",
+      "name": "儒鴻",
+      "industry": "成衣製造",
       "funds": [
         {
           "fundSymbol": "00401A",
           "fundName": "主動摩根台灣鑫收",
-          "ratio": 2.14
+          "ratio": 2.19
         }
       ],
-      "totalRatio": 2.14,
-      "maxRatio": 2.14
+      "totalRatio": 2.19,
+      "maxRatio": 2.19
     },
     {
       "symbol": "2472",
@@ -264,11 +250,11 @@
         {
           "fundSymbol": "00996A",
           "fundName": "主動兆豐台灣豐收",
-          "ratio": 2.1
+          "ratio": 2.13
         }
       ],
-      "totalRatio": 2.1,
-      "maxRatio": 2.1
+      "totalRatio": 2.13,
+      "maxRatio": 2.13
     },
     {
       "symbol": "7751",
@@ -278,11 +264,25 @@
         {
           "fundSymbol": "00996A",
           "fundName": "主動兆豐台灣豐收",
-          "ratio": 2.07
+          "ratio": 2.09
         }
       ],
-      "totalRatio": 2.07,
-      "maxRatio": 2.07
+      "totalRatio": 2.09,
+      "maxRatio": 2.09
+    },
+    {
+      "symbol": "2603",
+      "name": "長榮",
+      "industry": "航運業",
+      "funds": [
+        {
+          "fundSymbol": "00401A",
+          "fundName": "主動摩根台灣鑫收",
+          "ratio": 2.0
+        }
+      ],
+      "totalRatio": 2.0,
+      "maxRatio": 2.0
     },
     {
       "symbol": "2027",
@@ -292,11 +292,11 @@
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 1.95
+          "ratio": 1.87
         }
       ],
-      "totalRatio": 1.95,
-      "maxRatio": 1.95
+      "totalRatio": 1.87,
+      "maxRatio": 1.87
     },
     {
       "symbol": "6442",
@@ -306,11 +306,11 @@
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 1.9
+          "ratio": 1.86
         }
       ],
-      "totalRatio": 1.9,
-      "maxRatio": 1.9
+      "totalRatio": 1.86,
+      "maxRatio": 1.86
     },
     {
       "symbol": "2881",
@@ -320,207 +320,25 @@
         {
           "fundSymbol": "00401A",
           "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.86
+          "ratio": 1.75
         }
       ],
-      "totalRatio": 1.86,
-      "maxRatio": 1.86
+      "totalRatio": 1.75,
+      "maxRatio": 1.75
     },
     {
-      "symbol": "3026",
-      "name": "禾伸堂",
-      "industry": "電子零組件",
-      "funds": [
-        {
-          "fundSymbol": "00991A",
-          "fundName": "主動復華未來50",
-          "ratio": 1.85
-        }
-      ],
-      "totalRatio": 1.85,
-      "maxRatio": 1.85
-    },
-    {
-      "symbol": "2357",
-      "name": "華碩",
-      "industry": "電腦及週邊設備",
+      "symbol": "5904",
+      "name": "寶雅",
+      "industry": "百貨零售",
       "funds": [
         {
           "fundSymbol": "00401A",
           "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.56
+          "ratio": 1.75
         }
       ],
-      "totalRatio": 1.56,
-      "maxRatio": 1.56
-    },
-    {
-      "symbol": "7788",
-      "name": "松川精密",
-      "industry": "電機機械",
-      "funds": [
-        {
-          "fundSymbol": "00982A",
-          "fundName": "主動群益台灣強棒",
-          "ratio": 1.56
-        }
-      ],
-      "totalRatio": 1.56,
-      "maxRatio": 1.56
-    },
-    {
-      "symbol": "7750",
-      "name": "新代",
-      "industry": "電機機械",
-      "funds": [
-        {
-          "fundSymbol": "00985A",
-          "fundName": "主動野村台灣50",
-          "ratio": 1.54
-        }
-      ],
-      "totalRatio": 1.54,
-      "maxRatio": 1.54
-    },
-    {
-      "symbol": "1605",
-      "name": "華新",
-      "industry": "鋼鐵工業",
-      "funds": [
-        {
-          "fundSymbol": "00985A",
-          "fundName": "主動野村台灣50",
-          "ratio": 1.49
-        }
-      ],
-      "totalRatio": 1.49,
-      "maxRatio": 1.49
-    },
-    {
-      "symbol": "2890",
-      "name": "永豐金",
-      "industry": "銀行業",
-      "funds": [
-        {
-          "fundSymbol": "00401A",
-          "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.46
-        }
-      ],
-      "totalRatio": 1.46,
-      "maxRatio": 1.46
-    },
-    {
-      "symbol": "2883",
-      "name": "凱基金",
-      "industry": "人壽保險",
-      "funds": [
-        {
-          "fundSymbol": "00401A",
-          "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.39
-        }
-      ],
-      "totalRatio": 1.39,
-      "maxRatio": 1.39
-    },
-    {
-      "symbol": "2395",
-      "name": "研華",
-      "industry": "電腦及週邊設備",
-      "funds": [
-        {
-          "fundSymbol": "00982A",
-          "fundName": "主動群益台灣強棒",
-          "ratio": 1.38
-        }
-      ],
-      "totalRatio": 1.38,
-      "maxRatio": 1.38
-    },
-    {
-      "symbol": "8016",
-      "name": "矽創",
-      "industry": "半導體業",
-      "funds": [
-        {
-          "fundSymbol": "00982A",
-          "fundName": "主動群益台灣強棒",
-          "ratio": 1.37
-        }
-      ],
-      "totalRatio": 1.37,
-      "maxRatio": 1.37
-    },
-    {
-      "symbol": "6830",
-      "name": "汎銓",
-      "industry": "半導體設備與材料",
-      "funds": [
-        {
-          "fundSymbol": "00996A",
-          "fundName": "主動兆豐台灣豐收",
-          "ratio": 1.29
-        }
-      ],
-      "totalRatio": 1.29,
-      "maxRatio": 1.29
-    },
-    {
-      "symbol": "3406",
-      "name": "玉晶光",
-      "industry": "電腦及週邊設備",
-      "funds": [
-        {
-          "fundSymbol": "00993A",
-          "fundName": "主動安聯台灣",
-          "ratio": 1.27
-        }
-      ],
-      "totalRatio": 1.27,
-      "maxRatio": 1.27
-    },
-    {
-      "symbol": "8299",
-      "name": "群聯",
-      "industry": "半導體業",
-      "funds": [
-        {
-          "fundSymbol": "00980A",
-          "fundName": "主動野村臺灣優選",
-          "ratio": 1.16
-        }
-      ],
-      "totalRatio": 1.16,
-      "maxRatio": 1.16
-    },
-    {
-      "symbol": "6187",
-      "name": "萬潤",
-      "industry": "特殊工業機械",
-      "funds": [
-        {
-          "fundSymbol": "00401A",
-          "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.13
-        }
-      ],
-      "totalRatio": 1.13,
-      "maxRatio": 1.13
-    },
-    {
-      "symbol": "3529",
-      "name": "力旺",
-      "industry": "半導體業",
-      "funds": [
-        {
-          "fundSymbol": "00400A",
-          "fundName": "主動國泰動能高息",
-          "ratio": 1.08
-        }
-      ],
-      "totalRatio": 1.08,
-      "maxRatio": 1.08
+      "totalRatio": 1.75,
+      "maxRatio": 1.75
     },
     {
       "symbol": "2379",
@@ -530,25 +348,207 @@
         {
           "fundSymbol": "00401A",
           "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.03
+          "ratio": 1.74
         }
       ],
-      "totalRatio": 1.03,
-      "maxRatio": 1.03
+      "totalRatio": 1.74,
+      "maxRatio": 1.74
     },
     {
-      "symbol": "2313",
-      "name": "華通",
+      "symbol": "7788",
+      "name": "松川精密",
+      "industry": "電機機械",
+      "funds": [
+        {
+          "fundSymbol": "00982A",
+          "fundName": "主動群益台灣強棒",
+          "ratio": 1.57
+        }
+      ],
+      "totalRatio": 1.57,
+      "maxRatio": 1.57
+    },
+    {
+      "symbol": "1605",
+      "name": "華新",
+      "industry": "鋼鐵工業",
+      "funds": [
+        {
+          "fundSymbol": "00985A",
+          "fundName": "主動野村台灣50",
+          "ratio": 1.46
+        }
+      ],
+      "totalRatio": 1.46,
+      "maxRatio": 1.46
+    },
+    {
+      "symbol": "3529",
+      "name": "力旺",
+      "industry": "半導體業",
+      "funds": [
+        {
+          "fundSymbol": "00400A",
+          "fundName": "主動國泰動能高息",
+          "ratio": 1.43
+        }
+      ],
+      "totalRatio": 1.43,
+      "maxRatio": 1.43
+    },
+    {
+      "symbol": "2395",
+      "name": "研華",
+      "industry": "電腦及週邊設備",
+      "funds": [
+        {
+          "fundSymbol": "00982A",
+          "fundName": "主動群益台灣強棒",
+          "ratio": 1.39
+        }
+      ],
+      "totalRatio": 1.39,
+      "maxRatio": 1.39
+    },
+    {
+      "symbol": "3026",
+      "name": "禾伸堂",
       "industry": "電子零組件",
+      "funds": [
+        {
+          "fundSymbol": "00991A",
+          "fundName": "主動復華未來50",
+          "ratio": 1.37
+        }
+      ],
+      "totalRatio": 1.37,
+      "maxRatio": 1.37
+    },
+    {
+      "symbol": "2890",
+      "name": "永豐金",
+      "industry": "銀行業",
       "funds": [
         {
           "fundSymbol": "00401A",
           "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.03
+          "ratio": 1.36
         }
       ],
-      "totalRatio": 1.03,
-      "maxRatio": 1.03
+      "totalRatio": 1.36,
+      "maxRatio": 1.36
+    },
+    {
+      "symbol": "6830",
+      "name": "汎銓",
+      "industry": "半導體設備與材料",
+      "funds": [
+        {
+          "fundSymbol": "00996A",
+          "fundName": "主動兆豐台灣豐收",
+          "ratio": 1.3
+        }
+      ],
+      "totalRatio": 1.3,
+      "maxRatio": 1.3
+    },
+    {
+      "symbol": "2883",
+      "name": "凱基金",
+      "industry": "人壽保險",
+      "funds": [
+        {
+          "fundSymbol": "00401A",
+          "fundName": "主動摩根台灣鑫收",
+          "ratio": 1.29
+        }
+      ],
+      "totalRatio": 1.29,
+      "maxRatio": 1.29
+    },
+    {
+      "symbol": "8464",
+      "name": "億豐",
+      "industry": "居家生活",
+      "funds": [
+        {
+          "fundSymbol": "00401A",
+          "fundName": "主動摩根台灣鑫收",
+          "ratio": 1.28
+        }
+      ],
+      "totalRatio": 1.28,
+      "maxRatio": 1.28
+    },
+    {
+      "symbol": "8016",
+      "name": "矽創",
+      "industry": "半導體業",
+      "funds": [
+        {
+          "fundSymbol": "00982A",
+          "fundName": "主動群益台灣強棒",
+          "ratio": 1.26
+        }
+      ],
+      "totalRatio": 1.26,
+      "maxRatio": 1.26
+    },
+    {
+      "symbol": "3406",
+      "name": "玉晶光",
+      "industry": "電腦及週邊設備",
+      "funds": [
+        {
+          "fundSymbol": "00993A",
+          "fundName": "主動安聯台灣",
+          "ratio": 1.25
+        }
+      ],
+      "totalRatio": 1.25,
+      "maxRatio": 1.25
+    },
+    {
+      "symbol": "8299",
+      "name": "群聯",
+      "industry": "半導體業",
+      "funds": [
+        {
+          "fundSymbol": "00980A",
+          "fundName": "主動野村臺灣優選",
+          "ratio": 1.13
+        }
+      ],
+      "totalRatio": 1.13,
+      "maxRatio": 1.13
+    },
+    {
+      "symbol": "6526",
+      "name": "達發",
+      "industry": "半導體業",
+      "funds": [
+        {
+          "fundSymbol": "00996A",
+          "fundName": "主動兆豐台灣豐收",
+          "ratio": 1.09
+        }
+      ],
+      "totalRatio": 1.09,
+      "maxRatio": 1.09
+    },
+    {
+      "symbol": "6187",
+      "name": "萬潤",
+      "industry": "特殊工業機械",
+      "funds": [
+        {
+          "fundSymbol": "00401A",
+          "fundName": "主動摩根台灣鑫收",
+          "ratio": 1.06
+        }
+      ],
+      "totalRatio": 1.06,
+      "maxRatio": 1.06
     },
     {
       "symbol": "2317",
@@ -558,16 +558,16 @@
         {
           "fundSymbol": "00980A",
           "fundName": "主動野村臺灣優選",
-          "ratio": 3.87
+          "ratio": 3.78
         },
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 2.04
+          "ratio": 2.0
         }
       ],
-      "totalRatio": 5.91,
-      "maxRatio": 3.87
+      "totalRatio": 5.78,
+      "maxRatio": 3.78
     },
     {
       "symbol": "1815",
@@ -575,18 +575,18 @@
       "industry": "電子零組件",
       "funds": [
         {
-          "fundSymbol": "00987A",
-          "fundName": "主動台新優勢成長",
-          "ratio": 3.82
-        },
-        {
           "fundSymbol": "00992A",
           "fundName": "主動群益科技創新",
-          "ratio": 3.68
+          "ratio": 3.7
+        },
+        {
+          "fundSymbol": "00987A",
+          "fundName": "主動台新優勢成長",
+          "ratio": 3.48
         }
       ],
-      "totalRatio": 7.5,
-      "maxRatio": 3.82
+      "totalRatio": 7.18,
+      "maxRatio": 3.7
     },
     {
       "symbol": "6278",
@@ -596,16 +596,16 @@
         {
           "fundSymbol": "00996A",
           "fundName": "主動兆豐台灣豐收",
-          "ratio": 3.43
+          "ratio": 3.47
         },
         {
           "fundSymbol": "00400A",
           "fundName": "主動國泰動能高息",
-          "ratio": 2.08
+          "ratio": 2.0
         }
       ],
-      "totalRatio": 5.51,
-      "maxRatio": 3.43
+      "totalRatio": 5.47,
+      "maxRatio": 3.47
     },
     {
       "symbol": "8021",
@@ -615,35 +615,16 @@
         {
           "fundSymbol": "00996A",
           "fundName": "主動兆豐台灣豐收",
-          "ratio": 2.59
+          "ratio": 2.61
         },
         {
           "fundSymbol": "00992A",
           "fundName": "主動群益科技創新",
-          "ratio": 1.28
+          "ratio": 1.25
         }
       ],
-      "totalRatio": 3.87,
-      "maxRatio": 2.59
-    },
-    {
-      "symbol": "6515",
-      "name": "穎崴",
-      "industry": "半導體業",
-      "funds": [
-        {
-          "fundSymbol": "00987A",
-          "fundName": "主動台新優勢成長",
-          "ratio": 2.26
-        },
-        {
-          "fundSymbol": "00980A",
-          "fundName": "主動野村臺灣優選",
-          "ratio": 1.29
-        }
-      ],
-      "totalRatio": 3.55,
-      "maxRatio": 2.26
+      "totalRatio": 3.86,
+      "maxRatio": 2.61
     },
     {
       "symbol": "2382",
@@ -653,54 +634,54 @@
         {
           "fundSymbol": "00980A",
           "fundName": "主動野村臺灣優選",
-          "ratio": 2.17
+          "ratio": 2.11
         },
         {
           "fundSymbol": "00401A",
           "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.8
+          "ratio": 1.68
         }
       ],
-      "totalRatio": 3.97,
-      "maxRatio": 2.17
+      "totalRatio": 3.79,
+      "maxRatio": 2.11
     },
     {
-      "symbol": "6446",
-      "name": "藥華藥",
-      "industry": "製藥與生技",
+      "symbol": "6515",
+      "name": "穎崴",
+      "industry": "半導體業",
+      "funds": [
+        {
+          "fundSymbol": "00987A",
+          "fundName": "主動台新優勢成長",
+          "ratio": 2.06
+        },
+        {
+          "fundSymbol": "00980A",
+          "fundName": "主動野村臺灣優選",
+          "ratio": 1.26
+        }
+      ],
+      "totalRatio": 3.32,
+      "maxRatio": 2.06
+    },
+    {
+      "symbol": "3036",
+      "name": "文曄",
+      "industry": "電子零組件",
       "funds": [
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 1.68
+          "ratio": 1.99
         },
-        {
-          "fundSymbol": "00995A",
-          "fundName": "主動中信台灣卓越",
-          "ratio": 1.09
-        }
-      ],
-      "totalRatio": 2.77,
-      "maxRatio": 1.68
-    },
-    {
-      "symbol": "3533",
-      "name": "嘉澤",
-      "industry": "電子零組件",
-      "funds": [
         {
           "fundSymbol": "00400A",
           "fundName": "主動國泰動能高息",
-          "ratio": 1.67
-        },
-        {
-          "fundSymbol": "00996A",
-          "fundName": "主動兆豐台灣豐收",
-          "ratio": 1.3
+          "ratio": 1.32
         }
       ],
-      "totalRatio": 2.97,
-      "maxRatio": 1.67
+      "totalRatio": 3.31,
+      "maxRatio": 1.99
     },
     {
       "symbol": "2884",
@@ -710,16 +691,35 @@
         {
           "fundSymbol": "00401A",
           "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.62
+          "ratio": 1.89
         },
         {
           "fundSymbol": "00980A",
           "fundName": "主動野村臺灣優選",
-          "ratio": 1.44
+          "ratio": 1.36
         }
       ],
-      "totalRatio": 3.06,
-      "maxRatio": 1.62
+      "totalRatio": 3.25,
+      "maxRatio": 1.89
+    },
+    {
+      "symbol": "3533",
+      "name": "嘉澤",
+      "industry": "電子零組件",
+      "funds": [
+        {
+          "fundSymbol": "00400A",
+          "fundName": "主動國泰動能高息",
+          "ratio": 1.6
+        },
+        {
+          "fundSymbol": "00996A",
+          "fundName": "主動兆豐台灣豐收",
+          "ratio": 1.31
+        }
+      ],
+      "totalRatio": 2.91,
+      "maxRatio": 1.6
     },
     {
       "symbol": "7828",
@@ -734,11 +734,30 @@
         {
           "fundSymbol": "00401A",
           "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.32
+          "ratio": 1.24
         }
       ],
-      "totalRatio": 2.83,
+      "totalRatio": 2.75,
       "maxRatio": 1.51
+    },
+    {
+      "symbol": "2357",
+      "name": "華碩",
+      "industry": "電腦及週邊設備",
+      "funds": [
+        {
+          "fundSymbol": "00401A",
+          "fundName": "主動摩根台灣鑫收",
+          "ratio": 1.44
+        },
+        {
+          "fundSymbol": "00994A",
+          "fundName": "主動第一金台股優",
+          "ratio": 1.02
+        }
+      ],
+      "totalRatio": 2.46,
+      "maxRatio": 1.44
     },
     {
       "symbol": "6488",
@@ -748,16 +767,16 @@
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 1.32
+          "ratio": 1.29
         },
         {
           "fundSymbol": "00400A",
           "fundName": "主動國泰動能高息",
-          "ratio": 1.15
+          "ratio": 1.1
         }
       ],
-      "totalRatio": 2.47,
-      "maxRatio": 1.32
+      "totalRatio": 2.39,
+      "maxRatio": 1.29
     },
     {
       "symbol": "2360",
@@ -765,37 +784,18 @@
       "industry": "精密儀器",
       "funds": [
         {
-          "fundSymbol": "00401A",
-          "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.16
-        },
-        {
           "fundSymbol": "00992A",
           "fundName": "主動群益科技創新",
           "ratio": 1.09
-        }
-      ],
-      "totalRatio": 2.25,
-      "maxRatio": 1.16
-    },
-    {
-      "symbol": "6526",
-      "name": "達發",
-      "industry": "半導體業",
-      "funds": [
-        {
-          "fundSymbol": "00996A",
-          "fundName": "主動兆豐台灣豐收",
-          "ratio": 1.08
         },
         {
-          "fundSymbol": "00985A",
-          "fundName": "主動野村台灣50",
-          "ratio": 1.02
+          "fundSymbol": "00401A",
+          "fundName": "主動摩根台灣鑫收",
+          "ratio": 1.08
         }
       ],
-      "totalRatio": 2.1,
-      "maxRatio": 1.08
+      "totalRatio": 2.17,
+      "maxRatio": 1.09
     },
     {
       "symbol": "3105",
@@ -805,21 +805,21 @@
         {
           "fundSymbol": "00982A",
           "fundName": "主動群益台灣強棒",
-          "ratio": 8.09
+          "ratio": 8.11
         },
         {
           "fundSymbol": "00993A",
           "fundName": "主動安聯台灣",
-          "ratio": 3.69
+          "ratio": 3.63
         },
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 2.15
+          "ratio": 2.1
         }
       ],
-      "totalRatio": 13.93,
-      "maxRatio": 8.09
+      "totalRatio": 13.84,
+      "maxRatio": 8.11
     },
     {
       "symbol": "6531",
@@ -829,21 +829,21 @@
         {
           "fundSymbol": "00982A",
           "fundName": "主動群益台灣強棒",
-          "ratio": 6.7
+          "ratio": 6.72
         },
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 2.78
+          "ratio": 2.73
         },
         {
           "fundSymbol": "00995A",
           "fundName": "主動中信台灣卓越",
-          "ratio": 1.14
+          "ratio": 1.08
         }
       ],
-      "totalRatio": 10.62,
-      "maxRatio": 6.7
+      "totalRatio": 10.53,
+      "maxRatio": 6.72
     },
     {
       "symbol": "7769",
@@ -853,45 +853,21 @@
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 3.06
+          "ratio": 3.0
+        },
+        {
+          "fundSymbol": "00980A",
+          "fundName": "主動野村臺灣優選",
+          "ratio": 1.53
         },
         {
           "fundSymbol": "00995A",
           "fundName": "主動中信台灣卓越",
-          "ratio": 1.61
-        },
-        {
-          "fundSymbol": "00980A",
-          "fundName": "主動野村臺灣優選",
-          "ratio": 1.57
+          "ratio": 1.53
         }
       ],
-      "totalRatio": 6.24,
-      "maxRatio": 3.06
-    },
-    {
-      "symbol": "3036",
-      "name": "文曄",
-      "industry": "電子零組件",
-      "funds": [
-        {
-          "fundSymbol": "00985A",
-          "fundName": "主動野村台灣50",
-          "ratio": 2.37
-        },
-        {
-          "fundSymbol": "00400A",
-          "fundName": "主動國泰動能高息",
-          "ratio": 1.41
-        },
-        {
-          "fundSymbol": "00980A",
-          "fundName": "主動野村臺灣優選",
-          "ratio": 1.06
-        }
-      ],
-      "totalRatio": 4.84,
-      "maxRatio": 2.37
+      "totalRatio": 6.06,
+      "maxRatio": 3.0
     },
     {
       "symbol": "2376",
@@ -901,69 +877,21 @@
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 2.36
+          "ratio": 2.31
         },
         {
           "fundSymbol": "00980A",
           "fundName": "主動野村臺灣優選",
-          "ratio": 1.7
-        },
-        {
-          "fundSymbol": "00982A",
-          "fundName": "主動群益台灣強棒",
-          "ratio": 1.27
-        }
-      ],
-      "totalRatio": 5.33,
-      "maxRatio": 2.36
-    },
-    {
-      "symbol": "2891",
-      "name": "中信金",
-      "industry": "銀行業",
-      "funds": [
-        {
-          "fundSymbol": "00401A",
-          "fundName": "主動摩根台灣鑫收",
-          "ratio": 2.21
-        },
-        {
-          "fundSymbol": "00980A",
-          "fundName": "主動野村臺灣優選",
-          "ratio": 1.91
-        },
-        {
-          "fundSymbol": "00400A",
-          "fundName": "主動國泰動能高息",
           "ratio": 1.66
-        }
-      ],
-      "totalRatio": 5.78,
-      "maxRatio": 2.21
-    },
-    {
-      "symbol": "2455",
-      "name": "全新",
-      "industry": "半導體設備與材料",
-      "funds": [
-        {
-          "fundSymbol": "00987A",
-          "fundName": "主動台新優勢成長",
-          "ratio": 2.01
         },
         {
           "fundSymbol": "00982A",
           "fundName": "主動群益台灣強棒",
-          "ratio": 1.32
-        },
-        {
-          "fundSymbol": "00401A",
-          "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.25
+          "ratio": 1.28
         }
       ],
-      "totalRatio": 4.58,
-      "maxRatio": 2.01
+      "totalRatio": 5.25,
+      "maxRatio": 2.31
     },
     {
       "symbol": "6213",
@@ -973,21 +901,45 @@
         {
           "fundSymbol": "00993A",
           "fundName": "主動安聯台灣",
-          "ratio": 1.98
+          "ratio": 1.94
         },
         {
           "fundSymbol": "00982A",
           "fundName": "主動群益台灣強棒",
-          "ratio": 1.59
+          "ratio": 1.6
         },
         {
           "fundSymbol": "00992A",
           "fundName": "主動群益科技創新",
-          "ratio": 1.2
+          "ratio": 1.21
         }
       ],
-      "totalRatio": 4.77,
-      "maxRatio": 1.98
+      "totalRatio": 4.75,
+      "maxRatio": 1.94
+    },
+    {
+      "symbol": "2455",
+      "name": "全新",
+      "industry": "半導體設備與材料",
+      "funds": [
+        {
+          "fundSymbol": "00987A",
+          "fundName": "主動台新優勢成長",
+          "ratio": 1.83
+        },
+        {
+          "fundSymbol": "00982A",
+          "fundName": "主動群益台灣強棒",
+          "ratio": 1.32
+        },
+        {
+          "fundSymbol": "00401A",
+          "fundName": "主動摩根台灣鑫收",
+          "ratio": 1.17
+        }
+      ],
+      "totalRatio": 4.32,
+      "maxRatio": 1.83
     },
     {
       "symbol": "2344",
@@ -997,21 +949,21 @@
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 1.6
+          "ratio": 1.57
         },
         {
           "fundSymbol": "00980A",
           "fundName": "主動野村臺灣優選",
-          "ratio": 1.42
+          "ratio": 1.38
         },
         {
           "fundSymbol": "00993A",
           "fundName": "主動安聯台灣",
-          "ratio": 1.04
+          "ratio": 1.02
         }
       ],
-      "totalRatio": 4.06,
-      "maxRatio": 1.6
+      "totalRatio": 3.97,
+      "maxRatio": 1.57
     },
     {
       "symbol": "6285",
@@ -1021,7 +973,7 @@
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 1.41
+          "ratio": 1.38
         },
         {
           "fundSymbol": "00982A",
@@ -1031,11 +983,11 @@
         {
           "fundSymbol": "00401A",
           "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.09
+          "ratio": 1.02
         }
       ],
-      "totalRatio": 3.79,
-      "maxRatio": 1.41
+      "totalRatio": 3.69,
+      "maxRatio": 1.38
     },
     {
       "symbol": "6510",
@@ -1045,26 +997,26 @@
         {
           "fundSymbol": "00996A",
           "fundName": "主動兆豐台灣豐收",
-          "ratio": 5.79
+          "ratio": 5.85
         },
         {
           "fundSymbol": "00987A",
           "fundName": "主動台新優勢成長",
-          "ratio": 3.62
+          "ratio": 3.3
         },
         {
           "fundSymbol": "00994A",
           "fundName": "主動第一金台股優",
-          "ratio": 2.53
+          "ratio": 2.46
         },
         {
           "fundSymbol": "00995A",
           "fundName": "主動中信台灣卓越",
-          "ratio": 2.42
+          "ratio": 2.3
         }
       ],
-      "totalRatio": 14.36,
-      "maxRatio": 5.79
+      "totalRatio": 13.91,
+      "maxRatio": 5.85
     },
     {
       "symbol": "3491",
@@ -1074,26 +1026,26 @@
         {
           "fundSymbol": "00993A",
           "fundName": "主動安聯台灣",
-          "ratio": 5.15
+          "ratio": 5.05
         },
         {
           "fundSymbol": "00982A",
           "fundName": "主動群益台灣強棒",
-          "ratio": 4.7
+          "ratio": 4.71
         },
         {
           "fundSymbol": "00987A",
           "fundName": "主動台新優勢成長",
-          "ratio": 4.21
+          "ratio": 3.84
         },
         {
           "fundSymbol": "00401A",
           "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.56
+          "ratio": 1.46
         }
       ],
-      "totalRatio": 15.62,
-      "maxRatio": 5.15
+      "totalRatio": 15.06,
+      "maxRatio": 5.05
     },
     {
       "symbol": "2327",
@@ -1103,26 +1055,26 @@
         {
           "fundSymbol": "00996A",
           "fundName": "主動兆豐台灣豐收",
-          "ratio": 4.46
+          "ratio": 4.51
         },
         {
           "fundSymbol": "00981A",
           "fundName": "主動統一台股增長",
-          "ratio": 3.25
+          "ratio": 2.83
         },
         {
           "fundSymbol": "00403A",
           "fundName": "主動統一升級50",
-          "ratio": 2.69
+          "ratio": 2.53
         },
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 2.53
+          "ratio": 2.48
         }
       ],
-      "totalRatio": 12.93,
-      "maxRatio": 4.46
+      "totalRatio": 12.35,
+      "maxRatio": 4.51
     },
     {
       "symbol": "3044",
@@ -1132,7 +1084,7 @@
         {
           "fundSymbol": "00400A",
           "fundName": "主動國泰動能高息",
-          "ratio": 4.37
+          "ratio": 4.19
         },
         {
           "fundSymbol": "00982A",
@@ -1142,16 +1094,16 @@
         {
           "fundSymbol": "00980A",
           "fundName": "主動野村臺灣優選",
-          "ratio": 1.53
+          "ratio": 1.49
         },
         {
           "fundSymbol": "00994A",
           "fundName": "主動第一金台股優",
-          "ratio": 1.22
+          "ratio": 1.19
         }
       ],
-      "totalRatio": 9.2,
-      "maxRatio": 4.37
+      "totalRatio": 8.95,
+      "maxRatio": 4.19
     },
     {
       "symbol": "3661",
@@ -1161,176 +1113,26 @@
         {
           "fundSymbol": "00400A",
           "fundName": "主動國泰動能高息",
-          "ratio": 3.33
+          "ratio": 3.2
         },
         {
           "fundSymbol": "00994A",
           "fundName": "主動第一金台股優",
-          "ratio": 1.99
+          "ratio": 1.95
         },
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 1.41
+          "ratio": 1.38
         },
         {
           "fundSymbol": "00992A",
           "fundName": "主動群益科技創新",
-          "ratio": 1.32
-        }
-      ],
-      "totalRatio": 8.05,
-      "maxRatio": 3.33
-    },
-    {
-      "symbol": "6274",
-      "name": "台燿",
-      "industry": "電子零組件",
-      "funds": [
-        {
-          "fundSymbol": "00987A",
-          "fundName": "主動台新優勢成長",
-          "ratio": 3.3
-        },
-        {
-          "fundSymbol": "00981A",
-          "fundName": "主動統一台股增長",
-          "ratio": 2.24
-        },
-        {
-          "fundSymbol": "00993A",
-          "fundName": "主動安聯台灣",
           "ratio": 1.33
-        },
-        {
-          "fundSymbol": "00992A",
-          "fundName": "主動群益科技創新",
-          "ratio": 1.04
         }
       ],
-      "totalRatio": 7.91,
-      "maxRatio": 3.3
-    },
-    {
-      "symbol": "2303",
-      "name": "聯電",
-      "industry": "半導體業",
-      "funds": [
-        {
-          "fundSymbol": "00981A",
-          "fundName": "主動統一台股增長",
-          "ratio": 2.38
-        },
-        {
-          "fundSymbol": "00401A",
-          "fundName": "主動摩根台灣鑫收",
-          "ratio": 2.32
-        },
-        {
-          "fundSymbol": "00985A",
-          "fundName": "主動野村台灣50",
-          "ratio": 1.5
-        },
-        {
-          "fundSymbol": "00980A",
-          "fundName": "主動野村臺灣優選",
-          "ratio": 1.45
-        }
-      ],
-      "totalRatio": 7.65,
-      "maxRatio": 2.38
-    },
-    {
-      "symbol": "3231",
-      "name": "緯創",
-      "industry": "電腦及週邊設備",
-      "funds": [
-        {
-          "fundSymbol": "00982A",
-          "fundName": "主動群益台灣強棒",
-          "ratio": 2.12
-        },
-        {
-          "fundSymbol": "00980A",
-          "fundName": "主動野村臺灣優選",
-          "ratio": 1.89
-        },
-        {
-          "fundSymbol": "00992A",
-          "fundName": "主動群益科技創新",
-          "ratio": 1.88
-        },
-        {
-          "fundSymbol": "00401A",
-          "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.85
-        }
-      ],
-      "totalRatio": 7.74,
-      "maxRatio": 2.12
-    },
-    {
-      "symbol": "2408",
-      "name": "南亞科",
-      "industry": "半導體業",
-      "funds": [
-        {
-          "fundSymbol": "00980A",
-          "fundName": "主動野村臺灣優選",
-          "ratio": 2.08
-        },
-        {
-          "fundSymbol": "00985A",
-          "fundName": "主動野村台灣50",
-          "ratio": 1.51
-        },
-        {
-          "fundSymbol": "00993A",
-          "fundName": "主動安聯台灣",
-          "ratio": 1.23
-        },
-        {
-          "fundSymbol": "00992A",
-          "fundName": "主動群益科技創新",
-          "ratio": 1.04
-        }
-      ],
-      "totalRatio": 5.86,
-      "maxRatio": 2.08
-    },
-    {
-      "symbol": "3189",
-      "name": "景碩",
-      "industry": "半導體設備與材料",
-      "funds": [
-        {
-          "fundSymbol": "00991A",
-          "fundName": "主動復華未來50",
-          "ratio": 4.56
-        },
-        {
-          "fundSymbol": "00993A",
-          "fundName": "主動安聯台灣",
-          "ratio": 3.43
-        },
-        {
-          "fundSymbol": "00994A",
-          "fundName": "主動第一金台股優",
-          "ratio": 2.25
-        },
-        {
-          "fundSymbol": "00403A",
-          "fundName": "主動統一升級50",
-          "ratio": 1.94
-        },
-        {
-          "fundSymbol": "00992A",
-          "fundName": "主動群益科技創新",
-          "ratio": 1.78
-        }
-      ],
-      "totalRatio": 13.96,
-      "maxRatio": 4.56
+      "totalRatio": 7.86,
+      "maxRatio": 3.2
     },
     {
       "symbol": "6805",
@@ -1340,30 +1142,204 @@
         {
           "fundSymbol": "00987A",
           "fundName": "主動台新優勢成長",
+          "ratio": 3.07
+        },
+        {
+          "fundSymbol": "00994A",
+          "fundName": "主動第一金台股優",
+          "ratio": 2.95
+        },
+        {
+          "fundSymbol": "00993A",
+          "fundName": "主動安聯台灣",
+          "ratio": 1.15
+        },
+        {
+          "fundSymbol": "00996A",
+          "fundName": "主動兆豐台灣豐收",
+          "ratio": 1.09
+        }
+      ],
+      "totalRatio": 8.26,
+      "maxRatio": 3.07
+    },
+    {
+      "symbol": "6274",
+      "name": "台燿",
+      "industry": "電子零組件",
+      "funds": [
+        {
+          "fundSymbol": "00987A",
+          "fundName": "主動台新優勢成長",
+          "ratio": 3.01
+        },
+        {
+          "fundSymbol": "00981A",
+          "fundName": "主動統一台股增長",
+          "ratio": 1.95
+        },
+        {
+          "fundSymbol": "00993A",
+          "fundName": "主動安聯台灣",
+          "ratio": 1.3
+        },
+        {
+          "fundSymbol": "00992A",
+          "fundName": "主動群益科技創新",
+          "ratio": 1.04
+        }
+      ],
+      "totalRatio": 7.3,
+      "maxRatio": 3.01
+    },
+    {
+      "symbol": "2891",
+      "name": "中信金",
+      "industry": "銀行業",
+      "funds": [
+        {
+          "fundSymbol": "00401A",
+          "fundName": "主動摩根台灣鑫收",
+          "ratio": 2.49
+        },
+        {
+          "fundSymbol": "00980A",
+          "fundName": "主動野村臺灣優選",
+          "ratio": 1.85
+        },
+        {
+          "fundSymbol": "00400A",
+          "fundName": "主動國泰動能高息",
+          "ratio": 1.58
+        },
+        {
+          "fundSymbol": "00994A",
+          "fundName": "主動第一金台股優",
+          "ratio": 1.02
+        }
+      ],
+      "totalRatio": 6.94,
+      "maxRatio": 2.49
+    },
+    {
+      "symbol": "2303",
+      "name": "聯電",
+      "industry": "半導體業",
+      "funds": [
+        {
+          "fundSymbol": "00401A",
+          "fundName": "主動摩根台灣鑫收",
+          "ratio": 2.17
+        },
+        {
+          "fundSymbol": "00981A",
+          "fundName": "主動統一台股增長",
+          "ratio": 2.07
+        },
+        {
+          "fundSymbol": "00985A",
+          "fundName": "主動野村台灣50",
+          "ratio": 1.47
+        },
+        {
+          "fundSymbol": "00980A",
+          "fundName": "主動野村臺灣優選",
+          "ratio": 1.41
+        }
+      ],
+      "totalRatio": 7.12,
+      "maxRatio": 2.17
+    },
+    {
+      "symbol": "3231",
+      "name": "緯創",
+      "industry": "電腦及週邊設備",
+      "funds": [
+        {
+          "fundSymbol": "00982A",
+          "fundName": "主動群益台灣強棒",
+          "ratio": 2.13
+        },
+        {
+          "fundSymbol": "00992A",
+          "fundName": "主動群益科技創新",
+          "ratio": 1.89
+        },
+        {
+          "fundSymbol": "00980A",
+          "fundName": "主動野村臺灣優選",
+          "ratio": 1.84
+        },
+        {
+          "fundSymbol": "00401A",
+          "fundName": "主動摩根台灣鑫收",
+          "ratio": 1.73
+        }
+      ],
+      "totalRatio": 7.59,
+      "maxRatio": 2.13
+    },
+    {
+      "symbol": "2408",
+      "name": "南亞科",
+      "industry": "半導體業",
+      "funds": [
+        {
+          "fundSymbol": "00980A",
+          "fundName": "主動野村臺灣優選",
+          "ratio": 2.03
+        },
+        {
+          "fundSymbol": "00985A",
+          "fundName": "主動野村台灣50",
+          "ratio": 1.48
+        },
+        {
+          "fundSymbol": "00993A",
+          "fundName": "主動安聯台灣",
+          "ratio": 1.21
+        },
+        {
+          "fundSymbol": "00992A",
+          "fundName": "主動群益科技創新",
+          "ratio": 1.04
+        }
+      ],
+      "totalRatio": 5.76,
+      "maxRatio": 2.03
+    },
+    {
+      "symbol": "3189",
+      "name": "景碩",
+      "industry": "半導體設備與材料",
+      "funds": [
+        {
+          "fundSymbol": "00991A",
+          "fundName": "主動復華未來50",
+          "ratio": 3.37
+        },
+        {
+          "fundSymbol": "00993A",
+          "fundName": "主動安聯台灣",
           "ratio": 3.37
         },
         {
           "fundSymbol": "00994A",
           "fundName": "主動第一金台股優",
-          "ratio": 3.03
+          "ratio": 2.19
         },
         {
-          "fundSymbol": "00993A",
-          "fundName": "主動安聯台灣",
-          "ratio": 1.18
+          "fundSymbol": "00403A",
+          "fundName": "主動統一升級50",
+          "ratio": 1.82
         },
         {
-          "fundSymbol": "00981A",
-          "fundName": "主動統一台股增長",
-          "ratio": 1.09
-        },
-        {
-          "fundSymbol": "00996A",
-          "fundName": "主動兆豐台灣豐收",
-          "ratio": 1.08
+          "fundSymbol": "00992A",
+          "fundName": "主動群益科技創新",
+          "ratio": 1.79
         }
       ],
-      "totalRatio": 9.75,
+      "totalRatio": 12.54,
       "maxRatio": 3.37
     },
     {
@@ -1372,111 +1348,33 @@
       "industry": "半導體設備與材料",
       "funds": [
         {
-          "fundSymbol": "00987A",
-          "fundName": "主動台新優勢成長",
-          "ratio": 2.66
-        },
-        {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 2.62
+          "ratio": 2.56
+        },
+        {
+          "fundSymbol": "00987A",
+          "fundName": "主動台新優勢成長",
+          "ratio": 2.42
         },
         {
           "fundSymbol": "00993A",
           "fundName": "主動安聯台灣",
-          "ratio": 1.59
-        },
-        {
-          "fundSymbol": "00980A",
-          "fundName": "主動野村臺灣優選",
-          "ratio": 1.2
+          "ratio": 1.56
         },
         {
           "fundSymbol": "00992A",
           "fundName": "主動群益科技創新",
           "ratio": 1.18
-        }
-      ],
-      "totalRatio": 9.25,
-      "maxRatio": 2.66
-    },
-    {
-      "symbol": "8996",
-      "name": "高力",
-      "industry": "特殊工業機械",
-      "funds": [
-        {
-          "fundSymbol": "00992A",
-          "fundName": "主動群益科技創新",
-          "ratio": 4.26
-        },
-        {
-          "fundSymbol": "00987A",
-          "fundName": "主動台新優勢成長",
-          "ratio": 2.37
-        },
-        {
-          "fundSymbol": "00994A",
-          "fundName": "主動第一金台股優",
-          "ratio": 1.79
-        },
-        {
-          "fundSymbol": "00985A",
-          "fundName": "主動野村台灣50",
-          "ratio": 1.65
-        },
-        {
-          "fundSymbol": "00403A",
-          "fundName": "主動統一升級50",
-          "ratio": 1.59
-        },
-        {
-          "fundSymbol": "00993A",
-          "fundName": "主動安聯台灣",
-          "ratio": 1.39
-        }
-      ],
-      "totalRatio": 13.05,
-      "maxRatio": 4.26
-    },
-    {
-      "symbol": "5274",
-      "name": "信驊",
-      "industry": "半導體業",
-      "funds": [
-        {
-          "fundSymbol": "00993A",
-          "fundName": "主動安聯台灣",
-          "ratio": 2.76
-        },
-        {
-          "fundSymbol": "00400A",
-          "fundName": "主動國泰動能高息",
-          "ratio": 2.52
-        },
-        {
-          "fundSymbol": "00991A",
-          "fundName": "主動復華未來50",
-          "ratio": 2.42
-        },
-        {
-          "fundSymbol": "00995A",
-          "fundName": "主動中信台灣卓越",
-          "ratio": 2.38
-        },
-        {
-          "fundSymbol": "00403A",
-          "fundName": "主動統一升級50",
-          "ratio": 1.48
         },
         {
           "fundSymbol": "00980A",
           "fundName": "主動野村臺灣優選",
-          "ratio": 1.28
+          "ratio": 1.17
         }
       ],
-      "totalRatio": 12.84,
-      "maxRatio": 2.76
+      "totalRatio": 8.89,
+      "maxRatio": 2.56
     },
     {
       "symbol": "4958",
@@ -1486,85 +1384,36 @@
         {
           "fundSymbol": "00996A",
           "fundName": "主動兆豐台灣豐收",
-          "ratio": 6.61
+          "ratio": 6.68
         },
         {
           "fundSymbol": "00982A",
           "fundName": "主動群益台灣強棒",
-          "ratio": 2.65
+          "ratio": 2.66
         },
         {
           "fundSymbol": "00995A",
           "fundName": "主動中信台灣卓越",
-          "ratio": 2.59
+          "ratio": 2.46
         },
         {
           "fundSymbol": "00987A",
           "fundName": "主動台新優勢成長",
-          "ratio": 2.13
+          "ratio": 1.94
         },
         {
           "fundSymbol": "00993A",
           "fundName": "主動安聯台灣",
-          "ratio": 1.23
+          "ratio": 1.21
         },
         {
           "fundSymbol": "00992A",
           "fundName": "主動群益科技創新",
-          "ratio": 1.13
-        },
-        {
-          "fundSymbol": "00991A",
-          "fundName": "主動復華未來50",
-          "ratio": 1.1
+          "ratio": 1.14
         }
       ],
-      "totalRatio": 17.44,
-      "maxRatio": 6.61
-    },
-    {
-      "symbol": "2059",
-      "name": "川湖",
-      "industry": "居家生活",
-      "funds": [
-        {
-          "fundSymbol": "00991A",
-          "fundName": "主動復華未來50",
-          "ratio": 6.03
-        },
-        {
-          "fundSymbol": "00400A",
-          "fundName": "主動國泰動能高息",
-          "ratio": 3.67
-        },
-        {
-          "fundSymbol": "00992A",
-          "fundName": "主動群益科技創新",
-          "ratio": 3.5
-        },
-        {
-          "fundSymbol": "00980A",
-          "fundName": "主動野村臺灣優選",
-          "ratio": 3.42
-        },
-        {
-          "fundSymbol": "00985A",
-          "fundName": "主動野村台灣50",
-          "ratio": 2.59
-        },
-        {
-          "fundSymbol": "00982A",
-          "fundName": "主動群益台灣強棒",
-          "ratio": 2.39
-        },
-        {
-          "fundSymbol": "00401A",
-          "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.43
-        }
-      ],
-      "totalRatio": 23.03,
-      "maxRatio": 6.03
+      "totalRatio": 16.09,
+      "maxRatio": 6.68
     },
     {
       "symbol": "2345",
@@ -1574,144 +1423,158 @@
         {
           "fundSymbol": "00992A",
           "fundName": "主動群益科技創新",
-          "ratio": 5.21
+          "ratio": 5.24
         },
         {
           "fundSymbol": "00981A",
           "fundName": "主動統一台股增長",
-          "ratio": 4.5
+          "ratio": 3.91
         },
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 2.65
+          "ratio": 2.6
         },
         {
           "fundSymbol": "00995A",
           "fundName": "主動中信台灣卓越",
-          "ratio": 2.2
+          "ratio": 2.09
         },
         {
           "fundSymbol": "00403A",
           "fundName": "主動統一升級50",
-          "ratio": 1.68
+          "ratio": 1.58
         },
         {
           "fundSymbol": "00400A",
           "fundName": "主動國泰動能高息",
-          "ratio": 1.38
-        },
-        {
-          "fundSymbol": "00991A",
-          "fundName": "主動復華未來50",
-          "ratio": 1.23
+          "ratio": 1.33
         }
       ],
-      "totalRatio": 18.85,
-      "maxRatio": 5.21
+      "totalRatio": 16.75,
+      "maxRatio": 5.24
     },
     {
-      "symbol": "6669",
-      "name": "緯穎",
-      "industry": "電腦及週邊設備",
+      "symbol": "8996",
+      "name": "高力",
+      "industry": "特殊工業機械",
       "funds": [
-        {
-          "fundSymbol": "00985A",
-          "fundName": "主動野村台灣50",
-          "ratio": 3.38
-        },
-        {
-          "fundSymbol": "00403A",
-          "fundName": "主動統一升級50",
-          "ratio": 2.59
-        },
-        {
-          "fundSymbol": "00995A",
-          "fundName": "主動中信台灣卓越",
-          "ratio": 2.25
-        },
-        {
-          "fundSymbol": "00980A",
-          "fundName": "主動野村臺灣優選",
-          "ratio": 1.95
-        },
         {
           "fundSymbol": "00992A",
           "fundName": "主動群益科技創新",
-          "ratio": 1.73
+          "ratio": 4.28
         },
         {
-          "fundSymbol": "00981A",
-          "fundName": "主動統一台股增長",
-          "ratio": 1.45
-        },
-        {
-          "fundSymbol": "00982A",
-          "fundName": "主動群益台灣強棒",
-          "ratio": 1.37
-        },
-        {
-          "fundSymbol": "00401A",
-          "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.31
-        }
-      ],
-      "totalRatio": 16.03,
-      "maxRatio": 3.38
-    },
-    {
-      "symbol": "1303",
-      "name": "南亞",
-      "industry": "特用化學",
-      "funds": [
-        {
-          "fundSymbol": "00991A",
-          "fundName": "主動復華未來50",
-          "ratio": 6.35
+          "fundSymbol": "00987A",
+          "fundName": "主動台新優勢成長",
+          "ratio": 2.16
         },
         {
           "fundSymbol": "00994A",
           "fundName": "主動第一金台股優",
-          "ratio": 3.78
+          "ratio": 1.74
         },
         {
-          "fundSymbol": "00980A",
-          "fundName": "主動野村臺灣優選",
-          "ratio": 3.68
-        },
-        {
-          "fundSymbol": "00992A",
-          "fundName": "主動群益科技創新",
-          "ratio": 3.38
+          "fundSymbol": "00985A",
+          "fundName": "主動野村台灣50",
+          "ratio": 1.62
         },
         {
           "fundSymbol": "00403A",
           "fundName": "主動統一升級50",
-          "ratio": 3.37
+          "ratio": 1.5
         },
         {
           "fundSymbol": "00993A",
           "fundName": "主動安聯台灣",
-          "ratio": 3.35
-        },
+          "ratio": 1.36
+        }
+      ],
+      "totalRatio": 12.66,
+      "maxRatio": 4.28
+    },
+    {
+      "symbol": "5274",
+      "name": "信驊",
+      "industry": "半導體業",
+      "funds": [
         {
-          "fundSymbol": "00995A",
-          "fundName": "主動中信台灣卓越",
-          "ratio": 2.94
+          "fundSymbol": "00993A",
+          "fundName": "主動安聯台灣",
+          "ratio": 2.72
         },
         {
           "fundSymbol": "00400A",
           "fundName": "主動國泰動能高息",
-          "ratio": 1.8
+          "ratio": 2.42
         },
         {
-          "fundSymbol": "00996A",
-          "fundName": "主動兆豐台灣豐收",
-          "ratio": 1.53
+          "fundSymbol": "00995A",
+          "fundName": "主動中信台灣卓越",
+          "ratio": 2.26
+        },
+        {
+          "fundSymbol": "00991A",
+          "fundName": "主動復華未來50",
+          "ratio": 1.79
+        },
+        {
+          "fundSymbol": "00403A",
+          "fundName": "主動統一升級50",
+          "ratio": 1.39
+        },
+        {
+          "fundSymbol": "00980A",
+          "fundName": "主動野村臺灣優選",
+          "ratio": 1.24
         }
       ],
-      "totalRatio": 30.18,
-      "maxRatio": 6.35
+      "totalRatio": 11.82,
+      "maxRatio": 2.72
+    },
+    {
+      "symbol": "2059",
+      "name": "川湖",
+      "industry": "居家生活",
+      "funds": [
+        {
+          "fundSymbol": "00991A",
+          "fundName": "主動復華未來50",
+          "ratio": 4.45
+        },
+        {
+          "fundSymbol": "00400A",
+          "fundName": "主動國泰動能高息",
+          "ratio": 3.52
+        },
+        {
+          "fundSymbol": "00992A",
+          "fundName": "主動群益科技創新",
+          "ratio": 3.52
+        },
+        {
+          "fundSymbol": "00980A",
+          "fundName": "主動野村臺灣優選",
+          "ratio": 3.33
+        },
+        {
+          "fundSymbol": "00985A",
+          "fundName": "主動野村台灣50",
+          "ratio": 2.54
+        },
+        {
+          "fundSymbol": "00982A",
+          "fundName": "主動群益台灣強棒",
+          "ratio": 2.4
+        },
+        {
+          "fundSymbol": "00401A",
+          "fundName": "主動摩根台灣鑫收",
+          "ratio": 1.34
+        }
+      ],
+      "totalRatio": 21.1,
+      "maxRatio": 4.45
     },
     {
       "symbol": "2308",
@@ -1721,105 +1584,95 @@
         {
           "fundSymbol": "00996A",
           "fundName": "主動兆豐台灣豐收",
-          "ratio": 4.68
+          "ratio": 4.71
         },
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 3.36
+          "ratio": 3.28
         },
         {
           "fundSymbol": "00981A",
           "fundName": "主動統一台股增長",
-          "ratio": 3.35
+          "ratio": 2.9
         },
         {
           "fundSymbol": "00980A",
           "fundName": "主動野村臺灣優選",
-          "ratio": 2.88
+          "ratio": 2.8
         },
         {
           "fundSymbol": "00995A",
           "fundName": "主動中信台灣卓越",
-          "ratio": 2.35
+          "ratio": 2.23
         },
         {
           "fundSymbol": "00403A",
           "fundName": "主動統一升級50",
-          "ratio": 2.12
+          "ratio": 1.99
         },
         {
           "fundSymbol": "00400A",
           "fundName": "主動國泰動能高息",
-          "ratio": 1.86
+          "ratio": 1.78
         },
         {
           "fundSymbol": "00401A",
           "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.46
-        },
-        {
-          "fundSymbol": "00991A",
-          "fundName": "主動復華未來50",
-          "ratio": 1.05
+          "ratio": 1.36
         }
       ],
-      "totalRatio": 23.11,
-      "maxRatio": 4.68
+      "totalRatio": 21.05,
+      "maxRatio": 4.71
     },
     {
-      "symbol": "3008",
-      "name": "大立光",
-      "industry": "電子零組件",
+      "symbol": "6669",
+      "name": "緯穎",
+      "industry": "電腦及週邊設備",
       "funds": [
-        {
-          "fundSymbol": "00987A",
-          "fundName": "主動台新優勢成長",
-          "ratio": 3.49
-        },
-        {
-          "fundSymbol": "00992A",
-          "fundName": "主動群益科技創新",
-          "ratio": 3.33
-        },
-        {
-          "fundSymbol": "00995A",
-          "fundName": "主動中信台灣卓越",
-          "ratio": 2.83
-        },
-        {
-          "fundSymbol": "00982A",
-          "fundName": "主動群益台灣強棒",
-          "ratio": 2.74
-        },
-        {
-          "fundSymbol": "00980A",
-          "fundName": "主動野村臺灣優選",
-          "ratio": 1.8
-        },
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 1.69
-        },
-        {
-          "fundSymbol": "00401A",
-          "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.44
+          "ratio": 3.31
         },
         {
           "fundSymbol": "00403A",
           "fundName": "主動統一升級50",
-          "ratio": 1.34
+          "ratio": 2.43
         },
         {
-          "fundSymbol": "00993A",
-          "fundName": "主動安聯台灣",
-          "ratio": 1.05
+          "fundSymbol": "00995A",
+          "fundName": "主動中信台灣卓越",
+          "ratio": 2.13
+        },
+        {
+          "fundSymbol": "00980A",
+          "fundName": "主動野村臺灣優選",
+          "ratio": 1.9
+        },
+        {
+          "fundSymbol": "00992A",
+          "fundName": "主動群益科技創新",
+          "ratio": 1.73
+        },
+        {
+          "fundSymbol": "00982A",
+          "fundName": "主動群益台灣強棒",
+          "ratio": 1.37
+        },
+        {
+          "fundSymbol": "00981A",
+          "fundName": "主動統一台股增長",
+          "ratio": 1.27
+        },
+        {
+          "fundSymbol": "00401A",
+          "fundName": "主動摩根台灣鑫收",
+          "ratio": 1.22
         }
       ],
-      "totalRatio": 19.71,
-      "maxRatio": 3.49
+      "totalRatio": 15.36,
+      "maxRatio": 3.31
     },
     {
       "symbol": "3665",
@@ -1829,56 +1682,159 @@
         {
           "fundSymbol": "00992A",
           "fundName": "主動群益科技創新",
-          "ratio": 7.05
+          "ratio": 7.08
         },
         {
           "fundSymbol": "00987A",
           "fundName": "主動台新優勢成長",
-          "ratio": 4.04
+          "ratio": 3.68
         },
         {
           "fundSymbol": "00995A",
           "fundName": "主動中信台灣卓越",
-          "ratio": 2.93
+          "ratio": 2.78
         },
         {
           "fundSymbol": "00993A",
           "fundName": "主動安聯台灣",
-          "ratio": 2.73
-        },
-        {
-          "fundSymbol": "00981A",
-          "fundName": "主動統一台股增長",
-          "ratio": 2.16
+          "ratio": 2.67
         },
         {
           "fundSymbol": "00403A",
           "fundName": "主動統一升級50",
-          "ratio": 2.06
+          "ratio": 1.93
+        },
+        {
+          "fundSymbol": "00981A",
+          "fundName": "主動統一台股增長",
+          "ratio": 1.88
         },
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 1.7
+          "ratio": 1.67
         },
         {
           "fundSymbol": "00980A",
           "fundName": "主動野村臺灣優選",
-          "ratio": 1.57
+          "ratio": 1.53
         },
         {
           "fundSymbol": "00400A",
           "fundName": "主動國泰動能高息",
-          "ratio": 1.29
-        },
+          "ratio": 1.24
+        }
+      ],
+      "totalRatio": 24.46,
+      "maxRatio": 7.08
+    },
+    {
+      "symbol": "1303",
+      "name": "南亞",
+      "industry": "特用化學",
+      "funds": [
         {
           "fundSymbol": "00991A",
           "fundName": "主動復華未來50",
-          "ratio": 1.04
+          "ratio": 4.69
+        },
+        {
+          "fundSymbol": "00994A",
+          "fundName": "主動第一金台股優",
+          "ratio": 3.69
+        },
+        {
+          "fundSymbol": "00980A",
+          "fundName": "主動野村臺灣優選",
+          "ratio": 3.58
+        },
+        {
+          "fundSymbol": "00992A",
+          "fundName": "主動群益科技創新",
+          "ratio": 3.4
+        },
+        {
+          "fundSymbol": "00993A",
+          "fundName": "主動安聯台灣",
+          "ratio": 3.29
+        },
+        {
+          "fundSymbol": "00403A",
+          "fundName": "主動統一升級50",
+          "ratio": 3.17
+        },
+        {
+          "fundSymbol": "00995A",
+          "fundName": "主動中信台灣卓越",
+          "ratio": 2.78
+        },
+        {
+          "fundSymbol": "00400A",
+          "fundName": "主動國泰動能高息",
+          "ratio": 1.73
+        },
+        {
+          "fundSymbol": "00996A",
+          "fundName": "主動兆豐台灣豐收",
+          "ratio": 1.54
         }
       ],
-      "totalRatio": 26.57,
-      "maxRatio": 7.05
+      "totalRatio": 27.87,
+      "maxRatio": 4.69
+    },
+    {
+      "symbol": "3008",
+      "name": "大立光",
+      "industry": "電子零組件",
+      "funds": [
+        {
+          "fundSymbol": "00992A",
+          "fundName": "主動群益科技創新",
+          "ratio": 3.35
+        },
+        {
+          "fundSymbol": "00987A",
+          "fundName": "主動台新優勢成長",
+          "ratio": 3.18
+        },
+        {
+          "fundSymbol": "00982A",
+          "fundName": "主動群益台灣強棒",
+          "ratio": 2.75
+        },
+        {
+          "fundSymbol": "00995A",
+          "fundName": "主動中信台灣卓越",
+          "ratio": 2.68
+        },
+        {
+          "fundSymbol": "00980A",
+          "fundName": "主動野村臺灣優選",
+          "ratio": 1.76
+        },
+        {
+          "fundSymbol": "00985A",
+          "fundName": "主動野村台灣50",
+          "ratio": 1.66
+        },
+        {
+          "fundSymbol": "00401A",
+          "fundName": "主動摩根台灣鑫收",
+          "ratio": 1.35
+        },
+        {
+          "fundSymbol": "00403A",
+          "fundName": "主動統一升級50",
+          "ratio": 1.26
+        },
+        {
+          "fundSymbol": "00993A",
+          "fundName": "主動安聯台灣",
+          "ratio": 1.03
+        }
+      ],
+      "totalRatio": 19.02,
+      "maxRatio": 3.35
     },
     {
       "symbol": "3443",
@@ -1888,56 +1844,56 @@
         {
           "fundSymbol": "00987A",
           "fundName": "主動台新優勢成長",
-          "ratio": 5.59
+          "ratio": 5.1
         },
         {
           "fundSymbol": "00993A",
           "fundName": "主動安聯台灣",
-          "ratio": 4.88
+          "ratio": 4.79
         },
         {
           "fundSymbol": "00996A",
           "fundName": "主動兆豐台灣豐收",
-          "ratio": 4.3
-        },
-        {
-          "fundSymbol": "00403A",
-          "fundName": "主動統一升級50",
-          "ratio": 4.04
+          "ratio": 4.35
         },
         {
           "fundSymbol": "00994A",
           "fundName": "主動第一金台股優",
-          "ratio": 4.01
+          "ratio": 3.91
+        },
+        {
+          "fundSymbol": "00403A",
+          "fundName": "主動統一升級50",
+          "ratio": 3.8
         },
         {
           "fundSymbol": "00992A",
           "fundName": "主動群益科技創新",
-          "ratio": 3.67
+          "ratio": 3.69
         },
         {
           "fundSymbol": "00995A",
           "fundName": "主動中信台灣卓越",
-          "ratio": 2.84
+          "ratio": 2.69
         },
         {
           "fundSymbol": "00981A",
           "fundName": "主動統一台股增長",
-          "ratio": 2.4
+          "ratio": 2.09
         },
         {
           "fundSymbol": "00980A",
           "fundName": "主動野村臺灣優選",
-          "ratio": 1.77
+          "ratio": 1.73
         },
         {
           "fundSymbol": "00401A",
           "fundName": "主動摩根台灣鑫收",
-          "ratio": 1.69
+          "ratio": 1.58
         }
       ],
-      "totalRatio": 35.19,
-      "maxRatio": 5.59
+      "totalRatio": 33.73,
+      "maxRatio": 5.1
     },
     {
       "symbol": "8046",
@@ -1947,337 +1903,61 @@
         {
           "fundSymbol": "00991A",
           "fundName": "主動復華未來50",
-          "ratio": 5.01
+          "ratio": 3.7
         },
         {
           "fundSymbol": "00995A",
           "fundName": "主動中信台灣卓越",
-          "ratio": 3.71
+          "ratio": 3.52
         },
         {
           "fundSymbol": "00987A",
           "fundName": "主動台新優勢成長",
-          "ratio": 2.76
-        },
-        {
-          "fundSymbol": "00993A",
-          "fundName": "主動安聯台灣",
-          "ratio": 2.43
-        },
-        {
-          "fundSymbol": "00992A",
-          "fundName": "主動群益科技創新",
-          "ratio": 2.21
-        },
-        {
-          "fundSymbol": "00981A",
-          "fundName": "主動統一台股增長",
-          "ratio": 2.09
-        },
-        {
-          "fundSymbol": "00403A",
-          "fundName": "主動統一升級50",
-          "ratio": 1.99
-        },
-        {
-          "fundSymbol": "00994A",
-          "fundName": "主動第一金台股優",
-          "ratio": 1.64
-        },
-        {
-          "fundSymbol": "00996A",
-          "fundName": "主動兆豐台灣豐收",
-          "ratio": 1.59
-        },
-        {
-          "fundSymbol": "00985A",
-          "fundName": "主動野村台灣50",
-          "ratio": 1.44
-        },
-        {
-          "fundSymbol": "00980A",
-          "fundName": "主動野村臺灣優選",
-          "ratio": 1.21
-        }
-      ],
-      "totalRatio": 26.08,
-      "maxRatio": 5.01
-    },
-    {
-      "symbol": "3037",
-      "name": "欣興",
-      "industry": "電子零組件",
-      "funds": [
-        {
-          "fundSymbol": "00991A",
-          "fundName": "主動復華未來50",
-          "ratio": 6.37
-        },
-        {
-          "fundSymbol": "00994A",
-          "fundName": "主動第一金台股優",
-          "ratio": 5.34
-        },
-        {
-          "fundSymbol": "00981A",
-          "fundName": "主動統一台股增長",
-          "ratio": 4.91
-        },
-        {
-          "fundSymbol": "00992A",
-          "fundName": "主動群益科技創新",
-          "ratio": 4.82
-        },
-        {
-          "fundSymbol": "00987A",
-          "fundName": "主動台新優勢成長",
-          "ratio": 4.16
-        },
-        {
-          "fundSymbol": "00403A",
-          "fundName": "主動統一升級50",
-          "ratio": 3.96
-        },
-        {
-          "fundSymbol": "00993A",
-          "fundName": "主動安聯台灣",
-          "ratio": 3.93
-        },
-        {
-          "fundSymbol": "00985A",
-          "fundName": "主動野村台灣50",
-          "ratio": 2.73
-        },
-        {
-          "fundSymbol": "00980A",
-          "fundName": "主動野村臺灣優選",
-          "ratio": 2.52
-        },
-        {
-          "fundSymbol": "00995A",
-          "fundName": "主動中信台灣卓越",
           "ratio": 2.51
         },
         {
-          "fundSymbol": "00400A",
-          "fundName": "主動國泰動能高息",
-          "ratio": 2.36
-        },
-        {
-          "fundSymbol": "00996A",
-          "fundName": "主動兆豐台灣豐收",
-          "ratio": 2.17
-        }
-      ],
-      "totalRatio": 45.78,
-      "maxRatio": 6.37
-    },
-    {
-      "symbol": "6223",
-      "name": "旺矽",
-      "industry": "半導體設備與材料",
-      "funds": [
-        {
-          "fundSymbol": "00995A",
-          "fundName": "主動中信台灣卓越",
-          "ratio": 4.71
-        },
-        {
-          "fundSymbol": "00981A",
-          "fundName": "主動統一台股增長",
-          "ratio": 4.55
+          "fundSymbol": "00993A",
+          "fundName": "主動安聯台灣",
+          "ratio": 2.39
         },
         {
           "fundSymbol": "00992A",
           "fundName": "主動群益科技創新",
-          "ratio": 3.94
-        },
-        {
-          "fundSymbol": "00993A",
-          "fundName": "主動安聯台灣",
-          "ratio": 3.56
+          "ratio": 2.22
         },
         {
           "fundSymbol": "00403A",
           "fundName": "主動統一升級50",
-          "ratio": 3.49
+          "ratio": 1.87
         },
         {
-          "fundSymbol": "00982A",
-          "fundName": "主動群益台灣強棒",
-          "ratio": 3.21
-        },
-        {
-          "fundSymbol": "00400A",
-          "fundName": "主動國泰動能高息",
-          "ratio": 3.14
-        },
-        {
-          "fundSymbol": "00987A",
-          "fundName": "主動台新優勢成長",
-          "ratio": 2.93
+          "fundSymbol": "00981A",
+          "fundName": "主動統一台股增長",
+          "ratio": 1.82
         },
         {
           "fundSymbol": "00996A",
           "fundName": "主動兆豐台灣豐收",
-          "ratio": 2.19
-        },
-        {
-          "fundSymbol": "00401A",
-          "fundName": "主動摩根台灣鑫收",
-          "ratio": 2.18
-        },
-        {
-          "fundSymbol": "00991A",
-          "fundName": "主動復華未來50",
-          "ratio": 1.98
-        },
-        {
-          "fundSymbol": "00980A",
-          "fundName": "主動野村臺灣優選",
-          "ratio": 1.34
-        }
-      ],
-      "totalRatio": 37.22,
-      "maxRatio": 4.71
-    },
-    {
-      "symbol": "3653",
-      "name": "健策",
-      "industry": "電子零組件",
-      "funds": [
-        {
-          "fundSymbol": "00985A",
-          "fundName": "主動野村台灣50",
-          "ratio": 4.71
+          "ratio": 1.61
         },
         {
           "fundSymbol": "00994A",
           "fundName": "主動第一金台股優",
-          "ratio": 4.28
-        },
-        {
-          "fundSymbol": "00987A",
-          "fundName": "主動台新優勢成長",
-          "ratio": 4.26
-        },
-        {
-          "fundSymbol": "00981A",
-          "fundName": "主動統一台股增長",
-          "ratio": 4.19
-        },
-        {
-          "fundSymbol": "00995A",
-          "fundName": "主動中信台灣卓越",
-          "ratio": 3.96
-        },
-        {
-          "fundSymbol": "00993A",
-          "fundName": "主動安聯台灣",
-          "ratio": 3.81
-        },
-        {
-          "fundSymbol": "00403A",
-          "fundName": "主動統一升級50",
-          "ratio": 3.74
-        },
-        {
-          "fundSymbol": "00991A",
-          "fundName": "主動復華未來50",
-          "ratio": 3.06
-        },
-        {
-          "fundSymbol": "00400A",
-          "fundName": "主動國泰動能高息",
-          "ratio": 2.99
-        },
-        {
-          "fundSymbol": "00980A",
-          "fundName": "主動野村臺灣優選",
-          "ratio": 2.55
-        },
-        {
-          "fundSymbol": "00996A",
-          "fundName": "主動兆豐台灣豐收",
-          "ratio": 1.5
-        },
-        {
-          "fundSymbol": "00992A",
-          "fundName": "主動群益科技創新",
-          "ratio": 1.48
-        }
-      ],
-      "totalRatio": 40.53,
-      "maxRatio": 4.71
-    },
-    {
-      "symbol": "3711",
-      "name": "日月光投控",
-      "industry": "半導體業",
-      "funds": [
-        {
-          "fundSymbol": "00991A",
-          "fundName": "主動復華未來50",
-          "ratio": 4.2
-        },
-        {
-          "fundSymbol": "00981A",
-          "fundName": "主動統一台股增長",
-          "ratio": 3.85
-        },
-        {
-          "fundSymbol": "00401A",
-          "fundName": "主動摩根台灣鑫收",
-          "ratio": 3.62
-        },
-        {
-          "fundSymbol": "00995A",
-          "fundName": "主動中信台灣卓越",
-          "ratio": 3.41
-        },
-        {
-          "fundSymbol": "00993A",
-          "fundName": "主動安聯台灣",
-          "ratio": 3.29
-        },
-        {
-          "fundSymbol": "00982A",
-          "fundName": "主動群益台灣強棒",
-          "ratio": 2.55
-        },
-        {
-          "fundSymbol": "00980A",
-          "fundName": "主動野村臺灣優選",
-          "ratio": 2.29
-        },
-        {
-          "fundSymbol": "00994A",
-          "fundName": "主動第一金台股優",
-          "ratio": 2.06
-        },
-        {
-          "fundSymbol": "00403A",
-          "fundName": "主動統一升級50",
-          "ratio": 1.57
+          "ratio": 1.6
         },
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 1.51
+          "ratio": 1.42
         },
         {
-          "fundSymbol": "00996A",
-          "fundName": "主動兆豐台灣豐收",
-          "ratio": 1.08
-        },
-        {
-          "fundSymbol": "00992A",
-          "fundName": "主動群益科技創新",
-          "ratio": 1.04
+          "fundSymbol": "00980A",
+          "fundName": "主動野村臺灣優選",
+          "ratio": 1.18
         }
       ],
-      "totalRatio": 30.47,
-      "maxRatio": 4.2
+      "totalRatio": 23.84,
+      "maxRatio": 3.7
     },
     {
       "symbol": "2368",
@@ -2287,140 +1967,337 @@
         {
           "fundSymbol": "00994A",
           "fundName": "主動第一金台股優",
-          "ratio": 3.51
+          "ratio": 3.42
         },
         {
           "fundSymbol": "00987A",
           "fundName": "主動台新優勢成長",
-          "ratio": 3.02
-        },
-        {
-          "fundSymbol": "00981A",
-          "fundName": "主動統一台股增長",
-          "ratio": 2.81
+          "ratio": 2.75
         },
         {
           "fundSymbol": "00992A",
           "fundName": "主動群益科技創新",
-          "ratio": 2.62
+          "ratio": 2.64
+        },
+        {
+          "fundSymbol": "00981A",
+          "fundName": "主動統一台股增長",
+          "ratio": 2.44
         },
         {
           "fundSymbol": "00400A",
           "fundName": "主動國泰動能高息",
-          "ratio": 2.32
+          "ratio": 2.23
         },
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 2.24
+          "ratio": 2.2
         },
         {
           "fundSymbol": "00982A",
           "fundName": "主動群益台灣強棒",
-          "ratio": 2.13
+          "ratio": 2.14
         },
         {
           "fundSymbol": "00995A",
           "fundName": "主動中信台灣卓越",
-          "ratio": 2.04
+          "ratio": 1.93
         },
         {
           "fundSymbol": "00980A",
           "fundName": "主動野村臺灣優選",
-          "ratio": 1.9
+          "ratio": 1.85
         },
         {
           "fundSymbol": "00993A",
           "fundName": "主動安聯台灣",
-          "ratio": 1.2
-        },
-        {
-          "fundSymbol": "00991A",
-          "fundName": "主動復華未來50",
-          "ratio": 1.17
+          "ratio": 1.18
         },
         {
           "fundSymbol": "00996A",
           "fundName": "主動兆豐台灣豐收",
-          "ratio": 1.01
+          "ratio": 1.02
         }
       ],
-      "totalRatio": 25.97,
-      "maxRatio": 3.51
+      "totalRatio": 23.8,
+      "maxRatio": 3.42
     },
     {
-      "symbol": "2383",
-      "name": "台光電",
+      "symbol": "3037",
+      "name": "欣興",
       "industry": "電子零組件",
       "funds": [
         {
-          "fundSymbol": "00991A",
-          "fundName": "主動復華未來50",
-          "ratio": 8.82
-        },
-        {
-          "fundSymbol": "00995A",
-          "fundName": "主動中信台灣卓越",
-          "ratio": 7.25
-        },
-        {
-          "fundSymbol": "00987A",
-          "fundName": "主動台新優勢成長",
-          "ratio": 5.76
-        },
-        {
-          "fundSymbol": "00981A",
-          "fundName": "主動統一台股增長",
-          "ratio": 5.59
+          "fundSymbol": "00994A",
+          "fundName": "主動第一金台股優",
+          "ratio": 5.2
         },
         {
           "fundSymbol": "00992A",
           "fundName": "主動群益科技創新",
-          "ratio": 5.37
+          "ratio": 4.84
         },
         {
-          "fundSymbol": "00400A",
-          "fundName": "主動國泰動能高息",
-          "ratio": 5.24
+          "fundSymbol": "00991A",
+          "fundName": "主動復華未來50",
+          "ratio": 4.7
         },
         {
-          "fundSymbol": "00994A",
-          "fundName": "主動第一金台股優",
-          "ratio": 5.07
+          "fundSymbol": "00981A",
+          "fundName": "主動統一台股增長",
+          "ratio": 4.26
         },
         {
           "fundSymbol": "00993A",
           "fundName": "主動安聯台灣",
-          "ratio": 4.54
+          "ratio": 3.86
         },
         {
-          "fundSymbol": "00996A",
-          "fundName": "主動兆豐台灣豐收",
-          "ratio": 3.71
+          "fundSymbol": "00987A",
+          "fundName": "主動台新優勢成長",
+          "ratio": 3.79
         },
         {
           "fundSymbol": "00403A",
           "fundName": "主動統一升級50",
-          "ratio": 3.66
-        },
-        {
-          "fundSymbol": "00980A",
-          "fundName": "主動野村臺灣優選",
-          "ratio": 3.41
-        },
-        {
-          "fundSymbol": "00982A",
-          "fundName": "主動群益台灣強棒",
-          "ratio": 3.2
+          "ratio": 3.72
         },
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 2.99
+          "ratio": 2.67
+        },
+        {
+          "fundSymbol": "00980A",
+          "fundName": "主動野村臺灣優選",
+          "ratio": 2.45
+        },
+        {
+          "fundSymbol": "00995A",
+          "fundName": "主動中信台灣卓越",
+          "ratio": 2.38
+        },
+        {
+          "fundSymbol": "00400A",
+          "fundName": "主動國泰動能高息",
+          "ratio": 2.27
+        },
+        {
+          "fundSymbol": "00996A",
+          "fundName": "主動兆豐台灣豐收",
+          "ratio": 2.19
         }
       ],
-      "totalRatio": 64.61,
-      "maxRatio": 8.82
+      "totalRatio": 42.33,
+      "maxRatio": 5.2
+    },
+    {
+      "symbol": "3653",
+      "name": "健策",
+      "industry": "電子零組件",
+      "funds": [
+        {
+          "fundSymbol": "00985A",
+          "fundName": "主動野村台灣50",
+          "ratio": 4.62
+        },
+        {
+          "fundSymbol": "00994A",
+          "fundName": "主動第一金台股優",
+          "ratio": 4.17
+        },
+        {
+          "fundSymbol": "00987A",
+          "fundName": "主動台新優勢成長",
+          "ratio": 3.88
+        },
+        {
+          "fundSymbol": "00995A",
+          "fundName": "主動中信台灣卓越",
+          "ratio": 3.75
+        },
+        {
+          "fundSymbol": "00993A",
+          "fundName": "主動安聯台灣",
+          "ratio": 3.74
+        },
+        {
+          "fundSymbol": "00981A",
+          "fundName": "主動統一台股增長",
+          "ratio": 3.64
+        },
+        {
+          "fundSymbol": "00403A",
+          "fundName": "主動統一升級50",
+          "ratio": 3.52
+        },
+        {
+          "fundSymbol": "00400A",
+          "fundName": "主動國泰動能高息",
+          "ratio": 2.88
+        },
+        {
+          "fundSymbol": "00980A",
+          "fundName": "主動野村臺灣優選",
+          "ratio": 2.48
+        },
+        {
+          "fundSymbol": "00991A",
+          "fundName": "主動復華未來50",
+          "ratio": 2.26
+        },
+        {
+          "fundSymbol": "00996A",
+          "fundName": "主動兆豐台灣豐收",
+          "ratio": 1.52
+        },
+        {
+          "fundSymbol": "00992A",
+          "fundName": "主動群益科技創新",
+          "ratio": 1.49
+        }
+      ],
+      "totalRatio": 37.95,
+      "maxRatio": 4.62
+    },
+    {
+      "symbol": "6223",
+      "name": "旺矽",
+      "industry": "半導體設備與材料",
+      "funds": [
+        {
+          "fundSymbol": "00995A",
+          "fundName": "主動中信台灣卓越",
+          "ratio": 4.47
+        },
+        {
+          "fundSymbol": "00992A",
+          "fundName": "主動群益科技創新",
+          "ratio": 3.97
+        },
+        {
+          "fundSymbol": "00981A",
+          "fundName": "主動統一台股增長",
+          "ratio": 3.96
+        },
+        {
+          "fundSymbol": "00993A",
+          "fundName": "主動安聯台灣",
+          "ratio": 3.5
+        },
+        {
+          "fundSymbol": "00403A",
+          "fundName": "主動統一升級50",
+          "ratio": 3.28
+        },
+        {
+          "fundSymbol": "00982A",
+          "fundName": "主動群益台灣強棒",
+          "ratio": 3.22
+        },
+        {
+          "fundSymbol": "00400A",
+          "fundName": "主動國泰動能高息",
+          "ratio": 3.01
+        },
+        {
+          "fundSymbol": "00987A",
+          "fundName": "主動台新優勢成長",
+          "ratio": 2.68
+        },
+        {
+          "fundSymbol": "00996A",
+          "fundName": "主動兆豐台灣豐收",
+          "ratio": 2.22
+        },
+        {
+          "fundSymbol": "00401A",
+          "fundName": "主動摩根台灣鑫收",
+          "ratio": 2.04
+        },
+        {
+          "fundSymbol": "00991A",
+          "fundName": "主動復華未來50",
+          "ratio": 1.46
+        },
+        {
+          "fundSymbol": "00980A",
+          "fundName": "主動野村臺灣優選",
+          "ratio": 1.31
+        }
+      ],
+      "totalRatio": 35.12,
+      "maxRatio": 4.47
+    },
+    {
+      "symbol": "3711",
+      "name": "日月光投控",
+      "industry": "半導體業",
+      "funds": [
+        {
+          "fundSymbol": "00401A",
+          "fundName": "主動摩根台灣鑫收",
+          "ratio": 3.39
+        },
+        {
+          "fundSymbol": "00981A",
+          "fundName": "主動統一台股增長",
+          "ratio": 3.35
+        },
+        {
+          "fundSymbol": "00993A",
+          "fundName": "主動安聯台灣",
+          "ratio": 3.23
+        },
+        {
+          "fundSymbol": "00995A",
+          "fundName": "主動中信台灣卓越",
+          "ratio": 3.23
+        },
+        {
+          "fundSymbol": "00991A",
+          "fundName": "主動復華未來50",
+          "ratio": 3.1
+        },
+        {
+          "fundSymbol": "00982A",
+          "fundName": "主動群益台灣強棒",
+          "ratio": 2.56
+        },
+        {
+          "fundSymbol": "00980A",
+          "fundName": "主動野村臺灣優選",
+          "ratio": 2.24
+        },
+        {
+          "fundSymbol": "00994A",
+          "fundName": "主動第一金台股優",
+          "ratio": 2.01
+        },
+        {
+          "fundSymbol": "00403A",
+          "fundName": "主動統一升級50",
+          "ratio": 1.48
+        },
+        {
+          "fundSymbol": "00985A",
+          "fundName": "主動野村台灣50",
+          "ratio": 1.48
+        },
+        {
+          "fundSymbol": "00996A",
+          "fundName": "主動兆豐台灣豐收",
+          "ratio": 1.09
+        },
+        {
+          "fundSymbol": "00992A",
+          "fundName": "主動群益科技創新",
+          "ratio": 1.04
+        }
+      ],
+      "totalRatio": 28.2,
+      "maxRatio": 3.39
     },
     {
       "symbol": "3017",
@@ -2428,73 +2305,147 @@
       "industry": "電子零組件",
       "funds": [
         {
-          "fundSymbol": "00987A",
-          "fundName": "主動台新優勢成長",
-          "ratio": 7.9
-        },
-        {
           "fundSymbol": "00994A",
           "fundName": "主動第一金台股優",
-          "ratio": 7.9
+          "ratio": 7.71
         },
         {
-          "fundSymbol": "00991A",
-          "fundName": "主動復華未來50",
-          "ratio": 7.86
+          "fundSymbol": "00987A",
+          "fundName": "主動台新優勢成長",
+          "ratio": 7.2
         },
         {
           "fundSymbol": "00981A",
           "fundName": "主動統一台股增長",
-          "ratio": 7.46
+          "ratio": 6.49
         },
         {
           "fundSymbol": "00992A",
           "fundName": "主動群益科技創新",
-          "ratio": 6.2
+          "ratio": 6.23
         },
         {
           "fundSymbol": "00995A",
           "fundName": "主動中信台灣卓越",
-          "ratio": 6.16
+          "ratio": 5.84
+        },
+        {
+          "fundSymbol": "00991A",
+          "fundName": "主動復華未來50",
+          "ratio": 5.8
         },
         {
           "fundSymbol": "00403A",
           "fundName": "主動統一升級50",
-          "ratio": 5.95
+          "ratio": 5.59
         },
         {
           "fundSymbol": "00400A",
           "fundName": "主動國泰動能高息",
-          "ratio": 4.99
+          "ratio": 4.79
         },
         {
           "fundSymbol": "00993A",
           "fundName": "主動安聯台灣",
-          "ratio": 4.51
+          "ratio": 4.43
         },
         {
           "fundSymbol": "00996A",
           "fundName": "主動兆豐台灣豐收",
-          "ratio": 3.57
+          "ratio": 3.61
         },
         {
           "fundSymbol": "00982A",
           "fundName": "主動群益台灣強棒",
-          "ratio": 3.12
+          "ratio": 3.13
         },
         {
           "fundSymbol": "00980A",
           "fundName": "主動野村臺灣優選",
-          "ratio": 2.42
+          "ratio": 2.36
         },
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 1.74
+          "ratio": 1.7
         }
       ],
-      "totalRatio": 69.78,
-      "maxRatio": 7.9
+      "totalRatio": 64.88,
+      "maxRatio": 7.71
+    },
+    {
+      "symbol": "2383",
+      "name": "台光電",
+      "industry": "電子零組件",
+      "funds": [
+        {
+          "fundSymbol": "00995A",
+          "fundName": "主動中信台灣卓越",
+          "ratio": 6.87
+        },
+        {
+          "fundSymbol": "00991A",
+          "fundName": "主動復華未來50",
+          "ratio": 6.51
+        },
+        {
+          "fundSymbol": "00992A",
+          "fundName": "主動群益科技創新",
+          "ratio": 5.39
+        },
+        {
+          "fundSymbol": "00987A",
+          "fundName": "主動台新優勢成長",
+          "ratio": 5.25
+        },
+        {
+          "fundSymbol": "00400A",
+          "fundName": "主動國泰動能高息",
+          "ratio": 5.03
+        },
+        {
+          "fundSymbol": "00994A",
+          "fundName": "主動第一金台股優",
+          "ratio": 4.94
+        },
+        {
+          "fundSymbol": "00981A",
+          "fundName": "主動統一台股增長",
+          "ratio": 4.86
+        },
+        {
+          "fundSymbol": "00993A",
+          "fundName": "主動安聯台灣",
+          "ratio": 4.46
+        },
+        {
+          "fundSymbol": "00996A",
+          "fundName": "主動兆豐台灣豐收",
+          "ratio": 3.74
+        },
+        {
+          "fundSymbol": "00403A",
+          "fundName": "主動統一升級50",
+          "ratio": 3.44
+        },
+        {
+          "fundSymbol": "00980A",
+          "fundName": "主動野村臺灣優選",
+          "ratio": 3.32
+        },
+        {
+          "fundSymbol": "00982A",
+          "fundName": "主動群益台灣強棒",
+          "ratio": 3.21
+        },
+        {
+          "fundSymbol": "00985A",
+          "fundName": "主動野村台灣50",
+          "ratio": 2.93
+        }
+      ],
+      "totalRatio": 59.95,
+      "maxRatio": 6.87
     },
     {
       "symbol": "2330",
@@ -2502,78 +2453,78 @@
       "industry": "半導體業",
       "funds": [
         {
-          "fundSymbol": "00401A",
-          "fundName": "主動摩根台灣鑫收",
-          "ratio": 20.66
-        },
-        {
           "fundSymbol": "00994A",
           "fundName": "主動第一金台股優",
-          "ratio": 20.21
+          "ratio": 19.7
         },
         {
-          "fundSymbol": "00991A",
-          "fundName": "主動復華未來50",
-          "ratio": 17.83
-        },
-        {
-          "fundSymbol": "00981A",
-          "fundName": "主動統一台股增長",
-          "ratio": 17.46
+          "fundSymbol": "00401A",
+          "fundName": "主動摩根台灣鑫收",
+          "ratio": 19.32
         },
         {
           "fundSymbol": "00403A",
           "fundName": "主動統一升級50",
-          "ratio": 16.8
+          "ratio": 16.18
+        },
+        {
+          "fundSymbol": "00981A",
+          "fundName": "主動統一台股增長",
+          "ratio": 15.6
         },
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 14.88
+          "ratio": 14.03
+        },
+        {
+          "fundSymbol": "00991A",
+          "fundName": "主動復華未來50",
+          "ratio": 13.15
         },
         {
           "fundSymbol": "00400A",
           "fundName": "主動國泰動能高息",
-          "ratio": 13.21
+          "ratio": 12.67
         },
         {
           "fundSymbol": "00993A",
           "fundName": "主動安聯台灣",
-          "ratio": 12.36
+          "ratio": 12.06
         },
         {
           "fundSymbol": "00980A",
           "fundName": "主動野村臺灣優選",
-          "ratio": 11.02
-        },
-        {
-          "fundSymbol": "00995A",
-          "fundName": "主動中信台灣卓越",
-          "ratio": 9.4
+          "ratio": 10.73
         },
         {
           "fundSymbol": "00996A",
           "fundName": "主動兆豐台灣豐收",
-          "ratio": 9.21
+          "ratio": 9.3
         },
         {
           "fundSymbol": "00982A",
           "fundName": "主動群益台灣強棒",
-          "ratio": 9.16
+          "ratio": 9.18
+        },
+        {
+          "fundSymbol": "00995A",
+          "fundName": "主動中信台灣卓越",
+          "ratio": 8.92
         },
         {
           "fundSymbol": "00987A",
           "fundName": "主動台新優勢成長",
-          "ratio": 9.13
+          "ratio": 8.32
         },
         {
           "fundSymbol": "00992A",
           "fundName": "主動群益科技創新",
-          "ratio": 7.2
+          "ratio": 7.23
         }
       ],
-      "totalRatio": 188.53,
-      "maxRatio": 20.66
+      "totalRatio": 176.39,
+      "maxRatio": 19.7
     },
     {
       "symbol": "2454",
@@ -2583,76 +2534,76 @@
         {
           "fundSymbol": "00982A",
           "fundName": "主動群益台灣強棒",
-          "ratio": 9.89
+          "ratio": 9.92
         },
         {
           "fundSymbol": "00981A",
           "fundName": "主動統一台股增長",
-          "ratio": 9.63
-        },
-        {
-          "fundSymbol": "00991A",
-          "fundName": "主動復華未來50",
-          "ratio": 9.18
+          "ratio": 8.37
         },
         {
           "fundSymbol": "00994A",
           "fundName": "主動第一金台股優",
-          "ratio": 8.57
-        },
-        {
-          "fundSymbol": "00995A",
-          "fundName": "主動中信台灣卓越",
-          "ratio": 8.4
-        },
-        {
-          "fundSymbol": "00400A",
-          "fundName": "主動國泰動能高息",
-          "ratio": 8.28
+          "ratio": 8.35
         },
         {
           "fundSymbol": "00996A",
           "fundName": "主動兆豐台灣豐收",
-          "ratio": 8.05
+          "ratio": 8.13
         },
         {
-          "fundSymbol": "00403A",
-          "fundName": "主動統一升級50",
-          "ratio": 7.09
+          "fundSymbol": "00995A",
+          "fundName": "主動中信台灣卓越",
+          "ratio": 7.96
+        },
+        {
+          "fundSymbol": "00400A",
+          "fundName": "主動國泰動能高息",
+          "ratio": 7.95
         },
         {
           "fundSymbol": "00980A",
           "fundName": "主動野村臺灣優選",
-          "ratio": 7.04
+          "ratio": 6.86
+        },
+        {
+          "fundSymbol": "00991A",
+          "fundName": "主動復華未來50",
+          "ratio": 6.78
+        },
+        {
+          "fundSymbol": "00403A",
+          "fundName": "主動統一升級50",
+          "ratio": 6.66
         },
         {
           "fundSymbol": "00987A",
           "fundName": "主動台新優勢成長",
-          "ratio": 6.39
+          "ratio": 5.83
         },
         {
           "fundSymbol": "00401A",
           "fundName": "主動摩根台灣鑫收",
-          "ratio": 5.96
+          "ratio": 5.58
         },
         {
           "fundSymbol": "00992A",
           "fundName": "主動群益科技創新",
-          "ratio": 3.87
+          "ratio": 3.89
         },
         {
           "fundSymbol": "00985A",
           "fundName": "主動野村台灣50",
-          "ratio": 2.68
+          "ratio": 2.62
         },
         {
           "fundSymbol": "00993A",
           "fundName": "主動安聯台灣",
-          "ratio": 2.62
+          "ratio": 2.57
         }
       ],
-      "totalRatio": 97.65,
-      "maxRatio": 9.89
+      "totalRatio": 91.47,
+      "maxRatio": 9.92
     }
   ]
 }
