@@ -1,7 +1,7 @@
 {
-  "updateTime": "2026-11-27T05:23:01.385930+08:00",
+  "updateTime": "2026-11-27T05:48:05.355057+08:00",
   "tradeDate": "2026-11-26",
-  "totalCount": 2,
+  "totalCount": 1,
   "conditions": [
     "[日] 成交量大於 2000 張 (>= 2000 張)",
     "[日] 成交金額大於 0.5 億 (>= 5000 萬元)",
@@ -29,26 +29,6 @@
       "vol_multiple": 3.5,
       "vol_week_multiple": 7.17,
       "rank": 1
-    },
-    {
-      "market": "twse",
-      "code": "3665",
-      "name": "貿聯-KY",
-      "volume_shares": 4006029,
-      "volume_lots": 4006,
-      "trade_value": 7089018090,
-      "trade_value_yi": 70.89,
-      "open_price": 1720.0,
-      "close_price": 1790.0,
-      "change": 160.0,
-      "transaction": 8173,
-      "date": "2026-11-26",
-      "today_vol_lots": 11141,
-      "ma10_vol_lots": 3575,
-      "ma10w_vol_lots": 3164,
-      "vol_multiple": 3.12,
-      "vol_week_multiple": 3.52,
-      "rank": 2
     }
   ],
   "tpex": [],
@@ -72,26 +52,6 @@
       "vol_multiple": 3.5,
       "vol_week_multiple": 7.17,
       "rank": 1
-    },
-    {
-      "market": "twse",
-      "code": "3665",
-      "name": "貿聯-KY",
-      "volume_shares": 4006029,
-      "volume_lots": 4006,
-      "trade_value": 7089018090,
-      "trade_value_yi": 70.89,
-      "open_price": 1720.0,
-      "close_price": 1790.0,
-      "change": 160.0,
-      "transaction": 8173,
-      "date": "2026-11-26",
-      "today_vol_lots": 11141,
-      "ma10_vol_lots": 3575,
-      "ma10w_vol_lots": 3164,
-      "vol_multiple": 3.12,
-      "vol_week_multiple": 3.52,
-      "rank": 2
     }
   ]
 }

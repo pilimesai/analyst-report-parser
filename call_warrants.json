@@ -1,5 +1,5 @@
 {
-  "updateTime": "2026-11-27 04:32:12",
+  "updateTime": "2026-11-27 05:48:04",
   "tradeDate": "2026-11-26",
   "totalStocks": 695,
   "totalCallValue": 1367541350,
@@ -11249,7 +11249,7 @@
       "max_single_warrant_wan": 31.7,
       "max_single_warrant_name": "神達國泰66購02",
       "max_single_warrant_code": "043425",
-      "max_single_warrant_strike": "66.6000",
+      "max_single_warrant_strike": "66.0500",
       "max_single_warrant_expiry": "2027-06-23",
       "top_warrants": [
         {
@@ -11257,7 +11257,7 @@
           "name": "神達國泰66購02",
           "value": 316650,
           "volume": 164000,
-          "strike": "66.6000",
+          "strike": "66.0500",
           "expiry": "2027-06-23"
         },
         {
@@ -11265,7 +11265,7 @@
           "name": "神達元大64購01",
           "value": 203050,
           "volume": 450000,
-          "strike": "80.0000",
+          "strike": "79.3300",
           "expiry": "2027-04-22"
         },
         {
@@ -11273,7 +11273,7 @@
           "name": "神達國票65購03",
           "value": 101830,
           "volume": 90000,
-          "strike": "70.0000",
+          "strike": "69.4200",
           "expiry": "2027-05-17"
         },
         {
@@ -11281,7 +11281,7 @@
           "name": "神達國泰66購01",
           "value": 98050,
           "volume": 87000,
-          "strike": "77.7000",
+          "strike": "77.0500",
           "expiry": "2027-06-15"
         },
         {
@@ -11289,7 +11289,7 @@
           "name": "神達國泰65購01",
           "value": 83580,
           "volume": 199000,
-          "strike": "88.8000",
+          "strike": "88.0600",
           "expiry": "2027-05-20"
         }
       ],
