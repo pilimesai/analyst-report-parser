@@ -584198,5 +584198,29 @@
       "creditor": "瑞興商業銀行南京東路分行",
       "report_date": "112/01/03"
     }
+  ],
+  "3550": [
+    {
+      "identity": "B00010副董事長本人",
+      "name": "鄭金鴻",
+      "event_date": "115/11/25",
+      "pledge_shares": 300000,
+      "unpledge_shares": 0,
+      "cum_shares": 5014000,
+      "creditor": "第一商業銀行五股工業區分行",
+      "report_date": "115/11/26"
+    }
+  ],
+  "3006": [
+    {
+      "identity": "D00040董事本人",
+      "name": "山一投資有限公司",
+      "event_date": "115/11/25",
+      "pledge_shares": 1678000,
+      "unpledge_shares": 0,
+      "cum_shares": 1678000,
+      "creditor": "瑞士商瑞士銀行股份有限公司台北分公司",
+      "report_date": "115/11/26"
+    }
   ]
 }
