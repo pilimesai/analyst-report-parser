@@ -148,6 +148,16 @@ def calculate_kd(df, window=9):
     d = k.ewm(com=2, adjust=False).mean()
     return k, d
 
+def calculate_macd(df, fast=12, slow=26, signal=9):
+    """計算 MACD 指標 (DIF, DEM, OSC)"""
+    close = df['Close']
+    ema_fast = close.ewm(span=fast, adjust=False).mean()
+    ema_slow = close.ewm(span=slow, adjust=False).mean()
+    dif = ema_fast - ema_slow
+    dem = dif.ewm(span=signal, adjust=False).mean()
+    osc = (dif - dem) * 2
+    return dif, dem, osc
+
 def main():
     start_time = time.time()
     now_dt = datetime.datetime.now(TZ_TW)
@@ -333,6 +343,18 @@ def main():
                         if wt_k > wt_d and wy_k < wy_d:
                             matched_criteria.append("周KD黃金交叉")
 
+                # 3. MACD 黃金交叉 (EMA 12, 26, 9)
+                if len(df_stock) >= 26:
+                    dif_s, dem_s, osc_s = calculate_macd(df_stock, fast=12, slow=26, signal=9)
+                    if len(dif_s) >= 2:
+                        today_dif, today_dem = dif_s.iloc[-1], dem_s.iloc[-1]
+                        yest_dif, yest_dem = dif_s.iloc[-2], dem_s.iloc[-2]
+                        if today_dif > today_dem and yest_dif <= yest_dem:
+                            if today_dif > 0:
+                                matched_criteria.append("MACD零軸上黃金交叉")
+                            else:
+                                matched_criteria.append("MACD黃金交叉")
+
                 # 3. 成交量條件 (量大於十週均量且大於三倍十日均量)
                 if len(df_stock) > 10 and len(weekly_df) > 10:
                     vol_10d_avg = df_stock['Volume'].rolling(window=10).mean().iloc[-2]
@@ -426,6 +448,8 @@ def main():
             score += 1
         if any("今日成交值TOP30" in m for m in matched_criteria):
             score += 1
+        if any("MACD" in m for m in matched_criteria):
+            score += 1  # MACD 黃金交叉加分 (基礎 1 + 額外 1)
 
         scores[stock_id] = score
         matches[stock_id] = matched_criteria

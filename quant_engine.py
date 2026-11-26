@@ -68,6 +68,20 @@ def evaluate_stock_quant(stock_id):
                 wy_k, wy_d = weekly_hist['K'].iloc[-2], weekly_hist['D'].iloc[-2]
                 if wt_k > wt_d and wy_k < wy_d:
                     matched.append("周KD黃金交叉")
+
+            # (3) 計算 MACD (EMA 12, 26, 9)
+            if len(hist) >= 26:
+                ema_12 = hist['Close'].ewm(span=12, adjust=False).mean()
+                ema_26 = hist['Close'].ewm(span=26, adjust=False).mean()
+                dif = ema_12 - ema_26
+                dem = dif.ewm(span=9, adjust=False).mean()
+                today_dif, today_dem = dif.iloc[-1], dem.iloc[-1]
+                yest_dif, yest_dem = dif.iloc[-2], dem.iloc[-2]
+                if today_dif > today_dem and yest_dif <= yest_dem:
+                    if today_dif > 0:
+                        matched.append("MACD零軸上黃金交叉")
+                    else:
+                        matched.append("MACD黃金交叉")
                     
             # (3) 成交量條件: 大於十週均量 且 大於三倍十日均量
             if len(hist) > 10 and len(weekly_hist) > 10:

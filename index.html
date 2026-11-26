@@ -4019,7 +4019,9 @@
             'P': '入選今日成交值TOP30',
             'Q': '所在族群為多方族群 (MA20站上>=50%)',
             'R': '大股東質設成本防守 (跌破加權質押成本20%以內)',
-            'S': '入選認購權證買盤TOP10'
+            'S': '入選認購權證買盤TOP10',
+            'T': 'MACD黃金交叉',
+            'U': 'MACD零軸上黃金交叉'
         };
 
         function expandCriteria(criteriaArr) {
@@ -6455,6 +6457,23 @@ JSON 欄位：
                     }
                 }
 
+                // MACD 指標 (EMA 12, 26, 9)
+                if (priceData.length >= 26) {
+                    calculateMACD(priceData);
+                    const today_dif = priceData[len - 1].DIF;
+                    const today_dem = priceData[len - 1].DEM;
+                    const yest_dif = priceData[len - 2].DIF;
+                    const yest_dem = priceData[len - 2].DEM;
+
+                    if (today_dif > today_dem && yest_dif <= yest_dem) {
+                        if (today_dif > 0) {
+                            matched.push("MACD零軸上黃金交叉");
+                        } else {
+                            matched.push("MACD黃金交叉");
+                        }
+                    }
+                }
+
                 // Volume check
                 if (priceData.length > 10 && weeklyData.length > 10) {
                     let today_vol = priceData[len - 1].Trading_Volume;
@@ -6713,6 +6732,31 @@ JSON 欄位：
 
                 data[i].K = k;
                 data[i].D = d;
+            }
+        }
+
+        // MACD math (EMA 12, 26, 9)
+        function calculateMACD(data, fast = 12, slow = 26, signal = 9) {
+            if (!data || data.length < slow) return;
+            const kFast = 2 / (fast + 1);
+            const kSlow = 2 / (slow + 1);
+            const kSignal = 2 / (signal + 1);
+
+            let emaFast = data[0].close;
+            let emaSlow = data[0].close;
+
+            for (let i = 0; i < data.length; i++) {
+                const c = data[i].close;
+                emaFast = c * kFast + emaFast * (1 - kFast);
+                emaSlow = c * kSlow + emaSlow * (1 - kSlow);
+                data[i].DIF = emaFast - emaSlow;
+            }
+
+            let dem = data[0].DIF;
+            for (let i = 0; i < data.length; i++) {
+                dem = data[i].DIF * kSignal + dem * (1 - kSignal);
+                data[i].DEM = dem;
+                data[i].OSC = (data[i].DIF - dem) * 2;
             }
         }
 
