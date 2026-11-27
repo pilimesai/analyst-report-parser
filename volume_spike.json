@@ -1,7 +1,7 @@
 {
-  "updateTime": "2026-11-27T05:48:05.355057+08:00",
-  "tradeDate": "2026-11-26",
-  "totalCount": 1,
+  "updateTime": "2026-11-28T05:03:18.032011+08:00",
+  "tradeDate": "2026-11-27",
+  "totalCount": 0,
   "conditions": [
     "[日] 成交量大於 2000 張 (>= 2000 張)",
     "[日] 成交金額大於 0.5 億 (>= 5000 萬元)",
@@ -9,49 +9,7 @@
     "[日] 成交量大於 10 日均量的 3 倍 (>= 3x)",
     "[日] 收盤價大於開盤價 (實體紅K棒)"
   ],
-  "twse": [
-    {
-      "market": "twse",
-      "code": "0055",
-      "name": "元大MSCI金融",
-      "volume_shares": 3538107,
-      "volume_lots": 3538,
-      "trade_value": 149458953,
-      "trade_value_yi": 1.49,
-      "open_price": 42.11,
-      "close_price": 42.51,
-      "change": 0.8,
-      "transaction": 6960,
-      "date": "2026-11-26",
-      "today_vol_lots": 8240,
-      "ma10_vol_lots": 2352,
-      "ma10w_vol_lots": 1148,
-      "vol_multiple": 3.5,
-      "vol_week_multiple": 7.17,
-      "rank": 1
-    }
-  ],
+  "twse": [],
   "tpex": [],
-  "stocks": [
-    {
-      "market": "twse",
-      "code": "0055",
-      "name": "元大MSCI金融",
-      "volume_shares": 3538107,
-      "volume_lots": 3538,
-      "trade_value": 149458953,
-      "trade_value_yi": 1.49,
-      "open_price": 42.11,
-      "close_price": 42.51,
-      "change": 0.8,
-      "transaction": 6960,
-      "date": "2026-11-26",
-      "today_vol_lots": 8240,
-      "ma10_vol_lots": 2352,
-      "ma10w_vol_lots": 1148,
-      "vol_multiple": 3.5,
-      "vol_week_multiple": 7.17,
-      "rank": 1
-    }
-  ]
+  "stocks": []
 }
